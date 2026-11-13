@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "color=0": {
+      "model": "thaumichorizons:block/crystal_white"
+    },
+    "color=1": {
+      "model": "thaumichorizons:block/crystal_orange"
+    },
+    "color=2": {
+      "model": "thaumichorizons:block/crystal_magenta"
+    },
+    "color=3": {
+      "model": "thaumichorizons:block/crystal_lightblue"
+    },
+    "color=4": {
+      "model": "thaumichorizons:block/crystal_yellow"
+    },
+    "color=5": {
+      "model": "thaumichorizons:block/crystal_lime"
+    },
+    "color=6": {
+      "model": "thaumichorizons:block/crystal_pink"
+    },
+    "color=7": {
+      "model": "thaumichorizons:block/crystal_gray"
+    },
+    "color=8": {
+      "model": "thaumichorizons:block/crystal_lightgray"
+    },
+    "color=9": {
+      "model": "thaumichorizons:block/crystal_cyan"
+    },
+    "color=10": {
+      "model": "thaumichorizons:block/crystal_purple"
+    },
+    "color=11": {
+      "model": "thaumichorizons:block/crystal_blue"
+    },
+    "color=12": {
+      "model": "thaumichorizons:block/crystal_brown"
+    },
+    "color=13": {
+      "model": "thaumichorizons:block/crystal_green"
+    },
+    "color=14": {
+      "model": "thaumichorizons:block/crystal_red"
+    },
+    "color=15": {
+      "model": "thaumichorizons:block/crystal_black"
+    }
+  }
+}
