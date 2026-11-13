@@ -73,7 +73,6 @@ THAUMCRAFT_API = [
     "thaumcraft.research.ResearchGate",
     "thaumcraft.research.ResearchManager",
     "thaumcraft.research.ResearchPage",
-    "thaumcraft.research.ResearchSpec",
     "thaumcraft.research.Warp",
     "thaumcraft.research.WarpType",
     "thaumcraft.research.Knowledge",

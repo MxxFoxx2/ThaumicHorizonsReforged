@@ -14,8 +14,9 @@ TC4R — родственный проект рядом (`../thaumcraft-4-reforg
 ## Две ортогональные оси
 
 - Ось «версия MC»: шов `platform/` и `client/platform/` (сеть, StackKey-данные, attachments, рендер-типы, телепорт). Игровая логика не импортирует версиезависимые классы напрямую, `tools/check_seams.py` падает на запрещённых импортах.
-- Ось «порт Thaumcraft»: `dev.visfox.thaumichorizons.compat/` — интерфейсы (`AspectCompat`, `ResearchCompat`, `WarpCompat`, `EssentiaCompat`, `NodeCompat`, `VisNetCompat`, `GolemCompat`, `InfusionCompat`, `FxCompat`, `ScanCompat`, `PotionCompat`, `ItemCompat`). Игровая логика ходит только через них. Реализация `TcReforgedCompat` выбрана через ServiceLoader (`META-INF/services`).
-- Каждый compat-интерфейс имеет `isAvailable()`; контент отсутствующей подсистемы не регистрируется и скрывается, ядро не крашится. Ссылки на предметы TC — только `ItemCompat.lookup(...)`, никаких прямых референсов на классы TC4R из игровой логики.
+- Ось «порт Thaumcraft»: `dev.visfox.thaumichorizons.compat/` — интерфейсы (`AspectCompat`, `ResearchCompat`, `WarpCompat`, `EssentiaCompat`, `NodeCompat`, `VisNetCompat`, `GolemCompat`, `InfusionCompat`, `FxCompat`, `ScanCompat`, `PotionCompat`, `ItemCompat`). Реализация `TcReforgedPort` выбрана через ServiceLoader (`META-INF/services`).
+- Каждый compat-интерфейс имеет `isAvailable()`; контент отсутствующей подсистемы не регистрируется и скрывается, ядро не крашится. Ссылки на предметы TC — только `ItemCompat.lookup(...)`.
+- **Allowlist API TC4R**: наследование классов TC4R не абстрагируется адаптером, поэтому игровому коду разрешён прямой импорт только API-поверхности TC4R — список `THAUMCRAFT_API` в `tools/check_seams.py` (аспекты, `EssentiaTransport`/`EssentiaHandler`, `Node`/`NodeGenerator`/`VisNet`/`VisNode`, wand-классы и фокусы, голем-классы, research/warp, `TcRecipes`, `thaumcraft.api.addon.*`). Внутренности TC4R (`NodeBlockEntity`, `GolemBase` internals, клиент TC4R и т.д.) — только в `compat/`. Добавление в allowlist = осознанное решение расширить точку сопряжения, помечать в `docs/ADDON_API.md` TC4R.
 
 ## Mixin-хуки TC4R
 
