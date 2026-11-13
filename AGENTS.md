@@ -3,8 +3,8 @@
 Инструкции для любых ИИ-агентов, работающих в этом репозитории. Полный контракт проекта — в [CLAUDE.md](CLAUDE.md), он обязателен и здесь. Краткая выжимка:
 
 1. Источник истины — исходники 1.7.10 в `reference/1.7.10/`. Логика портируется 1:1; каждое отступление фиксируется в разделе «Намеренные отступления» `CLAUDE.md`.
-2. Игровая логика ходит только через два шва: `platform/` (версия MC) и `thaumichorizons.compat/` (порт Thaumcraft). Прямые импорты классов TC4R из игровой логики запрещены — `tools/check_seams.py` это ловит.
-3. Mixin-цели TC4R живут только в `thaumichorizons.compat.tc/` как реализация `TcReforgedCompat`.
+2. Игровая логика ходит только через два шва: `platform/` (версия MC) и `dev.visfox.thaumichorizons.compat/` (порт Thaumcraft). Прямые импорты классов TC4R из игровой логики запрещены — `tools/check_seams.py` это ловит.
+3. Mixin-цели TC4R живут только в `dev.visfox.thaumichorizons.compat.tc/` как реализация `TcReforgedCompat`.
 4. Ветки: `main` (MC 26.3) → `mc/26.1.2` → `mc/1.21.1`; в версионных ветках правятся только швы, compat и регистрация.
 5. Java: 4 пробела, без комментариев. Коммиты `feat:`/`fix:` на английском, без co-author.
 6. GameTest-ы не пишутся; проверки через `./gradlew build`, `python3 tools/check_seams.py`, `runClient`/`runServer`.

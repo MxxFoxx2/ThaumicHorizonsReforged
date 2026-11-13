@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "thaumichorizons.mixin",
+  "package": "dev.visfox.thaumichorizons.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "refmap": "thaumichorizons.refmap.json",

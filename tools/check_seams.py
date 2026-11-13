@@ -3,7 +3,7 @@ import re
 import sys
 from pathlib import Path
 
-SOURCE_DIR = Path("src") / "main" / "java" / "thaumichorizons"
+SOURCE_DIR = Path("src") / "main" / "java" / "dev" / "visfox" / "thaumichorizons"
 
 PLATFORM = ("platform/", "client/platform/")
 CLIENT_PLATFORM = ("client/platform/",)
@@ -34,7 +34,7 @@ OUTSIDE_CLIENT_PLATFORM = [
 
 OUTSIDE_CLIENT = [
     "net.minecraft.client.*",
-    "thaumichorizons.client.*",
+    "dev.visfox.thaumichorizons.client.*",
     "com.mojang.blaze3d.*",
     "net.neoforged.neoforge.client.*",
 ]

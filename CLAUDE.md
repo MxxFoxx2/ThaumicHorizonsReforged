@@ -14,14 +14,14 @@ TC4R — родственный проект рядом (`../thaumcraft-4-reforg
 ## Две ортогональные оси
 
 - Ось «версия MC»: шов `platform/` и `client/platform/` (сеть, StackKey-данные, attachments, рендер-типы, телепорт). Игровая логика не импортирует версиезависимые классы напрямую, `tools/check_seams.py` падает на запрещённых импортах.
-- Ось «порт Thaumcraft»: `thaumichorizons.compat/` — интерфейсы (`AspectCompat`, `ResearchCompat`, `WarpCompat`, `EssentiaCompat`, `NodeCompat`, `VisNetCompat`, `GolemCompat`, `InfusionCompat`, `FxCompat`, `ScanCompat`, `PotionCompat`, `ItemCompat`). Игровая логика ходит только через них. Реализация `TcReforgedCompat` выбрана через ServiceLoader (`META-INF/services`).
+- Ось «порт Thaumcraft»: `dev.visfox.thaumichorizons.compat/` — интерфейсы (`AspectCompat`, `ResearchCompat`, `WarpCompat`, `EssentiaCompat`, `NodeCompat`, `VisNetCompat`, `GolemCompat`, `InfusionCompat`, `FxCompat`, `ScanCompat`, `PotionCompat`, `ItemCompat`). Игровая логика ходит только через них. Реализация `TcReforgedCompat` выбрана через ServiceLoader (`META-INF/services`).
 - Каждый compat-интерфейс имеет `isAvailable()`; контент отсутствующей подсистемы не регистрируется и скрывается, ядро не крашится. Ссылки на предметы TC — только `ItemCompat.lookup(...)`, никаких прямых референсов на классы TC4R из игровой логики.
 
 ## Mixin-хуки TC4R
 
 Пока хуки не приняты в TC4R, TH-R несёт их mixin'ами (`thaumichorizons.mixins.json`, `META-INF/accesstransformer.cfg`). Правила:
 
-- Mixin'ы живут только в `thaumichorizons.compat.tc/` и только как реализация `TcReforgedCompat`. Раскидывать цели TC4R по игровому коду запрещено.
+- Mixin'ы живут только в `dev.visfox.thaumichorizons.compat.tc/` и только как реализация `TcReforgedCompat`. Раскидывать цели TC4R по игровому коду запрещено.
 - Версия TC4R пинуется range'ом в `neoforge.mods.toml`; при обновлении TC4R mixin'ы проверяются первыми.
 - Сигнатуры mixin-хуков совпадают с будущим нативным API TC4R. Когда хук принят upstream — mixin удаляется, `TcReforgedCompat` переключается на нативный вызов, интерфейсы не меняются.
 
@@ -43,7 +43,7 @@ TC4R — родственный проект рядом (`../thaumcraft-4-reforg
 
 ## Ресурсы и регистрация
 
-- Регистрация через `DeferredRegister` в `thaumichorizons/registry/` (`ThItems`, `ThBlocks`, `ThBlockEntities`, `ThEntities`, `ThEffects`, `ThMenus`, `ThPayloads`, `ThCreativeTabs`). Регистрация учитывает capability-флаги compat-слоя.
+- Регистрация через `DeferredRegister` в `dev.visfox.thaumichorizons.registry/` (`ThItems`, `ThBlocks`, `ThBlockEntities`, `ThEntities`, `ThEffects`, `ThMenus`, `ThPayloads`, `ThCreativeTabs`). Регистрация учитывает capability-флаги compat-слоя.
 - Player-состояние — NeoForge attachments (copy-on-death, авто-sync по образцу `BaubleAttachments` TC4R); item-данные — data components (StackKey-стиль TC4R), NBT-хаков нет.
 - Рецепты critter/self-infusion — собственный реестр TH, НЕ `TcRecipes` TC4R.
 
