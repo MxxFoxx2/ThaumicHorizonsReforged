@@ -390,7 +390,9 @@ public final class TcReforgedPort implements ThaumcraftPort {
                 case TAINTED -> thaumcraft.node.NodeType.TAINTED;
                 case HUNGRY -> thaumcraft.node.NodeType.HUNGRY;
                 case PURE -> thaumcraft.node.NodeType.PURE;
-                case ENERGIZED, SYNTHETIC, ETHEREAL -> null;
+                case ENERGIZED -> null;
+                case SYNTHETIC -> thaumcraft.node.NodeType.SYNTHETIC;
+                case ETHEREAL -> thaumcraft.node.NodeType.ETHEREAL;
             };
         }
 
@@ -402,6 +404,8 @@ public final class TcReforgedPort implements ThaumcraftPort {
                 case TAINTED -> NodeCompat.NodeType.TAINTED;
                 case HUNGRY -> NodeCompat.NodeType.HUNGRY;
                 case PURE -> NodeCompat.NodeType.PURE;
+                case SYNTHETIC -> NodeCompat.NodeType.SYNTHETIC;
+                case ETHEREAL -> NodeCompat.NodeType.ETHEREAL;
             };
         }
     }
