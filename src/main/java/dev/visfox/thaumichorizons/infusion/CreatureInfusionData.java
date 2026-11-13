@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
-public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean climb, int tumorWarp, int tumorWarpSticky, int tumorWarpTemp) {
+public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean climb, int tumorWarp, int tumorWarpPermanent, int tumorWarpTemp) {
     public static final int NUM_INFUSIONS = 12;
 
     public static final CreatureInfusionData EMPTY = new CreatureInfusionData(new int[NUM_INFUSIONS], false, false, 0, 0, 0);
@@ -15,10 +15,10 @@ public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean c
         Codec.BOOL.optionalFieldOf("chameleon", false).forGetter(CreatureInfusionData::chameleon),
         Codec.BOOL.optionalFieldOf("climb", false).forGetter(CreatureInfusionData::climb),
         Codec.INT.optionalFieldOf("tumor_warp", 0).forGetter(CreatureInfusionData::tumorWarp),
-        Codec.INT.optionalFieldOf("tumor_warp_sticky", 0).forGetter(CreatureInfusionData::tumorWarpSticky),
+        Codec.INT.optionalFieldOf("tumor_warp_perm", 0).forGetter(CreatureInfusionData::tumorWarpPermanent),
         Codec.INT.optionalFieldOf("tumor_warp_temp", 0).forGetter(CreatureInfusionData::tumorWarpTemp)
-    ).apply(instance, (list, chameleon, climb, tumorWarp, tumorWarpSticky, tumorWarpTemp) ->
-        new CreatureInfusionData(normalize(list), chameleon, climb, tumorWarp, tumorWarpSticky, tumorWarpTemp)));
+    ).apply(instance, (list, chameleon, climb, tumorWarp, tumorWarpPermanent, tumorWarpTemp) ->
+        new CreatureInfusionData(normalize(list), chameleon, climb, tumorWarp, tumorWarpPermanent, tumorWarpTemp)));
 
     public static final StreamCodec<ByteBuf, CreatureInfusionData> STREAM_CODEC = new StreamCodec<>() {
         @Override
@@ -30,9 +30,9 @@ public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean c
             boolean chameleon = buffer.readBoolean();
             boolean climb = buffer.readBoolean();
             int tumorWarp = buffer.readInt();
-            int tumorWarpSticky = buffer.readInt();
+            int tumorWarpPermanent = buffer.readInt();
             int tumorWarpTemp = buffer.readInt();
-            return new CreatureInfusionData(infusions, chameleon, climb, tumorWarp, tumorWarpSticky, tumorWarpTemp);
+            return new CreatureInfusionData(infusions, chameleon, climb, tumorWarp, tumorWarpPermanent, tumorWarpTemp);
         }
 
         @Override
@@ -43,7 +43,7 @@ public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean c
             buffer.writeBoolean(data.chameleon());
             buffer.writeBoolean(data.climb());
             buffer.writeInt(data.tumorWarp());
-            buffer.writeInt(data.tumorWarpSticky());
+            buffer.writeInt(data.tumorWarpPermanent());
             buffer.writeInt(data.tumorWarpTemp());
         }
     };
@@ -59,7 +59,7 @@ public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean c
     public CreatureInfusionData withInfusion(int slot, int recipeId) {
         int[] copy = infusions.clone();
         copy[Math.floorMod(slot, NUM_INFUSIONS)] = recipeId;
-        return new CreatureInfusionData(copy, chameleon, climb, tumorWarp, tumorWarpSticky, tumorWarpTemp);
+        return new CreatureInfusionData(copy, chameleon, climb, tumorWarp, tumorWarpPermanent, tumorWarpTemp);
     }
 
     private static java.util.List<Integer> toList(int[] values) {

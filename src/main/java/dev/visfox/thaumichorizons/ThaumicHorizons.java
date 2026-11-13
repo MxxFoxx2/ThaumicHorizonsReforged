@@ -11,6 +11,7 @@ import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class ThaumicHorizons {
 
     public ThaumicHorizons(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        modContainer.registerConfig(ModConfig.Type.STARTUP, ThaumicHorizonsConfig.SPEC);
         CreatureInfusion.init();
         DataAttachments.register(modEventBus);
         ThEffects.register(modEventBus);
