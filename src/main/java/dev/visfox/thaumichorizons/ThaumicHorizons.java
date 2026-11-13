@@ -7,6 +7,7 @@ import dev.visfox.thaumichorizons.platform.DataAttachments;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThCreativeTabs;
 import dev.visfox.thaumichorizons.registry.ThEffects;
+import dev.visfox.thaumichorizons.network.ToggleInfusionPayload;
 import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.neoforged.bus.api.IEventBus;
@@ -32,9 +33,14 @@ public class ThaumicHorizons {
         ThCreativeTabs.register(modEventBus);
         ConfigResearch.init();
         ConfigAspects.init();
+        ToggleInfusionPayload.register();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("Thaumic Horizons: Reforged loaded");
+    }
+
+    public static net.minecraft.resources.Identifier id(String path) {
+        return net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, path);
     }
 }

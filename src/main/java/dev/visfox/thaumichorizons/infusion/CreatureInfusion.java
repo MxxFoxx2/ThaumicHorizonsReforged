@@ -62,6 +62,12 @@ public final class CreatureInfusion {
         player.setInvisible(active);
     }
 
+    public static void toggleClimb(ServerPlayer player) {
+        CreatureInfusionData data = get(player);
+        DATA.set(player, new CreatureInfusionData(data.infusions(), data.chameleon(), !data.climb(), data.tumorWarp(), data.tumorWarpPermanent(), data.tumorWarpTemp()));
+        DATA.sync(player);
+    }
+
     public static void applyVisualState(Player player) {
         if (player.level().isClientSide()) {
             return;
