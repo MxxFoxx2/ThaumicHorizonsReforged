@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "thaumichorizons.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "refmap": "thaumichorizons.refmap.json",
+  "mixins": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
