@@ -1,6 +1,8 @@
 package dev.visfox.thaumichorizons;
 
 import com.mojang.logging.LogUtils;
+import dev.visfox.thaumichorizons.infusion.CreatureInfusion;
+import dev.visfox.thaumichorizons.platform.DataAttachments;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThCreativeTabs;
 import dev.visfox.thaumichorizons.registry.ThEffects;
@@ -18,6 +20,8 @@ public class ThaumicHorizons {
 
     public ThaumicHorizons(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        CreatureInfusion.init();
+        DataAttachments.register(modEventBus);
         ThEffects.register(modEventBus);
         ThBlocks.register(modEventBus);
         ThItems.register(modEventBus);
