@@ -3,15 +3,21 @@ package dev.visfox.thaumichorizons.compat.tc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
 import thaumcraft.aspect.Aspect;
@@ -19,6 +25,11 @@ import thaumcraft.aspect.AspectList;
 import thaumcraft.aspect.AspectRegistry;
 import thaumcraft.aspect.AspectHelper;
 import thaumcraft.aspect.AspectSync;
+import thaumcraft.entity.TaintedMob;
+import thaumcraft.essentia.EssentiaHandler;
+import thaumcraft.node.Node;
+import thaumcraft.node.NodeGenerator;
+import thaumcraft.node.NodeModifier;
 import thaumcraft.research.Knowledge;
 import thaumcraft.research.ResearchCategories;
 import thaumcraft.research.ResearchGate;
@@ -28,6 +39,8 @@ import thaumcraft.research.ResearchPage;
 import thaumcraft.research.PlayerKnowledge;
 import thaumcraft.research.Warp;
 import thaumcraft.research.WarpType;
+import thaumcraft.research.ScanManager;
+import thaumcraft.vis.VisNet;
 import dev.visfox.thaumichorizons.compat.AspectCompat;
 import dev.visfox.thaumichorizons.compat.AspectCompat.AspectDataRegistrar;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
@@ -49,13 +62,13 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final AspectCompat aspects = new TcAspects();
     private final ResearchCompat research = new TcResearch();
     private final WarpCompat warp = new TcWarp();
-    private final EssentiaCompat essentia = new UnavailableEssentia();
-    private final NodeCompat nodes = new UnavailableNodes();
-    private final VisNetCompat visNet = new UnavailableVisNet();
+    private final EssentiaCompat essentia = new TcEssentia();
+    private final NodeCompat nodes = new TcNodes();
+    private final VisNetCompat visNet = new TcVisNet();
     private final GolemCompat golems = new UnavailableGolems();
     private final InfusionCompat infusion = new UnavailableInfusion();
     private final FxCompat fx = new UnavailableFx();
-    private final ScanCompat scan = new UnavailableScan();
+    private final ScanCompat scan = new TcScan();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
 
@@ -305,13 +318,131 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class UnavailableEssentia implements EssentiaCompat {
+    static final class TcEssentia implements EssentiaCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public int drainEssentia(Level level, BlockPos from, String aspectTag, int amount, Direction side, int range) {
+            Aspect aspect = Aspect.getAspect(aspectTag);
+            if (aspect == null || amount <= 0) {
+                return 0;
+            }
+            if (!(level.getBlockEntity(from) instanceof BlockEntity tile)) {
+                return 0;
+            }
+            return EssentiaHandler.drainEssentia(tile, aspect, side, range) ? amount : 0;
+        }
+
+        @Override
+        public boolean isTaintedMob(LivingEntity entity) {
+            return entity instanceof TaintedMob;
+        }
     }
 
-    static final class UnavailableNodes implements NodeCompat {
+    static final class TcNodes implements NodeCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public NodeInfo nodeAt(Level level, BlockPos pos) {
+            if (!(level.getBlockEntity(pos) instanceof Node node)) {
+                return null;
+            }
+            NodeModifier modifier = node.getNodeModifier();
+            return new NodeInfo(
+                TcConversions.toCompat(node.getAspects()),
+                TcConversions.toCompat(node.getAspectsBase()),
+                toCompatType(node.getNodeType()),
+                modifier == null ? null : modifier.getSerializedName()
+            );
+        }
+
+        @Override
+        public boolean createNode(Level level, BlockPos pos, CompatAspectList aspects, NodeType type) {
+            thaumcraft.node.NodeType tcType = toTcType(type);
+            if (tcType == null) {
+                return false;
+            }
+            NodeGenerator.createNodeAt(level, pos, tcType, null, TcConversions.toAspectList(aspects));
+            return true;
+        }
+
+        @Override
+        public CompatAspectList consumeNode(Level level, BlockPos pos) {
+            if (!(level.getBlockEntity(pos) instanceof Node node)) {
+                return new CompatAspectList();
+            }
+            CompatAspectList drained = TcConversions.toCompat(node.getAspects());
+            level.removeBlock(pos, false);
+            return drained;
+        }
+
+        private thaumcraft.node.@Nullable NodeType toTcType(NodeCompat.NodeType type) {
+            return switch (type) {
+                case NORMAL -> thaumcraft.node.NodeType.NORMAL;
+                case UNSTABLE -> thaumcraft.node.NodeType.UNSTABLE;
+                case SINISTER -> thaumcraft.node.NodeType.DARK;
+                case TAINTED -> thaumcraft.node.NodeType.TAINTED;
+                case HUNGRY -> thaumcraft.node.NodeType.HUNGRY;
+                case PURE -> thaumcraft.node.NodeType.PURE;
+                case ENERGIZED, SYNTHETIC, ETHEREAL -> null;
+            };
+        }
+
+        private NodeCompat.NodeType toCompatType(thaumcraft.node.NodeType type) {
+            return switch (type) {
+                case NORMAL -> NodeCompat.NodeType.NORMAL;
+                case UNSTABLE -> NodeCompat.NodeType.UNSTABLE;
+                case DARK -> NodeCompat.NodeType.SINISTER;
+                case TAINTED -> NodeCompat.NodeType.TAINTED;
+                case HUNGRY -> NodeCompat.NodeType.HUNGRY;
+                case PURE -> NodeCompat.NodeType.PURE;
+            };
+        }
     }
 
-    static final class UnavailableVisNet implements VisNetCompat {
+    static final class TcVisNet implements VisNetCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public int drainVis(Level level, BlockPos pos, String aspectTag, int amount, int range) {
+            Aspect aspect = Aspect.getAspect(aspectTag);
+            if (aspect == null || amount <= 0) {
+                return 0;
+            }
+            return VisNet.drainVis(level, pos, aspect, amount);
+        }
+
+        @Override
+        public int addVisToNode(Level level, BlockPos nodePos, String aspectTag, int amount) {
+            Aspect aspect = Aspect.getAspect(aspectTag);
+            if (aspect == null || amount <= 0 || !(level.getBlockEntity(nodePos) instanceof Node node)) {
+                return 0;
+            }
+            int leftover = node.addToContainer(aspect, amount);
+            return amount - leftover;
+        }
+    }
+
+    static final class TcScan implements ScanCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public CompatAspectList resolveEntity(Entity entity) {
+            ScanManager.Target target = ScanManager.resolveEntity(entity);
+            return target == null ? new CompatAspectList() : TcConversions.toCompat(target.aspects());
+        }
     }
 
     static final class UnavailableGolems implements GolemCompat {

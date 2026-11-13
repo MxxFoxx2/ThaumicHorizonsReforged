@@ -23,7 +23,6 @@ public interface NodeCompat {
     public enum NodeType {
         NORMAL,
         UNSTABLE,
-        PALE,
         SINISTER,
         TAINTED,
         HUNGRY,
