@@ -305,5 +305,14 @@
   "vortexStabilizer1": "The vast amount of vis present in hungry nodes has lured more than one apprentice to an early grave. Such an embarrassing end would not befit a thaumaturge of your stature, so you have developed a method of temporarily neutralizing such a node's pull.<BR>When provided with a redstone signal, the vortex attenuator projects a cerulean beam which suppresses flows in the thaumic field. Any hungry node struck by the beam will cease absorbing nearby material until the beam is removed.<BR>It is possible that the beam may also disrupt certain other phenomena...",
   "warpedTumor1": "Warp has proven to be frustratingly stubborn, following your soul from body to body. If you can't dispose of it altogether, the next best thing would be to keep your warp confined somewhere it can't do much harm.<BR>By means of the §5Warped Tumor§0 infusion, you can produce an organ in your new body's abdomen with an exceptionally strong affinity for warp. It cannot confine all of the eldritch energies coursing through you, but the tumor does hold up to %d points of warp.<BR>Should you die, any warp contained in the tumor will likely return to your soul.",
   "wispSpawn1": "Casting a pile of salis mundus into a stabilized rift has a curious result: the salt grains absorb enough vis to resonate with one another and clump together into a quasi-living being.<BR>These artificially generated wisps are almost identical to the ones which naturally grow in magical environs. Note that the wisps' aspects will depend on which aspects were present in the parent node.<BR>The number of wisps generated is highly variable, and an incautious thaumaturge can find himself quickly overwhelmed.",
-  "tc.research_category.ThaumicHorizons": "Thaumic Horizons"
+  "tc.research_category.ThaumicHorizons": "Thaumic Horizons",
+  "block.thaumichorizons.visdynamo": "Vis Dynamo",
+  "block.thaumichorizons.essentiadynamo": "Essentia Dynamo",
+  "block.thaumichorizons.nodemonitor": "Node Monitor",
+  "block.thaumichorizons.synthnode": "Ethereal Shard",
+  "block.thaumichorizons.transductionamplifier": "Transduction Amplifier",
+  "block.thaumichorizons.vortexth": "Planar Vortex",
+  "block.thaumichorizons.vortexstabilizer": "Vortex Attenuator",
+  "block.thaumichorizons.alchemite": "Alchemite",
+  "entity.thaumichorizons.alchemiteprimed": "Primed Alchemite"
 }

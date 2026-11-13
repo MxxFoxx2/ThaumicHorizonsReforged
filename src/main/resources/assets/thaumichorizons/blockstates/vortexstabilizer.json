@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "thaumichorizons:block/vortexstabilizer",
+      "x": 180
+    },
+    "facing=up": {
+      "model": "thaumichorizons:block/vortexstabilizer"
+    },
+    "facing=north": {
+      "model": "thaumichorizons:block/vortexstabilizer",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "thaumichorizons:block/vortexstabilizer"
+    },
+    "facing=west": {
+      "model": "thaumichorizons:block/vortexstabilizer",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "thaumichorizons:block/vortexstabilizer",
+      "y": 270
+    }
+  }
+}

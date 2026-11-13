@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "thaumichorizons:block/nodemonitor",
+      "x": 180
+    },
+    "facing=up": {
+      "model": "thaumichorizons:block/nodemonitor"
+    },
+    "facing=north": {
+      "model": "thaumichorizons:block/nodemonitor",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "thaumichorizons:block/nodemonitor"
+    },
+    "facing=west": {
+      "model": "thaumichorizons:block/nodemonitor",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "thaumichorizons:block/nodemonitor",
+      "y": 270
+    }
+  }
+}

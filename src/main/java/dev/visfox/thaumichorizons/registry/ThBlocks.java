@@ -1,10 +1,18 @@
 package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.block.AlchemiteBlock;
 import dev.visfox.thaumichorizons.block.CrystalBlock;
 import dev.visfox.thaumichorizons.block.DropsBlock;
 import dev.visfox.thaumichorizons.block.DustBlock;
+import dev.visfox.thaumichorizons.block.EssentiaDynamoBlock;
 import dev.visfox.thaumichorizons.block.LeviathanBlock;
+import dev.visfox.thaumichorizons.block.NodeMonitorBlock;
+import dev.visfox.thaumichorizons.block.SyntheticNodeBlock;
+import dev.visfox.thaumichorizons.block.TransductionAmplifierBlock;
+import dev.visfox.thaumichorizons.block.VisDynamoBlock;
+import dev.visfox.thaumichorizons.block.VortexBlock;
+import dev.visfox.thaumichorizons.block.VortexStabilizerBlock;
 import java.util.function.UnaryOperator;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -54,6 +62,30 @@ public final class ThBlocks {
             .noOcclusion().lightLevel(state -> 15)));
     public static final DeferredBlock<LeviathanBlock> LEVIATHAN = withItem(BLOCKS.registerBlock("leviathanth",
         LeviathanBlock::new, properties -> properties.mapColor(MapColor.STONE).strength(10.0F, 10.0F).sound(SoundType.STONE)));
+    public static final DeferredBlock<VisDynamoBlock> VIS_DYNAMO = withItem(BLOCKS.registerBlock("visdynamo",
+        VisDynamoBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(0.7F, 1.0F)
+            .lightLevel(state -> 7).noOcclusion().sound(SoundType.STONE)));
+    public static final DeferredBlock<EssentiaDynamoBlock> ESSENTIA_DYNAMO = withItem(BLOCKS.registerBlock("essentiadynamo",
+        EssentiaDynamoBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(0.7F, 1.0F)
+            .lightLevel(state -> 7).noOcclusion().sound(SoundType.STONE)));
+    public static final DeferredBlock<NodeMonitorBlock> NODE_MONITOR = withItem(BLOCKS.registerBlock("nodemonitor",
+        NodeMonitorBlock::new, properties -> properties.mapColor(MapColor.COLOR_YELLOW).strength(0.7F, 1.0F)
+            .lightLevel(state -> 7).noOcclusion().sound(SoundType.GLASS)));
+    public static final DeferredBlock<SyntheticNodeBlock> SYNTH_NODE = withItem(BLOCKS.registerBlock("synthnode",
+        SyntheticNodeBlock::new, properties -> properties.mapColor(MapColor.COLOR_CYAN).strength(0.7F, 1.0F)
+            .lightLevel(state -> 7).noOcclusion().sound(SoundType.GLASS)));
+    public static final DeferredBlock<TransductionAmplifierBlock> TRANSDUCTION_AMPLIFIER =
+        withItem(BLOCKS.registerBlock("transductionamplifier", TransductionAmplifierBlock::new,
+            properties -> properties.mapColor(MapColor.METAL).strength(0.0F, 0.0F).sound(SoundType.STONE)));
+    public static final DeferredBlock<VortexBlock> VORTEX = withItem(BLOCKS.registerBlock("vortexth",
+        VortexBlock::new, properties -> properties.mapColor(MapColor.COLOR_PURPLE).strength(-1.0F, 20000.0F)
+            .noLootTable().noCollision().lightLevel(state -> 15).sound(SoundType.WOOL)));
+    public static final DeferredBlock<VortexStabilizerBlock> VORTEX_STABILIZER = withItem(BLOCKS.registerBlock("vortexstabilizer",
+        VortexStabilizerBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(10.0F, 0.0F)
+            .sound(SoundType.METAL)));
+    public static final DeferredBlock<AlchemiteBlock> ALCHEMITE = withItem(BLOCKS.registerBlock("alchemite",
+        AlchemiteBlock::new, properties -> properties.mapColor(MapColor.COLOR_CYAN).strength(0.7F, 1.0F)
+            .lightLevel(state -> 7).sound(SoundType.GRASS)));
 
     private static <B extends Block> DeferredBlock<B> withItem(DeferredBlock<B> block) {
         ThItems.ITEMS.registerSimpleBlockItem(block);
