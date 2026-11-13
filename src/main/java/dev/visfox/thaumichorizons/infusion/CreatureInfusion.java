@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 
 public final class CreatureInfusion {
     public static final int CHAMELEON_SKIN = 10;
-    public static final int SPIDER_CLIMB = 11;
+    public static final int SPIDER_CLIMB = 9;
 
     public static final DataKey<CreatureInfusionData> DATA = DataKey.builder("creature_infusion", () -> CreatureInfusionData.EMPTY)
         .codec(CreatureInfusionData.CODEC)
