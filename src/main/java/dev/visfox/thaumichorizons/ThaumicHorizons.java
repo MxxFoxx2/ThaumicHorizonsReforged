@@ -1,11 +1,13 @@
 package dev.visfox.thaumichorizons;
 
 import com.mojang.logging.LogUtils;
+import dev.visfox.thaumichorizons.aspect.ConfigAspects;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusion;
 import dev.visfox.thaumichorizons.platform.DataAttachments;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThCreativeTabs;
 import dev.visfox.thaumichorizons.registry.ThEffects;
+import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -26,6 +28,8 @@ public class ThaumicHorizons {
         ThBlocks.register(modEventBus);
         ThItems.register(modEventBus);
         ThCreativeTabs.register(modEventBus);
+        ConfigResearch.init();
+        ConfigAspects.init();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

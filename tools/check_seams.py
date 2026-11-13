@@ -40,6 +40,51 @@ OUTSIDE_CLIENT = [
 ]
 OUTSIDE_CLIENT_EXCEPT_FILES = ("ThaumicHorizonsClient.java",)
 
+THAUMCRAFT_API = [
+    "thaumcraft.Thaumcraft",
+    "thaumcraft.Config",
+    "thaumcraft.aspect.Aspect",
+    "thaumcraft.aspect.AspectList",
+    "thaumcraft.aspect.AspectRegistry",
+    "thaumcraft.aspect.AspectSync",
+    "thaumcraft.aspect.AddonAspects",
+    "thaumcraft.essentia.EssentiaTransport",
+    "thaumcraft.essentia.EssentiaHandler",
+    "thaumcraft.node.Node",
+    "thaumcraft.node.NodeType",
+    "thaumcraft.node.NodeModifier",
+    "thaumcraft.node.NodeGenerator",
+    "thaumcraft.vis.VisNode",
+    "thaumcraft.vis.VisNet",
+    "thaumcraft.wand.WandItem",
+    "thaumcraft.wand.WandCap",
+    "thaumcraft.wand.WandRod",
+    "thaumcraft.wand.WandRegistry",
+    "thaumcraft.wand.WandKeys",
+    "thaumcraft.wand.Wands",
+    "thaumcraft.wand.focus.FocusItem",
+    "thaumcraft.wand.focus.FocusUpgradeType",
+    "thaumcraft.entity.golem.GolemBase",
+    "thaumcraft.entity.golem.GolemType",
+    "thaumcraft.entity.golem.GolemKeys",
+    "thaumcraft.entity.TaintedMob",
+    "thaumcraft.research.ResearchCategories",
+    "thaumcraft.research.ResearchItem",
+    "thaumcraft.research.ResearchGate",
+    "thaumcraft.research.ResearchManager",
+    "thaumcraft.research.ResearchPage",
+    "thaumcraft.research.ResearchSpec",
+    "thaumcraft.research.Warp",
+    "thaumcraft.research.WarpType",
+    "thaumcraft.research.Knowledge",
+    "thaumcraft.research.ScanManager",
+    "thaumcraft.crafting.TcRecipes",
+    "thaumcraft.crafting.TcRecipe",
+    "thaumcraft.crafting.InfusionRecipe",
+    "thaumcraft.crafting.TcStack",
+    "thaumcraft.api.addon.*",
+]
+
 IMPORT_PATTERN = re.compile(r"^\s*import\s+(?:static\s+)?([\w.]+(?:\.\*)?)\s*;")
 
 
@@ -58,8 +103,8 @@ def violated_rule(relative, imported):
     in_client_platform = relative.startswith(CLIENT_PLATFORM)
     in_client = relative.startswith(CLIENT)
     in_compat = relative.startswith(COMPAT)
-    if not in_compat and matches_any(imported, ["thaumcraft.*"]):
-        return "thaumcraft.* imports are allowed only inside compat/"
+    if not in_compat and matches_any(imported, ["thaumcraft.*"]) and not matches_any(imported, THAUMCRAFT_API):
+        return "thaumcraft.* outside compat/ is limited to the API allowlist (THAUMCRAFT_API in check_seams.py)"
     if not in_platform and matches_any(imported, OUTSIDE_PLATFORM):
         return "outside platform/ and client/platform/"
     if not in_client_platform and matches_any(imported, OUTSIDE_CLIENT_PLATFORM):
