@@ -73,6 +73,7 @@ public interface ResearchCompat {
         IMAGE,
         ASPECTS,
         CRAFTING,
+        ARCANE,
         CRUCIBLE,
         INFUSION,
         CREATURE_INFUSION

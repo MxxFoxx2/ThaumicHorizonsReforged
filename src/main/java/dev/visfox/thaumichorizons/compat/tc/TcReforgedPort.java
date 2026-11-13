@@ -242,9 +242,10 @@ public final class TcReforgedPort implements ThaumcraftPort {
                 case IMAGE -> ResearchPage.image(page.image().toString(), page.textKey());
                 case ASPECTS -> null;
                 case CRAFTING -> ResearchPage.crafting(page.recipeKeys().toArray(String[]::new));
+                case ARCANE -> ResearchPage.arcane(page.recipeKeys().toArray(String[]::new));
                 case CRUCIBLE -> ResearchPage.crucible(page.recipeKeys().toArray(String[]::new));
                 case INFUSION -> ResearchPage.infusion(page.recipeKeys().toArray(String[]::new));
-                case CREATURE_INFUSION -> null;
+                case CREATURE_INFUSION -> ResearchPage.creatureInfusion(page.payload());
             };
         }
 
