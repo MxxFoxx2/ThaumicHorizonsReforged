@@ -1,7 +1,10 @@
 package dev.visfox.thaumichorizons;
 
 import com.mojang.logging.LogUtils;
+import dev.visfox.thaumichorizons.registry.ThBlocks;
+import dev.visfox.thaumichorizons.registry.ThCreativeTabs;
 import dev.visfox.thaumichorizons.registry.ThEffects;
+import dev.visfox.thaumichorizons.registry.ThItems;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -16,6 +19,9 @@ public class ThaumicHorizons {
     public ThaumicHorizons(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         ThEffects.register(modEventBus);
+        ThBlocks.register(modEventBus);
+        ThItems.register(modEventBus);
+        ThCreativeTabs.register(modEventBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
