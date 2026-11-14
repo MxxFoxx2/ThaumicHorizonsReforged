@@ -5,6 +5,7 @@ import dev.visfox.thaumichorizons.entity.AlchemitePrimedEntity;
 import dev.visfox.thaumichorizons.entity.ChocolateCow;
 import dev.visfox.thaumichorizons.entity.ChromaticSheep;
 import dev.visfox.thaumichorizons.entity.Endersteed;
+import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.Familiar;
 import dev.visfox.thaumichorizons.entity.GoldChicken;
 import dev.visfox.thaumichorizons.entity.Gravekeeper;
@@ -76,6 +77,9 @@ public final class ThEntities {
         "sheeder", Sheeder::new, builder -> builder.sized(1.4F, 0.9F).eyeHeight(0.65F));
     public static final DeferredHolder<EntityType<?>, EntityType<LostSoul>> LOST_SOUL = creature(
         "lostsoul", LostSoul::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.45F).notInPeaceful());
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityGolemTH>> GOLEM_TH =
+        ENTITIES.registerEntityType("golemth", EntityGolemTH::new, MobCategory.MISC,
+            builder -> builder.sized(0.4F, 0.95F).clientTrackingRange(4).updateInterval(3));
 
     private ThEntities() {
     }
@@ -112,5 +116,6 @@ public final class ThEntities {
         event.put(MED_SLIME.get(), MedSlime.createAttributes().build());
         event.put(SHEEDER.get(), Sheeder.createAttributes().build());
         event.put(LOST_SOUL.get(), LostSoul.createAttributes().build());
+        event.put(GOLEM_TH.get(), thaumcraft.entity.golem.GolemBase.createAttributes().build());
     }
 }

@@ -32,6 +32,7 @@ public class ThaumicHorizons {
         dev.visfox.thaumichorizons.infusion.CreatureInfusions.init();
         dev.visfox.thaumichorizons.infusion.ThInfusionRecipes.init();
         DataAttachments.register(modEventBus);
+        dev.visfox.thaumichorizons.platform.StackData.register(modEventBus);
         ThEffects.register(modEventBus);
         ThBlocks.register(modEventBus);
         ThItems.register(modEventBus);
@@ -42,6 +43,7 @@ public class ThaumicHorizons {
         ConfigResearch.init();
         ConfigAspects.init();
         ToggleInfusionPayload.register();
+        dev.visfox.thaumichorizons.item.lenses.LensChangePayload.register();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

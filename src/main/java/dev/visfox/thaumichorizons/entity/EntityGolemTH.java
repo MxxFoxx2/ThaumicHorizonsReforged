@@ -1,0 +1,523 @@
+package dev.visfox.thaumichorizons.entity;
+
+import java.util.EnumSet;
+import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
+import thaumcraft.Thaumcraft;
+import thaumcraft.entity.golem.GolemBase;
+import thaumcraft.entity.golem.GolemKeys;
+import thaumcraft.entity.golem.GolemSnapshot;
+import thaumcraft.entity.golem.GolemType;
+import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
+import dev.visfox.thaumichorizons.entity.ai.FollowPlayerGoal;
+import dev.visfox.thaumichorizons.lib.THSounds;
+
+public class EntityGolemTH extends GolemBase {
+    private static final EntityDataAccessor<Integer> TH_BLOCK =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TH_META =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> TH_BERSERK =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> TH_KABOOM =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.BOOLEAN);
+
+    public int ticksAlive;
+    public int voidCount;
+
+    @SuppressWarnings("unchecked")
+    public static EntityType<EntityGolemTH> thType() {
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(ThaumicHorizons.id("golemth")).orElse(null);
+        if (type == null) {
+            type = BuiltInRegistries.ENTITY_TYPE.getOptional(Thaumcraft.id("golem")).orElse(null);
+        }
+        return (EntityType<EntityGolemTH>) type;
+    }
+
+    public EntityGolemTH(EntityType<? extends GolemBase> type, Level level) {
+        super(type, level);
+        this.ticksAlive = 0;
+        this.voidCount = 0;
+    }
+
+    public void loadGolem(double x, double y, double z, @Nullable Block block, int md, int ticksAlive, boolean adv,
+            boolean berserk, boolean kaboom) {
+        setPos(x, y, z);
+        this.ticksAlive = ticksAlive;
+        entityData.set(TH_BLOCK, block == null ? 0 : BuiltInRegistries.BLOCK.getId(block));
+        entityData.set(TH_META, md);
+        entityData.set(TH_BERSERK, berserk);
+        entityData.set(TH_KABOOM, kaboom);
+        GolemType resolved = materialType(block);
+        configure(resolved, new GolemSnapshot(-1, adv, List.of(), "", List.of(), ItemContainerContents.EMPTY, List.of(), 0));
+        setHealth(getMaxHealth());
+        if (level().isClientSide()) {
+            loadTexture();
+        }
+    }
+
+    private static boolean isCopperFamily(@Nullable Block block) {
+        if (block == null) {
+            return false;
+        }
+        for (net.minecraft.world.level.block.WeatheringCopper.WeatherState weather
+            : net.minecraft.world.level.block.WeatheringCopper.WeatherState.values()) {
+            if (Blocks.COPPER_BLOCK.weathering().pick(weather) == block
+                || Blocks.COPPER_BLOCK.waxed().pick(weather) == block
+                || Blocks.COPPER_CHAIN.weathering().pick(weather) == block
+                || Blocks.COPPER_CHAIN.waxed().pick(weather) == block
+                || Blocks.LIGHTNING_ROD.weathering().pick(weather) == block
+                || Blocks.LIGHTNING_ROD.waxed().pick(weather) == block) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static GolemType materialType(@Nullable Block block) {
+        if (block == null) {
+            return GolemType.VOID;
+        }
+        BlockState state = block.defaultBlockState();
+        if (isCopperFamily(block)) {
+            return GolemType.METAL;
+        }
+        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.PODZOL)
+            || state.is(Blocks.MOSS_BLOCK)) {
+            return GolemType.GRASS;
+        }
+        if (state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND) || state.is(Blocks.DIRT_PATH)
+            || state.is(Blocks.MUD) || state.is(Blocks.MUDDY_MANGROVE_ROOTS) || state.is(Blocks.GRAVEL)
+            || state.is(Blocks.SUSPICIOUS_GRAVEL) || state.is(Blocks.CRIMSON_NYLIUM)
+            || state.is(Blocks.WARPED_NYLIUM)) {
+            return GolemType.DIRT;
+        }
+        if (state.is(BlockTags.LOGS) || state.is(BlockTags.PLANKS) || state.is(BlockTags.WOODEN_SLABS)
+            || state.is(BlockTags.WOODEN_STAIRS) || state.is(BlockTags.WOODEN_FENCES)
+            || state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS)
+            || state.is(Blocks.BOOKSHELF) || state.is(Blocks.CHISELED_BOOKSHELF) || state.is(Blocks.CRAFTING_TABLE)
+            || state.is(Blocks.CHEST) || state.is(Blocks.TRAPPED_CHEST) || state.is(Blocks.BARREL)
+            || state.is(Blocks.PUMPKIN) || state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN)
+            || state.is(Blocks.MELON) || state.is(Blocks.NOTE_BLOCK) || state.is(Blocks.JUKEBOX)
+            || state.is(Blocks.BAMBOO_BLOCK) || state.is(Blocks.BEEHIVE) || state.is(Blocks.BEE_NEST)) {
+            return GolemType.WOOD;
+        }
+        if (state.is(BlockTags.LEAVES) || state.is(BlockTags.SAPLINGS) || state.is(BlockTags.FLOWERS)
+            || state.is(BlockTags.CROPS) || state.is(Blocks.VINE) || state.is(Blocks.SUGAR_CANE)
+            || state.is(Blocks.KELP) || state.is(Blocks.KELP_PLANT) || state.is(Blocks.SEAGRASS)
+            || state.is(Blocks.TALL_SEAGRASS) || state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN)
+            || state.is(Blocks.LARGE_FERN) || state.is(Blocks.DEAD_BUSH) || state.is(Blocks.BAMBOO)
+            || state.is(Blocks.LILY_PAD) || state.is(Blocks.MOSS_CARPET) || state.is(Blocks.AZALEA)
+            || state.is(Blocks.FLOWERING_AZALEA) || state.is(Blocks.BIG_DRIPLEAF) || state.is(Blocks.SMALL_DRIPLEAF)
+            || state.is(Blocks.SPORE_BLOSSOM) || state.is(Blocks.GLOW_LICHEN) || state.is(Blocks.HANGING_ROOTS)
+            || state.is(Blocks.WEEPING_VINES) || state.is(Blocks.TWISTING_VINES)
+            || state.is(Blocks.MANGROVE_PROPAGULE)) {
+            return GolemType.PLANT;
+        }
+        if (state.is(Blocks.IRON_BLOCK) || state.is(Blocks.GOLD_BLOCK) || isCopperFamily(block)
+            || state.is(Blocks.RAW_IRON_BLOCK) || state.is(Blocks.RAW_GOLD_BLOCK) || state.is(Blocks.ANVIL)
+            || state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL) || state.is(Blocks.IRON_BARS)
+            || state.is(Blocks.IRON_CHAIN) || state.is(Blocks.CAULDRON)
+            || state.is(Blocks.WATER_CAULDRON)
+            || state.is(Blocks.LAVA_CAULDRON) || state.is(Blocks.HOPPER) || state.is(Blocks.RAIL)
+            || state.is(Blocks.POWERED_RAIL) || state.is(Blocks.DETECTOR_RAIL) || state.is(Blocks.ACTIVATOR_RAIL)
+            || state.is(Blocks.IRON_DOOR) || state.is(Blocks.IRON_TRAPDOOR)
+            || state.is(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+            return GolemType.METAL;
+        }
+        if (state.is(BlockTags.WOOL) || state.is(BlockTags.WOOL_CARPETS) || state.is(BlockTags.BEDS)
+            || state.is(Blocks.SPONGE) || state.is(Blocks.WET_SPONGE) || state.is(Blocks.SHULKER_BOX)) {
+            return GolemType.CLOTH;
+        }
+        if (state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.SOUL_SAND)
+            || state.is(Blocks.SOUL_SOIL) || state.is(Blocks.SUSPICIOUS_SAND) || state.is(Blocks.SANDSTONE)
+            || state.is(Blocks.RED_SANDSTONE)) {
+            return GolemType.SAND;
+        }
+        if (state.is(Blocks.REDSTONE_LAMP) || state.is(Blocks.REDSTONE_BLOCK) || state.is(Blocks.REDSTONE_WIRE)
+            || state.is(Blocks.REPEATER) || state.is(Blocks.COMPARATOR) || state.is(Blocks.DAYLIGHT_DETECTOR)
+            || state.is(Blocks.OBSERVER) || state.is(Blocks.PISTON) || state.is(Blocks.STICKY_PISTON)
+            || state.is(Blocks.DISPENSER) || state.is(Blocks.DROPPER) || state.is(Blocks.TARGET)
+            || state.is(Blocks.LEVER) || state.is(Blocks.REDSTONE_TORCH) || state.is(Blocks.TRIPWIRE)
+            || state.is(Blocks.TRIPWIRE_HOOK) || state.is(Blocks.COMMAND_BLOCK)
+            || state.is(Blocks.CHAIN_COMMAND_BLOCK) || state.is(Blocks.REPEATING_COMMAND_BLOCK)) {
+            return GolemType.REDSTONE;
+        }
+        if (state.is(Blocks.TNT)) {
+            return GolemType.TNT;
+        }
+        if (state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE) || state.is(Blocks.BLUE_ICE)
+            || state.is(Blocks.FROSTED_ICE) || state.is(Blocks.SNOW_BLOCK) || state.is(Blocks.SNOW)
+            || state.is(Blocks.POWDER_SNOW)) {
+            return GolemType.ICE;
+        }
+        if (state.is(Blocks.CACTUS)) {
+            return GolemType.CACTUS;
+        }
+        if (state.is(Blocks.CAKE)) {
+            return GolemType.CAKE;
+        }
+        if (state.is(Blocks.COBWEB)) {
+            return GolemType.WEB;
+        }
+        return GolemType.ROCK;
+    }
+
+    public @Nullable Block getBlocky() {
+        int id = entityData.get(TH_BLOCK);
+        if (id == 0) {
+            return null;
+        }
+        return BuiltInRegistries.BLOCK.byId(id);
+    }
+
+    public int getMd() {
+        return entityData.get(TH_META);
+    }
+
+    public boolean isBerserk() {
+        return entityData.get(TH_BERSERK);
+    }
+
+    public boolean isKaboom() {
+        return entityData.get(TH_KABOOM);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TH_BLOCK, 0);
+        builder.define(TH_META, 0);
+        builder.define(TH_BERSERK, false);
+        builder.define(TH_KABOOM, false);
+    }
+
+    @Override
+    public boolean isWorking() {
+        return getCore() >= 0 ? super.isWorking() : !inactive && isAlive();
+    }
+
+    @Override
+    public boolean isWithinHome(BlockPos pos) {
+        return getCore() < 0 || super.isWithinHome(pos);
+    }
+
+    @Override
+    public void rebuildGoals() {
+        super.rebuildGoals();
+        if (getCore() < 0) {
+            setupUncoredGoals();
+        }
+    }
+
+    private void setupUncoredGoals() {
+        goalSelector.addGoal(0, new AvoidEntityGoal<>(this, Creeper.class, 8.0F, 1.0D, 1.0D));
+        goalSelector.addGoal(3, new AttackOnCollideGoalTH(this, 1.0D, true));
+        goalSelector.addGoal(5, new OpenDoorGoal(this, true));
+        float speed = (float) (getAttributeValue(Attributes.MOVEMENT_SPEED) * 3.0D);
+        if (!isKaboom()) {
+            goalSelector.addGoal(6, new FollowPlayerGoal(this, speed, 2.0F, 12.0F));
+        } else {
+            goalSelector.addGoal(6, new FollowPlayerGoal(this, speed, 8.0F, 12.0F));
+        }
+        goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false,
+            (target, lvl) -> target instanceof Enemy));
+        if (isBerserk()) {
+            targetSelector.addGoal(1, new BerserkTargetGoal());
+        }
+        setHome(blockPosition().immutable(), Direction.UP);
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        Entity attacker = source.getDirectEntity();
+        if (attacker != null && attacker != this && getBlocky() == Blocks.CACTUS) {
+            attacker.hurtServer(level, damageSources().thorns(this), getUpgradeAmount(5) * 2 + random.nextInt(2));
+        }
+        return super.hurtServer(level, source, amount);
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!level().isClientSide() && getCore() == -1) {
+            if (ticksAlive > 0) {
+                ticksAlive--;
+                Player owner = getOwnerPlayer();
+                if (owner != null) {
+                    setHome(owner.blockPosition(), getHomeFacing());
+                }
+            } else if (ticksAlive != -420) {
+                die();
+            } else {
+                if (tickCount % 10 == 0 && random.nextInt(500) == 0) {
+                    Player player = getOwnerPlayer();
+                    if (player != null) {
+                        switch (voidCount) {
+                            case 0 -> player.sendSystemMessage(
+                                Component.translatable("thaumichorizons.golemWarning1").withStyle(net.minecraft.ChatFormatting.ITALIC, net.minecraft.ChatFormatting.DARK_PURPLE));
+                            case 1 -> player.sendSystemMessage(
+                                Component.translatable("thaumichorizons.golemWarning2").withStyle(net.minecraft.ChatFormatting.ITALIC, net.minecraft.ChatFormatting.DARK_PURPLE));
+                            case 2 -> player.sendSystemMessage(
+                                Component.translatable("thaumichorizons.golemWarning3").withStyle(net.minecraft.ChatFormatting.ITALIC, net.minecraft.ChatFormatting.DARK_PURPLE));
+                            case 3 -> {
+                                die();
+                                spawnEldritchGuardian();
+                            }
+                            default -> {
+                            }
+                        }
+                        voidCount++;
+                    }
+                }
+                Player owner = getOwnerPlayer();
+                if (owner != null) {
+                    setHome(owner.blockPosition(), getHomeFacing());
+                }
+            }
+        }
+    }
+
+    private @Nullable Player getOwnerPlayer() {
+        if (getOwnerUUID() == null || !(level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return serverLevel.getPlayerByUUID(getOwnerUUID());
+    }
+
+    private void spawnEldritchGuardian() {
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.fromNamespaceAndPath("thaumcraft", "eldritch_guardian")).orElse(null);
+        if (type != null) {
+            Entity guardian = type.create(level(), EntitySpawnReason.EVENT);
+            if (guardian != null) {
+                guardian.setPos(getX(), getY(), getZ());
+                level().addFreshEntity(guardian);
+            }
+        }
+    }
+
+    public void die() {
+        discard();
+        Block blocky = getBlocky();
+        if (blocky == Blocks.TNT) {
+            level().explode(this, getX(), getY(), getZ(), 4.0F, Level.ExplosionInteraction.MOB);
+            return;
+        }
+        if (isKaboom()) {
+            level().explode(this, getX(), getY(), getZ(), 3.0F, Level.ExplosionInteraction.MOB);
+            return;
+        }
+        if (blocky == null) {
+            return;
+        }
+        BlockPos base = BlockPos.containing(getX() - 0.5, getY(), getZ() - 0.5);
+        if (tryRestoreBlock(base)) {
+            return;
+        }
+        for (int dy : new int[] {0, -1, 1}) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx != 0 || dz != 0 || dy != 0) {
+                        if (tryRestoreBlock(base.offset(dx, dy, dz))) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean tryRestoreBlock(BlockPos pos) {
+        if (level().getBlockState(pos).isAir() && getBlocky() != null) {
+            level().setBlock(pos, getBlocky().defaultBlockState(), 3);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Component getName() {
+        if (hasCustomName()) {
+            return getCustomName();
+        }
+        Block blocky = getBlocky();
+        if (blocky == null) {
+            return Component.translatable("entity.thaumichorizons.golemth.voidling");
+        }
+        return new ItemStack(blocky).getHoverName().copy().append(" ")
+            .append(Component.translatable("entity.thaumichorizons.golemth.name"));
+    }
+
+    @Override
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("GolemBlockTH", entityData.get(TH_BLOCK));
+        output.putInt("GolemMetaTH", entityData.get(TH_META));
+        output.putInt("TicksAliveTH", ticksAlive);
+        output.putInt("VoidCountTH", voidCount);
+        output.putBoolean("BerserkTH", isBerserk());
+        output.putBoolean("KaboomTH", isKaboom());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        entityData.set(TH_BLOCK, input.getIntOr("GolemBlockTH", 0));
+        entityData.set(TH_META, input.getIntOr("GolemMetaTH", 0));
+        ticksAlive = input.getIntOr("TicksAliveTH", 0);
+        voidCount = input.getIntOr("VoidCountTH", 0);
+        entityData.set(TH_BERSERK, input.getBooleanOr("BerserkTH", false));
+        entityData.set(TH_KABOOM, input.getBooleanOr("KaboomTH", false));
+    }
+
+    @Override
+    public ItemStack toItem(boolean dismantle) {
+        var item = BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id("golemplacer"));
+        if (item == null) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack stack = new ItemStack(item);
+        GolemKeys.STATE.set(stack, dismantle ? GolemSnapshot.EMPTY : snapshot());
+        if (!dismantle) {
+            GolemBlockData.set(stack, getBlocky(), getMd(), isBerserk(), isKaboom());
+            if (hasCustomName()) {
+                stack.set(DataComponents.CUSTOM_NAME, getCustomName());
+            }
+        }
+        return stack;
+    }
+
+    public static final class GolemBlockData {
+        private GolemBlockData() {
+        }
+
+        public static void set(ItemStack stack, @Nullable Block block, int md, boolean berserk, boolean kaboom) {
+            CompoundTag tag = new CompoundTag();
+            if (block != null) {
+                tag.putInt("GolemBlockId", BuiltInRegistries.BLOCK.getId(block));
+            }
+            tag.putInt("GolemMd", md);
+            tag.putBoolean("Berserk", berserk);
+            tag.putBoolean("Kaboom", kaboom);
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        }
+
+        public static CompoundTag get(ItemStack stack) {
+            return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        }
+
+        public static @Nullable Block blockOf(CompoundTag tag) {
+            int id = tag.getIntOr("GolemBlockId", 0);
+            return id == 0 ? null : BuiltInRegistries.BLOCK.get(id).map(ref -> ref.value()).orElse(null);
+        }
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        boolean hit = super.doHurtTarget(level, target);
+        if (hit && getBlocky() == Blocks.COBWEB && target instanceof LivingEntity living) {
+            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.SLOWNESS, 20, 0));
+        }
+        return hit;
+    }
+
+    public void loadTexture() {
+    }
+
+    private class BerserkTargetGoal extends TargetGoal {
+        private @Nullable LivingEntity target;
+
+        BerserkTargetGoal() {
+            super(EntityGolemTH.this, false);
+            setFlags(EnumSet.of(Flag.TARGET));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (tickCount % 10 != 0) {
+                return false;
+            }
+            AABB box = getBoundingBox().inflate(getRange(), 4.0D, getRange());
+            List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class, box,
+                candidate -> candidate != EntityGolemTH.this && candidate.isAlive()
+                    && (getOwnerUUID() == null || !getOwnerUUID().equals(candidate.getUUID())));
+            double best = Double.MAX_VALUE;
+            LivingEntity chosen = null;
+            for (LivingEntity candidate : candidates) {
+                double distance = distanceToSqr(candidate);
+                if (distance < best) {
+                    best = distance;
+                    chosen = candidate;
+                }
+            }
+            target = chosen;
+            return target != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return target != null && target.isAlive()
+                && distanceToSqr(target) < getRange() * getRange() * 2.0D
+                && (getOwnerUUID() == null || !getOwnerUUID().equals(target.getUUID()));
+        }
+
+        @Override
+        public void start() {
+            if (target != null) {
+                setTarget(target);
+            }
+        }
+
+        @Override
+        public void stop() {
+            if (getTarget() == target) {
+                setTarget(null);
+            }
+            target = null;
+        }
+    }
+}
