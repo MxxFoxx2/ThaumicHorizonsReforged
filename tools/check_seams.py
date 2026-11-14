@@ -70,6 +70,7 @@ THAUMCRAFT_API = [
     "thaumcraft.entity.golem.GolemType",
     "thaumcraft.entity.golem.GolemKeys",
     "thaumcraft.entity.TaintedMob",
+    "thaumcraft.taint.TaintBiomes",
     "thaumcraft.research.ResearchCategories",
     "thaumcraft.research.ResearchItem",
     "thaumcraft.research.ResearchGate",

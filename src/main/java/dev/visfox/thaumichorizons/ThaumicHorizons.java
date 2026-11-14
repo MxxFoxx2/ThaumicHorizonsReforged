@@ -28,6 +28,8 @@ public class ThaumicHorizons {
         modEventBus.addListener(this::commonSetup);
         modContainer.registerConfig(ModConfig.Type.STARTUP, ThaumicHorizonsConfig.SPEC);
         CreatureInfusion.init();
+        dev.visfox.thaumichorizons.infusion.CreatureInfusions.init();
+        dev.visfox.thaumichorizons.infusion.ThInfusionRecipes.init();
         DataAttachments.register(modEventBus);
         ThEffects.register(modEventBus);
         ThBlocks.register(modEventBus);
