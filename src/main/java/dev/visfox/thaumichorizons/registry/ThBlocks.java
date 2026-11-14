@@ -2,15 +2,25 @@ package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.AlchemiteBlock;
+import dev.visfox.thaumichorizons.block.BloodInfuserBlock;
 import dev.visfox.thaumichorizons.block.CrystalBlock;
 import dev.visfox.thaumichorizons.block.DropsBlock;
 import dev.visfox.thaumichorizons.block.DustBlock;
 import dev.visfox.thaumichorizons.block.EssentiaDynamoBlock;
+import dev.visfox.thaumichorizons.block.InspiratronBlock;
 import dev.visfox.thaumichorizons.block.LeviathanBlock;
+import dev.visfox.thaumichorizons.block.ModifiedMatrixBlock;
 import dev.visfox.thaumichorizons.block.NodeMonitorBlock;
+import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
+import dev.visfox.thaumichorizons.block.SoulExtractorBlock;
+import dev.visfox.thaumichorizons.block.SoulforgeBlock;
+import dev.visfox.thaumichorizons.block.SoulJarBlock;
 import dev.visfox.thaumichorizons.block.SyntheticNodeBlock;
 import dev.visfox.thaumichorizons.block.TransductionAmplifierBlock;
 import dev.visfox.thaumichorizons.block.VisDynamoBlock;
+import dev.visfox.thaumichorizons.block.VatBlock;
+import dev.visfox.thaumichorizons.block.VatInteriorBlock;
+import dev.visfox.thaumichorizons.block.VatSolidBlock;
 import dev.visfox.thaumichorizons.block.VortexBlock;
 import dev.visfox.thaumichorizons.block.VortexStabilizerBlock;
 import java.util.function.UnaryOperator;
@@ -86,6 +96,34 @@ public final class ThBlocks {
     public static final DeferredBlock<AlchemiteBlock> ALCHEMITE = withItem(BLOCKS.registerBlock("alchemite",
         AlchemiteBlock::new, properties -> properties.mapColor(MapColor.COLOR_CYAN).strength(0.7F, 1.0F)
             .lightLevel(state -> 7).sound(SoundType.GRASS)));
+    public static final DeferredBlock<SoulJarBlock> SOUL_JAR = BLOCKS.registerBlock("souljar",
+        SoulJarBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.3F, 1.0F)
+            .sound(SoundType.GLASS).noOcclusion().lightLevel(state -> 9));
+    public static final DeferredBlock<SoulExtractorBlock> SOUL_EXTRACTOR = withItem(BLOCKS.registerBlock("soulsieve",
+        SoulExtractorBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(0.7F, 1.0F)
+            .sound(SoundType.WOOD).noOcclusion()));
+    public static final DeferredBlock<InspiratronBlock> INSPIRATRON = withItem(BLOCKS.registerBlock("inspiratron",
+        InspiratronBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.7F, 1.0F)
+            .sound(SoundType.GLASS).noOcclusion()));
+    public static final DeferredBlock<SoulforgeBlock> SOULFORGE = withItem(BLOCKS.registerBlock("soulforge",
+        SoulforgeBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.7F, 1.0F)
+            .sound(SoundType.GLASS).noOcclusion()));
+    public static final DeferredBlock<BloodInfuserBlock> BLOOD_INFUSER = withItem(BLOCKS.registerBlock("bloodinfuser",
+        BloodInfuserBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(1.0F, 1.0F)
+            .sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<SoulBeaconBlock> SOUL_BEACON = withItem(BLOCKS.registerBlock("soulbeacon",
+        SoulBeaconBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(7.0F, 7.0F)
+            .sound(SoundType.METAL).noOcclusion().lightLevel(state -> 15)));
+    public static final DeferredBlock<ModifiedMatrixBlock> MOD_MATRIX = withItem(BLOCKS.registerBlock("modmatrix",
+        ModifiedMatrixBlock::new, properties -> properties.mapColor(MapColor.STONE).strength(2.0F, 2.0F)
+            .noOcclusion()));
+    public static final DeferredBlock<VatBlock> VAT = BLOCKS.registerBlock("vat", VatBlock::new,
+        properties -> properties.mapColor(MapColor.WOOD).strength(3.0F, 15.0F).noOcclusion().lightLevel(state -> 8));
+    public static final DeferredBlock<VatSolidBlock> VAT_SOLID = BLOCKS.registerBlock("vatsolid", VatSolidBlock::new,
+        properties -> properties.mapColor(MapColor.WOOD).strength(3.0F, 15.0F).noOcclusion().lightLevel(state -> 8));
+    public static final DeferredBlock<VatInteriorBlock> VAT_INTERIOR = BLOCKS.registerBlock("vatinterior",
+        VatInteriorBlock::new, properties -> properties.mapColor(MapColor.WATER).strength(3.0F, 15.0F)
+            .noOcclusion().lightLevel(state -> 8));
 
     private static <B extends Block> DeferredBlock<B> withItem(DeferredBlock<B> block) {
         ThItems.ITEMS.registerSimpleBlockItem(block);

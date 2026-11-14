@@ -1,0 +1,94 @@
+package dev.visfox.thaumichorizons.item;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
+
+public class InjectorItem extends Item {
+    public static final int MAX_DAMAGE = 1000;
+
+    public InjectorItem(Properties properties) {
+        super(properties.durability(MAX_DAMAGE));
+    }
+
+    @Override
+    public net.minecraft.world.InteractionResult use(Level world, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown()) {
+            if (!world.isClientSide() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(new dev.visfox.thaumichorizons.container.InjectorMenuProvider());
+            }
+        } else if (getAmmo(stack, 0) == null) {
+            rotateAmmo(stack);
+            world.playSound(null, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(),
+                net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+        } else {
+            player.startUsingItem(hand);
+        }
+        return net.minecraft.world.InteractionResult.CONSUME;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
+        return 72000;
+    }
+
+    @Override
+    public net.minecraft.world.item.ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return net.minecraft.world.item.ItemUseAnimation.NONE;
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, Level world, net.minecraft.world.entity.LivingEntity entity, int timeLeft) {
+        if (!(entity instanceof Player player)) {
+            return true;
+        }
+        ItemStack ammo = getAmmo(stack, 0);
+        if (ammo == null) {
+            return true;
+        }
+        int charge = getUseDuration(stack, entity) - timeLeft;
+        float f = charge / 30.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
+        if (f < 0.1F) {
+            return true;
+        }
+        if (f > 1.0F) {
+            f = 1.0F;
+        }
+        stack.hurtAndBreak(1, player, net.minecraft.world.InteractionHand.MAIN_HAND.asEquipmentSlot());
+        world.playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.ARROW_SHOOT,
+            net.minecraft.sounds.SoundSource.PLAYERS, 1.0F,
+            1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+        rotateAmmo(stack);
+        return true;
+    }
+
+    public @Nullable ItemStack getAmmo(ItemStack stack, int slot) {
+        SyringeKeys.AmmoData data = SyringeKeys.AMMO.get(stack);
+        if (data == null || slot >= data.ammo().size()) {
+            return null;
+        }
+        ItemStack ammo = data.ammo().get(slot);
+        return ammo == null || ammo.isEmpty() ? null : ammo;
+    }
+
+    void rotateAmmo(ItemStack stack) {
+        SyringeKeys.AmmoData data = SyringeKeys.AMMO.get(stack);
+        List<ItemStack> ammo = data == null ? new ArrayList<>() : new ArrayList<>(data.ammo());
+        while (ammo.size() < 7) {
+            ammo.add(ItemStack.EMPTY);
+        }
+        List<ItemStack> rotated = new ArrayList<>();
+        for (int i = 1; i < 7; i++) {
+            rotated.add(ammo.get(i));
+        }
+        rotated.add(ItemStack.EMPTY);
+        SyringeKeys.AMMO.set(stack, new SyringeKeys.AmmoData(rotated));
+    }
+}

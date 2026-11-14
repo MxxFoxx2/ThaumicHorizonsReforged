@@ -10,6 +10,7 @@ import dev.visfox.thaumichorizons.item.SyringeBloodItem;
 import dev.visfox.thaumichorizons.item.SyringeBloodSampleItem;
 import dev.visfox.thaumichorizons.item.SyringeEmptyItem;
 import dev.visfox.thaumichorizons.item.SyringeInjectionItem;
+import dev.visfox.thaumichorizons.item.SoulJarBlockItem;
 import dev.visfox.thaumichorizons.item.golem.CrystalWandItem;
 import dev.visfox.thaumichorizons.item.golem.DisposableWandItem;
 import dev.visfox.thaumichorizons.item.golem.GolemBellTHItem;
@@ -57,19 +58,21 @@ public final class ThItems {
         properties -> new Item(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build())));
 
 
-    public static final DeferredItem<SyringeInjectionItem> SYRINGE_INJECTION = ITEMS.registerItem("syringeInjection",
+    public static final DeferredItem<SoulJarBlockItem> SOUL_JAR_ITEM = ITEMS.registerItem("souljar",
+        properties -> new SoulJarBlockItem(ThBlocks.SOUL_JAR.get(), properties.stacksTo(1)));
+    public static final DeferredItem<SyringeInjectionItem> SYRINGE_INJECTION = ITEMS.registerItem("syringeinjection",
         SyringeInjectionItem::new, properties -> properties.stacksTo(1));
-    public static final DeferredItem<SyringeEmptyItem> SYRINGE_EMPTY = ITEMS.registerItem("syringeEmpty",
+    public static final DeferredItem<SyringeEmptyItem> SYRINGE_EMPTY = ITEMS.registerItem("syringeempty",
         SyringeEmptyItem::new);
-    public static final DeferredItem<SyringeBloodItem> SYRINGE_BLOOD = ITEMS.registerItem("syringeBlood",
+    public static final DeferredItem<SyringeBloodItem> SYRINGE_BLOOD = ITEMS.registerItem("syringeblood",
         SyringeBloodItem::new);
-    public static final DeferredItem<SyringeBloodSampleItem> SYRINGE_BLOOD_SAMPLE = ITEMS.registerItem("syringeBloodSample",
+    public static final DeferredItem<SyringeBloodSampleItem> SYRINGE_BLOOD_SAMPLE = ITEMS.registerItem("syringebloodsample",
         SyringeBloodSampleItem::new);
     public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new);
-    public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseEffigy",
+    public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseeffigy",
         CorpseEffigyItem::new);
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);
-    public static final DeferredItem<FocusContainmentItem> FOCUS_CONTAINMENT = ITEMS.registerItem("focus_containment",
+    public static final DeferredItem<FocusContainmentItem> FOCUS_CONTAINMENT = ITEMS.registerItem("focuscontainment",
         FocusContainmentItem::new, FocusItem::properties);
 
     public static final DeferredItem<GolemPowderItem> GOLEM_POWDER = ITEMS.registerItem("golempowder",
