@@ -103,7 +103,7 @@ public class SyringeInjectionItem extends Item {
                     : message.copy().withStyle(net.minecraft.ChatFormatting.GRAY));
             }
         } else {
-            tooltip.accept(Component.translatable("potion.empty").withStyle(net.minecraft.ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable("tooltip.thaumichorizons.syringe.empty").withStyle(net.minecraft.ChatFormatting.GRAY));
         }
     }
 }

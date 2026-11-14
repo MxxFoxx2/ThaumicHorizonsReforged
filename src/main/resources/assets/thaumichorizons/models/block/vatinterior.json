@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "thaumichorizons:blocks/vatInterior"
+    "all": "thaumichorizons:block/vatinterior"
   }
 }

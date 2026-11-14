@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "thaumichorizons:items/syringe_empty"
+    "layer0": "thaumichorizons:item/syringe_empty"
   }
 }

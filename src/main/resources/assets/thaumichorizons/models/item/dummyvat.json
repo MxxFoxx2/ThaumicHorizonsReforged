@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "thaumichorizons:items/vat"
+    "layer0": "thaumichorizons:item/vat"
   }
 }

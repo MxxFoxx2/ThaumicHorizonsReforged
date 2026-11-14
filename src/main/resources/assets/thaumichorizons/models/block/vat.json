@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "top": "thaumichorizons:blocks/vattop",
-    "side": "thaumichorizons:blocks/vat_side",
-    "bottom": "thaumichorizons:blocks/vatbottom"
+    "top": "thaumichorizons:block/vattop",
+    "side": "thaumichorizons:block/vat_side",
+    "bottom": "thaumichorizons:block/vatbottom"
   }
 }

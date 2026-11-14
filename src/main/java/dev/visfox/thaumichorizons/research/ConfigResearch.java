@@ -129,7 +129,7 @@ public final class ConfigResearch {
 
     private static void registerAlternateGolemBell() {
         register("alternateGolemBell", tags("ordo", 2, "potentia", 2, "vitreus", 3),
-            -2, 0, 1, th("textures/items/newbell.png"),
+            -2, 0, 1, th("textures/item/newbell.png"),
             List.of(Flag.CONCEALED), List.of(), List.of(), List.of("GOLEMBELL"), List.of(), 0,
             PageSpec.text("alternateGolemBell1"),
             PageSpec.recipes(PageKind.ARCANE, "GOLEMBELL"));
@@ -150,7 +150,7 @@ public final class ConfigResearch {
 
     private static void registerAlchIncubation() {
         register("alchIncubation", tags("bestia", 4, "victus", 2, "ignis", 2),
-            2, 0, 1, th("textures/items/eggincubated.png"),
+            2, 0, 1, th("textures/item/eggincubated.png"),
             List.of(Flag.SECONDARY), List.of("alcheponics"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("alchIncubation1"),
             PageSpec.recipes(PageKind.CRUCIBLE, "alchIncubation"));
@@ -183,7 +183,7 @@ public final class ConfigResearch {
 
     private static void registerEtherealShard() {
         register("etherealShard", tags("auram", 8, "potentia", 16, "vacuos", 16, "praecantatio", 8),
-            1, 4, 3, th("textures/blocks/synthNode.png"),
+            1, 4, 3, th("textures/block/synthnode.png"),
             List.of(Flag.CONCEALED), List.of("shardTrans"), List.of("INFUSION", "VISPOWER"),
             List.of(), List.of(), 0,
             PageSpec.text("etherealShard1"),
@@ -193,7 +193,7 @@ public final class ConfigResearch {
 
     private static void registerAlchemite() {
         register("alchemite", tags("ignis", 2, "perditio", 2, "potentia", 4, "vitreus", 4, "permutatio", 2),
-            3, 6, 2, th("textures/blocks/alchemite_side.png"),
+            3, 6, 2, th("textures/block/alchemite_side.png"),
             List.of(), List.of(), List.of("ESSENTIACRYSTAL"), List.of(), List.of(), 0,
             PageSpec.text("alchemite1"),
             PageSpec.recipes(PageKind.CRUCIBLE, "alchemite"));
@@ -256,7 +256,7 @@ public final class ConfigResearch {
 
     private static void registerFocusContainment() {
         register("focusContainment", tags("vinculum", 6, "vacuos", 6, "iter", 2),
-            8, -3, 3, th("textures/items/focus_containment.png"),
+            8, -3, 3, th("textures/item/focus_containment.png"),
             List.of(Flag.CONCEALED), List.of(), List.of("DISTILESSENTIA", "FOCUSPORTABLEHOLE"),
             List.of(), List.of(), 0,
             PageSpec.text("focusContainment1"),
@@ -266,7 +266,7 @@ public final class ConfigResearch {
 
     private static void registerMirrorAmulet() {
         register("mirrorAmulet", tags("mortuus", 5, "perditio", 5, "vacuos", 5),
-            17, 4, 2, th("textures/items/amuletmirror.png"),
+            17, 4, 2, th("textures/item/amuletmirror.png"),
             List.of(Flag.CONCEALED), List.of("cloneSelf"), List.of("MIRROR"), List.of(), List.of(), 0,
             PageSpec.text("mirrorAmulet1"),
             PageSpec.recipes(PageKind.INFUSION, "mirrorAmulet"));
@@ -274,7 +274,7 @@ public final class ConfigResearch {
 
     private static void registerEssentiaInjection() {
         register("essentiaInjection", tags("victus", 4, "humanus", 2, "permutatio", 2, "praecantatio", 2),
-            6, 1, 3, th("textures/items/syringe.png"),
+            6, 1, 3, th("textures/item/syringe.png"),
             List.of(), List.of("meatGrowth"), List.of("THAUMATORIUM", "INFUSION"), List.of(),
             List.of(), 1,
             PageSpec.text("essentiaInjection1"),
@@ -287,7 +287,7 @@ public final class ConfigResearch {
 
     private static void registerBlastPhial() {
         register("blastPhial", tags("victus", 2, "ignis", 2, "perditio", 2),
-            6, 3, 1, th("textures/items/phialBlood.png"),
+            6, 3, 1, th("textures/item/phialblood.png"),
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("essentiaInjection"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("blastPhial1"),
@@ -296,7 +296,7 @@ public final class ConfigResearch {
 
     private static void registerInjector() {
         register("injector", tags("telum", 3, "machina", 3, "volatus", 3),
-            8, 3, 1, th("textures/items/injector.png"),
+            8, 3, 1, th("textures/item/injector.png"),
             List.of(Flag.CONCEALED), List.of("blastPhial", "BONEBOW"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("injector1"),
@@ -366,7 +366,7 @@ public final class ConfigResearch {
 
     private static void registerLensFire() {
         register("lensFire", tags("sensus", 3, "lux", 3, "potentia", 2),
-            2, -2, 2, th("textures/items/lensfire.png"),
+            2, -2, 2, th("textures/item/lensfire.png"),
             List.of(), List.of("GOGGLES", "INFUSION"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("lensFire1"),
             PageSpec.recipes(PageKind.INFUSION, "lensFire"));
@@ -374,7 +374,7 @@ public final class ConfigResearch {
 
     private static void registerLensWater() {
         register("lensWater", tags("sensus", 4, "permutatio", 2),
-            1, -4, 1, th("textures/items/lenswater.png"),
+            1, -4, 1, th("textures/item/lenswater.png"),
             List.of(Flag.CONCEALED), List.of("lensFire", "ARCANEEAR"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("lensWater1"),
@@ -383,7 +383,7 @@ public final class ConfigResearch {
 
     private static void registerLensEarth() {
         register("lensEarth", tags("sensus", 4, "vacuos", 2, "lux", 2),
-            3, -4, 1, th("textures/items/lensearth.png"),
+            3, -4, 1, th("textures/item/lensearth.png"),
             List.of(Flag.CONCEALED), List.of("lensFire"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("lensEarth1"),
             PageSpec.recipes(PageKind.INFUSION, "lensEarth"));
@@ -391,7 +391,7 @@ public final class ConfigResearch {
 
     private static void registerLensAir() {
         register("lensAir", tags("sensus", 4, "auram", 2, "victus", 2, "exanimis", 2),
-            -1, -4, 1, th("textures/items/lensair.png"),
+            -1, -4, 1, th("textures/item/lensair.png"),
             List.of(Flag.CONCEALED), List.of("lensFire"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("lensAir1"),
             PageSpec.recipes(PageKind.INFUSION, "lensAir"));
@@ -399,7 +399,7 @@ public final class ConfigResearch {
 
     private static void registerLensOrderEntropy() {
         register("lensOrderEntropy", tags("sensus", 4, "cognitio", 4, "praecantatio", 2),
-            5, -4, 1, th("textures/items/lensorderentropy.png"),
+            5, -4, 1, th("textures/item/lensorderentropy.png"),
             List.of(Flag.CONCEALED), List.of("lensFire"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("lensOrderEntropy1"),
             PageSpec.recipes(PageKind.INFUSION, "lensOrderEntropy"));
@@ -407,7 +407,7 @@ public final class ConfigResearch {
 
     private static void registerLensCase() {
         register("lensCase", tags("vitreus", 2, "pannus", 4, "vacuos", 2),
-            2, -6, 1, th("textures/items/lenscase.png"),
+            2, -6, 1, th("textures/item/lenscase.png"),
             List.of(Flag.SECONDARY, Flag.CONCEALED),
             List.of("lensAir", "lensWater", "lensEarth", "lensOrderEntropy", "FOCUSPOUCH"),
             List.of(), List.of(), List.of(), 0,
@@ -417,7 +417,7 @@ public final class ConfigResearch {
 
     private static void registerFocusLiquefaction() {
         register("focusLiquefaction", tags("ignis", 3, "metallum", 3, "permutatio", 2),
-            1, 8, 2, th("textures/items/focus_liquefaction.png"),
+            1, 8, 2, th("textures/item/focus_liquefaction.png"),
             List.of(Flag.CONCEALED), List.of("focusIllumination", "FOCUSEXCAVATION"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("focusLiquefaction1"),
@@ -426,7 +426,7 @@ public final class ConfigResearch {
 
     private static void registerFocusDisintegration() {
         register("focusDisintegration", tags("praecantatio", 3, "vitreus", 2, "perditio", 3),
-            3, 8, 2, th("textures/items/focus_disintegration.png"),
+            3, 8, 2, th("textures/item/focus_disintegration.png"),
             List.of(Flag.CONCEALED), List.of("focusLiquefaction", "alchemite", "LIQUIDDEATH"),
             List.of(), List.of(), List.of(), 0,
             PageSpec.text("focusDisintegration1"),
@@ -435,7 +435,7 @@ public final class ConfigResearch {
 
     private static void registerFocusIllumination() {
         register("focusIllumination", tags("lux", 2, "potentia", 2, "praecantatio", 1),
-            -1, 6, 1, th("textures/items/focus_illumination.png"),
+            -1, 6, 1, th("textures/item/focus_illumination.png"),
             List.of(Flag.CONCEALED), List.of("FOCUSFIRE"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("focusIllumination1"),
             PageSpec.recipes(PageKind.CRUCIBLE, "focusIllumination"));
@@ -443,7 +443,7 @@ public final class ConfigResearch {
 
     private static void registerFocusAnimation() {
         register("focusAnimation", tags("humanus", 5, "motus", 5, "spiritus", 5, "fabrico", 3),
-            12, -1, 3, th("textures/items/focus_animation.png"),
+            12, -1, 3, th("textures/item/focus_animation.png"),
             List.of(Flag.CONCEALED), List.of("PRIMPEARL", "golemPowder"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("focusAnimation1"),
@@ -453,7 +453,7 @@ public final class ConfigResearch {
 
     private static void registerGreatwoodBoat() {
         register("greatwoodBoat", tags("aqua", 1, "iter", 1, "fabrico", 1),
-            5, 8, 1, th("textures/items/boatgreatwood.png"),
+            5, 8, 1, th("textures/item/boatgreatwood.png"),
             List.of(Flag.SECONDARY), List.of(), List.of(), List.of(), List.of(), 0,
             PageSpec.text("greatwoodBoat1"),
             PageSpec.recipes(PageKind.CRAFTING, "greatwoodBoat"));
@@ -461,7 +461,7 @@ public final class ConfigResearch {
 
     private static void registerThaumiumBoat() {
         register("thaumiumBoat", tags("ignis", 2, "metallum", 2, "praecantatio", 2),
-            7, 8, 1, th("textures/items/boatthaumium.png"),
+            7, 8, 1, th("textures/item/boatthaumium.png"),
             List.of(), List.of("greatwoodBoat", "THAUMIUM"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("thaumiumBoat1"),
             PageSpec.recipes(PageKind.CRAFTING, "thaumiumBoat"));
@@ -469,7 +469,7 @@ public final class ConfigResearch {
 
     private static void registerGolemPowder() {
         register("golemPowder", tags("humanus", 3, "spiritus", 3, "motus", 3, "fabrico", 3),
-            12, 1, 3, th("textures/items/golempowder.png"),
+            12, 1, 3, th("textures/item/golempowder.png"),
             List.of(Flag.CONCEALED), List.of("GOLEMTHAUMIUM", "ADVANCEDGOLEM", "incarnationVat"),
             List.of(), List.of(), List.of(), 0,
             PageSpec.text("golemPowder1"),
@@ -480,7 +480,7 @@ public final class ConfigResearch {
 
     private static void registerPlanarTheory() {
         register("planarTheory", tags("vacuos", 5, "praecantatio", 5, "alienis", 5),
-            10, 8, 3, th("textures/items/planarconduit.png"),
+            10, 8, 3, th("textures/item/planarconduit.png"),
             List.of(Flag.CONCEALED), List.of("VISPOWER", "VOIDMETAL"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("planarTheory1"),
@@ -535,7 +535,7 @@ public final class ConfigResearch {
 
     private static void registerCrystalWand() {
         register("crystalWand", tags("praecantatio", 4, "vitreus", 4, "potentia", 4),
-            15, 10, 2, th("textures/items/crystalwand.png"),
+            15, 10, 2, th("textures/item/crystalwand.png"),
             List.of(Flag.CONCEALED), List.of("planarRift"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("crystalWand1"),
             PageSpec.recipes(PageKind.CRAFTING, "crystalWand"));
@@ -543,7 +543,7 @@ public final class ConfigResearch {
 
     private static void registerVoidPutty() {
         register("voidPutty", tags("permutatio", 3, "fabrico", 3, "metallum", 3),
-            16, 9, 2, th("textures/items/voidputty.png"),
+            16, 9, 2, th("textures/item/voidputty.png"),
             List.of(Flag.CONCEALED), List.of("planarRift"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("voidPutty1"));
     }
@@ -570,7 +570,7 @@ public final class ConfigResearch {
 
     private static void registerPlanarClouds() {
         register("planarClouds", new CompatAspectList(),
-            20, 6, 1, th("textures/blocks/cloud.png"),
+            20, 6, 1, th("textures/block/cloud.png"),
             List.of(Flag.LOST, Flag.ROUND), List.of("pocketPlane"), List.of(), List.of(),
             List.of("thaumichorizons:cloudth", "thaumichorizons:cloudglowingth"), 0,
             PageSpec.text("planarClouds1"),
@@ -580,7 +580,7 @@ public final class ConfigResearch {
 
     private static void registerLeviathan() {
         register("leviathan", new CompatAspectList(),
-            20, 10, 1, th("textures/blocks/leviathan.png"),
+            20, 10, 1, th("textures/block/leviathan.png"),
             List.of(Flag.LOST, Flag.ROUND), List.of("pocketPlane"), List.of(), List.of(),
             List.of("thaumichorizons:leviathanth"), 0,
             PageSpec.text("leviathan1"),
@@ -589,7 +589,7 @@ public final class ConfigResearch {
 
     private static void registerPlanarKeystone() {
         register("planarKeystone", tags("iter", 15, "vacuos", 12, "auram", 9, "alienis", 6, "praecantatio", 3),
-            20, 8, 4, th("textures/items/keystone.png"),
+            20, 8, 4, th("textures/item/keystone.png"),
             List.of(Flag.CONCEALED), List.of("pocketPlane"), List.of(), List.of(), List.of(), 5,
             PageSpec.text("planarKeystone1"),
             PageSpec.recipes(PageKind.INFUSION, "planarKeystone"),
@@ -612,7 +612,7 @@ public final class ConfigResearch {
 
     private static void registerInstilledLoyalty() {
         register("instilledLoyalty", tags("cognitio", 4, "bestia", 3, "permutatio", 3),
-            15, -1, 2, th("textures/items/instilledloyalty.png"),
+            15, -1, 2, th("textures/item/instilledloyalty.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("generalInfusion7"),
             PageSpec.text("generalInfusion7b"));
@@ -628,7 +628,7 @@ public final class ConfigResearch {
 
     private static void registerEldritchFangs() {
         register("eldritchFangs", tags("alienis", 4, "telum", 4, "venenum", 4),
-            15, -2, 2, th("textures/items/eldritchfangs.png"),
+            15, -2, 2, th("textures/item/eldritchfangs.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion", "VOIDMETAL"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("generalInfusion9"));
@@ -636,14 +636,14 @@ public final class ConfigResearch {
 
     private static void registerPortability() {
         register("portability", tags("vacuos", 4, "vinculum", 4),
-            15, -4, 2, th("textures/items/portability.png"),
+            15, -4, 2, th("textures/item/portability.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("portability1"));
     }
 
     private static void registerSheepInfusion() {
         register("sheepInfusion", tags("bestia", 3, "pannus", 3, "sensus", 3),
-            10, -5, 1, th("textures/items/sheep.png"),
+            10, -5, 1, th("textures/item/sheep.png"),
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("generalInfusion"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("sheepInfusion1"));
@@ -651,7 +651,7 @@ public final class ConfigResearch {
 
     private static void registerCatInfusion() {
         register("catInfusion", tags("bestia", 5, "praecantatio", 3, "exanimis", 3),
-            13, -5, 1, th("textures/items/cat.png"),
+            13, -5, 1, th("textures/item/cat.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("catInfusion1"),
             PageSpec.text("catInfusion2"),
@@ -660,7 +660,7 @@ public final class ConfigResearch {
 
     private static void registerCowInfusion() {
         register("cowInfusion", tags("bestia", 5, "limus", 5, "permutatio", 5),
-            9, -5, 1, th("textures/items/cow.png"),
+            9, -5, 1, th("textures/item/cow.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("cowInfusion1"),
             PageSpec.recipes(PageKind.CRAFTING, "cowInfusion"),
@@ -669,7 +669,7 @@ public final class ConfigResearch {
 
     private static void registerChickenInfusion() {
         register("chickenInfusion", tags("bestia", 5, "limus", 5, "lucrum", 3, "tenebrae", 3),
-            11, -5, 1, th("textures/items/chicken.png"),
+            11, -5, 1, th("textures/item/chicken.png"),
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("generalInfusion"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("chickenInfusion1"),
@@ -678,7 +678,7 @@ public final class ConfigResearch {
 
     private static void registerPigInfusion() {
         register("pigInfusion", tags("bestia", 5, "fames", 5, "metallum", 3, "vitium", 3, "sano", 3),
-            12, -5, 1, th("textures/items/pig.png"),
+            12, -5, 1, th("textures/item/pig.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("pigInfusion1"),
             PageSpec.text("pigInfusion2"));
@@ -686,7 +686,7 @@ public final class ConfigResearch {
 
     private static void registerDogInfusion() {
         register("dogInfusion", tags("bestia", 5, "lux", 3, "ignis", 3, "aqua", 3, "praecantatio", 3),
-            14, -5, 1, th("textures/items/wolf.png"),
+            14, -5, 1, th("textures/item/wolf.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("dogInfusion1"),
             PageSpec.text("dogInfusion2"),
@@ -695,7 +695,7 @@ public final class ConfigResearch {
 
     private static void registerHorseInfusion() {
         register("horseInfusion", tags("bestia", 4, "iter", 5, "alienis", 4),
-            15, -5, 2, th("textures/items/horse.png"),
+            15, -5, 2, th("textures/item/horse.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("horseInfusion2"),
             PageSpec.text("horseInfusion3"));
@@ -703,7 +703,7 @@ public final class ConfigResearch {
 
     private static void registerNightmareInfusion() {
         register("nightmareInfusion", tags("ignis", 4, "vacuos", 3, "iter", 3),
-            17, -7, 2, th("textures/items/horse.png"),
+            17, -7, 2, th("textures/item/horse.png"),
             List.of(Flag.CONCEALED), List.of("horseInfusion", "LEVITATOR"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("nightmareInfusion1"),
@@ -712,14 +712,14 @@ public final class ConfigResearch {
 
     private static void registerSheederInfusion() {
         register("sheederInfusion", tags("pannus", 4, "bestia", 3, "permutatio", 3),
-            10, -7, 2, th("textures/items/sheep.png"),
+            10, -7, 2, th("textures/item/sheep.png"),
             List.of(Flag.CONCEALED), List.of("sheepInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("sheederInfusion1"));
     }
 
     private static void registerSelfInfusion() {
         register("selfInfusion", tags("humanus", 6, "praecantatio", 6, "fabrico", 6),
-            14, 1, 3, th("textures/items/humaninfusion.png"),
+            14, 1, 3, th("textures/item/humaninfusion.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion", "cloneSelf"), List.of(),
             List.of("humanInfusion"), List.of(), 0,
             PageSpec.text("selfInfusion1"),
@@ -729,7 +729,7 @@ public final class ConfigResearch {
 
     private static void registerHumanInfusion() {
         register("humanInfusion", tags("humanus", 1),
-            16, 1, 1, th("textures/items/quicksilverlimbs.png"),
+            16, 1, 1, th("textures/item/quicksilverlimbs.png"),
             List.of(Flag.CONCEALED), List.of("selfInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("humanInfusion1"),
             PageSpec.text("humanInfusion3"),
@@ -738,14 +738,14 @@ public final class ConfigResearch {
 
     private static void registerMorphicFingers() {
         register("morphicFingers", tags("humanus", 3, "fabrico", 3, "instrumentum", 3, "permutatio", 2),
-            19, 2, 2, th("textures/items/morphicfingers.png"),
+            19, 2, 2, th("textures/item/morphicfingers.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("morphicFingers1"));
     }
 
     private static void registerSilverHeart() {
         register("silverHeart", tags("humanus", 3, "ordo", 3, "sano", 3),
-            19, -1, 2, th("textures/items/silverwoodheart.png"),
+            19, -1, 2, th("textures/item/silverwoodheart.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("silverHeart1"),
             PageSpec.text("silverHeart2"));
@@ -753,7 +753,7 @@ public final class ConfigResearch {
 
     private static void registerSynthSkin() {
         register("synthSkin", tags("humanus", 3, "herba", 3, "fames", 3),
-            19, 0, 2, th("textures/items/synthskin.png"),
+            19, 0, 2, th("textures/item/synthskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("synthSkin1"));
     }
@@ -767,21 +767,21 @@ public final class ConfigResearch {
 
     private static void registerWarpedTumor() {
         register("warpedTumor", tags("humanus", 15, "vitium", 12, "alienis", 9, "corpus", 6, "permutatio", 3),
-            19, 4, 3, th("textures/items/warpedtumor.png"),
+            19, 4, 3, th("textures/item/warpedtumor.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("warpedTumor1"));
     }
 
     private static void registerSpiderClimb() {
         register("spiderClimb", tags("humanus", 3, "bestia", 3, "motus", 3, "limus", 3),
-            19, 3, 2, th("textures/items/spiderclimb.png"),
+            19, 3, 2, th("textures/item/spiderclimb.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("spiderClimb1"));
     }
 
     private static void registerChameleonSkin() {
         register("chameleonSkin", tags("sensus", 4, "permutatio", 4, "vacuos", 4),
-            19, -2, 2, th("textures/items/chameleonskin.png"),
+            19, -2, 2, th("textures/item/chameleonskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("chameleonSkin1"));
     }
