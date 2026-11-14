@@ -16,7 +16,7 @@ Snapshot after the initial full-port sprint (see `git log` and [fidelity.md](fid
 - Recipes: 43 TC4R registrations + 11 vanilla JSONs, keys 1:1 (wired via `ThRecipes.init()`).
 - Client: renderers for all 20 creatures + AlchemitePrimed + golem, blockstates/models for the ten soul/vat blocks, item models.
 
-## Deferred (next windows — 300M tokens/day, 18:00–04:00 MSK, after Nov 16)
+## Deferred (priority order; the original sprint was cut short by its session token quota — a fresh agent with its own budget can proceed immediately, order below is by user value)
 
 1. **Pocket plane** (~60% done): in-flight files preserved in `.deferred-pocket/`, resume instructions in `.deferred-pocket/RESUME_MANIFEST.md`. Remaining: PocketRegistry, SlotBlockEntity, PortalTHBlock/SlotBlock, Keystone/PlanarConduit items, dimension JSONs, Vortex-collapse integration, seam allowlist for `thaumcraft.platform.Teleport`.
 2. **Client polish**: FX (ClientFx real implementations instead of approximations), radial lens HUD (V key), VortexSound, Familiar hat layer, Endersteed armor variants, modmatrix texture.
