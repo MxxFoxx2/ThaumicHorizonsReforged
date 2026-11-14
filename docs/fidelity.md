@@ -33,6 +33,31 @@ Where the original used TC4 metadata items without a TC4R counterpart:
 - Machine FX (alchemite FX, block zaps, hungry-node FX, vortex sound) routed through vanilla particles/sounds until the FX compat phase.
 - VisDynamo aspect-toggle GUI deferred to the menu phase; toggles exist as BE fields.
 
+## Souls / Vat / blood phase — documented deviations
+
+- Soul-jar villager profession stored as a registry id string.
+- TC4R taint-poison / blurred-vision effects omitted from blood-infuser and vat effect lists (no compat seam for them yet).
+- Vat stabilizer symmetry scan counts only vanilla skulls (needs an InfusionCompat block predicate for TC4R skull variants).
+- `resetStats` skipped (the port has no `IEntityInfusedStats` equivalent).
+- Instilled-loyalty gate implemented via goalSelector priority instead of the original flag.
+- Critter recipes 20/21/22 (undead horses, nightmare) complete but spawn nothing until those entities are ported.
+- Deferred: `EntitySyringe`/`EntityBlastPhial` projectiles (injector charge/fire logic works, spawn pending), brain-jar feeding seam, block/blockstate/item models for the ten soul/vat blocks (client phase), containment beam FX, creative empty-soul-jar sub-item.
+
+## Golems / lenses phase — documented deviations
+
+- `EnumGolemTHType` replaced by TC4R `GolemType` extension values (identical stats incl. `visCost`); golem material derived from the block via a modern block/tag mapping (modern MC removed `Material`). CLAY is still never produced, parity with the original.
+- Restored blocks use `defaultBlockState()` (no numeric meta) — facing/rotation of golem-restored blocks resets.
+- Wand-pairing (core/upgrade/decoration) goes through TC4R `GolemBase.mobInteract` `GolemPartItem` flow.
+- Baubles support dropped from LensManager (no Baubles on NeoForge 26.3); lens cases work from inventory only.
+- Lens night-vision detection uses a duration<=255 heuristic.
+- Liquefaction "nuggets" upgrade is inert (TC4R removed the smelting-bonus registry); purity uses TC4R `SpecialMining.find`.
+- Disposable-wand recharge-prevention hack unnecessary (TC4R nodes recharge only the base `Wands.isWand` item).
+
+## Pocket plane — deferred at ~60%
+
+- Stopped mid-task by quota window; in-flight files preserved in `.deferred-pocket/` with a resume manifest (`RESUME_MANIFEST.md`). DONE: SavedData (`PocketPlanes`), PocketPlaneData schema, PocketPlaneGenerator (layers/caves/pockets/biomes 1:1), custom ChunkGenerator codec. TODO: PocketRegistry, SlotBlockEntity, PortalTHBlock/SlotBlock, Keystone/PlanarConduit items, dimension JSONs, Vortex-collapse integration. Resume in a 300M window.
+- Deviations already baked in: TC4 meta blocks mapped to named TC4R blocks (arcane_levitator, obsidian_tile, infused stones, crusted_taint...), biome assignment via `thaumcraft.taint.TaintBiomes.set`, dimension is data-driven and gated by `pocketPlaneEnabled` config, PocketNoise uses a different noise algorithm than 1.7.10 octaves.
+
 ## Phased deferrals (tracked, not lost)
 
 - Client renderers for entities and special machine models — client phase.
@@ -41,3 +66,4 @@ Where the original used TC4 metadata items without a TC4R counterpart:
 - Crystal-essence conversion of destroyed nodes/blocks — needs TC4R crystal-essence item API.
 - Flux gas/goo spill from overloaded transducers, wisp spawning (salis mundus), crystal-wand void crafting — pending flux/wisp/golem systems.
 - Warp tumor store caps use the config value (50) exactly like the original config default.
+- Entities still unported: HorseZombie, HorseSkeleton, NightmareTH, BoatGreatwood, BoatThaumium, BlastPhial, Syringe projectile, EggIncubated, finite LightningBolt, ItemEggIncubated logic.
