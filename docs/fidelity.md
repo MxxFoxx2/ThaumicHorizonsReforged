@@ -75,3 +75,11 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Localization is JSON-only (`en_us`/`ru_ru`, full key parity); the 1.7.10 `.lang` format is not loaded by MC 26.3.
 - Tamable TH mobs (panther/gravekeeper/familiar) register AI goals in `registerGoals()` (server-only). Building `BreedGoal` in the constructor cast `ClientLevel`→`ServerLevel` on the client and disconnected players on spawn; goals now never construct client-side.
 - Block-entity item persistence uses `ItemStack.OPTIONAL_CODEC` (permits empty slots), matching TC4R; plain `ItemStack.CODEC` rejected air/0 and dropped inventories on save.
+
+## Addon wand recognition & primed-alchemite client safety
+
+- TC4R `Wands.isWand` matched only the base wand item (`stack.is(ModItems.WAND)`), so the TH disposable wand — a `WandItem` subclass mirroring 1.7.10 `ItemWandCastingDisposable extends ItemWandCasting` — was rejected by the arcane workbench, focus use, charging and the vis HUD. The fork seam (`feat/addon-api`) now accepts any `WandItem` subclass; without add-ons the only `WandItem` is the base wand, so vanilla behavior is unchanged. Documented in TC4R `docs/ADDON_API.md`.
+- The disposable wand sets default `WandKeys.PARTS` (disposable cap/rod) and `WandKeys.VIS` (25000 per primal) in its `Item.Properties` operator, so creative/given stacks are full and correctly named. The records are built directly; creating an `ItemStack` during registration crashed with "Components not bound yet". Added `item.Wand.disposable.cap/rod` translations (ru/en); `WandParts`/`WandVis` added to the `check_seams.py` API allowlist. Verified in-game: vis HUD renders and the name reads "Одноразовый кристальный жезл".
+- The crystal wand stays a bare crafting ingredient, exactly like the original `ItemCrystalWand`.
+- `AlchemitePrimedEntity` overrides `getMoveSimulationType()` = `SERVER_AND_CLIENT` (vanilla `PrimedTnt` idiom); the NeoForge dev-only guard threw "logical side not permitted to simulate movement" when a primed alchemite ticked on the client.
+- Known deviation: the disposable wand is currently rechargeable; the original returned an empty `getAspectsWithRoom` / 0 `getMaxVis` on tick to make it single-use. Restoring that needs a TC4R recharge seam (deferred).
