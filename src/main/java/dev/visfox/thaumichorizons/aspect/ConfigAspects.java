@@ -20,6 +20,7 @@ public final class ConfigAspects {
             registrar.item(ThItems.INK_EGG, tags("limus", 2, "tenebrae", 2));
             registrar.item(ThItems.GOLD_EGG, tags("limus", 2, "lucrum", 1));
             registrar.item(ThItems.VOID_PUTTY, tags("fabrico", 4, "alienis", 4));
+        registrar.item(ThItems.CRYSTAL_WAND, tags("vitreus", 6, "praecantatio", 4));
             registrar.item(ThItems.MEAT, tags("corpus", 4));
             registrar.item(ThItems.MEAT_COOKED, tags("corpus", 3, "ignis", 1));
             registrar.item(ThItems.MEAT_NUGGET, tags("corpus", 1));

@@ -115,6 +115,9 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             if (stack.is(seed)) {
                 items.add(new ItemStack(ThItems.VOID_PUTTY.get(), stack.getCount()));
                 item.discard();
+            } else if (stack.is(ThItems.CRYSTAL_WAND.get())) {
+                items.add(new ItemStack(ThItems.WAND_CASTING_DISPOSABLE.get()));
+                item.discard();
             }
         }
     }

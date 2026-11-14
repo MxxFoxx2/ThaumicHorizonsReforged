@@ -91,3 +91,10 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Ported static models: `visdynamo`, `essentiadynamo` (base slab), `inspiratron`, `soulforge` (minus animated brine), `bloodinfuser`, `soulbeacon`, `soulsieve`, `vortexstabilizer`. Verified in-game: each renders as its intended box geometry with correctly mapped atlas tiles, not a stretched cube.
 - Already correct (single square face): `synthnode` (32×32), `modmatrix` (`bone` 16×16), `transductionamplifier` (vanilla iron).
 - Still deferred (TESR/multiblock, not cube-representable): `vat` (3×3 multiblock over a 512×512 atlas the port does not ship) and `nodemonitor` (hexagonal ring atlas). Their animated renderers belong to the machine-renderer client phase.
+
+## Inert crystal wand recognition
+
+- The inert crystal wand is a crafting ingredient in the original (`ItemCrystalWand extends Item`), not a wand; it is "recognized" in two ways, both of which were missing in the port.
+- Scan: the original registers an object tag `CRYSTAL 6 + MAGIC 4`. `ConfigAspects` now registers `vitreus 6 + praecantatio 4` for `CRYSTAL_WAND`, so the thaumometer detects it (previously the scan returned nothing because `AspectRegistry.getObjectTags` had no entry).
+- Vortex: the original `TileVortex.handleVoidCrafting` converts a thrown inert wand into the charged crystalline wand (crystal rod/cap + 25000 vis per primal). `VortexBlockEntity.handleVoidCrafting` now does the same, producing `WAND_CASTING_DISPOSABLE` (whose defaults already carry the crystal parts and full vis). This is the survival path to the charged wand.
+- The remaining original object tags (amuletMirror, focusAnimation, syringes, nutrients, alchemite, vat, soulBeacon, vortex, portal, spikes, …) are still unregistered in the port; tracked separately.
