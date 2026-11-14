@@ -20,8 +20,9 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 
 ## Data mappings (TC4 meta → TC4R ids)
 
-Where the original used TC4 metadata items without a TC4R counterpart:
-`itemResource` 3→quicksilver, 6→crystallized_essence, 7→enchanted_fabric, 10→quicksilver_drop, 14→wisp_essence, 16→void_seed, 1→thaumium_ingot; `blockMetalDevice:9`→alchemical_construct, `blockLifter`→arcane_bellows, `customPlant 4/5`→tainted_plant/ethereal_bloom, `blockTaint:2`→tainted_soil, `cosmeticSolid:0`→arcane_stone, `blockJar:3`→void_jar, `table:15`→arcane_worktable, `customPlant 1/2`→shimmerleaf/vishroom; wool meta 32767→white wool; potion stacks 8233/8269→plain `SPLASH_POTION` without effect data (data-only for now; the vat GUI refines this later).
+Authoritative source: the host's own table `../thaumcraft-4-reforged/tools/data/id_map.json` — trust it over semantic guesses (verified against TH reference usage; e.g. `blockWoodenDevice:6` is greatwood_planks, not bellows; `blockStoneDevice:2` is runic_matrix). Resolved `itemResource` metas as used by TH: 0→alumentum, 1→nitor, 2→thaumium_ingot, 3→quicksilver, 6→amber, 7→enchanted_fabric, 8→vis_filter, 9→knowledge_fragment, 14→salis_mundus, 15→primal_charm, 16→void_metal_ingot. Blocks: `blockMetalDevice:9`→alchemical_construct, `blockLifter`→arcane_bellows, `customPlant 4/5`→tainted_plant/ethereal_bloom, `blockTaint:2`→tainted_soil, `cosmeticSolid:0`→arcane_stone, `blockJar:3`→void_jar, `table:15`→arcane_worktable, `customPlant 1/2`→shimmerleaf/vishroom; wool meta 32767→white wool; potion stacks 8233/8269→plain `SPLASH_POTION` without effect data (data-only for now; the vat GUI refines this later).
+
+Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-variant recipes keep the bare original key for variant 0 plus `1..n` suffixes (`alcheponics1..4`, `meatGrowth1..2`, `fleshLeather1..2`, `shardTrans1..5`); the syringe arcane/infusion key collision resolved as `essentiaInjectionSyringe`; blast-phial variant data carried via a `TcStack.registerDataHandler/Matcher("phial", ...)` pair.
 
 ## Machines — documented deviations
 

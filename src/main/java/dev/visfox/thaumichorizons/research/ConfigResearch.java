@@ -132,7 +132,7 @@ public final class ConfigResearch {
             -2, 0, 1, th("textures/items/newbell.png"),
             List.of(Flag.CONCEALED), List.of(), List.of(), List.of("GOLEMBELL"), List.of(), 0,
             PageSpec.text("alternateGolemBell1"),
-            PageSpec.recipes(PageKind.CRAFTING, "GOLEMBELL"));
+            PageSpec.recipes(PageKind.ARCANE, "GOLEMBELL"));
     }
 
     private static void registerAlcheponics() {
@@ -142,10 +142,10 @@ public final class ConfigResearch {
             PageSpec.text("alcheponics1"),
             PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics"),
             PageSpec.text("alcheponics2"),
+            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics1", "alcheponics2"),
+            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics3", "alcheponics4"),
             PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics"));
+            PageSpec.recipes(PageKind.CRUCIBLE, "alcheponics1", "alcheponics2", "alcheponics3", "alcheponics4"));
     }
 
     private static void registerAlchIncubation() {
@@ -161,7 +161,7 @@ public final class ConfigResearch {
             4, 0, 2, mc("textures/item/beef.png"),
             List.of(), List.of("alchIncubation"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("meatGrowth1"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "meatGrowth"));
+            PageSpec.recipes(PageKind.CRUCIBLE, "meatGrowth", "meatGrowth1", "meatGrowth2"));
     }
 
     private static void registerFleshLeather() {
@@ -169,7 +169,7 @@ public final class ConfigResearch {
             6, -1, 1, mc("textures/item/leather.png"),
             List.of(Flag.SECONDARY), List.of("meatGrowth"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("fleshLeather1"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "fleshLeather"));
+            PageSpec.recipes(PageKind.CRUCIBLE, "fleshLeather", "fleshLeather1", "fleshLeather2"));
     }
 
     private static void registerShardTrans() {
@@ -178,7 +178,7 @@ public final class ConfigResearch {
             1, 2, 2, tc("textures/item/shard.png"),
             List.of(Flag.SECONDARY), List.of(), List.of(), List.of(), List.of(), 0,
             PageSpec.text("shardTrans1"),
-            PageSpec.recipes(PageKind.CRUCIBLE, "shardTrans"));
+            PageSpec.recipes(PageKind.CRUCIBLE, "shardTrans", "shardTrans1", "shardTrans2", "shardTrans3", "shardTrans4", "shardTrans5"));
     }
 
     private static void registerEtherealShard() {
@@ -278,7 +278,7 @@ public final class ConfigResearch {
             List.of(), List.of("meatGrowth"), List.of("THAUMATORIUM", "INFUSION"), List.of(),
             List.of(), 1,
             PageSpec.text("essentiaInjection1"),
-            PageSpec.recipes(PageKind.CRAFTING, "essentiaInjection"),
+            PageSpec.recipes(PageKind.ARCANE, "essentiaInjectionSyringe"),
             PageSpec.text("essentiaInjection2"),
             PageSpec.recipes(PageKind.INFUSION, "essentiaInjection"),
             PageSpec.text("essentiaInjection3"),
@@ -291,7 +291,7 @@ public final class ConfigResearch {
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("essentiaInjection"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("blastPhial1"),
-            PageSpec.recipes(PageKind.CRAFTING, "blastPhial"));
+            PageSpec.recipes(PageKind.ARCANE, "blastPhial"));
     }
 
     private static void registerInjector() {
