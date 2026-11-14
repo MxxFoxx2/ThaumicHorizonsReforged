@@ -68,3 +68,10 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Flux gas/goo spill from overloaded transducers, wisp spawning (salis mundus), crystal-wand void crafting — pending flux/wisp/golem systems.
 - Warp tumor store caps use the config value (50) exactly like the original config default.
 - Entities still unported: HorseZombie, HorseSkeleton, NightmareTH, BoatGreatwood, BoatThaumium, BlastPhial, Syringe projectile, EggIncubated, finite LightningBolt, ItemEggIncubated logic.
+
+## Asset pipeline & client-safety — documented deviations
+
+- Textures use singular `textures/block/` + `textures/item/` (vanilla atlas auto-stitches these across namespaces, the Forbidden Magic idiom); the custom `assets/minecraft/atlases/blocks.json` is removed. Plural `blocks/`/`items/` are NOT auto-stitched. Item renders go through the `assets/thaumichorizons/items/` definition layer (MC 1.21.4+).
+- Localization is JSON-only (`en_us`/`ru_ru`, full key parity); the 1.7.10 `.lang` format is not loaded by MC 26.3.
+- Tamable TH mobs (panther/gravekeeper/familiar) register AI goals in `registerGoals()` (server-only). Building `BreedGoal` in the constructor cast `ClientLevel`→`ServerLevel` on the client and disconnected players on spawn; goals now never construct client-side.
+- Block-entity item persistence uses `ItemStack.OPTIONAL_CODEC` (permits empty slots), matching TC4R; plain `ItemStack.CODEC` rejected air/0 and dropped inventories on save.
