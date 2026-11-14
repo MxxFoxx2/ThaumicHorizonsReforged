@@ -4,7 +4,7 @@ Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; mainta
 
 The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
 
-> **Personal use only.** Thaumic Horizons assets belong to Kentington and the GTNH team; Thaumcraft assets belong to Azanor. This repository contains ported logic and assets and is not intended for redistribution.
+> **License scope.** Thaumic Horizons itself is open source — Kentington's original code is MIT and the GTNH fork's changes are LGPL-3.0-or-later — so this port's TH logic and assets are redistributable under those licenses (see Authors and license below). What stays restricted: **Thaumcraft** assets and logic belong to Azanor and reach this mod only through [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged), whose own personal-use policy applies to them.
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
