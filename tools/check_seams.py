@@ -71,6 +71,7 @@ THAUMCRAFT_API = [
     "thaumcraft.wand.focus.FocusUpgradeType",
     "thaumcraft.entity.golem.GolemBase",
     "thaumcraft.entity.golem.GolemType",
+    "thaumcraft.client.render.entity.golem.GolemRenderer",
     "thaumcraft.entity.golem.GolemKeys",
     "thaumcraft.entity.golem.GolemSnapshot",
     "thaumcraft.item.golem.GolemPlacerItem",
