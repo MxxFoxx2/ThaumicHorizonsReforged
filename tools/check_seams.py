@@ -64,6 +64,8 @@ THAUMCRAFT_API = [
     "thaumcraft.wand.WandRod",
     "thaumcraft.wand.WandRegistry",
     "thaumcraft.wand.WandKeys",
+    "thaumcraft.wand.WandParts",
+    "thaumcraft.wand.WandVis",
     "thaumcraft.wand.WandManager",
     "thaumcraft.wand.WandTriggers",
     "thaumcraft.wand.Wands",

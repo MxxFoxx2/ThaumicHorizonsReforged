@@ -3,15 +3,15 @@ package dev.visfox.thaumichorizons.item.golem;
 import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import thaumcraft.Thaumcraft;
-import thaumcraft.aspect.Aspect;
+import thaumcraft.wand.WandCap;
 import thaumcraft.wand.WandItem;
 import thaumcraft.wand.WandKeys;
+import thaumcraft.wand.WandParts;
 import thaumcraft.wand.WandRegistry;
-import thaumcraft.wand.WandCap;
 import thaumcraft.wand.WandRod;
-import thaumcraft.wand.Wands;
+import thaumcraft.wand.WandVis;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 
 public class DisposableWandItem extends WandItem {
@@ -26,17 +26,13 @@ public class DisposableWandItem extends WandItem {
         super(properties);
     }
 
+    public static Item.Properties properties(Item.Properties properties) {
+        Item.Properties result = WandKeys.PARTS.apply(WandItem.properties(properties),
+            new WandParts(CAP_DISPOSABLE.tag(), ROD_DISPOSABLE.tag(), false));
+        return WandKeys.VIS.apply(result, new WandVis(25000, 25000, 25000, 25000, 25000, 25000));
+    }
+
     public static ItemStack create() {
-        ItemStack template = Wands.create(CAP_DISPOSABLE, ROD_DISPOSABLE, false);
-        var item = BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id("wandcastingdisposable"));
-        if (item == null) {
-            return template;
-        }
-        ItemStack stack = new ItemStack(item);
-        WandKeys.PARTS.set(stack, Wands.getParts(template));
-        for (Aspect aspect : Aspect.getPrimalAspects()) {
-            Wands.storeVis(stack, aspect, 25000);
-        }
-        return stack;
+        return new ItemStack(BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id("wandcastingdisposable")));
     }
 }
