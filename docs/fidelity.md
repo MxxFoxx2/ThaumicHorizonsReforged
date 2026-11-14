@@ -83,3 +83,11 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - The crystal wand stays a bare crafting ingredient, exactly like the original `ItemCrystalWand`.
 - `AlchemitePrimedEntity` overrides `getMoveSimulationType()` = `SERVER_AND_CLIENT` (vanilla `PrimedTnt` idiom); the NeoForge dev-only guard threw "logical side not permitted to simulate movement" when a primed alchemite ticked on the client.
 - Known deviation: the disposable wand is currently rechargeable; the original returned an empty `getAspectsWithRoom` / 0 `getMaxVis` on tick to make it single-use. Restoring that needs a TC4R recharge seam (deferred).
+
+## Functional-block static models (machine atlases)
+
+- The machines shipped as `cube_all`/`cube_bottom_top` over the 1.7.10 *custom-model atlases* (e.g. `dynamobase` 64×32, `soulsieve` 128×64, `inspiratron`/`soulforge` 64×64 cross-nets). Vanilla cube parents stretch the whole atlas onto every face, so the blocks rendered garbled. Root cause: the reference draws these with `ModelRenderer` box models / TESRs, not cube faces.
+- Added `tools/gen_machine_models.py`, which parses the reference `Model*.java` box specs (`addBox` + `setRotationPoint` + texture offset) and emits static JSON `elements` with per-face UVs into the atlas (standard box unwrap, scaled to the 16×16 JSON UV grid). The flipped-TESR transform `X=8+mx, Y=24−my, Z=8−mz` reproduces the reference stacking; the dynamo base slab uses the unflipped ground placement.
+- Ported static models: `visdynamo`, `essentiadynamo` (base slab), `inspiratron`, `soulforge` (minus animated brine), `bloodinfuser`, `soulbeacon`, `soulsieve`, `vortexstabilizer`. Verified in-game: each renders as its intended box geometry with correctly mapped atlas tiles, not a stretched cube.
+- Already correct (single square face): `synthnode` (32×32), `modmatrix` (`bone` 16×16), `transductionamplifier` (vanilla iron).
+- Still deferred (TESR/multiblock, not cube-representable): `vat` (3×3 multiblock over a 512×512 atlas the port does not ship) and `nodemonitor` (hexagonal ring atlas). Their animated renderers belong to the machine-renderer client phase.
