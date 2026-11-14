@@ -33,6 +33,10 @@ public class Familiar extends TamableAnimal {
     public Familiar(EntityType<? extends Familiar> type, Level level) {
         super(type, level);
         this.setTame(true, false);
+    }
+
+    @Override
+    protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
@@ -48,10 +52,6 @@ public class Familiar extends TamableAnimal {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Ocelot.createAttributes();
-    }
-
-    @Override
-    protected void registerGoals() {
     }
 
     @Override

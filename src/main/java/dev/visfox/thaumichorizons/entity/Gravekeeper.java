@@ -33,6 +33,10 @@ public class Gravekeeper extends TamableAnimal {
     public Gravekeeper(EntityType<? extends Gravekeeper> type, Level level) {
         super(type, level);
         this.setTame(true, false);
+    }
+
+    @Override
+    protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
@@ -47,10 +51,6 @@ public class Gravekeeper extends TamableAnimal {
 
     public static AttributeSupplier.Builder createAttributes() {
         return net.minecraft.world.entity.animal.feline.Ocelot.createAttributes();
-    }
-
-    @Override
-    protected void registerGoals() {
     }
 
     @Override

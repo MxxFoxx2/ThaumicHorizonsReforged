@@ -506,7 +506,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 markAndSync();
                 return true;
             }
-            player.openMenu(this);
+            player.openMenu(this, worldPosition);
             return true;
         }
         return false;
@@ -1249,8 +1249,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         } else if (level instanceof ServerLevel serverLevel) {
             input.read("entity", CompoundTag.CODEC).ifPresent(tag -> loadContainedEntity(tag, serverLevel));
         }
-        sample = input.read("sample", ItemStack.CODEC).orElse(null);
-        nutrients = input.read("nutrients", ItemStack.CODEC).orElse(null);
+        sample = input.read("sample", ItemStack.OPTIONAL_CODEC).orElse(null);
+        nutrients = input.read("nutrients", ItemStack.OPTIONAL_CODEC).orElse(null);
         int[] stored = input.getIntArray("selfInfusions").orElse(new int[0]);
         selfInfusions = stored.length == 0 ? new int[SELF_INFUSION_SLOTS] : stored;
         selfInfusionHealth = input.getFloatOr("selfInfusionHealth", SELF_INFUSION_INITIAL_HEALTH);
@@ -1258,7 +1258,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         ValueInput.ValueInputList recipeIn = input.childrenList("recipein").orElse(null);
         if (recipeIn != null) {
             for (ValueInput child : recipeIn) {
-                child.read("item", ItemStack.CODEC).ifPresent(recipeIngredients::add);
+                child.read("item", ItemStack.OPTIONAL_CODEC).ifPresent(recipeIngredients::add);
             }
         }
         String rot = input.getStringOr("rotype", "");
@@ -1293,10 +1293,10 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         }
         out.store("entity", CompoundTag.CODEC, entityData);
         if (sample != null) {
-            out.store("sample", ItemStack.CODEC, sample);
+            out.store("sample", ItemStack.OPTIONAL_CODEC, sample);
         }
         if (nutrients != null) {
-            out.store("nutrients", ItemStack.CODEC, nutrients);
+            out.store("nutrients", ItemStack.OPTIONAL_CODEC, nutrients);
         }
         out.putIntArray("selfInfusions", selfInfusions);
         out.putFloat("selfInfusionHealth", selfInfusionHealth);
@@ -1304,7 +1304,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             ValueOutput.ValueOutputList recipeIn = out.childrenList("recipein");
             for (ItemStack stack : recipeIngredients) {
                 ValueOutput child = recipeIn.addChild();
-                child.store("item", ItemStack.CODEC, stack);
+                child.store("item", ItemStack.OPTIONAL_CODEC, stack);
             }
         }
         if (recipeOutput instanceof Integer id) {

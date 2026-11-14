@@ -132,7 +132,7 @@ public class SoulExtractorBlockEntity extends VisNode implements net.minecraft.w
         super.loadAdditional(input);
         ticksLeft = input.getIntOr("ticks", 0);
         extracting = input.getBooleanOr("extracting", false);
-        sieveInventory.setItem(0, input.read("soulsand", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+        sieveInventory.setItem(0, input.read("soulsand", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class SoulExtractorBlockEntity extends VisNode implements net.minecraft.w
         output.putInt("ticks", ticksLeft);
         output.putBoolean("extracting", extracting);
         if (!sieveInventory.getItem(0).isEmpty()) {
-            output.store("soulsand", ItemStack.CODEC, sieveInventory.getItem(0));
+            output.store("soulsand", ItemStack.OPTIONAL_CODEC, sieveInventory.getItem(0));
         }
     }
 

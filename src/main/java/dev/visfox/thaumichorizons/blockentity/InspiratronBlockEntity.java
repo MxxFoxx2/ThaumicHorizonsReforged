@@ -156,8 +156,8 @@ public class InspiratronBlockEntity extends ThBlockEntity implements SoulReceive
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         progress = input.getIntOr("progress", 0);
-        inventory.setItem(0, input.read("paper", ItemStack.CODEC).orElse(ItemStack.EMPTY));
-        inventory.setItem(1, input.read("knowledge", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+        inventory.setItem(0, input.read("paper", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
+        inventory.setItem(1, input.read("knowledge", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
     }
 
     @Override
@@ -165,10 +165,10 @@ public class InspiratronBlockEntity extends ThBlockEntity implements SoulReceive
         super.saveAdditional(output);
         output.putInt("progress", progress);
         if (!inventory.getItem(0).isEmpty()) {
-            output.store("paper", ItemStack.CODEC, inventory.getItem(0));
+            output.store("paper", ItemStack.OPTIONAL_CODEC, inventory.getItem(0));
         }
         if (!inventory.getItem(1).isEmpty()) {
-            output.store("knowledge", ItemStack.CODEC, inventory.getItem(1));
+            output.store("knowledge", ItemStack.OPTIONAL_CODEC, inventory.getItem(1));
         }
     }
 

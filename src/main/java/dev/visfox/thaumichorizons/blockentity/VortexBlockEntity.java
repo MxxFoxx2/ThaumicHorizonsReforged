@@ -236,7 +236,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         createdDimension = input.getBooleanOr("createdDimension", false);
         cheat = input.getBooleanOr("cheat", false);
         aspects = input.read("aspects", AspectList.CODEC).orElseGet(AspectList::new);
-        items = new ArrayList<>(input.read("items", ItemStack.CODEC.listOf()).orElseGet(ArrayList::new));
+        items = new ArrayList<>(input.read("items", ItemStack.OPTIONAL_CODEC.listOf()).orElseGet(ArrayList::new));
     }
 
     @Override
@@ -250,7 +250,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         output.putBoolean("cheat", cheat);
         output.store("aspects", AspectList.CODEC, aspects);
         if (!items.isEmpty()) {
-            output.store("items", ItemStack.CODEC.listOf(), items);
+            output.store("items", ItemStack.OPTIONAL_CODEC.listOf(), items);
         }
     }
 }

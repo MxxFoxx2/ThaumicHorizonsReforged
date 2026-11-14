@@ -34,6 +34,10 @@ public class GuardianPanther extends TamableAnimal {
     public GuardianPanther(EntityType<? extends GuardianPanther> type, Level level) {
         super(type, level);
         this.setTame(true, false);
+    }
+
+    @Override
+    protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.5F));
@@ -52,10 +56,6 @@ public class GuardianPanther extends TamableAnimal {
             .add(Attributes.MAX_HEALTH, 24.0)
             .add(Attributes.MOVEMENT_SPEED, 0.5)
             .add(Attributes.ATTACK_DAMAGE, 3.0);
-    }
-
-    @Override
-    protected void registerGoals() {
     }
 
     @Override

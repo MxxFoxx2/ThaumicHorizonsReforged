@@ -412,8 +412,8 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         currentlySucking = sucking.isEmpty() ? null : Aspect.getAspect(sucking);
         aspectsSelected = input.read("aspectsSelected", AspectList.CODEC).orElseGet(AspectList::new);
         aspectsAcquired = input.read("aspectsAcquired", AspectList.CODEC).orElseGet(AspectList::new);
-        syringe = input.read("syringe", ItemStack.CODEC).orElse(null);
-        List<ItemStack> items = input.read("items", ItemStack.CODEC.listOf()).orElseGet(ArrayList::new);
+        syringe = input.read("syringe", ItemStack.OPTIONAL_CODEC).orElse(null);
+        List<ItemStack> items = input.read("items", ItemStack.OPTIONAL_CODEC.listOf()).orElseGet(ArrayList::new);
         for (int i = 0; i < 9; i++) {
             this.output[i] = i < items.size() ? items.get(i) : null;
         }
@@ -427,13 +427,13 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         out.store("aspectsSelected", AspectList.CODEC, aspectsSelected);
         out.store("aspectsAcquired", AspectList.CODEC, aspectsAcquired);
         if (syringe != null) {
-            out.store("syringe", ItemStack.CODEC, syringe);
+            out.store("syringe", ItemStack.OPTIONAL_CODEC, syringe);
         }
         ArrayList<ItemStack> items = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             items.add(this.output[i] == null ? ItemStack.EMPTY : this.output[i]);
         }
-        out.store("items", ItemStack.CODEC.listOf(), items);
+        out.store("items", ItemStack.OPTIONAL_CODEC.listOf(), items);
     }
 
     private void buildWeights() {
