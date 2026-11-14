@@ -12,6 +12,7 @@ import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.network.ToggleInfusionPayload;
 import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import dev.visfox.thaumichorizons.registry.ThMenus;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -36,6 +37,7 @@ public class ThaumicHorizons {
         ThItems.register(modEventBus);
         ThBlockEntities.register(modEventBus);
         ThEntities.register(modEventBus);
+        ThMenus.register(modEventBus);
         ThCreativeTabs.register(modEventBus);
         ConfigResearch.init();
         ConfigAspects.init();

@@ -67,7 +67,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final VisNetCompat visNet = new TcVisNet();
     private final GolemCompat golems = new UnavailableGolems();
     private final InfusionCompat infusion = new UnavailableInfusion();
-    private final FxCompat fx = new UnavailableFx();
+    private final FxCompat fx = new TcFx();
     private final ScanCompat scan = new TcScan();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
@@ -456,7 +456,60 @@ public final class TcReforgedPort implements ThaumcraftPort {
     static final class UnavailableInfusion implements InfusionCompat {
     }
 
-    static final class UnavailableFx implements FxCompat {
+    static final class TcFx implements FxCompat {
+        private static thaumcraft.fx.FxProxy fx() {
+            return thaumcraft.fx.Fx.get();
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public void wisp(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color, boolean longer) {
+            fx().essentiaTrail(level, BlockPos.containing(from), BlockPos.containing(to), longer ? 16 : 8, color, 1.0F);
+        }
+
+        @Override
+        public void burst(Level level, net.minecraft.world.phys.Vec3 pos, int color, int count) {
+            fx().shockBurst(level, pos.x, pos.y, pos.z, 1.0F + count * 0.1F);
+        }
+
+        @Override
+        public void arcLightning(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color) {
+            fx().nodeBolt(level, (float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) to.y, (float) to.z);
+        }
+
+        @Override
+        public void blockSparkle(Level level, BlockPos pos, int color, int count) {
+            fx().blockSparkle(level, pos, color, count);
+        }
+
+        @Override
+        public void essentiaTrail(Level level, BlockPos from, net.minecraft.world.phys.Vec3 to, int color) {
+            fx().essentiaTrail(level, from, BlockPos.containing(to), 8, color, 1.0F);
+        }
+
+        @Override
+        public void blocksplosion(Level level, BlockPos center, int color) {
+            fx().blocksplosion(level, center, color);
+        }
+
+        @Override
+        public void containmentCapture(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
+            fx().containmentCapture(level, pos.x, pos.y, pos.z, color);
+        }
+
+        @Override
+        public void essentiaBubble(Level level, BlockPos pos, int color) {
+            fx().blockBubble(level, pos, color);
+        }
+
+        @Override
+        public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
+            fx().deadCreature(level, pos.x, pos.y, pos.z, color);
+        }
     }
 
     static final class UnavailableScan implements ScanCompat {
