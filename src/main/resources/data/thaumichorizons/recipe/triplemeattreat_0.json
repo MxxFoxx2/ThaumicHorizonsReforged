@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sugar",
+    "thaumichorizons:meatnuggetth",
+    "thaumcraft:chicken_nugget",
+    "thaumcraft:pork_nugget"
+  ],
+  "result": {
+    "id": "thaumcraft:triple_meat_treat"
+  }
+}

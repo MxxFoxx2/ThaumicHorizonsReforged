@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "M"
+  ],
+  "key": {
+    "M": "thaumichorizons:bucketchocolate"
+  },
+  "result": {
+    "id": "thaumichorizons:barchocolate"
+  }
+}

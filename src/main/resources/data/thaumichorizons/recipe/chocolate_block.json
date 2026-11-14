@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate",
+    "thaumichorizons:barchocolate"
+  ],
+  "result": {
+    "id": "thaumichorizons:chocolate"
+  }
+}

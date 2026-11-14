@@ -42,6 +42,7 @@ public class ThaumicHorizons {
         ThCreativeTabs.register(modEventBus);
         ConfigResearch.init();
         ConfigAspects.init();
+        dev.visfox.thaumichorizons.crafting.ThRecipes.init();
         ToggleInfusionPayload.register();
         dev.visfox.thaumichorizons.item.lenses.LensChangePayload.register();
     }

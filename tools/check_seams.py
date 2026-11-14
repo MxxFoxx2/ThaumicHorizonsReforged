@@ -99,6 +99,11 @@ THAUMCRAFT_API = [
     "thaumcraft.crafting.TcRecipe",
     "thaumcraft.crafting.InfusionRecipe",
     "thaumcraft.crafting.TcStack",
+    "thaumcraft.crafting.TcIngredient",
+    "thaumcraft.crafting.CrucibleRecipe",
+    "thaumcraft.crafting.ShapedArcaneRecipe",
+    "thaumcraft.crafting.ShapelessArcaneRecipe",
+    "thaumcraft.crafting.CraftingRecipeRef",
     "thaumcraft.api.addon.*",
 ]
 
