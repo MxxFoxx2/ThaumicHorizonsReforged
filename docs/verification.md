@@ -25,7 +25,7 @@ python -I tools/check_seams.py
 
 - [ ] Soul jar: wand-right-click an infused critter → jars it (name label), release works
 - [ ] Containment focus captures LostSoul
-- [ ] Vat multiblock forms; curative mode cures with containment foci
+- [ ] Vat multiblock forms; curative mode cures with containment foci *(partial 2026-11-16: formation reproduced in-world after trigger-registration fix — blueprint converts to VAT blocks, vis consumed server-side; curative mode still open)*
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
 - [ ] Corpse effigy + self-clone flow works
 - [ ] Blood infuser: syringe draw/inject cycle

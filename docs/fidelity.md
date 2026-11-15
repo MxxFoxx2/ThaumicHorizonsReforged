@@ -43,6 +43,8 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Instilled-loyalty gate implemented via goalSelector priority instead of the original flag.
 - Critter recipes 20/21/22 (undead horses, nightmare) complete but spawn nothing until those entities are ported.
 - Deferred: `EntitySyringe`/`EntityBlastPhial` projectiles (injector charge/fire logic works, spawn pending), brain-jar feeding seam, block/blockstate/item models for the ten soul/vat blocks (client phase), containment beam FX, creative empty-soul-jar sub-item.
+- `VatTrigger.register()` was dead code (never called); now registered from `FMLCommonSetupEvent` via `enqueueWork`. In-world formation verified 2026-11-16: the glass/pressure-plate/levitator blueprint converts to VAT/VAT_SOLID/VAT_INTERIOR on wand use, server-side replace with client-side gate.
+- Vat formation pays crafting vis through the wand cap modifier (iron cap +10%, TC4 parity): 50 vis per aspect costs 5500 centivis with an iron cap, so a wand stocked with exactly 5000 per aspect legitimately fails to form the vat.
 
 ## Golems / lenses phase — documented deviations
 

@@ -19,15 +19,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.WandItem;
 import thaumcraft.wand.WandTriggers;
 
+@EventBusSubscriber(modid = dev.visfox.thaumichorizons.ThaumicHorizons.MODID)
 public final class VatTrigger {
     private static final int WATER = 50;
 
     private VatTrigger() {
+    }
+
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(VatTrigger::register);
     }
 
     public static void register() {
