@@ -397,12 +397,13 @@
   "focus.upgrade.slow.name": "Замедление",
   "focus.upgrade.slow.text": "Пойманное существо двигается медленнее.",
   "container.lenscase": "Футляр для линз",
-  "entity.thaumichorizons.golemth.name": "Голем",
-  "entity.thaumichorizons.golemth.voidling": "Голем пустоты",
+  "entity.thaumichorizons.golemth.name": "Голем ТГ",
+  "entity.thaumichorizons.golemth.voidling": "Войдлинг",
   "item.thaumichorizons.golemPlacer.voidling": "Голем пустоты",
   "thaumichorizons.golemWarning1": "Один из ваших големов странно себя ведёт.",
   "thaumichorizons.golemWarning2": "Один из ваших големов что-то тихо напевает себе под нос.",
   "thaumichorizons.golemWarning3": "Неподалёку Вы слышите маниакальный смех.",
   "tooltip.thaumichorizons.syringe.empty": "Пусто",
-  "container.thaumichorizons.lenscase": "Футляр для линз"
+  "container.thaumichorizons.lenscase": "Футляр для линз",
+  "entity.thaumichorizons.alchemiteprimed.name": "Заряженный алхимит"
 }

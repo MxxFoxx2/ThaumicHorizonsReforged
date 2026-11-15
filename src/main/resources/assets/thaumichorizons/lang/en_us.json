@@ -397,12 +397,13 @@
   "focus.upgrade.slow.name": "Slow",
   "focus.upgrade.slow.text": "Contained creatures move slower.",
   "container.lenscase": "Lens Case",
-  "entity.thaumichorizons.golemth.name": "Golem",
-  "entity.thaumichorizons.golemth.voidling": "Voidling Golem",
+  "entity.thaumichorizons.golemth.name": "TH Golem",
+  "entity.thaumichorizons.golemth.voidling": "Voidling",
   "item.thaumichorizons.golemPlacer.voidling": "Voidling Golem",
   "thaumichorizons.golemWarning1": "One of your golems is acting strangely.",
   "thaumichorizons.golemWarning2": "One of your golems has begun softly chanting.",
   "thaumichorizons.golemWarning3": "In the distance you hear hollow laughter.",
   "tooltip.thaumichorizons.syringe.empty": "Empty",
-  "container.thaumichorizons.lenscase": "Lens Case"
+  "container.thaumichorizons.lenscase": "Lens Case",
+  "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite"
 }
