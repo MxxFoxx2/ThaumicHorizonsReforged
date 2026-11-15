@@ -57,7 +57,9 @@ public class VortexStabilizerBlockEntity extends ThBlockEntity {
                     worldPosition.getX() + dir.getStepX() * 10 + 0.5,
                     worldPosition.getY() + dir.getStepY() * 10 + 0.5,
                     worldPosition.getZ() + dir.getStepZ() * 10 + 0.5);
-                HitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER,
+                // Original rayTraceBlocks(from,to) hits blocks without a collision box (vortex
+                // collision is null upstream); COLLIDER would ray straight through the vortex.
+                HitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE,
                     ClipContext.Fluid.NONE, CollisionContext.empty()));
                 if (hit instanceof BlockHitResult blockHit) {
                     mop = blockHit;
