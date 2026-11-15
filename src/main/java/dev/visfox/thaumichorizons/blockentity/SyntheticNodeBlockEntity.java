@@ -19,7 +19,6 @@ import thaumcraft.node.Node;
 import thaumcraft.node.NodeModifier;
 import thaumcraft.node.NodeType;
 import thaumcraft.research.ResearchGate;
-import thaumcraft.vis.VisNet;
 import thaumcraft.vis.VisNode;
 import thaumcraft.wand.WandInteractable;
 import thaumcraft.wand.WandKeys;
@@ -44,11 +43,12 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
     }
 
     private void tick(Level tickLevel) {
+        tickNetwork(tickLevel);
         if (!tickLevel.isClientSide()) {
             for (Aspect aspect : aspectsMax.getAspectsSortedAmount()) {
                 if (aspects.getAmount(aspect) < aspectsMax.getAmount(aspect)) {
                     if (aspect.isPrimal()) {
-                        int drained = VisNet.drainVis(tickLevel, worldPosition, aspect, 10);
+                        int drained = consumeVis(aspect, 10);
                         if (drained > 0) {
                             addFractionalToContainer(aspect, drained);
                         }
@@ -56,7 +56,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
                         AspectList primalComponents = reduceToPrimals(new AspectList().add(aspect, 1));
                         int actuallyDrained = 100;
                         for (Aspect primal : primalComponents.getAspects()) {
-                            int drained = VisNet.drainVis(tickLevel, worldPosition, primal, 10);
+                            int drained = consumeVis(primal, 10);
                             if (drained < actuallyDrained) {
                                 actuallyDrained = drained;
                             }
