@@ -15,4 +15,12 @@ public final class ThRenderTypes {
     public static RenderType entityTranslucent(Identifier texture) {
         return RenderTypes.entityTranslucent(texture);
     }
+
+    public static RenderType entityCutout(Identifier texture) {
+        return RenderTypes.entityCutout(texture);
+    }
+
+    public static RenderType entityCutoutNoCull(Identifier texture) {
+        return RenderTypes.entityCutout(texture, false);
+    }
 }

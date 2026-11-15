@@ -26,6 +26,9 @@ public final class SoulBeaconKeys {
         .codec(SoulBeaconData.CODEC)
         .build();
 
+    public static void init() {
+    }
+
     private SoulBeaconKeys() {
     }
 }

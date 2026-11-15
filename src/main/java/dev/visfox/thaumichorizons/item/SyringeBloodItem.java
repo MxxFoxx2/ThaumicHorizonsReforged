@@ -17,8 +17,8 @@ public class SyringeBloodItem extends Item {
     @Override
     public Component getName(ItemStack stack) {
         if (isPhial(stack)) {
-            return Component.translatable("item.thaumichorizons.syringeBlood.1");
+            return Component.translatable("item.thaumichorizons.syringeBlood.1.name");
         }
-        return Component.translatable("item.thaumichorizons.syringeBlood.0");
+        return Component.translatable("item.thaumichorizons.syringeBlood.0.name");
     }
 }

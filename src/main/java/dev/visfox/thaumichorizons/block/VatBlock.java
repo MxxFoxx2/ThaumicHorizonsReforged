@@ -16,7 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
 public class VatBlock extends Block implements EntityBlock {
-    public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 10, 10);
+    public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 10, 11);
 
     public VatBlock(Properties properties) {
         super(properties);

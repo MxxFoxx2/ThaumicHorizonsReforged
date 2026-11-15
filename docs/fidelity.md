@@ -90,7 +90,23 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Added `tools/gen_machine_models.py`, which parses the reference `Model*.java` box specs (`addBox` + `setRotationPoint` + texture offset) and emits static JSON `elements` with per-face UVs into the atlas (standard box unwrap, scaled to the 16×16 JSON UV grid). The flipped-TESR transform `X=8+mx, Y=24−my, Z=8−mz` reproduces the reference stacking; the dynamo base slab uses the unflipped ground placement.
 - Ported static models: `visdynamo`, `essentiadynamo` (base slab), `inspiratron`, `soulforge` (minus animated brine), `bloodinfuser`, `soulbeacon`, `soulsieve`, `vortexstabilizer`. Verified in-game: each renders as its intended box geometry with correctly mapped atlas tiles, not a stretched cube.
 - Already correct (single square face): `synthnode` (32×32), `modmatrix` (`bone` 16×16), `transductionamplifier` (vanilla iron).
-- Still deferred (TESR/multiblock, not cube-representable): `vat` (3×3 multiblock over a 512×512 atlas the port does not ship) and `nodemonitor` (hexagonal ring atlas). Their animated renderers belong to the machine-renderer client phase.
+- Still deferred (TESR/multiblock, not cube-representable): `vat` (3×3 multiblock over a 512×512 atlas the port does not ship). Its animated renderer belongs to the machine-renderer client phase.
+
+## Textures larger than 16×16 — no splitting
+
+- MC 1.7.10 did **not** cut oversized block textures into 16×16 tiles for `cube_all` faces: the whole image was stretched onto the face. Verified against the host port (`thaumcraft-4-reforged`), where TC4's `alchemyblock` (32×32) is still used as a plain `cube_all` and renders as one coherent 32×32 image. The same holds for the TH textures `eyecluster`/`brain`/`leviathan`/`vortex`/`synthnode` (32×32, one coherent picture per face) — so they are **not** sliced into 16×16 sprites in this port. Only textures with an `.mcmeta` animation strip (`cloud` 16×128, `void` 64×512, `blockcrystaldeep` 16×576) are frame-stacks, and MC 26.3 derives their frame size the same way MC 1.7.10 did (`min(width, height)`).
+- `cloud`/`cloudglowingth` now use `cube_bottom_top` with `cloudtop` on the top and bottom faces. The reference `BlockCloud.getIcon` returns `icontop[meta]` for sides 0 and 1 and `icon[meta]` otherwise, so the top/bottom faces use the dedicated `cloudtop` texture, not the animated cloud side texture.
+
+## Node monitor — OBJ block-entity renderer
+
+- The node monitor is drawn by `NodeMonitorRenderer` (block-entity renderer) from `thaumcraft:models/obj/scanner.obj` + `thaumichorizons:textures/models/hexagon.obj`, with the `nodemon.png` ring atlas and the `nodemonscreen`/`nodemonscreenactive` overlays. The block model is intentionally empty (no cube elements) so nothing is double-drawn; the blockstate rotations are harmless leftovers since the renderer applies its own facing transform.
+- Fixed the ring texture path: the renderer looked for `textures/models/nodemon.png` while the file ships as `textures/block/nodemon.png`.
+- The inventory item was invisible (empty block model parent). It now uses `minecraft:item/generated` with a new 16×16 `textures/item/nodemonitor.png` rendered offline from the scanner OBJ (`tools/preview_obj.py`) — the gold hexagonal ring.
+
+## Collision shapes
+
+- `visdynamo` and `essentiadynamo` are thin base plates in the reference (`ModelQuarterBlock`, 16×1×16), but 1.7.10 left them with the default full-block bounds. The port now gives both a `VoxelShape` of `Block.box(0,0,0,16,1,16)` — a deliberate deviation from the original, requested for the plates not to occupy a full block.
+- `nodemonitor` uses `Block.box(2,0,2,14,2,14)` (a flat hexagonal ring footprint) instead of a full cube.
 
 ## Inert crystal wand recognition
 

@@ -37,7 +37,7 @@ import thaumcraft.wand.focus.FocusItem;
 import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusContainmentItem extends FocusItem {
-    public static final FocusUpgradeType SLOW = new FocusUpgradeType(16, "slow",
+    public static final FocusUpgradeType SLOW = new FocusUpgradeType(36, "slow",
         new AspectList().add(Aspect.TRAP, 8));
     public static final HashMap<String, Entity> hitCritters = new HashMap<>();
     public static final HashMap<String, Float> contain = new HashMap<>();

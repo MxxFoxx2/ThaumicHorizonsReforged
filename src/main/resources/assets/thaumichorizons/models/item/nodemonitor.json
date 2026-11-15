@@ -1,3 +1,6 @@
 {
-  "parent": "thaumichorizons:block/nodemonitor"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thaumichorizons:item/nodemonitor"
+  }
 }

@@ -40,7 +40,7 @@ public class InspiratronBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
         BlockHitResult hitResult) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof InspiratronBlockEntity inspiratron) {
-            player.openMenu(inspiratron);
+            player.openMenu(inspiratron, pos);
         }
         return InteractionResult.SUCCESS;
     }

@@ -29,6 +29,9 @@ public final class SoulJarKeys {
 
     public static final StackKey<SoulJarData> DATA = StackKey.register("soul_jar", SoulJarData.CODEC, SoulJarData.STREAM_CODEC);
 
+    public static void init() {
+    }
+
     private SoulJarKeys() {
     }
 }

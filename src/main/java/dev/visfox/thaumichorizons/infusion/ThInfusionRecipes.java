@@ -183,6 +183,7 @@ public final class ThInfusionRecipes {
 
     @Nullable
     public static CreatureInfusionRecipe getCreatureInfusion(LivingEntity entityContained, ArrayList<ItemStack> components, Player player) {
+        ensureRecipes();
         for (CreatureInfusionRecipe recipe : critterRecipes) {
             if (recipe.matches(components, entityContained.getClass(), player.level(), player)) {
                 return recipe;
@@ -193,6 +194,7 @@ public final class ThInfusionRecipes {
 
     @Nullable
     public static SelfInfusionRecipe getSelfInfusion(ArrayList<ItemStack> components, Player player) {
+        ensureRecipes();
         for (SelfInfusionRecipe recipe : selfRecipes) {
             if (recipe.matches(components, player.level(), player)) {
                 return recipe;
@@ -211,10 +213,12 @@ public final class ThInfusionRecipes {
     }
 
     public static ArrayList<CreatureInfusionRecipe> getCritterRecipes() {
+        ensureRecipes();
         return critterRecipes;
     }
 
     public static ArrayList<SelfInfusionRecipe> getSelfRecipes() {
+        ensureRecipes();
         return selfRecipes;
     }
 
@@ -227,7 +231,15 @@ public final class ThInfusionRecipes {
         classBanList.add((type, entity) -> tcEntityType("pech") == type);
         classBanList.add((type, entity) -> tcEntityType("wisp") == type);
         classBanList.add((type, entity) -> entity instanceof thaumcraft.entity.TaintedMob);
-        registerRecipes();
+    }
+
+    private static boolean recipesInitialized;
+
+    private static synchronized void ensureRecipes() {
+        if (!recipesInitialized) {
+            registerRecipes();
+            recipesInitialized = true;
+        }
     }
 
     private static @Nullable EntityType<?> tcEntityType(String name) {

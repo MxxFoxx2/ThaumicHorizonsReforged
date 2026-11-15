@@ -40,7 +40,7 @@ public class BloodInfuserBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
         BlockHitResult hitResult) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BloodInfuserBlockEntity infuser) {
-            player.openMenu(infuser);
+            player.openMenu(infuser, pos);
         }
         return InteractionResult.SUCCESS;
     }

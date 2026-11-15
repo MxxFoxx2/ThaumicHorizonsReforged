@@ -25,7 +25,6 @@ import dev.visfox.thaumichorizons.block.VortexBlock;
 import dev.visfox.thaumichorizons.block.VortexStabilizerBlock;
 import java.util.function.UnaryOperator;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -43,13 +42,13 @@ public final class ThBlocks {
     public static final DeferredBlock<DustBlock> DUST = withItem(BLOCKS.registerBlock("dustth",
         DustBlock::new, properties -> properties.mapColor(MapColor.SAND).strength(0.5F).sound(SoundType.SAND)));
     public static final DeferredBlock<DropsBlock> EYES = withItem(BLOCKS.registerBlock("eyeth",
-        properties -> new DropsBlock(properties, new ItemStack(Items.SPIDER_EYE), 3),
+        properties -> new DropsBlock(properties, Items.SPIDER_EYE, 3),
         properties -> properties.mapColor(MapColor.COLOR_RED).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<DropsBlock> BONE = withItem(BLOCKS.registerBlock("boneth",
-        properties -> new DropsBlock(properties, new ItemStack(Items.BONE), 3),
+        properties -> new DropsBlock(properties, Items.BONE, 3),
         properties -> properties.mapColor(MapColor.STONE).strength(2.5F, 2.5F).sound(SoundType.STONE)));
     public static final DeferredBlock<DropsBlock> FLESH = withItem(BLOCKS.registerBlock("fleshth",
-        properties -> new DropsBlock(properties, new ItemStack(Items.BONE), 3),
+        properties -> new DropsBlock(properties, Items.BONE, 3),
         properties -> properties.mapColor(MapColor.COLOR_RED).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<Block> LIGHT = BLOCKS.registerBlock("light",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()

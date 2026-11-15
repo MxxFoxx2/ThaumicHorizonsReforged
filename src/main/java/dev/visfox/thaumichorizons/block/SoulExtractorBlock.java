@@ -40,7 +40,7 @@ public class SoulExtractorBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
         BlockHitResult hitResult) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof SoulExtractorBlockEntity extractor) {
-            player.openMenu(extractor);
+            player.openMenu(extractor, pos);
         }
         return InteractionResult.SUCCESS;
     }
