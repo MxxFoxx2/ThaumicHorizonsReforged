@@ -10,16 +10,16 @@ python -I tools/check_seams.py
 ./gradlew runClient
 ```
 
-- [ ] Mod loads alongside TC4R, no mixin/attachment errors in log
-- [ ] Creative tab shows TH items, blocks, machines
-- [ ] Thaumometer scans TH items and creatures; aspects present
-- [ ] Research browser: `ThaumicHorizons` category opens, entries visible, page text renders
-- [ ] Machines: place VisDynamo near elements → vis net joins; EssentiaDynamo above jar → drains; NodeMonitor on node → redstone
+- [x] Mod loads alongside TC4R, no mixin/attachment errors in log
+- [x] Creative tab shows TH items, blocks, machines
+- [ ] Thaumometer scans TH items and creatures; aspects present *(aspects data verified via `/thaumcraft aspects item` for inert/charged wand; held thaumometer scan and creature scans pending)*
+- [x] Research browser: `ThaumicHorizons` category opens, entries visible, page text renders
+- [ ] Machines: place VisDynamo near elements → vis net joins; EssentiaDynamo above jar → drains; NodeMonitor on node → redstone *(placement, GUIs and static models verified in-game; vis-net/drain/redstone logic pending)*
 - [ ] SyntheticNode: wand tap → node created with SYNTHETIC type
 - [ ] Vortex: absorbs blocks in 5×5×5, hungry-node pull works, stabilizer unhungrifies
-- [ ] Alchemite: ignite → fuse → explosion, chain reaction
-- [ ] Creatures: `/summon thaumichorizons:chromaticsheep` etc. spawn, behave (color cycle, shear, eat stone)
-- [ ] `/thaumichorizons chameleon true` → see Invisibility checklist below
+- [ ] Alchemite: ignite → fuse → explosion, chain reaction *(ignite→fuse exercised, client move-crash fixed; explosion/chain pending)*
+- [ ] Creatures: `/summon thaumichorizons:chromaticsheep` etc. spawn, behave (color cycle, shear, eat stone) *(22 summons spawn/render without crash after the goal-constructor CCE fix; behavior spot-checks pending)*
+- [x] `/thaumichorizons chameleon true` → see Invisibility checklist below *(single-client A/B verified: true hides body/armor/held item, false restores; two-client checklist still open)*
 
 ## Gate 2 — after souls/Vat/GUI phase
 
