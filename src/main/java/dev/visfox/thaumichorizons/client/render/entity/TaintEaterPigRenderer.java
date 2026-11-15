@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.PigRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.Mth;
 
 public class TaintEaterPigRenderer extends PigRenderer {
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/entity/taintfeeder.png");
@@ -34,8 +36,13 @@ public class TaintEaterPigRenderer extends PigRenderer {
 
         @Override
         public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, PigRenderState state, float yRot, float xRot) {
-            submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack, ThRenderTypes.eyes(EYES_TEXTURE),
-                lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+            // Original shouldRenderPass blends the eyes overlay at alpha 0.32+0.32*sin, fullbright;
+            // an opaque cutout pass would paint the whole body cyan.
+            float pulse = Mth.sin((float) Math.toRadians((state.ageInTicks % 45) * 8.0F));
+            int alpha = (int) ((0.32F + 0.32F * pulse) * 255.0F);
+            submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack,
+                ThRenderTypes.entityTranslucent(EYES_TEXTURE), LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+                (alpha << 24) | 0xFFFFFF);
         }
     }
 }
