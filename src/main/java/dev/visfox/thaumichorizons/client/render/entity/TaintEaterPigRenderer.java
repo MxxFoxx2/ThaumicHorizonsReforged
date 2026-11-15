@@ -40,9 +40,11 @@ public class TaintEaterPigRenderer extends PigRenderer {
             // an opaque cutout pass would paint the whole body cyan.
             float pulse = Mth.sin((float) Math.toRadians((state.ageInTicks % 45) * 8.0F));
             int alpha = (int) ((0.32F + 0.32F * pulse) * 255.0F);
+            // 9-arg overload: 7th is tintedColor, 9th outlineColor. The 7-arg overload
+            // treats its last param as outlineColor and forces an opaque tint.
             submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack,
                 ThRenderTypes.entityTranslucent(EYES_TEXTURE), LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-                (alpha << 24) | 0xFFFFFF);
+                (alpha << 24) | 0xFFFFFF, null, state.outlineColor);
         }
     }
 }
