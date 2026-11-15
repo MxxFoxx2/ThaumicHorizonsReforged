@@ -9,6 +9,7 @@ import dev.visfox.thaumichorizons.block.DustBlock;
 import dev.visfox.thaumichorizons.block.EssentiaDynamoBlock;
 import dev.visfox.thaumichorizons.block.InspiratronBlock;
 import dev.visfox.thaumichorizons.block.LeviathanBlock;
+import dev.visfox.thaumichorizons.block.LightSolarBlock;
 import dev.visfox.thaumichorizons.block.ModifiedMatrixBlock;
 import dev.visfox.thaumichorizons.block.NodeMonitorBlock;
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
@@ -52,6 +53,9 @@ public final class ThBlocks {
         properties -> properties.mapColor(MapColor.COLOR_RED).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<Block> LIGHT = BLOCKS.registerBlock("light",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()
+            .lightLevel(state -> 14).sound(SoundType.WOOL));
+    public static final DeferredBlock<LightSolarBlock> LIGHT_SOLAR = BLOCKS.registerBlock("lightsolar",
+        LightSolarBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()
             .lightLevel(state -> 14).sound(SoundType.WOOL));
     public static final DeferredBlock<Block> VOID = withItem(BLOCKS.registerBlock("voidth",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(-1.0F, 6000000.0F).noCollision()

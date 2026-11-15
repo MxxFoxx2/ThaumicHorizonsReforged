@@ -30,9 +30,6 @@ public class ThaumicHorizons {
         modContainer.registerConfig(ModConfig.Type.STARTUP, ThaumicHorizonsConfig.SPEC);
         CreatureInfusion.init();
         dev.visfox.thaumichorizons.infusion.CreatureInfusions.init();
-        dev.visfox.thaumichorizons.item.SyringeKeys.init();
-        dev.visfox.thaumichorizons.item.SoulJarKeys.init();
-        dev.visfox.thaumichorizons.blockentity.SoulBeaconKeys.init();
         dev.visfox.thaumichorizons.infusion.ThInfusionRecipes.init();
         DataAttachments.register(modEventBus);
         dev.visfox.thaumichorizons.platform.StackData.register(modEventBus);

@@ -24,6 +24,17 @@ public final class ConfigAspects {
             registrar.item(ThItems.MEAT, tags("corpus", 4));
             registrar.item(ThItems.MEAT_COOKED, tags("corpus", 3, "ignis", 1));
             registrar.item(ThItems.MEAT_NUGGET, tags("corpus", 1));
+            registrar.item(ThItems.SYRINGE_EMPTY, tags("vitreus", 1, "metallum", 1));
+            registrar.item(ThItems.SYRINGE_BLOOD_SAMPLE, tags("vitreus", 1, "metallum", 1, "bestia", 1));
+            registrar.item(ThItems.SYRINGE_BLOOD, tags("vitreus", 1, "metallum", 1, "humanus", 1));
+            registrar.item(ThItems.SYRINGE_INJECTION, tags("vitreus", 1, "metallum", 1, "humanus", 1));
+            registrar.item(ThItems.NUTRIENTS, tags("fames", 2));
+            registrar.item(ThBlocks.ALCHEMITE, tags("potentia", 4, "perditio", 4, "permutatio", 2, "praecantatio", 2,
+                "vitreus", 2));
+            registrar.item(ThBlocks.VAT, tags("machina", 1, "sano", 1));
+            registrar.item(ThBlocks.VAT_SOLID, tags("machina", 1, "sano", 1));
+            registrar.item(ThBlocks.SOUL_BEACON, tags("spiritus", 8, "iter", 8, "vinculum", 8, "lux", 8));
+            registrar.item(ThBlocks.VORTEX, tags("auram", 16, "vacuos", 16));
             registrar.item(ThBlocks.CHOCOLATE, tags("fames", 5, "victus", 5));
             registrar.item(ThBlocks.BRAIN, tags("cognitio", 4, "corpus", 4));
             registrar.item(ThBlocks.CLOUD, tags("tempestas", 2));

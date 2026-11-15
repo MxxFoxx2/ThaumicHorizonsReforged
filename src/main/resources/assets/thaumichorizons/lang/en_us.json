@@ -406,4 +406,9 @@
   "tooltip.thaumichorizons.syringe.empty": "Empty",
   "container.thaumichorizons.lenscase": "Lens Case",
   "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite"
+  "block.thaumichorizons.lightsolar": "Solar Light Orb",
+  "item.thaumichorizons.focusanimation": "Wand Focus: Animation",
+  "item.thaumichorizons.focusdisintegration": "Wand Focus: Disintegration",
+  "item.thaumichorizons.focusillumination": "Wand Focus: Illumination",
+  "item.thaumichorizons.focusliquefaction": "Wand Focus: Liquefaction",
 }

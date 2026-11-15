@@ -26,10 +26,12 @@ public final class ThRecipes {
         crucible1();
         crucible2();
         crucible3();
+        crucible4();
         arcane0();
         infusion0();
         infusion1();
         infusion2();
+        infusion3();
     }
 
     private static void registerPhialData() {
@@ -183,6 +185,44 @@ public final class ThRecipes {
     }
 
     private static void infusion2() {
+        TcRecipes.register(new InfusionRecipe("focusLiquefaction", "focusLiquefaction", TcStack.of("thaumichorizons:focusliquefaction"), 3,
+            new AspectList().add(Aspect.FIRE, 12).add(Aspect.METAL, 8).add(Aspect.EXCHANGE, 4),
+            TcIngredient.item("minecraft:diamond"), List.of(
+                TcIngredient.item("thaumcraft:focus_fire"),
+                TcIngredient.item("thaumcraft:salis_mundus"),
+                TcIngredient.item("thaumcraft:focus_excavation"))));
+        TcRecipes.register(new InfusionRecipe("focusDisintegration", "focusDisintegration", TcStack.of("thaumichorizons:focusdisintegration"), 7,
+            new AspectList().add(Aspect.ENTROPY, 32).add(Aspect.MAGIC, 24).add(Aspect.CRYSTAL, 32).add(Aspect.EXCHANGE, 16),
+            TcIngredient.item("thaumcraft:focus_excavation"), List.of(
+                TcIngredient.item("thaumcraft:liquid_death_bucket"),
+                TcIngredient.item("thaumcraft:primal_charm"),
+                TcIngredient.item("thaumcraft:liquid_death_bucket"),
+                TcIngredient.item("thaumcraft:alumentum"))));
+        TcRecipes.register(new InfusionRecipe("focusAnimation", "focusAnimation", TcStack.of("thaumichorizons:focusanimation"), 10,
+            new AspectList().add(Aspect.MAN, 64).add(Aspect.MOTION, 64).add(Aspect.SOUL, 64).add(Aspect.CRAFT, 64),
+            TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
+                TcIngredient.item("thaumcraft:golem_core_blank"),
+                TcIngredient.item("thaumichorizons:syringeblood"),
+                TcIngredient.item("thaumcraft:golem_upgrade_air"),
+                TcIngredient.item("thaumcraft:golem_upgrade_fire"),
+                TcIngredient.item("thaumcraft:golem_upgrade_order"),
+                TcIngredient.item("thaumcraft:golem_core_blank"),
+                TcIngredient.item("thaumichorizons:syringeblood"),
+                TcIngredient.item("thaumcraft:golem_upgrade_earth"),
+                TcIngredient.item("thaumcraft:golem_upgrade_water"),
+                TcIngredient.item("thaumcraft:golem_upgrade_entropy"))));
+    }
+
+    private static void crucible4() {
+        TcRecipes.register(new CrucibleRecipe("focusIllumination", "focusIllumination", TcStack.of("thaumichorizons:focusillumination"),
+            TcIngredient.item("minecraft:glowstone"),
+            new AspectList().add(Aspect.LIGHT, 12).add(Aspect.ENERGY, 8).add(Aspect.FIRE, 8)));
+        TcRecipes.register(new CrucibleRecipe("incarnationVat", "incarnationVat", TcStack.of("thaumichorizons:nutrients"),
+            TcIngredient.item("minecraft:sugar"),
+            new AspectList().add(Aspect.HUNGER, 2)));
+    }
+
+    private static void infusion3() {
         TcRecipes.register(new InfusionRecipe("infusionVat", "infusionVat", TcStack.of("thaumichorizons:modmatrix"), 10,
             new AspectList().add(Aspect.LIFE, 32).add(Aspect.CRAFT, 32).add(Aspect.MAGIC, 32).add(Aspect.BEAST, 32),
             TcIngredient.item("thaumcraft:runic_matrix"), List.of(

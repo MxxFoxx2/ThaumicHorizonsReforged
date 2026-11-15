@@ -1,4 +1,5 @@
 package dev.visfox.thaumichorizons.item;
+        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/slow.png"),
 
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.entity.LostSoul;

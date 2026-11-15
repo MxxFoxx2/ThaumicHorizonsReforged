@@ -406,4 +406,9 @@
   "tooltip.thaumichorizons.syringe.empty": "Пусто",
   "container.thaumichorizons.lenscase": "Футляр для линз",
   "entity.thaumichorizons.alchemiteprimed.name": "Заряженный алхимит"
+  "block.thaumichorizons.lightsolar": "Солнечная сфера света",
+  "item.thaumichorizons.focusanimation": "Набалдашник: Оживление",
+  "item.thaumichorizons.focusdisintegration": "Набалдашник: Разложение",
+  "item.thaumichorizons.focusillumination": "Набалдашник: Освещение",
+  "item.thaumichorizons.focusliquefaction": "Набалдашник: Разжижение",
 }

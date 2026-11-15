@@ -1,8 +1,8 @@
 package dev.visfox.thaumichorizons.item.focus;
 
 import dev.visfox.thaumichorizons.lib.THSounds;
+import dev.visfox.thaumichorizons.registry.ThBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +21,6 @@ import thaumcraft.wand.WandItem;
 import thaumcraft.wand.Wands;
 import thaumcraft.wand.focus.FocusItem;
 import thaumcraft.wand.focus.FocusUpgradeType;
-import dev.visfox.thaumichorizons.ThaumicHorizons;
 
 public class FocusIlluminationItem extends FocusItem {
     public static final FocusUpgradeType SOLAR = new FocusUpgradeType(32, "solar",
@@ -73,11 +72,9 @@ public class FocusIlluminationItem extends FocusItem {
             return InteractionResult.CONSUME;
         }
         Block light = isUpgradedWith(Wands.getFocusItem(stack), SOLAR)
-            ? BuiltInRegistries.BLOCK.getValue(ThaumicHorizons.id("lightsolar"))
-            : BuiltInRegistries.BLOCK.getValue(ThaumicHorizons.id("light"));
-        if (light != null) {
-            level.setBlock(pos, light.defaultBlockState(), 3);
-        }
+            ? ThBlocks.LIGHT_SOLAR.get()
+            : ThBlocks.LIGHT.get();
+        level.setBlock(pos, light.defaultBlockState(), 3);
         player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
         if (!level.isClientSide()) {
             THSounds.play(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), "wand", SoundSource.PLAYERS, 1.0F, 1.0F);

@@ -1,4 +1,16 @@
 package dev.visfox.thaumichorizons.registry;
+import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusDisintegrationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusIlluminationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusLiquefactionItem;
+    public static final DeferredItem<FocusAnimationItem> FOCUS_ANIMATION = ITEMS.registerItem("focusanimation",
+        FocusAnimationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusDisintegrationItem> FOCUS_DISINTEGRATION = ITEMS.registerItem("focusdisintegration",
+        FocusDisintegrationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusIlluminationItem> FOCUS_ILLUMINATION = ITEMS.registerItem("focusillumination",
+        FocusIlluminationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusLiquefactionItem> FOCUS_LIQUEFACTION = ITEMS.registerItem("focusliquefaction",
+        FocusLiquefactionItem::new, FocusItem::properties);
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
