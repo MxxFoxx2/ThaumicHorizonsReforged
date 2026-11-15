@@ -8,6 +8,7 @@ import dev.visfox.thaumichorizons.blockentity.SoulforgeBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VisDynamoBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.container.BloodInfuserMenu;
+import dev.visfox.thaumichorizons.menu.ContainerCase;
 import dev.visfox.thaumichorizons.container.FingersMenu;
 import dev.visfox.thaumichorizons.container.InjectorMenu;
 import dev.visfox.thaumichorizons.container.InspiratronMenu;
@@ -29,6 +30,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ThMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, ThaumicHorizons.MODID);
 
+    public static final DeferredHolder<MenuType<?>, MenuType<ContainerCase>> CASE = MENUS.register("case",
+        () -> IMenuTypeExtension.create((id, inventory, buf) -> new ContainerCase(id, inventory, buf.readVarInt())));
     public static final DeferredHolder<MenuType<?>, MenuType<VatMenu>> VAT = MENUS.register("vat",
         () -> withPos((id, inventory, pos) -> new VatMenu(id, inventory,
             blockEntity(inventory, pos, VatBlockEntity.class))));

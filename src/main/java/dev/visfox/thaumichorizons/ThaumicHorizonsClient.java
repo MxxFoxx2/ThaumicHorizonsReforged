@@ -35,5 +35,6 @@ public class ThaumicHorizonsClient {
         event.register(ThMenus.INJECTOR.get(), InjectorScreen::new);
         event.register(ThMenus.FINGERS.get(), FingersScreen::new);
         event.register(ThMenus.VIS_DYNAMO.get(), VisDynamoScreen::new);
+        event.register(ThMenus.CASE.get(), dev.visfox.thaumichorizons.client.screen.GuiCase::new);
     }
 }

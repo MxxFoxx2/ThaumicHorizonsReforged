@@ -403,5 +403,6 @@
   "thaumichorizons.golemWarning1": "One of your golems is acting strangely.",
   "thaumichorizons.golemWarning2": "One of your golems has begun softly chanting.",
   "thaumichorizons.golemWarning3": "In the distance you hear hollow laughter.",
-  "tooltip.thaumichorizons.syringe.empty": "Empty"
+  "tooltip.thaumichorizons.syringe.empty": "Empty",
+  "container.thaumichorizons.lenscase": "Lens Case"
 }

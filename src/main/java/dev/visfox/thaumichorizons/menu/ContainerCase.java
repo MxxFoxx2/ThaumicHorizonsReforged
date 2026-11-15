@@ -25,6 +25,10 @@ public class ContainerCase extends AbstractContainerMenu {
     private final int caseSlotIndex;
     private final int blockedSlot;
 
+    public int getBlockSlotIndex() {
+        return caseSlotIndex;
+    }
+
     public ContainerCase(int windowId, Inventory playerInventory, int selectedSlot) {
         super((MenuType<ContainerCase>) BuiltInRegistries.MENU.getValue(ThaumicHorizons.id("case")), windowId);
         this.playerInventory = playerInventory;
