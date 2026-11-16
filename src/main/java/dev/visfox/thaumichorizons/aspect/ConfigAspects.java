@@ -31,6 +31,7 @@ public final class ConfigAspects {
             registrar.item(ThItems.NUTRIENTS, tags("fames", 2));
             registrar.item(ThItems.FOCUS_ILLUMINATION, tags("lux", 5, "potentia", 5));
             registrar.item(ThItems.FOCUS_ANIMATION, tags("spiritus", 8, "humanus", 8, "motus", 8, "fabrico", 8));
+            registrar.item(ThItems.EGG_INCUBATED, tags("limus", 2, "victus", 2, "bestia", 2));
             registrar.item(ThBlocks.ALCHEMITE, tags("potentia", 4, "perditio", 4, "permutatio", 2, "praecantatio", 2,
                 "vitreus", 2));
             registrar.item(ThBlocks.VAT, tags("machina", 1, "sano", 1));

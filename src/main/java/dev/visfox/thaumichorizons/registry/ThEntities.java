@@ -5,6 +5,7 @@ import dev.visfox.thaumichorizons.entity.AlchemitePrimedEntity;
 import dev.visfox.thaumichorizons.entity.ChocolateCow;
 import dev.visfox.thaumichorizons.entity.ChromaticSheep;
 import dev.visfox.thaumichorizons.entity.Endersteed;
+import dev.visfox.thaumichorizons.entity.EggIncubatedEntity;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.Familiar;
 import dev.visfox.thaumichorizons.entity.GoldChicken;
@@ -36,6 +37,10 @@ public final class ThEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<AlchemitePrimedEntity>> ALCHEMITE_PRIMED =
         ENTITIES.registerEntityType("alchemiteprimed", AlchemitePrimedEntity::new, MobCategory.MISC,
             builder -> builder.sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EggIncubatedEntity>> EGG_INCUBATED =
+        ENTITIES.registerEntityType("eggincubated", EggIncubatedEntity::new, MobCategory.MISC,
+            builder -> builder.sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(20).fireImmune());
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChromaticSheep>> CHROMATIC_SHEEP = creature(
         "chromaticsheep", ChromaticSheep::new, builder -> builder.sized(0.9F, 1.3F).eyeHeight(1.213F));

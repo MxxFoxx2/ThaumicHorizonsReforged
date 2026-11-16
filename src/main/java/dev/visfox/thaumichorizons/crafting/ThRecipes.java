@@ -27,6 +27,7 @@ public final class ThRecipes {
         crucible2();
         crucible3();
         crucible4();
+        crucible5();
         arcane0();
         arcane1();
         infusion0();
@@ -244,6 +245,12 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:amber"),
                 TcIngredient.item("thaumcraft:thaumium_ingot"))));
+    }
+
+    private static void crucible5() {
+        TcRecipes.register(new CrucibleRecipe("alchIncubation", "alchIncubation", TcStack.of("thaumichorizons:eggincubated"),
+            TcIngredient.item("minecraft:egg"),
+            new AspectList().add(Aspect.FIRE, 2).add(Aspect.LIFE, 2)));
     }
 
     private static void crucible4() {

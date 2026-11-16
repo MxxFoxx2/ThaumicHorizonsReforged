@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.registry;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
 import dev.visfox.thaumichorizons.item.CorpseEffigyItem;
+import dev.visfox.thaumichorizons.item.EggIncubatedItem;
 import dev.visfox.thaumichorizons.item.FocusContainmentItem;
 import dev.visfox.thaumichorizons.item.InjectorItem;
 import dev.visfox.thaumichorizons.item.NutrientsItem;
@@ -107,6 +108,8 @@ public final class ThItems {
         ItemLensCase::new, ItemLensCase::properties);
     public static final DeferredItem<Item> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
         Item::new, properties -> properties.stacksTo(1));
+    public static final DeferredItem<EggIncubatedItem> EGG_INCUBATED = ITEMS.registerItem("eggincubated",
+        EggIncubatedItem::new, properties -> properties.stacksTo(16));
 
     private ThItems() {
     }
