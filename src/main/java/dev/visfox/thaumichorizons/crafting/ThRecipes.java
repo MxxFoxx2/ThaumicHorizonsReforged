@@ -28,10 +28,12 @@ public final class ThRecipes {
         crucible3();
         crucible4();
         arcane0();
+        arcane1();
         infusion0();
         infusion1();
         infusion2();
         infusion3();
+        infusion4();
     }
 
     private static void registerPhialData() {
@@ -211,6 +213,37 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:golem_upgrade_earth"),
                 TcIngredient.item("thaumcraft:golem_upgrade_water"),
                 TcIngredient.item("thaumcraft:golem_upgrade_entropy"))));
+    }
+
+    private static void arcane1() {
+        TcRecipes.register(new ShapedArcaneRecipe("planarTheory", "planarTheory", TcStack.of("thaumichorizons:planarconduit"),
+            new AspectList().add(Aspect.FIRE, 50).add(Aspect.WATER, 50).add(Aspect.ORDER, 50)
+                .add(Aspect.ENTROPY, 50).add(Aspect.EARTH, 50).add(Aspect.AIR, 50), 3, 3, List.of(
+                TcIngredient.item("thaumcraft:void_metal_ingot"), TcIngredient.item("thaumcraft:wisp_essence"),
+                TcIngredient.item("thaumcraft:void_metal_ingot"),
+                TcIngredient.item("thaumcraft:wisp_essence"), TcIngredient.item("minecraft:ender_pearl"),
+                TcIngredient.item("thaumcraft:wisp_essence"),
+                TcIngredient.item("thaumcraft:void_metal_ingot"), TcIngredient.item("thaumcraft:wisp_essence"),
+                TcIngredient.item("thaumcraft:void_metal_ingot"))));
+        TcRecipes.register(new ShapedArcaneRecipe("transductionAmplifier", "transductionAmplifier",
+            TcStack.of("thaumichorizons:transductionamplifier"),
+            new AspectList().add(Aspect.AIR, 10).add(Aspect.FIRE, 10).add(Aspect.ORDER, 10), 3, 3, List.of(
+                TcIngredient.EMPTY, TcIngredient.item("thaumichorizons:planarconduit"), TcIngredient.EMPTY,
+                TcIngredient.item("thaumcraft:amber"), TcIngredient.item("thaumcraft:node_transducer"),
+                TcIngredient.item("thaumcraft:amber"),
+                TcIngredient.item("minecraft:redstone_block"), TcIngredient.item("thaumcraft:nitor"),
+                TcIngredient.item("minecraft:redstone_block"))));
+    }
+
+    private static void infusion4() {
+        TcRecipes.register(new InfusionRecipe("vortexStabilizer", "vortexStabilizer",
+            TcStack.of("thaumichorizons:vortexstabilizer"), 6,
+            new AspectList().add(Aspect.AURA, 8).add(Aspect.TRAP, 32).add(Aspect.HUNGER, 32).add(Aspect.ENERGY, 16),
+            TcIngredient.item("thaumcraft:node_stabilizer"), List.of(
+                TcIngredient.item("thaumichorizons:planarconduit"),
+                TcIngredient.item("thaumcraft:thaumium_ingot"),
+                TcIngredient.item("thaumcraft:amber"),
+                TcIngredient.item("thaumcraft:thaumium_ingot"))));
     }
 
     private static void crucible4() {

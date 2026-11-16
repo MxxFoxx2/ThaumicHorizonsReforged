@@ -1,16 +1,4 @@
 package dev.visfox.thaumichorizons.registry;
-import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
-import dev.visfox.thaumichorizons.item.focus.FocusDisintegrationItem;
-import dev.visfox.thaumichorizons.item.focus.FocusIlluminationItem;
-import dev.visfox.thaumichorizons.item.focus.FocusLiquefactionItem;
-    public static final DeferredItem<FocusAnimationItem> FOCUS_ANIMATION = ITEMS.registerItem("focusanimation",
-        FocusAnimationItem::new, FocusItem::properties);
-    public static final DeferredItem<FocusDisintegrationItem> FOCUS_DISINTEGRATION = ITEMS.registerItem("focusdisintegration",
-        FocusDisintegrationItem::new, FocusItem::properties);
-    public static final DeferredItem<FocusIlluminationItem> FOCUS_ILLUMINATION = ITEMS.registerItem("focusillumination",
-        FocusIlluminationItem::new, FocusItem::properties);
-    public static final DeferredItem<FocusLiquefactionItem> FOCUS_LIQUEFACTION = ITEMS.registerItem("focusliquefaction",
-        FocusLiquefactionItem::new, FocusItem::properties);
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
@@ -23,6 +11,10 @@ import dev.visfox.thaumichorizons.item.SyringeBloodSampleItem;
 import dev.visfox.thaumichorizons.item.SyringeEmptyItem;
 import dev.visfox.thaumichorizons.item.SyringeInjectionItem;
 import dev.visfox.thaumichorizons.item.SoulJarBlockItem;
+import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusDisintegrationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusIlluminationItem;
+import dev.visfox.thaumichorizons.item.focus.FocusLiquefactionItem;
 import dev.visfox.thaumichorizons.item.golem.CrystalWandItem;
 import dev.visfox.thaumichorizons.item.golem.DisposableWandItem;
 import dev.visfox.thaumichorizons.item.golem.GolemBellTHItem;
@@ -86,6 +78,14 @@ public final class ThItems {
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);
     public static final DeferredItem<FocusContainmentItem> FOCUS_CONTAINMENT = ITEMS.registerItem("focuscontainment",
         FocusContainmentItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusAnimationItem> FOCUS_ANIMATION = ITEMS.registerItem("focusanimation",
+        FocusAnimationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusDisintegrationItem> FOCUS_DISINTEGRATION = ITEMS.registerItem("focusdisintegration",
+        FocusDisintegrationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusIlluminationItem> FOCUS_ILLUMINATION = ITEMS.registerItem("focusillumination",
+        FocusIlluminationItem::new, FocusItem::properties);
+    public static final DeferredItem<FocusLiquefactionItem> FOCUS_LIQUEFACTION = ITEMS.registerItem("focusliquefaction",
+        FocusLiquefactionItem::new, FocusItem::properties);
 
     public static final DeferredItem<GolemPowderItem> GOLEM_POWDER = ITEMS.registerItem("golempowder",
         GolemPowderItem::new, properties -> properties.stacksTo(64));
@@ -105,6 +105,8 @@ public final class ThItems {
         ItemLensOrderEntropy::new);
     public static final DeferredItem<ItemLensCase> LENS_CASE = ITEMS.registerItem("lenscase",
         ItemLensCase::new, ItemLensCase::properties);
+    public static final DeferredItem<Item> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
+        Item::new, properties -> properties.stacksTo(1));
 
     private ThItems() {
     }

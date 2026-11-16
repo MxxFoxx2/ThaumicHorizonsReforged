@@ -29,6 +29,8 @@ public final class ConfigAspects {
             registrar.item(ThItems.SYRINGE_BLOOD, tags("vitreus", 1, "metallum", 1, "humanus", 1));
             registrar.item(ThItems.SYRINGE_INJECTION, tags("vitreus", 1, "metallum", 1, "humanus", 1));
             registrar.item(ThItems.NUTRIENTS, tags("fames", 2));
+            registrar.item(ThItems.FOCUS_ILLUMINATION, tags("lux", 5, "potentia", 5));
+            registrar.item(ThItems.FOCUS_ANIMATION, tags("spiritus", 8, "humanus", 8, "motus", 8, "fabrico", 8));
             registrar.item(ThBlocks.ALCHEMITE, tags("potentia", 4, "perditio", 4, "permutatio", 2, "praecantatio", 2,
                 "vitreus", 2));
             registrar.item(ThBlocks.VAT, tags("machina", 1, "sano", 1));
