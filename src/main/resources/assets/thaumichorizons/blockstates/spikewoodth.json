@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down": { "model": "thaumichorizons:block/spike_hidden" },
+    "facing=up": { "model": "thaumichorizons:block/spike_hidden" },
+    "facing=north": { "model": "thaumichorizons:block/spike_hidden" },
+    "facing=south": { "model": "thaumichorizons:block/spike_hidden" },
+    "facing=west": { "model": "thaumichorizons:block/spike_hidden" },
+    "facing=east": { "model": "thaumichorizons:block/spike_hidden" }
+  }
+}
