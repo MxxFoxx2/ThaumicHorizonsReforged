@@ -7,11 +7,11 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Place all ten cloud item variants; confirm each places the matching cloud texture/type and remains correct after save/reload.
 - [ ] Without planarClouds, confirm wand use does not remove the cloud or consume vis. With the research and at least 100 AIR vis, confirm one right-click removes the cloud, consumes exactly 100 AIR vis and drops the matching invulnerable cloud item.
 - [ ] Confirm each picked-up variant can be placed again without changing its type; test multiplayer pickup and ensure no duplicate item.
-- [ ] Test precipitation and entity effects in Overworld rain, including warm/cold biomes, fire/acid clouds, growth clouds and rain pause/resume. Save/reload while raining.
+- [ ] Test precipitation and entity effects in Overworld rain, including warm/cold biomes, fire/acid clouds, growth clouds and rain pause/resume. Confirm the synchronized weather columns appear/disappear with rain; save/reload while raining.
 - [ ] Test periodic lightning from thunderclouds and Animus clouds; confirm Animus clouds only convert eligible blocks and spawn temporary berserk TH golems.
 - [ ] Test alloy nugget and meat drops, primal aspect orbs, XP orbs, cow-to-mooshroom conversion and soil-specific growth results.
 - [ ] Test acidic-cloud Thaumcraft dissolve damage and verify the full entity column is processed; test fire, enderman, blaze and firebat effects.
-- [ ] Remaining visual parity checks: the full weather-column renderer for rain/snow/embers and synced rain-state persistence.
+- [ ] In a live client, verify long-column rain/snow/ember rendering, variant tints, UV scrolling, warm/cold biome texture selection, rain start/stop synchronization, column-depth updates and chunk unload/reload persistence.
 
 
 ## Gate 1 — after machines + creatures (V-phase)

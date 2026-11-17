@@ -33,7 +33,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Timed effects include lightning from thunderclouds and animus clouds, alloy nuggets, meat, primal aspect orbs, XP orbs, growth vegetation and the Animus cloud's temporary berserk TH golem conversion.
 - Legacy alloy nugget metadata 5 is mapped to TC4R's quicksilver_drop; metal outputs otherwise use the matching TC4R nugget item IDs, with an iron-nugget fallback when a matching ID is unavailable.
 - The growth table preserves the original Thaumcraft plant variants used by TileCloud: greatwood sapling (meta 0), silverwood sapling (meta 1) and cinderpearl (meta 3), in addition to the vanilla flower/sapling and soil-specific branches.
-- Still not complete: the dedicated long-column weather renderer for rain/snow/embers and the legacy rain-state client sync/persistence behavior. Client runtime checks are pending; see verification.md.
+- The dedicated long-column weather renderer is ported with scrolling UVs, original variant tint colors, fire-rain selection and warm/cold biome rain/snow selection. The server synchronizes the shared Overworld rain flag and the measured column depth to clients and persists both values with the block entity. Client runtime checks are pending; see verification.md.
 
 
 ## Machines — documented deviations

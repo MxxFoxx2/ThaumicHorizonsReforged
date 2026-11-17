@@ -33,6 +33,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import thaumcraft.aspect.Aspect;
@@ -46,6 +51,8 @@ public final class CloudBlockEntity extends BlockEntity {
 
     private int dropTimer = -1;
     private int weatherTicks;
+    private boolean raining;
+    private int columnDepth = 256;
 
     public CloudBlockEntity(BlockPos pos, BlockState state) {
         super(ThBlockEntities.CLOUD.get(), pos, state);
@@ -58,16 +65,55 @@ public final class CloudBlockEntity extends BlockEntity {
             cloud.renderFiniteLightning(level, pos, type);
             return;
         }
-        if (!(level instanceof ServerLevel serverLevel)
-                || !serverLevel.getServer().overworld().isRaining()) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
 
-        if (++cloud.weatherTicks % 10 == 0) {
+        boolean overworldRaining = serverLevel.getServer().overworld().isRaining();
+        if (++cloud.weatherTicks % 100 == 0 && cloud.raining != overworldRaining) {
+            cloud.raining = overworldRaining;
+            cloud.syncRenderState(serverLevel);
+        }
+        if (!overworldRaining) {
+            return;
+        }
+
+        if (cloud.weatherTicks % 10 == 0) {
+            cloud.refreshColumnDepth(serverLevel);
             cloud.applyPrecipitation(serverLevel, type);
         }
         cloud.tickDropTimer(serverLevel, type);
         cloud.applyEntityEffects(serverLevel, type);
+    }
+
+    public boolean isRaining() {
+        return raining;
+    }
+
+    public int getColumnDepth() {
+        return columnDepth;
+    }
+
+    private void refreshColumnDepth(ServerLevel level) {
+        BlockPos pos = worldPosition;
+        BlockHitResult hit = level.clip(new ClipContext(
+            new Vec3(pos.getX() + 0.5, pos.getY() - 0.5, pos.getZ() + 0.5),
+            new Vec3(pos.getX() + 0.5, pos.getY() - 256.0, pos.getZ() + 0.5),
+            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE,
+            net.minecraft.world.phys.shapes.CollisionContext.empty()
+        ));
+        int nextDepth = hit.getType() == HitResult.Type.BLOCK
+            ? Math.max(1, Math.min(256, pos.getY() - hit.getBlockPos().getY()))
+            : 256;
+        if (nextDepth != columnDepth) {
+            columnDepth = nextDepth;
+            syncRenderState(level);
+        }
+    }
+
+    private void syncRenderState(ServerLevel level) {
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
     }
 
     /**
@@ -466,6 +512,8 @@ public final class CloudBlockEntity extends BlockEntity {
         super.loadAdditional(input);
         dropTimer = input.getIntOr("dropTimer", -1);
         weatherTicks = input.getIntOr("weatherTicks", 0);
+        raining = input.getBooleanOr("raining", false);
+        columnDepth = Math.max(1, Math.min(256, input.getIntOr("columnDepth", 256)));
     }
 
     @Override
@@ -473,5 +521,17 @@ public final class CloudBlockEntity extends BlockEntity {
         super.saveAdditional(output);
         output.putInt("dropTimer", dropTimer);
         output.putInt("weatherTicks", weatherTicks);
+        output.putBoolean("raining", raining);
+        output.putInt("columnDepth", columnDepth);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }
