@@ -6,7 +6,6 @@ import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
-import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.lib.THSounds;
@@ -21,7 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -38,8 +36,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
-import thaumcraft.entity.monster.Wisp;
-import thaumcraft.registry.ModEntities;
 import thaumcraft.wand.WandInteractable;
 import thaumcraft.platform.Teleport;
 
@@ -231,7 +227,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                 item.discard();
             } else if (salisMundus != null && stack.is(salisMundus)) {
                 // Legacy itemResource metadata 14: each Salis Mundus releases 1–4 Wisps.
-                spawnWisps(server, stack.getCount());
+                Compat.port().items().spawnWisps(server, worldPosition, aspects, stack.getCount());
                 item.discard();
             } else if (stack.is(ThItems.CRYSTAL_WAND.get())) {
                 items.add(new ItemStack(ThItems.WAND_CASTING_DISPOSABLE.get()));
@@ -251,26 +247,6 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                     server.broadcastEntityEvent(golem, (byte) 7);
                 }
                 item.discard();
-            }
-        }
-    }
-
-    private void spawnWisps(ServerLevel server, int salisMundusCount) {
-        List<Aspect> storedAspects = aspects.getAspects();
-        for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
-            int wispCount = server.getRandom().nextInt(4) + 1;
-            for (int i = 0; i < wispCount; i++) {
-                Wisp wisp = ModEntities.WISP.get().create(server, EntitySpawnReason.TRIGGER);
-                if (wisp == null) {
-                    continue;
-                }
-                wisp.setPos(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D,
-                    worldPosition.getZ() + 0.5D);
-                if (!storedAspects.isEmpty()) {
-                    Aspect aspect = storedAspects.get(server.getRandom().nextInt(storedAspects.size()));
-                    wisp.setAspect(aspect);
-                }
-                server.addFreshEntity(wisp);
             }
         }
     }

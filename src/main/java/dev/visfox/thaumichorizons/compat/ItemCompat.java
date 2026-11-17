@@ -1,5 +1,6 @@
 package dev.visfox.thaumichorizons.compat;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -36,6 +37,10 @@ public interface ItemCompat {
     }
 
     default boolean spawnAspectOrb(ServerLevel level, double x, double y, double z, Aspect aspect, int amount) {
+        throw new UnsupportedOperationException();
+    }
+
+    default void spawnWisps(ServerLevel level, BlockPos pos, AspectList aspects, int salisMundusCount) {
         throw new UnsupportedOperationException();
     }
 
