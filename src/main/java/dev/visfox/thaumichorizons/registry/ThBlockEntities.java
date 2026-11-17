@@ -6,6 +6,7 @@ import dev.visfox.thaumichorizons.blockentity.EssentiaDynamoBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.IlluminationLightBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.NodeMonitorBlockEntity;
+import dev.visfox.thaumichorizons.blockentity.RecombinatorBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulExtractorBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulforgeBlockEntity;
@@ -43,6 +44,8 @@ public final class ThBlockEntities {
     public static final Supplier<BlockEntityType<TransductionAmplifierBlockEntity>> TRANSDUCTION_AMPLIFIER =
         BLOCK_ENTITIES.register("transductionamplifier",
             () -> new BlockEntityType<>(TransductionAmplifierBlockEntity::new, ThBlocks.TRANSDUCTION_AMPLIFIER.get()));
+    public static final Supplier<BlockEntityType<RecombinatorBlockEntity>> RECOMBINATOR = BLOCK_ENTITIES.register(
+        "recombinator", () -> new BlockEntityType<>(RecombinatorBlockEntity::new, ThBlocks.RECOMBINATOR.get()));
     public static final Supplier<BlockEntityType<VortexBlockEntity>> VORTEX = BLOCK_ENTITIES.register(
         "vortexth", () -> new BlockEntityType<>(VortexBlockEntity::new, ThBlocks.VORTEX.get()));
     public static final Supplier<BlockEntityType<VortexStabilizerBlockEntity>> VORTEX_STABILIZER = BLOCK_ENTITIES.register(
