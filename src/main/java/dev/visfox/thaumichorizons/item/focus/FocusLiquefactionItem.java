@@ -285,8 +285,6 @@ public class FocusLiquefactionItem extends FocusItem {
                 }
             }
 
-            // Legacy Nuggets upgrade: each level independently has a 45% chance
-            // to drop one bonus item from Thaumcraft's smelting-bonus table.
             int nuggetLevel = Wands.getFocusUpgrade(stack, NUGGETS);
             if (nuggetLevel > 0 && Compat.port().items().isAvailable()) {
                 Item bonusItem = Compat.port().items().getSmeltingBonus(new ItemStack(blockState.getBlock()));
