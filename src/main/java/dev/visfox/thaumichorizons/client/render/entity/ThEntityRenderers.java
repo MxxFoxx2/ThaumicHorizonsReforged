@@ -25,6 +25,8 @@ public final class ThEntityRenderers {
     static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ThEntities.ALCHEMITE_PRIMED.get(), AlchemitePrimedRenderer::new);
         event.registerEntityRenderer(ThEntities.EGG_INCUBATED.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ThEntities.SYRINGE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ThEntities.BLAST_PHIAL.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ThEntities.CHROMATIC_SHEEP.get(), SheepRenderer::new);
         event.registerEntityRenderer(ThEntities.SELF_SHEARING_SHEEP.get(), SheepRenderer::new);
         event.registerEntityRenderer(ThEntities.GUARDIAN_PANTHER.get(), GuardianPantherRenderer::new);

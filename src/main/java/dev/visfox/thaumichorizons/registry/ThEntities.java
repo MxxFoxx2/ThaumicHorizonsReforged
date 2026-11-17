@@ -2,6 +2,8 @@ package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.entity.AlchemitePrimedEntity;
+import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
+import dev.visfox.thaumichorizons.entity.SyringeProjectile;
 import dev.visfox.thaumichorizons.entity.ChocolateCow;
 import dev.visfox.thaumichorizons.entity.ChromaticSheep;
 import dev.visfox.thaumichorizons.entity.Endersteed;
@@ -37,6 +39,14 @@ public final class ThEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<AlchemitePrimedEntity>> ALCHEMITE_PRIMED =
         ENTITIES.registerEntityType("alchemiteprimed", AlchemitePrimedEntity::new, MobCategory.MISC,
             builder -> builder.sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE =
+        ENTITIES.registerEntityType("syringe_projectile", SyringeProjectile::new, MobCategory.MISC,
+            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BlastPhialProjectile>> BLAST_PHIAL =
+        ENTITIES.registerEntityType("blast_phial", BlastPhialProjectile::new, MobCategory.MISC,
+            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EggIncubatedEntity>> EGG_INCUBATED =
         ENTITIES.registerEntityType("eggincubated", EggIncubatedEntity::new, MobCategory.MISC,

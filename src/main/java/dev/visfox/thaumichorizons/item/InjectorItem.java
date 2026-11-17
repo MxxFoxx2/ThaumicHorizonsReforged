@@ -1,11 +1,17 @@
 package dev.visfox.thaumichorizons.item;
 
+import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
+import dev.visfox.thaumichorizons.entity.SyringeProjectile;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
@@ -52,26 +58,45 @@ public class InjectorItem extends Item {
         if (ammo == null) {
             return true;
         }
+
         int charge = getUseDuration(stack, entity) - timeLeft;
-        float f = charge / 30.0F;
-        f = (f * f + f * 2.0F) / 3.0F;
-        if (f < 0.1F) {
+        float draw = charge / 30.0F;
+        draw = (draw * draw + draw * 2.0F) / 3.0F;
+        if (draw < 0.1F) {
             return true;
         }
-        if (f > 1.0F) {
-            f = 1.0F;
+        draw = Math.min(draw, 1.0F);
+
+        if (!world.isClientSide()) {
+            float projectilePower = draw * 2.0F;
+            if (ThItems.SYRINGE_INJECTION.get().isPhial(ammo)) {
+                world.addFreshEntity(new BlastPhialProjectile(world, player, ammo, projectilePower));
+            } else {
+                SyringeProjectile projectile = new SyringeProjectile(world, player, ammo, projectilePower, stack);
+                HolderGetter<Enchantment> enchantments = player.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                int power = stack.getEnchantmentLevel(enchantments.getOrThrow(Enchantments.POWER));
+                projectile.setBaseDamage(1.5D + (power > 0 ? power * 0.5D + 0.5D : 0.0D));
+                if (draw >= 1.0F) {
+                    projectile.setCritArrow(true);
+                }
+                if (stack.getEnchantmentLevel(enchantments.getOrThrow(Enchantments.FLAME)) > 0) {
+                    projectile.igniteForTicks(100);
+                }
+                world.addFreshEntity(projectile);
+            }
+
+            stack.hurtAndBreak(1, player, player.getUsedItemHand().asEquipmentSlot());
+            world.playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.ARROW_SHOOT,
+                net.minecraft.sounds.SoundSource.PLAYERS, 1.0F,
+                1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + draw * 0.5F);
+            rotateAmmo(stack);
         }
-        stack.hurtAndBreak(1, player, net.minecraft.world.InteractionHand.MAIN_HAND.asEquipmentSlot());
-        world.playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.ARROW_SHOOT,
-            net.minecraft.sounds.SoundSource.PLAYERS, 1.0F,
-            1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-        rotateAmmo(stack);
         return true;
     }
 
     public @Nullable ItemStack getAmmo(ItemStack stack, int slot) {
         SyringeKeys.AmmoData data = SyringeKeys.AMMO.get(stack);
-        if (data == null || slot >= data.ammo().size()) {
+        if (data == null || slot < 0 || slot >= data.ammo().size()) {
             return null;
         }
         ItemStack ammo = data.ammo().get(slot);

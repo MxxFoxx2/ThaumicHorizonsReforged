@@ -21,6 +21,16 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Walk through/stand against each spike orientation; confirm the collision bounds match the old 1/16 inset and entity contact applies 1 cactus damage per collision tick.
 - [ ] Check the OBJ render and all three textures from every direction; check block/item icons in inventory and hand. The current inventory/hand model is a generated 2D texture icon, not the old 3D inventory model.
 
+## Injector projectiles — source and CI coverage only
+
+- [ ] Load a seven-slot injector with ordinary syringe ammunition and phial ammunition. Confirm Shift-right-click opens the loader and that the first non-empty slot cycles into the firing position.
+- [ ] Hold the injector for short, medium and full charges. Confirm the legacy draw curve/threshold, one durability point per successful shot, and server-side ammunition rotation without duplicate client entities.
+- [ ] Fire an ordinary syringe at a living target. Confirm its stored PotionContents effects are applied only after a successful hit; hit a block and recover the embedded syringe, then confirm its potion data is intact. Check pickup restrictions for non-player shooters and despawn behavior.
+- [ ] Enchant the injector with Power, Punch and Flame. Confirm Power increases dart damage, Punch applies knockback, and Flame ignites a hit target for five seconds. Confirm a full charge produces the critical-arrow effect.
+- [ ] Fire phial ammunition from the injector and use a phial directly. Confirm each creates one splash projectile with the same effect list and splash behavior as the source syringe item, and that survival consumption/creative preservation matches the original.
+- [ ] Test both projectiles with two clients and through save/reload while embedded/in flight. Check that projectile state and potion payload remain synchronized.
+- [ ] Inspect projectile appearance in hand, flight and impact. The syringe currently uses a 2D syringe item sprite via ThrownItemRenderer; replace/verify against the legacy 3D model and check Blast Phial tint/scale/orientation.
+
 ## Gate 1 — after machines + creatures (V-phase)
 
 ```sh

@@ -91,7 +91,8 @@ public final class ThItems {
         SyringeBloodItem::new);
     public static final DeferredItem<SyringeBloodSampleItem> SYRINGE_BLOOD_SAMPLE = ITEMS.registerItem("syringebloodsample",
         SyringeBloodSampleItem::new);
-    public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new);
+    public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new,
+        properties -> properties.stacksTo(1).enchantable(3));
     public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseeffigy",
         CorpseEffigyItem::new);
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);
