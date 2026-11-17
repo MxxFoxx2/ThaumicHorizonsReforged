@@ -7,6 +7,7 @@ import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.IlluminationLightBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.NodeMonitorBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.RecombinatorBlockEntity;
+import dev.visfox.thaumichorizons.blockentity.SpikeBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulExtractorBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulforgeBlockEntity;
@@ -30,6 +31,9 @@ public final class ThBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ThaumicHorizons.MODID);
 
+    public static final Supplier<BlockEntityType<SpikeBlockEntity>> SPIKE = BLOCK_ENTITIES.register(
+        "spiketh", () -> new BlockEntityType<>(SpikeBlockEntity::new,
+            java.util.Set.of(ThBlocks.SPIKE.get(), ThBlocks.SPIKE_WOOD.get(), ThBlocks.SPIKE_TOOTH.get())));
     public static final Supplier<BlockEntityType<VisDynamoBlockEntity>> VIS_DYNAMO = BLOCK_ENTITIES.register(
         "visdynamo", () -> new BlockEntityType<>(VisDynamoBlockEntity::new, ThBlocks.VIS_DYNAMO.get()));
     public static final Supplier<BlockEntityType<EssentiaDynamoBlockEntity>> ESSENTIA_DYNAMO = BLOCK_ENTITIES.register(
