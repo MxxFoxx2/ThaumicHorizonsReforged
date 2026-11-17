@@ -33,11 +33,18 @@ public class KeystoneItem extends Item {
         return data.copyTag().getIntOr("dimension", 0);
     }
 
-    public static ItemStack create(int planeID) {
-        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
+    private static CompoundTag boundData(int planeID) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("dimension", planeID);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        if (PocketPlanes.validPlane(planeID)) {
+            tag.putString("name", PocketPlanes.planes.get(planeID).name);
+        }
+        return tag;
+    }
+
+    public static ItemStack create(int planeID) {
+        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(planeID)));
         return stack;
     }
 
@@ -55,9 +62,7 @@ public class KeystoneItem extends Item {
                 return InteractionResult.PASS;
             }
             if (!level.isClientSide()) {
-                CompoundTag tag = new CompoundTag();
-                tag.putInt("dimension", vortex.dimensionID);
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(vortex.dimensionID)));
             }
             return InteractionResult.SUCCESS;
         }
@@ -83,6 +88,11 @@ public class KeystoneItem extends Item {
         int planeID = getPlaneID(stack);
         if (isBound(stack) && PocketPlanes.validPlane(planeID)) {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth"));
+            CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+            String planeName = data == null ? "" : data.copyTag().getStringOr("name", "");
+            if (!planeName.isBlank()) {
+                builder.accept(Component.literal(planeName));
+            }
         } else {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth_blank"));
         }
