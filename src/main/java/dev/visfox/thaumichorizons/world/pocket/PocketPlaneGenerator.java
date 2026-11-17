@@ -26,6 +26,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
@@ -158,7 +159,13 @@ public final class PocketPlaneGenerator {
 
     static void setBlock(ServerLevel world, int x, int y, int z, Block block, int md) {
         world.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
-        world.setBlock(new BlockPos(x, y, z), block.defaultBlockState(), 2);
+        BlockState state = block.defaultBlockState();
+        // Legacy snow-layer metadata stores (layers - 1); other metadata
+        // variants have already been converted to distinct modern block IDs.
+        if (block == Blocks.SNOW && state.hasProperty(SnowLayerBlock.LAYERS)) {
+            state = state.setValue(SnowLayerBlock.LAYERS, Math.max(1, Math.min(8, md + 1)));
+        }
+        world.setBlock(new BlockPos(x, y, z), state, 2);
     }
 
     public static void setBlockPublic(ServerLevel world, int x, int y, int z, Block block) {
