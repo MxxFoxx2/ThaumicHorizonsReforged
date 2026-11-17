@@ -1,10 +1,13 @@
 package dev.visfox.thaumichorizons.lib;
 
+import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,6 +15,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -19,6 +25,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
+import thaumcraft.aspect.AspectList;
 import thaumcraft.node.Node;
 import thaumcraft.node.NodeModifier;
 import thaumcraft.node.NodeType;
@@ -172,23 +179,58 @@ public class ExplosionAlchemite {
                     this.explosionX, this.explosionY, this.explosionZ, 1.0, 0.0, 0.0);
             }
         }
-        for (BlockPos blockpos : this.affectedBlockPositions) {
-            BlockState block = this.level.getBlockState(blockpos);
-            if (this.level.getBlockEntity(blockpos) instanceof Node node) {
-                double d = Math.random();
-                if (d < 0.25) {
-                    this.level.destroyBlock(blockpos, false);
-                } else if (d < 0.5) {
-                    node.setNodeModifier(NodeModifier.FADING);
-                    this.level.sendBlockUpdated(blockpos, block, block, 3);
-                } else {
-                    node.setNodeModifier(null);
-                    node.setNodeType(NodeType.UNSTABLE);
-                    this.level.sendBlockUpdated(blockpos, block, block, 3);
+        if (this.level instanceof ServerLevel serverLevel && Compat.port().items().isAvailable()) {
+            var itemCompat = Compat.port().items();
+            Item essenceItem = itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"));
+            for (BlockPos blockpos : this.affectedBlockPositions) {
+                BlockState block = serverLevel.getBlockState(blockpos);
+                if (serverLevel.getBlockEntity(blockpos) instanceof Node node) {
+                    double d = serverLevel.getRandom().nextDouble();
+                    if (d < 0.25) {
+                        if (essenceItem != null) {
+                            dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem);
+                            if (Compat.port().fx().isAvailable()) {
+                                Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
+                            }
+                        }
+                        serverLevel.destroyBlock(blockpos, false);
+                    } else if (d < 0.5) {
+                        node.setNodeModifier(NodeModifier.FADING);
+                        serverLevel.sendBlockUpdated(blockpos, block, block, 3);
+                    } else {
+                        node.setNodeModifier(null);
+                        node.setNodeType(NodeType.UNSTABLE);
+                        serverLevel.sendBlockUpdated(blockpos, block, block, 3);
+                    }
+                } else if (!block.isAir()) {
+                    Item blockItem = block.getBlock().asItem();
+                    AspectList aspects = blockItem == Items.AIR
+                        ? null
+                        : itemCompat.getObjectAspects(new ItemStack(blockItem));
+                    if (essenceItem != null && aspects != null && !aspects.isEmpty()) {
+                        dropCrystallizedEssence(serverLevel, blockpos, aspects, essenceItem);
+                        if (Compat.port().fx().isAvailable()) {
+                            Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
+                        }
+                        serverLevel.destroyBlock(blockpos, false, this.exploder);
+                    } else {
+                        serverLevel.destroyBlock(blockpos, true, this.exploder);
+                    }
                 }
-            } else if (!block.isAir()) {
-                this.level.destroyBlock(blockpos, true, this.exploder);
             }
+        }
+    }
+
+    private static void dropCrystallizedEssence(ServerLevel level, BlockPos pos, AspectList aspects, Item item) {
+        for (Aspect aspect : aspects.getAspects()) {
+            int amount = aspects.getAmount(aspect);
+            if (amount <= 0) {
+                continue;
+            }
+            ItemStack essence = new ItemStack(item, amount);
+            Compat.port().items().setSingleAspect(essence, aspect, 1);
+            level.addFreshEntity(new InvulnerableItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5,
+                pos.getZ() + 0.5, essence));
         }
     }
 }
