@@ -331,7 +331,10 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         if (level == null || level.isClientSide() || !hasKeystone) {
             return InteractionResult.PASS;
         }
-        ItemStack keystone = KeystoneItem.create(removeKeystone());
+        int planeID = pocketID;
+        int color = keystoneColor;
+        removeKeystone();
+        ItemStack keystone = KeystoneItem.create(planeID, color);
         if (!player.getInventory().add(keystone)) {
             level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(level,
                 worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
@@ -353,8 +356,10 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             destroyPortal(server, pos);
         }
         if (hasKeystone) {
-            int planeID = removeKeystone();
-            ItemStack keystone = KeystoneItem.create(planeID);
+            int planeID = pocketID;
+            int color = keystoneColor;
+            removeKeystone();
+            ItemStack keystone = KeystoneItem.create(planeID, color);
             server.addFreshEntity(new ItemEntity(server, pos.getX() + 0.5D, pos.getY() + 0.5D,
                 pos.getZ() + 0.5D, keystone));
         }

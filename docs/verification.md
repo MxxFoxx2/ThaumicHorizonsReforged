@@ -133,7 +133,7 @@ Two clients on the same server:
 - [ ] Right-click a valid generated Pocket Plane vortex with a blank Keystone. Confirm it binds to the correct plane, persists through inventory/world save and displays the bound tooltip; confirm invalid vortices and non-Pocket-Plane dimensions do not bind it.
 - [ ] Insert a bound Keystone into an empty Slot; remove it with an empty hand; confirm the same plane ID is preserved. Test inventory-full drops, invalid plane IDs and multiplayer synchronization.
 - [ ] Build both gateway orientations around the Slot using the original frame: four `thaumcraft:advanced_alchemical_construct` corners and eleven `thaumcraft:ancient_stone` border blocks. Confirm substituted/arbitrary blocks are rejected; activate with a wand, verify aspect cost, portal opening/closing, the four-portal limit, and frame restoration after teardown/reload. After closure, confirm the 3×3 opening is still air and the portal can be opened again without rebuilding the frame.
-- [ ] Check the legacy custom 5×5 PlanarGateway research-page visualization and the inlaid Keystone model separately: neither is claimed complete by the current static Slot model and normal Infusion page.
+- [ ] The custom 5×5 PlanarGateway research-page visualization remains unported because the current ResearchPage API has no matching page type. Validate the dynamic inlaid Keystone renderer in a live client for alignment, receptacle-atlas UVs, aspect tint and disappearance after extraction.
 
 ## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 

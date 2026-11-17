@@ -56,6 +56,15 @@ public class KeystoneItem extends Item {
         return stack;
     }
 
+    /** Recreates a bound Keystone using the exact tint previously stored by its Slot. */
+    public static ItemStack create(int planeID, int color) {
+        CompoundTag tag = boundData(planeID);
+        tag.putInt("color", color & 0xFFFFFF);
+        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        return stack;
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         ItemStack stack = context.getItemInHand();
