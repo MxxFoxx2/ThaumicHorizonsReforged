@@ -36,6 +36,7 @@ public final class ThRecipes {
         infusion2();
         infusion3();
         infusion4();
+        infusionPocketPlane();
         mirrorAmulet();
     }
 
@@ -258,6 +259,37 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:water_shard"), TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:water_shard"))));
+    }
+
+    private static void infusionPocketPlane() {
+        // Blank keystone: imprint it by right-clicking a generated Pocket Plane vortex.
+        TcRecipes.register(new InfusionRecipe("pocketPlane", "pocketPlane",
+            TcStack.of("thaumichorizons:keystoneth"), 6,
+            new AspectList().add(Aspect.TRAVEL, 32).add(Aspect.VOID, 32).add(Aspect.EXCHANGE, 16),
+            TcIngredient.item("thaumichorizons:planarconduit"), List.of(
+                TcIngredient.item("minecraft:quartz"), TcIngredient.item("thaumcraft:balanced_shard"),
+                TcIngredient.item("minecraft:quartz"), TcIngredient.item("thaumcraft:balanced_shard"),
+                TcIngredient.item("minecraft:quartz"), TcIngredient.item("thaumcraft:balanced_shard"),
+                TcIngredient.item("minecraft:quartz"), TcIngredient.item("thaumcraft:balanced_shard"))));
+
+        // Secondary Keystone recipe unlocked by Planar Gateways research.
+        TcRecipes.register(new InfusionRecipe("planarKeystone", "planarKeystone",
+            TcStack.of("thaumichorizons:keystoneth"), 6,
+            new AspectList().add(Aspect.TRAVEL, 24).add(Aspect.VOID, 24).add(Aspect.ELDRITCH, 12),
+            TcIngredient.item("minecraft:diamond"), List.of(
+                TcIngredient.item("thaumcraft:quicksilver"), TcIngredient.item("thaumcraft:balanced_shard"),
+                TcIngredient.item("thaumcraft:quicksilver"), TcIngredient.item("thaumcraft:balanced_shard"))));
+
+        // The receptacle that anchors a gateway frame around the inserted Keystone.
+        TcRecipes.register(new InfusionRecipe("planarKeystoneSlot", "planarKeystone",
+            TcStack.of("thaumichorizons:slotth"), 8,
+            new AspectList().add(Aspect.VOID, 32).add(Aspect.TRAVEL, 24)
+                .add(Aspect.MECHANISM, 24).add(Aspect.ELDRITCH, 24),
+            TcIngredient.item("thaumichorizons:planarconduit"), List.of(
+                TcIngredient.item("minecraft:gold_ingot"), TcIngredient.item("thaumcraft:void_metal_ingot"),
+                TcIngredient.item("minecraft:gold_ingot"), TcIngredient.item("thaumcraft:void_metal_ingot"),
+                TcIngredient.item("minecraft:gold_ingot"), TcIngredient.item("thaumcraft:void_metal_ingot"),
+                TcIngredient.item("minecraft:gold_ingot"), TcIngredient.item("thaumcraft:void_metal_ingot"))));
     }
 
     private static void infusion4() {

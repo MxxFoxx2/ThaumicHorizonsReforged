@@ -19,6 +19,15 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 - The original arcane recipe aspect costs and ingredients are restored and linked to the existing Greatwood/Thaumium research pages.
 - The 1.7.10 movement multipliers are not copied into the modern paddle-control physics. Exact relative speed and collision-damage parity therefore remain a live-client comparison, not a claimed 1:1 port.
 
+## Planar Keystone and receptacle — partial port
+
+- The original blank Keystone infusion recipe is registered under `pocketPlane`: Planar Conduit central ingredient, four Quartz and four Balanced Shards, with TRAVEL 32 / VOID 32 / EXCHANGE 16 and instability 6.
+- The alternate Keystone recipe is registered under `planarKeystone`: Diamond central ingredient, two Quicksilver and two Balanced Shards, with TRAVEL 24 / VOID 24 / ELDRITCH 12 and instability 6.
+- The Slot receptacle recipe is registered under `planarKeystoneSlot`: Planar Conduit central ingredient, four Gold Ingots and four Void Metal Ingots, with VOID 32 / TRAVEL 24 / MECHANISM 24 / ELDRITCH 24 and instability 8.
+- Research pages now reference the correct recipe keys. PocketRegistry items (Keystone, Planar Conduit and Slot) are exposed in the Thaumic Horizons creative tab. Keystone and Slot item models exist; Slot has a static frame model using the original receptacle texture.
+- The modern ResearchPage API currently has no page type for the original custom 5×5 PlanarGateway infusion display, so the legacy multi-block recipe visualization is not yet ported. The Slot model also does not yet draw the inserted Keystone or its plane color; this remains visual work.
+- All recipe registration, crafting, binding, insertion/extraction and gateway activation still require client/world verification.
+
 ## Creature entities — modern-parent substitutions
 
 - Panther / Gravekeeper / Familiar extend `TamableAnimal` instead of the ocelot lineage (modern `Cat`/`Ocelot` carry variant and avoid-player AI baggage). Always-tamed semantics and TH owner AI preserved.

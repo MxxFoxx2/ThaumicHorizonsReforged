@@ -20,6 +20,9 @@ public final class ThCreativeTabs {
             for (DeferredHolder<Item, ? extends Item> holder : ThItems.ITEMS.getEntries()) {
                 output.accept(holder.get());
             }
+            for (DeferredHolder<Item, ? extends Item> holder : PocketRegistry.ITEMS.getEntries()) {
+                output.accept(holder.get());
+            }
         })
         .build());
 

@@ -122,6 +122,17 @@ Two clients on the same server:
 - [ ] Backport branches (26.1.2, 1.21.1) build and pass Gate 1
 
 
+## Planar Keystone and Slot — source and CI coverage only
+
+- [ ] Complete `pocketPlane` research and craft a blank Keystone. Verify central Planar Conduit, four Quartz, four Balanced Shards, and TRAVEL 32 / VOID 32 / EXCHANGE 16.
+- [ ] Complete `planarKeystone` research and craft the alternate Keystone. Verify central Diamond, two Quicksilver, two Balanced Shards, and TRAVEL 24 / VOID 24 / ELDRITCH 12.
+- [ ] Craft the Slot receptacle from its `planarKeystoneSlot` infusion page. Verify central Planar Conduit, four Gold Ingots, four Void Metal Ingots, and VOID 32 / TRAVEL 24 / MECHANISM 24 / ELDRITCH 24.
+- [ ] Confirm Keystone and Planar Conduit appear in the creative tab; place the Slot item and inspect the static receptacle model and collision/interaction target.
+- [ ] Right-click a valid generated Pocket Plane vortex with a blank Keystone. Confirm it binds to the correct plane, persists through inventory/world save and displays the bound tooltip; confirm invalid vortices and non-Pocket-Plane dimensions do not bind it.
+- [ ] Insert a bound Keystone into an empty Slot; remove it with an empty hand; confirm the same plane ID is preserved. Test inventory-full drops, invalid plane IDs and multiplayer synchronization.
+- [ ] Build both gateway orientations around the Slot, activate with a wand, verify aspect cost, portal opening/closing, the four-portal limit, and teardown/reload persistence.
+- [ ] Check the legacy custom 5×5 PlanarGateway research-page visualization and the inlaid Keystone model separately: neither is claimed complete by the current static Slot model and normal Infusion page.
+
 ## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 
 The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open. The source Vortex now consumes a primordial_pearl item after stabilization, creates the pocket plane, and records the source dimension + return coordinates. The generated vortex and source vortex both use the same saved plane ID for bidirectional player travel. When the source vortex collapses, its generated pocket vortex is removed after the original 25-tick delay. CI validates compilation and JAR contents only; no live-world travel has been marked tested. Portal source endpoints now persist a dimension identifier, coordinates and frame orientation. Portal blocks implement both entry into the Pocket Plane and return to the recorded source world; Keystone binding/insertion/extraction and wand-triggered slot opening are wired. The gateway geometry check now validates the 3×3 opening and 15 frame blocks. These are code/CI checks only; no live-world portal travel has been claimed as tested.

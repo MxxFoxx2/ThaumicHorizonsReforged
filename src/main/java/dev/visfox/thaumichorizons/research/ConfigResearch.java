@@ -594,7 +594,7 @@ public final class ConfigResearch {
             PageSpec.text("planarKeystone1"),
             PageSpec.recipes(PageKind.INFUSION, "planarKeystone"),
             PageSpec.text("planarKeystone2"),
-            PageSpec.recipes(PageKind.INFUSION, "planarKeystone"));
+            PageSpec.recipes(PageKind.INFUSION, "planarKeystoneSlot"));
     }
 
     private static void registerGeneralInfusion() {

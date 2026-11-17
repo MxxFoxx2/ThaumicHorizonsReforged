@@ -11,6 +11,7 @@ import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.neoforged.bus.api.IEventBus;
@@ -29,6 +30,8 @@ public final class PocketRegistry {
         PortalTHBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 11));
     public static final net.neoforged.neoforge.registries.DeferredBlock<SlotBlock> SLOT = BLOCKS.registerBlock("slotth",
         SlotBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0F, 15.0F).noOcclusion());
+    public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> SLOT_ITEM = ITEMS.registerItem("slotth",
+        properties -> new BlockItem(SLOT.get(), properties.stacksTo(1)));
     public static final net.neoforged.neoforge.registries.DeferredItem<KeystoneItem> KEYSTONE_TH = ITEMS.registerItem("keystoneth",
         KeystoneItem::new, properties -> properties.stacksTo(1));
     public static final net.neoforged.neoforge.registries.DeferredItem<PlanarConduitItem> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
