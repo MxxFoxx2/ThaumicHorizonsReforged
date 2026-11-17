@@ -7,6 +7,9 @@ import dev.visfox.thaumichorizons.entity.SyringeProjectile;
 import dev.visfox.thaumichorizons.entity.ChocolateCow;
 import dev.visfox.thaumichorizons.entity.ChromaticSheep;
 import dev.visfox.thaumichorizons.entity.Endersteed;
+import dev.visfox.thaumichorizons.entity.HorseSkeleton;
+import dev.visfox.thaumichorizons.entity.HorseZombie;
+import dev.visfox.thaumichorizons.entity.NightmareTH;
 import dev.visfox.thaumichorizons.entity.EggIncubatedEntity;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.Familiar;
@@ -74,6 +77,16 @@ public final class ThEntities {
         "tainteaterpig", TaintEaterPig::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.78F));
     public static final DeferredHolder<EntityType<?>, EntityType<Endersteed>> ENDERSTEED = creature(
         "endersteed", Endersteed::new, builder -> builder.sized(1.3965F, 1.6F).eyeHeight(1.473F));
+    public static final DeferredHolder<EntityType<?>, EntityType<HorseZombie>> HORSE_ZOMBIE =
+        ENTITIES.registerEntityType("horse_zombie", HorseZombie::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<HorseSkeleton>> HORSE_SKELETON =
+        ENTITIES.registerEntityType("horse_skeleton", HorseSkeleton::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<NightmareTH>> NIGHTMARE =
+        ENTITIES.registerEntityType("nightmare", NightmareTH::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).fireImmune());
+
     public static final DeferredHolder<EntityType<?>, EntityType<Seawolf>> SEAWOLF = creature(
         "seawolf", Seawolf::new, builder -> builder.sized(0.6F, 0.85F).eyeHeight(0.425F));
     public static final DeferredHolder<EntityType<?>, EntityType<NetherHound>> NETHER_HOUND = creature(
@@ -122,6 +135,9 @@ public final class ThEntities {
         event.put(ORE_PIG.get(), OrePig.createAttributes().build());
         event.put(TAINT_EATER_PIG.get(), TaintEaterPig.createAttributes().build());
         event.put(ENDERSTEED.get(), Endersteed.createAttributes().build());
+        event.put(HORSE_ZOMBIE.get(), HorseZombie.createAttributes().build());
+        event.put(HORSE_SKELETON.get(), HorseSkeleton.createAttributes().build());
+        event.put(NIGHTMARE.get(), NightmareTH.createAttributes().build());
         event.put(SEAWOLF.get(), Seawolf.createAttributes().build());
         event.put(NETHER_HOUND.get(), NetherHound.createAttributes().build());
         event.put(LUNAR_WOLF.get(), LunarWolf.createAttributes().build());

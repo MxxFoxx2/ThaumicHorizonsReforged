@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.infusion;
 
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.entity.Endersteed;
+import dev.visfox.thaumichorizons.entity.NightmareTH;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
@@ -396,7 +397,7 @@ public final class ThInfusionRecipes {
         critterRecipes.add(new CreatureInfusionRecipe("nightmareInfusion", 22, 8,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.FIRE, 32).add(thaumcraft.aspect.Aspect.TRAVEL, 16)
                 .add(thaumcraft.aspect.Aspect.VOID, 16),
-            Endersteed.class,
+            NightmareTH.class,
             new ItemStack[] { new ItemStack(Items.NETHER_STAR), new ItemStack(Blocks.OBSIDIAN),
                 tc("fire_shard"), block("arcane_bellows"), tc("fire_shard"), new ItemStack(Blocks.OBSIDIAN) },
             0));
