@@ -44,9 +44,9 @@
 *[aA][uU][tT][oO][gG][eE][nN][eE][rR][aA][tT][eE][dD]* binary
 
 # Keep GitHub-generated source archives focused on the actual mod source/build files.
-/.github/ export-ignore
-/docs/ export-ignore
-/reference/ export-ignore
-/tools/ export-ignore
+/.github/** export-ignore
+/docs/** export-ignore
+/reference/** export-ignore
+/tools/** export-ignore
 /AGENTS.md export-ignore
 /CLAUDE.md export-ignore
