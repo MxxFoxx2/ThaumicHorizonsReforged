@@ -41,6 +41,7 @@ python -I tools/check_seams.py
 ## Additional content checks added after the original Gate 2 pass
 
 - [ ] Incubated Egg: obtain via `alchIncubation`, throw it, confirm projectile renders and hatches a baby chicken on impact.
+- [ ] Recombinator: place it directly above a node, power it with redstone and confirm activation after placement/reload. After the 50-tick warm-up, confirm it samples nearby unlocked aura nodes; verify the four combination priorities in order (primal+primal, source-primal, target-primal, any+any), random valid result selection, one source aspect consumed, one target aspect consumed, and a 1-in-3 chance to reduce the target's base amount. Confirm the 32-block node-zap effect and persistence of active/count state. Static block geometry is present; moving pearl and active ring animation remain unported.
 - [ ] Planar Conduit: craft using `planarTheory`; verify the Transduction Amplifier arcane recipe and Vortex Stabilizer infusion recipe against the reference ingredients/aspect costs.
 - [ ] Confirm the thrown Incubated Egg renders in-game. `ThrownItemRenderer` is now registered for `ThaumicHorizons:eggincubated`; no missing-renderer log or invisible projectile in a live client.
 - [ ] Mirror Amulet: craft it, link it to an ordinary TC4R mirror, die with inventory and bauble items, and confirm the items are transported through the mirror and the amulet is consumed.
