@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.visfox.thaumichorizons.platform.StackKey;
+import java.util.Objects;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,6 +29,10 @@ public final class SoulJarKeys {
     }
 
     public static final StackKey<SoulJarData> DATA = StackKey.register("soul_jar", SoulJarData.CODEC, SoulJarData.STREAM_CODEC);
+
+    public static void initialize() {
+        Objects.requireNonNull(DATA);
+    }
 
     private SoulJarKeys() {
     }

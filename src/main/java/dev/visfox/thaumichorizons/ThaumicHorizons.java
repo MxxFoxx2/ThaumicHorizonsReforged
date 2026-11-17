@@ -34,6 +34,8 @@ public class ThaumicHorizons {
         dev.visfox.thaumichorizons.infusion.ThInfusionRecipes.init();
         DataAttachments.register(modEventBus);
         dev.visfox.thaumichorizons.platform.StackData.register(modEventBus);
+        dev.visfox.thaumichorizons.item.SyringeKeys.initialize();
+        dev.visfox.thaumichorizons.item.SoulJarKeys.initialize();
         ThEffects.register(modEventBus);
         ThSounds.register(modEventBus);
         ThBlocks.register(modEventBus);

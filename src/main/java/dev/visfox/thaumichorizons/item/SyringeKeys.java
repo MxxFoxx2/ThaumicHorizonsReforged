@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -67,6 +68,13 @@ public final class SyringeKeys {
     }
 
     public static final StackKey<SampleData> SAMPLE = StackKey.register("syringe_sample", SampleData.CODEC, SampleData.STREAM_CODEC);
+
+    public static void initialize() {
+        Objects.requireNonNull(INJECTION);
+        Objects.requireNonNull(BLOOD);
+        Objects.requireNonNull(AMMO);
+        Objects.requireNonNull(SAMPLE);
+    }
 
     private SyringeKeys() {
     }
