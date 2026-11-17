@@ -23,14 +23,22 @@ python -I tools/check_seams.py
 
 ## Gate 2 — after souls/Vat/GUI phase
 
-- [ ] Soul jar: wand-right-click an infused critter → jars it (name label), release works
+- [ ] Soul jar: wand-right-click an infused critter → jars it (name label), item survives inventory/drop/save/reload, placement preserves NBT, wand release restores the original entity. Capture, data transfer and release code were added in `6fd7614`; the full cycle has not yet been reproduced in-game.
 - [ ] Containment focus captures LostSoul
-- [ ] Vat multiblock forms; curative mode cures with containment foci *(partial 2026-11-16: formation reproduced in-world after trigger-registration fix — blueprint converts to VAT blocks, vis consumed server-side; curative mode still open)*
+- [x] Vat multiblock forms *(reproduced in-world 2026-11-16: blueprint converts to VAT blocks and vis is consumed server-side after trigger-registration fix)*
+- [ ] Curative Vat mode cures with containment foci
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
 - [ ] Corpse effigy + self-clone flow works
 - [ ] Blood infuser: syringe draw/inject cycle
-- [ ] All 8 menus open, slots behave, VisDynamo aspect toggles persist
+- [ ] All 9 registered menus (Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers, Vis Dynamo) open; slots behave and VisDynamo aspect toggles persist
 - [ ] Inspiratron: soul → research completion fires
+
+## Additional content checks added after the original Gate 2 pass
+
+- [ ] Incubated Egg: obtain via `alchIncubation`, throw it, confirm projectile renders and hatches a baby chicken on impact.
+- [ ] Planar Conduit: craft using `planarTheory`; verify the Transduction Amplifier arcane recipe and Vortex Stabilizer infusion recipe against the reference ingredients/aspect costs.
+- [ ] Soul Jar: test creature NBT and custom name through capture, item drop/pickup, inventory, placement, save/reload and release. Confirm a failed entity decode does not silently lose the jar/contained entity.
+- [ ] Confirm the missing projectile renderer does not produce a missing-renderer log or invisible projectile.
 
 ## Invisibility checklist (community requirement — run every phase touching infusions)
 
