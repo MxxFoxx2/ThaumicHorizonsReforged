@@ -1,12 +1,19 @@
 package dev.visfox.thaumichorizons.block;
 
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
+import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
+import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,12 +26,14 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import thaumcraft.aspect.Aspect;
+import thaumcraft.wand.WandInteractable;
 
 /**
  * A legacy cloud block. The variant is kept in block state rather than legacy metadata.
  * Server-side weather processing is implemented by CloudBlockEntity in the follow-up pass.
  */
-public class CloudBlock extends Block implements EntityBlock {
+public class CloudBlock extends Block implements EntityBlock, WandInteractable {
     public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 9);
 
     public CloudBlock(Properties properties, int defaultType) {
@@ -62,6 +71,44 @@ public class CloudBlock extends Block implements EntityBlock {
         }
         return (tickLevel, pos, tickState, entity) ->
             CloudBlockEntity.tick(tickLevel, pos, tickState, (CloudBlockEntity) entity);
+    }
+
+    @Override
+    public InteractionResult onWandUseOn(Level level, BlockPos pos, Player player, ItemStack wand, Direction side) {
+        if (!Compat.port().items().isWand(wand)
+                || !Compat.port().research().isComplete(player, "planarClouds")) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!Compat.port().items().consumeVis(wand, player, Aspect.AIR, 100, false)) {
+            return InteractionResult.PASS;
+        }
+
+        int type = level.getBlockState(pos).getValue(TYPE);
+        ItemStack cloud = new ItemStack(cloudItem(type));
+        InvulnerableItemEntity item = new InvulnerableItemEntity(level,
+            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, cloud);
+        level.addFreshEntity(item);
+        level.removeBlock(pos, false);
+        return InteractionResult.SUCCESS;
+    }
+
+    private static net.minecraft.world.item.Item cloudItem(int type) {
+        return switch (type) {
+            case 0 -> ThItems.CLOUD.get();
+            case 1 -> ThItems.CLOUD_FIRE.get();
+            case 2 -> ThItems.CLOUD_THUNDER.get();
+            case 3 -> ThItems.CLOUD_ACID.get();
+            case 4 -> ThItems.CLOUD_ALLOY.get();
+            case 5 -> ThItems.CLOUD_FLESH.get();
+            case 6 -> ThItems.CLOUD_VIS.get();
+            case 7 -> ThItems.CLOUD_GLYPH.get();
+            case 8 -> ThItems.CLOUD_SPORE.get();
+            case 9 -> ThItems.CLOUD_ANIMUS.get();
+            default -> throw new IllegalStateException("Unknown cloud type: " + type);
+        };
     }
 
     @Override

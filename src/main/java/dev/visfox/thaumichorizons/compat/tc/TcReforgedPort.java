@@ -327,6 +327,12 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
 
         @Override
+        public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
+            return stack.getItem() instanceof thaumcraft.wand.WandItem wand
+                && wand.consumeVis(stack, player, aspect, amount, crafting);
+        }
+
+        @Override
         public boolean isEssentiaJar(ItemStack stack) {
             return false;
         }

@@ -3,6 +3,8 @@ package dev.visfox.thaumichorizons.registry;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.tc.BaubleAmuletMirrorItem;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
+import dev.visfox.thaumichorizons.item.CloudBlockItem;
+import dev.visfox.thaumichorizons.block.CloudBlock;
 import dev.visfox.thaumichorizons.item.CorpseEffigyItem;
 import dev.visfox.thaumichorizons.item.EggIncubatedItem;
 import dev.visfox.thaumichorizons.item.FocusContainmentItem;
@@ -37,6 +39,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
+import java.util.function.Supplier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ThItems {
@@ -65,6 +68,17 @@ public final class ThItems {
         properties -> new Item(properties.food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.7F).build())));
     public static final DeferredItem<Item> MEAT_NUGGET = ITEMS.registerItem("meatnuggetth",
         properties -> new Item(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build())));
+
+    public static final DeferredItem<CloudBlockItem> CLOUD = cloudItem("cloudth", () -> ThBlocks.CLOUD.get(), 0);
+    public static final DeferredItem<CloudBlockItem> CLOUD_FIRE = cloudItem("cloudglowingth", () -> ThBlocks.CLOUD_GLOWING.get(), 1);
+    public static final DeferredItem<CloudBlockItem> CLOUD_THUNDER = cloudItem("cloudth_thunder", () -> ThBlocks.CLOUD.get(), 2);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ACID = cloudItem("cloudth_acid", () -> ThBlocks.CLOUD.get(), 3);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ALLOY = cloudItem("cloudglowingth_alloy", () -> ThBlocks.CLOUD_GLOWING.get(), 4);
+    public static final DeferredItem<CloudBlockItem> CLOUD_FLESH = cloudItem("cloudth_flesh", () -> ThBlocks.CLOUD.get(), 5);
+    public static final DeferredItem<CloudBlockItem> CLOUD_VIS = cloudItem("cloudglowingth_vis", () -> ThBlocks.CLOUD_GLOWING.get(), 6);
+    public static final DeferredItem<CloudBlockItem> CLOUD_GLYPH = cloudItem("cloudglowingth_glyph", () -> ThBlocks.CLOUD_GLOWING.get(), 7);
+    public static final DeferredItem<CloudBlockItem> CLOUD_SPORE = cloudItem("cloudth_spore", () -> ThBlocks.CLOUD.get(), 8);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ANIMUS = cloudItem("cloudglowingth_animus", () -> ThBlocks.CLOUD_GLOWING.get(), 9);
 
 
     public static final DeferredItem<SoulJarBlockItem> SOUL_JAR_ITEM = ITEMS.registerItem("souljar",
@@ -112,6 +126,10 @@ public final class ThItems {
         ItemLensCase::new, ItemLensCase::properties);
     public static final DeferredItem<EggIncubatedItem> EGG_INCUBATED = ITEMS.registerItem("eggincubated",
         EggIncubatedItem::new, properties -> properties.stacksTo(16));
+
+    private static DeferredItem<CloudBlockItem> cloudItem(String name, Supplier<CloudBlock> block, int type) {
+        return ITEMS.registerItem(name, properties -> new CloudBlockItem(block.get(), type, properties));
+    }
 
     private ThItems() {
     }

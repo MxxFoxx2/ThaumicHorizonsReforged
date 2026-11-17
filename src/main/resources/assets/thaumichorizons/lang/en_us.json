@@ -414,5 +414,15 @@
   "thaumichorizons.golemWarning3": "In the distance you hear hollow laughter.",
   "tooltip.thaumichorizons.syringe.empty": "Empty",
   "container.thaumichorizons.lenscase": "Lens Case",
-  "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite"
+  "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite",
+  "item.thaumichorizons.cloudth": "Cloud",
+  "item.thaumichorizons.cloudglowingth": "Fire Cloud",
+  "item.thaumichorizons.cloudth_thunder": "Thunder Cloud",
+  "item.thaumichorizons.cloudth_acid": "Acid Cloud",
+  "item.thaumichorizons.cloudglowingth_alloy": "Alloy Cloud",
+  "item.thaumichorizons.cloudth_flesh": "Flesh Cloud",
+  "item.thaumichorizons.cloudglowingth_vis": "Vis Cloud",
+  "item.thaumichorizons.cloudglowingth_glyph": "Glyph Cloud",
+  "item.thaumichorizons.cloudth_spore": "Spore Cloud",
+  "item.thaumichorizons.cloudglowingth_animus": "Animus Cloud"
 }

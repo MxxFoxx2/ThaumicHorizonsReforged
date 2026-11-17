@@ -63,12 +63,12 @@ public final class ThBlocks {
     public static final DeferredBlock<Block> VOID = withItem(BLOCKS.registerBlock("voidth",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(-1.0F, 6000000.0F).noCollision()
             .lightLevel(state -> 15).sound(SoundType.WOOL)));
-    public static final DeferredBlock<CloudBlock> CLOUD = withItem(BLOCKS.registerBlock("cloudth",
+    public static final DeferredBlock<CloudBlock> CLOUD = BLOCKS.registerBlock("cloudth",
         properties -> new CloudBlock(properties, 0), properties -> properties.mapColor(MapColor.SNOW)
-            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL)));
-    public static final DeferredBlock<CloudBlock> CLOUD_GLOWING = withItem(BLOCKS.registerBlock("cloudglowingth",
+            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL));
+    public static final DeferredBlock<CloudBlock> CLOUD_GLOWING = BLOCKS.registerBlock("cloudglowingth",
         properties -> new CloudBlock(properties, 1), properties -> properties.mapColor(MapColor.SNOW)
-            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL).lightLevel(state -> 15)));
+            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL).lightLevel(state -> 15));
     public static final DeferredBlock<Block> BRAIN = withItem(BLOCKS.registerBlock("brainth",
         Block::new, properties -> properties.mapColor(MapColor.COLOR_PINK).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<CrystalBlock> CRYSTAL = withItem(BLOCKS.registerBlock("crystalth",
