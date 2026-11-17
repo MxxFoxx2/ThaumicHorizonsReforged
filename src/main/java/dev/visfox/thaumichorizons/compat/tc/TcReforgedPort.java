@@ -336,8 +336,8 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
 
         @Override
-        public boolean hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
-            return entity.hurt(level.damageSources().source(ModDamageTypes.DISSOLVE), amount);
+        public void hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
+            entity.hurt(level.damageSources().source(ModDamageTypes.DISSOLVE), amount);
         }
 
         @Override

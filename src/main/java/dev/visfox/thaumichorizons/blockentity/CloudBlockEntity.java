@@ -136,8 +136,10 @@ public final class CloudBlockEntity extends BlockEntity {
     }
 
     private void spawnLightning(ServerLevel level, BlockPos ground) {
-        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
-        if (bolt == null) {
+        EntityType<?> lightningType = BuiltInRegistries.ENTITY_TYPE.getValue(
+            Identifier.fromNamespaceAndPath("minecraft", "lightning_bolt"));
+        Entity created = lightningType.create(level, EntitySpawnReason.TRIGGERED);
+        if (!(created instanceof LightningBolt bolt)) {
             return;
         }
         bolt.setPos(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5);
@@ -278,14 +280,18 @@ public final class CloudBlockEntity extends BlockEntity {
     }
 
     private void convertCowToMooshroom(ServerLevel level, LivingEntity cow) {
-        Entity converted = EntityType.MOOSHROOM.create(level, EntitySpawnReason.CONVERSION);
+        EntityType<?> mooshroomType = BuiltInRegistries.ENTITY_TYPE.getValue(
+            Identifier.fromNamespaceAndPath("minecraft", "mooshroom"));
+        Entity converted = mooshroomType.create(level, EntitySpawnReason.CONVERSION);
         if (!(converted instanceof LivingEntity mooshroom)) {
             return;
         }
         double x = cow.getX();
         double y = cow.getY();
         double z = cow.getZ();
-        mooshroom.moveTo(x, y, z, cow.getYRot(), cow.getXRot());
+        mooshroom.setPos(x, y, z);
+        mooshroom.setYRot(cow.getYRot());
+        mooshroom.setXRot(cow.getXRot());
         mooshroom.setHealth(cow.getHealth());
         cow.discard();
         level.addFreshEntity(mooshroom);

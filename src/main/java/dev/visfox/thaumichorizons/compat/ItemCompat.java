@@ -31,7 +31,7 @@ public interface ItemCompat {
         throw new UnsupportedOperationException();
     }
 
-    default boolean hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
+    default void hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
         throw new UnsupportedOperationException();
     }
 
