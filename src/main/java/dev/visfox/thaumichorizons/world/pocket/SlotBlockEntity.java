@@ -125,6 +125,12 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         return makePortal(player, wand) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
+    @Override
+    public InteractionResult onWandUseOn(Level level, BlockPos pos, Player player, ItemStack wand,
+            net.minecraft.core.Direction side) {
+        return makePortal(player, wand) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+    }
+
     public static void destroyPortal(Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof SlotBlockEntity slot) || level.isClientSide() || !slot.portalOpen) {
             return;
@@ -166,8 +172,8 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             frameZ(level, pos, 2, 0);
             frameZ(level, pos, -2, -4);
             frameZ(level, pos, 2, -4);
-            coreZ(level, pos, 0, -1);
-            coreZ(level, pos, 1, -1);
+            coreZ(level, pos, -1, 0);
+            coreZ(level, pos, 1, 0);
             coreZ(level, pos, -1, -4);
             coreZ(level, pos, 0, -4);
             coreZ(level, pos, 1, -4);
@@ -201,43 +207,61 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     public boolean checkPortalX() {
-        for (int x = -2; x <= 2; x++) {
-            for (int y = 0; y >= -4; y--) {
-                if (x != 0 || y != 0) {
-                    if (level == null || level.getBlockState(worldPosition.offset(x, y, 0)).isAir()) {
-                        return false;
-                    }
-                }
-            }
+        if (level == null) {
+            return false;
         }
-        for (int y = 0; y >= -4; y--) {
-            for (int z = -2; z <= 2; z++) {
-                if (level == null || !level.getBlockState(worldPosition.offset(0, y, z)).isAir()) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y >= -3; y--) {
+                if (!level.getBlockState(worldPosition.offset(x, y, 0)).isAir()) {
                     return false;
                 }
             }
         }
-        return true;
+        for (int x : new int[] { -2, 2 }) {
+            if (!isFrameBlock(x, 0) || !isFrameBlock(x, -4)) {
+                return false;
+            }
+            for (int y = -1; y >= -3; y--) {
+                if (!isFrameBlock(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return isFrameBlock(-1, 0) && isFrameBlock(1, 0)
+            && isFrameBlock(-1, -4) && isFrameBlock(0, -4) && isFrameBlock(1, -4);
     }
 
     public boolean checkPortalZ() {
-        for (int z = -2; z <= 2; z++) {
-            for (int y = 0; y >= -4; y--) {
-                if (z != 0 || y != 0) {
-                    if (level == null || level.getBlockState(worldPosition.offset(0, y, z)).isAir()) {
-                        return false;
-                    }
-                }
-            }
+        if (level == null) {
+            return false;
         }
-        for (int y = 0; y >= -4; y--) {
-            for (int x = -2; x <= 2; x++) {
-                if (level == null || !level.getBlockState(worldPosition.offset(x, y, 0)).isAir()) {
+        for (int z = -1; z <= 1; z++) {
+            for (int y = -1; y >= -3; y--) {
+                if (!level.getBlockState(worldPosition.offset(0, y, z)).isAir()) {
                     return false;
                 }
             }
         }
-        return true;
+        for (int z : new int[] { -2, 2 }) {
+            if (!isFrameBlockZ(z, 0) || !isFrameBlockZ(z, -4)) {
+                return false;
+            }
+            for (int y = -1; y >= -3; y--) {
+                if (!isFrameBlockZ(z, y)) {
+                    return false;
+                }
+            }
+        }
+        return isFrameBlockZ(-1, 0) && isFrameBlockZ(1, 0)
+            && isFrameBlockZ(-1, -4) && isFrameBlockZ(0, -4) && isFrameBlockZ(1, -4);
+    }
+
+    private boolean isFrameBlock(int xOffset, int yOffset) {
+        return level != null && !level.getBlockState(worldPosition.offset(xOffset, yOffset, 0)).isAir();
+    }
+
+    private boolean isFrameBlockZ(int zOffset, int yOffset) {
+        return level != null && !level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).isAir();
     }
 
     public boolean insertKeystone(int planeID) {
