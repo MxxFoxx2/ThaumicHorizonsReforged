@@ -44,6 +44,7 @@ python -I tools/check_seams.py
 - [ ] Mirror Amulet: craft it, link it to an ordinary TC4R mirror, die with inventory and bauble items, and confirm the items are transported through the mirror and the amulet is consumed.
 - [ ] Void Putty repair: combine a damaged repairable item with Void Putty and confirm the repaired item is returned with damage reset.
 - [ ] Focus Illumination dyeing: combine an Illumination Focus with one or more dyes and confirm the focus color changes to the legacy dye color.
+- [ ] Focus Illumination placement: place normal and Solar lights using several focus colors; confirm the invisible block state preserves indices 0–15 after save/reload and its ambient sparkle uses the selected palette color. Confirm Solar light still ignites undead for five seconds.
 
 ## Invisibility checklist (community requirement — run every phase touching infusions)
 
