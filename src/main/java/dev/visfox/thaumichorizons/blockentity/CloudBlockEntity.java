@@ -93,8 +93,74 @@ public final class CloudBlockEntity extends BlockEntity {
                     worldPosition.getY() + 0.5, worldPosition.getZ() + level.getRandom().nextDouble(), drop);
                 level.addFreshEntity(item);
             }
+            case 8 -> applyGrowthDrop(level, target);
         }
         setChanged();
+    }
+
+    private void applyGrowthDrop(ServerLevel level, BlockPos ground) {
+        BlockPos above = ground.above();
+        if (!level.isEmptyBlock(above)) {
+            return;
+        }
+
+        BlockState soil = level.getBlockState(ground);
+        var random = level.getRandom();
+        if (soil.is(Blocks.FARMLAND)) {
+            switch (random.nextInt(8)) {
+                case 1 -> level.setBlock(above, Blocks.MELON_STEM.defaultBlockState(), 3);
+                case 2 -> level.setBlock(above, Blocks.PUMPKIN_STEM.defaultBlockState(), 3);
+                case 3 -> level.setBlock(above, Blocks.CARROTS.defaultBlockState(), 3);
+                case 4 -> level.setBlock(above, Blocks.POTATOES.defaultBlockState(), 3);
+                default -> level.setBlock(above, Blocks.WHEAT.defaultBlockState(), 3);
+            }
+            return;
+        }
+        if (soil.is(Blocks.DIRT)) {
+            level.setBlock(ground, random.nextInt(10) == 4
+                ? Blocks.MYCELIUM.defaultBlockState() : Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+            return;
+        }
+        if (soil.is(Blocks.STONE) || soil.is(Blocks.MYCELIUM)) {
+            level.setBlock(above, (random.nextInt(3) == 1
+                ? Blocks.BROWN_MUSHROOM : Blocks.RED_MUSHROOM).defaultBlockState(), 3);
+            return;
+        }
+        if (soil.is(Blocks.SAND)) {
+            level.setBlock(above, random.nextInt(10) == 4
+                ? Blocks.DEAD_BUSH.defaultBlockState() : Blocks.CACTUS.defaultBlockState(), 3);
+            return;
+        }
+        if (soil.is(Blocks.SOUL_SAND)) {
+            level.setBlock(above, Blocks.NETHER_WART.defaultBlockState(), 3);
+            return;
+        }
+        if (soil.is(Blocks.GRASS_BLOCK)) {
+            int roll = random.nextInt(1000);
+            if (roll < 750) {
+                level.setBlock(above, switch (random.nextInt(6)) {
+                    case 0 -> Blocks.SHORT_GRASS.defaultBlockState();
+                    case 1 -> Blocks.FERN.defaultBlockState();
+                    case 2 -> Blocks.DANDELION.defaultBlockState();
+                    case 3 -> Blocks.POPPY.defaultBlockState();
+                    case 4 -> Blocks.AZURE_BLUET.defaultBlockState();
+                    default -> Blocks.OXEYE_DAISY.defaultBlockState();
+                }, 3);
+            } else if (roll < 950) {
+                level.setBlock(above, switch (random.nextInt(6)) {
+                    case 0 -> Blocks.OAK_SAPLING.defaultBlockState();
+                    case 1 -> Blocks.SPRUCE_SAPLING.defaultBlockState();
+                    case 2 -> Blocks.BIRCH_SAPLING.defaultBlockState();
+                    case 3 -> Blocks.JUNGLE_SAPLING.defaultBlockState();
+                    case 4 -> Blocks.ACACIA_SAPLING.defaultBlockState();
+                    default -> Blocks.DARK_OAK_SAPLING.defaultBlockState();
+                }, 3);
+            } else if (roll < 975) {
+                level.setBlock(above, Blocks.LILAC.defaultBlockState(), 3);
+            } else {
+                level.setBlock(above, Blocks.ROSE_BUSH.defaultBlockState(), 3);
+            }
+        }
     }
 
     private BlockPos findGroundBelow(ServerLevel level) {
