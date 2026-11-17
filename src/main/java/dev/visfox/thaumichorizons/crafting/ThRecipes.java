@@ -30,6 +30,7 @@ public final class ThRecipes {
         crucible5();
         arcane0();
         arcane1();
+        arcaneBoats();
         infusion0();
         infusion1();
         infusion2();
@@ -235,6 +236,28 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:amber"),
                 TcIngredient.item("minecraft:redstone_block"), TcIngredient.item("thaumcraft:nitor"),
                 TcIngredient.item("minecraft:redstone_block"))));
+    }
+
+    private static void arcaneBoats() {
+        TcRecipes.register(new ShapedArcaneRecipe("greatwoodBoat", "greatwoodBoat",
+            TcStack.of("thaumichorizons:boatgreatwood"),
+            new AspectList().add(Aspect.ORDER, 5).add(Aspect.EARTH, 5).add(Aspect.WATER, 5),
+            3, 2, List.of(
+                TcIngredient.item("thaumcraft:greatwood_log"), TcIngredient.EMPTY,
+                TcIngredient.item("thaumcraft:greatwood_log"),
+                TcIngredient.item("thaumcraft:greatwood_log"), TcIngredient.item("thaumcraft:greatwood_log"),
+                TcIngredient.item("thaumcraft:greatwood_log"))));
+        TcRecipes.register(new ShapedArcaneRecipe("thaumiumBoat", "thaumiumBoat",
+            TcStack.of("thaumichorizons:boatthaumium"),
+            new AspectList().add(Aspect.FIRE, 10).add(Aspect.WATER, 10)
+                .add(Aspect.ORDER, 10).add(Aspect.EARTH, 10),
+            3, 3, List.of(
+                TcIngredient.item("thaumcraft:water_shard"), TcIngredient.item("thaumcraft:thaumium_ingot"),
+                TcIngredient.item("thaumcraft:water_shard"),
+                TcIngredient.item("thaumcraft:thaumium_ingot"), TcIngredient.item("thaumichorizons:boatgreatwood"),
+                TcIngredient.item("thaumcraft:thaumium_ingot"),
+                TcIngredient.item("thaumcraft:water_shard"), TcIngredient.item("thaumcraft:thaumium_ingot"),
+                TcIngredient.item("thaumcraft:water_shard"))));
     }
 
     private static void infusion4() {

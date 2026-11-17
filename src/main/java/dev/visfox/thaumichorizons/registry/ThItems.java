@@ -34,6 +34,7 @@ import thaumcraft.entity.golem.GolemType;
 import thaumcraft.wand.focus.FocusItem;
 import dev.visfox.thaumichorizons.item.SuicidePillItem;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
@@ -56,6 +57,10 @@ public final class ThItems {
         Item::new, properties -> properties.stacksTo(16));
     public static final DeferredItem<Item> GOLD_EGG = ITEMS.registerItem("goldegg",
         Item::new, properties -> properties.stacksTo(16));
+    public static final DeferredItem<BoatItem> BOAT_GREATWOOD = ITEMS.registerItem("boatgreatwood",
+        properties -> new BoatItem(ThEntities.BOAT_GREATWOOD.get(), properties.stacksTo(1)));
+    public static final DeferredItem<BoatItem> BOAT_THAUMIUM = ITEMS.registerItem("boatthaumium",
+        properties -> new BoatItem(ThEntities.BOAT_THAUMIUM.get(), properties.stacksTo(1)));
     public static final DeferredItem<Item> VOID_PUTTY = ITEMS.registerItem("voidputty",
         Item::new, properties -> properties.stacksTo(16));
     public static final DeferredItem<BaubleAmuletMirrorItem> AMULET_MIRROR = ITEMS.registerItem("amuletmirror",

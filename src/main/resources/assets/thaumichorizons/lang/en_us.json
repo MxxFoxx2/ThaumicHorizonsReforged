@@ -430,5 +430,9 @@
   "item.thaumichorizons.nightmare_spawn_egg": "Nightmare Spawn Egg",
   "entity.thaumichorizons.horse_zombie": "Zombie Horse",
   "entity.thaumichorizons.horse_skeleton": "Skeleton Horse",
-  "entity.thaumichorizons.nightmare": "Nightmare"
+  "entity.thaumichorizons.nightmare": "Nightmare",
+  "item.thaumichorizons.boatgreatwood": "Greatwood Boat",
+  "item.thaumichorizons.boatthaumium": "Thaumium Boat",
+  "entity.thaumichorizons.boat_greatwood": "Greatwood Boat",
+  "entity.thaumichorizons.boat_thaumium": "Thaumium Boat"
 }

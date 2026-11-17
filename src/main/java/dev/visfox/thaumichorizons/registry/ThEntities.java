@@ -28,9 +28,11 @@ import dev.visfox.thaumichorizons.entity.Seawolf;
 import dev.visfox.thaumichorizons.entity.SelfShearingSheep;
 import dev.visfox.thaumichorizons.entity.Sheeder;
 import dev.visfox.thaumichorizons.entity.TaintEaterPig;
+import dev.visfox.thaumichorizons.entity.ThaumiumBoat;
 import dev.visfox.thaumichorizons.entity.VoltSlime;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -54,6 +56,15 @@ public final class ThEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EggIncubatedEntity>> EGG_INCUBATED =
         ENTITIES.registerEntityType("eggincubated", EggIncubatedEntity::new, MobCategory.MISC,
             builder -> builder.sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(20).fireImmune());
+
+    public static final DeferredHolder<EntityType<?>, EntityType<Boat>> BOAT_GREATWOOD =
+        ENTITIES.registerEntityType("boat_greatwood",
+            (type, level) -> new Boat(type, level, ThItems.BOAT_GREATWOOD::get), MobCategory.MISC,
+            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ThaumiumBoat>> BOAT_THAUMIUM =
+        ENTITIES.registerEntityType("boat_thaumium", ThaumiumBoat::new, MobCategory.MISC,
+            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3).fireImmune());
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChromaticSheep>> CHROMATIC_SHEEP = creature(
         "chromaticsheep", ChromaticSheep::new, builder -> builder.sized(0.9F, 1.3F).eyeHeight(1.213F));

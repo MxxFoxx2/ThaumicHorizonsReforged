@@ -42,6 +42,15 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Confirm Nightmare is fire immune, can rise through lava without accumulating fall damage, turns grass underfoot into dirt, burns legacy plant/web/leaves blocks at body/head level, and is not slowed by cobwebs. Confirm the source explosion appears only on successful dimension travel.
 - [ ] Test repeated dimension trips, death/respawn, server restart, dismount before full jump, and destination with no safe landing column. Check for duplicate Nightmare entities, detached riders, or lost passengers.
 
+## Greatwood and Thaumium Boats — source and CI coverage only
+
+- [ ] Craft each boat through its Thaumcraft arcane-research page; verify Greatwood costs 5 ORDER / 5 EARTH / 5 WATER and uses five Greatwood Logs, and Thaumium costs 10 FIRE / 10 WATER / 10 ORDER / 10 EARTH with four Water Shards, four Thaumium Ingots and one Greatwood Boat.
+- [ ] Place both boats on water using the item; confirm survival consumption / creative preservation, passenger mounting, steering, dismounting, pickup and correct item drops.
+- [ ] Confirm Greatwood Boat does not work as a lava boat. Confirm Thaumium Boat floats and can be steered in source and flowing lava, does not burn, and remains present after save/reload.
+- [ ] Ride Thaumium Boat through lava with a player and a living mob; confirm passengers are extinguished and receive/retain Fire Resistance while aboard in lava, and that the effect expires normally after leaving.
+- [ ] Test dispensers with each boat above water; test Thaumium Boat over lava and Greatwood Boat over lava (the latter should not place). Check blocked placement and stack consumption.
+- [ ] Test boat collisions, damage/pickup, passenger synchronization with two clients, dedicated-server behavior, and custom model/texture loading from multiple angles. Compare movement speed with the original; legacy 1.7.10 speed multipliers are not assumed to match modern paddle physics.
+
 ## Gate 1 — after machines + creatures (V-phase)
 
 ```sh

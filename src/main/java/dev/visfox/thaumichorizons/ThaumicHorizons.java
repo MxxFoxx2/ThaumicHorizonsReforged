@@ -14,6 +14,8 @@ import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import dev.visfox.thaumichorizons.registry.ThSounds;
+import net.minecraft.core.dispenser.BoatDispenseItemBehavior;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -53,6 +55,12 @@ public class ThaumicHorizons {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            DispenserBlock.registerBehavior(ThItems.BOAT_GREATWOOD.get(),
+                new BoatDispenseItemBehavior(ThEntities.BOAT_GREATWOOD.get()));
+            DispenserBlock.registerBehavior(ThItems.BOAT_THAUMIUM.get(),
+                new BoatDispenseItemBehavior(ThEntities.BOAT_THAUMIUM.get()));
+        });
         LOGGER.info("Thaumic Horizons: Reforged loaded");
     }
 

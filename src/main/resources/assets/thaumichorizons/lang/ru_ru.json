@@ -430,5 +430,9 @@
   "item.thaumichorizons.nightmare_spawn_egg": "Яйцо призыва Кошмара",
   "entity.thaumichorizons.horse_zombie": "Лошадь-зомби",
   "entity.thaumichorizons.horse_skeleton": "Лошадь-скелет",
-  "entity.thaumichorizons.nightmare": "Кошмар"
+  "entity.thaumichorizons.nightmare": "Кошмар",
+  "item.thaumichorizons.boatgreatwood": "Лодка из великого дерева",
+  "item.thaumichorizons.boatthaumium": "Таумиевая лодка",
+  "entity.thaumichorizons.boat_greatwood": "Лодка из великого дерева",
+  "entity.thaumichorizons.boat_thaumium": "Таумиевая лодка"
 }

@@ -4,6 +4,8 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
 import net.minecraft.client.renderer.entity.SheepRenderer;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.object.boat.BoatModel;
 import net.minecraft.client.renderer.entity.UndeadHorseRenderer;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
@@ -22,10 +24,18 @@ public final class ThEntityRenderers {
     @SubscribeEvent
     static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(FamiliarHatModel.LAYER, FamiliarHatModel::createLayer);
+        event.registerLayerDefinition(ThBoatRenderer.GREATWOOD_LAYER, BoatModel::createBoatModel);
+        event.registerLayerDefinition(ThBoatRenderer.THAUMIUM_LAYER, BoatModel::createBoatModel);
     }
 
     @SubscribeEvent
     static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ThEntities.BOAT_GREATWOOD.get(), context ->
+            new ThBoatRenderer(context, ThBoatRenderer.GREATWOOD_LAYER,
+                ThaumicHorizons.id("textures/entity/boatgreatwood.png")));
+        event.registerEntityRenderer(ThEntities.BOAT_THAUMIUM.get(), context ->
+            new ThBoatRenderer(context, ThBoatRenderer.THAUMIUM_LAYER,
+                ThaumicHorizons.id("textures/entity/boatthaumium.png")));
         event.registerEntityRenderer(ThEntities.ALCHEMITE_PRIMED.get(), AlchemitePrimedRenderer::new);
         event.registerEntityRenderer(ThEntities.EGG_INCUBATED.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ThEntities.SYRINGE.get(), ThrownItemRenderer::new);

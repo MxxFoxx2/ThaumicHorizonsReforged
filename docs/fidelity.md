@@ -11,6 +11,14 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 - The client cancels `RenderPlayerEvent.Pre` for chameleon-active players via `AvatarRenderState.id` — hiding body, armor and held item (vanilla potion invisibility leaves armor visible; here nothing renders).
 - Other self-infusion effects (1 = jump + speed, 3 = regeneration, 4 = resistance) keep the original approach: permanent non-curative `MobEffectInstance`, re-applied on join/tick.
 
+## Boats — modern vehicle implementation
+
+- Greatwood and Thaumium variants use the 26.3 vanilla boat placement, passenger, steering, collision and save/load implementation, with separate entity/item registrations and the original TH boat textures.
+- Thaumium Boat overrides the NeoForge boat-fluid hooks for water and lava, is registered fire-immune, and clears fire / refreshes a short Fire Resistance effect for living passengers while the boat is in lava.
+- Both item registrations use the vanilla BoatItem placement path; their dispenser behaviors are registered through BoatDispenseItemBehavior, which consults the boat-fluid hook.
+- The original arcane recipe aspect costs and ingredients are restored and linked to the existing Greatwood/Thaumium research pages.
+- The 1.7.10 movement multipliers are not copied into the modern paddle-control physics. Exact relative speed and collision-damage parity therefore remain a live-client comparison, not a claimed 1:1 port.
+
 ## Creature entities — modern-parent substitutions
 
 - Panther / Gravekeeper / Familiar extend `TamableAnimal` instead of the ocelot lineage (modern `Cat`/`Ocelot` carry variant and avoid-player AI baggage). Always-tamed semantics and TH owner AI preserved.
