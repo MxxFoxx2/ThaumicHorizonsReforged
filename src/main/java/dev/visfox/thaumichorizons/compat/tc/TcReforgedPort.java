@@ -27,6 +27,7 @@ import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
+import thaumcraft.aspect.AspectHelper;
 import thaumcraft.item.AspectTooltips;
 import thaumcraft.aspect.AspectRegistry;
 import thaumcraft.aspect.AspectSync;
@@ -333,6 +334,12 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public AspectList getAspects(ItemStack stack) {
             return AspectTooltips.getAspects(stack);
+        }
+
+        @Override
+        public @Nullable AspectList getObjectAspects(ItemStack stack) {
+            AspectList objectAspects = AspectHelper.getObjectTags(stack);
+            return AspectHelper.getBonusTags(stack, objectAspects);
         }
 
         @Override
