@@ -13,6 +13,8 @@ public interface ThaumcraftPort {
     };
     FluxCompat UNAVAILABLE_FLUX = new FluxCompat() {
     };
+    NodeCompat UNAVAILABLE_NODES = new NodeCompat() {
+    };
     PotionCompat UNAVAILABLE_POTIONS = new PotionCompat() {
     };
     ItemCompat UNAVAILABLE_ITEMS = new ItemCompat() {
@@ -48,6 +50,10 @@ public interface ThaumcraftPort {
 
     default FluxCompat flux() {
         return UNAVAILABLE_FLUX;
+    }
+
+    default NodeCompat nodes() {
+        return UNAVAILABLE_NODES;
     }
 
     default PotionCompat potions() {
