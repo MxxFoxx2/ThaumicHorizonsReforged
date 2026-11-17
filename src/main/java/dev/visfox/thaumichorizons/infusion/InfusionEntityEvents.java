@@ -10,6 +10,9 @@ import dev.visfox.thaumichorizons.entity.ai.OwnerHurtByTargetGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.OwnerHurtTargetGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.SitGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.WanderGoalTH;
+import dev.visfox.thaumichorizons.item.SoulJarKeys;
+import dev.visfox.thaumichorizons.lib.EntityNbt;
+import dev.visfox.thaumichorizons.registry.ThBlocks;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +45,7 @@ import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -383,8 +387,16 @@ public final class InfusionEntityEvents {
     }
 
     private static void jarIntoSoulJar(LivingEntity living, ItemStack wand) {
-        ThaumicHorizons.LOGGER.info("Soul jar for critter {} pending: the TH blockJar block is not ported yet",
-            living.getName().getString());
+        Level level = living.level();
+        ItemStack jar = new ItemStack(ThBlocks.SOUL_JAR.get());
+        SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(
+            EntityNbt.save(living), false, living.getName().getString(), ""));
+        living.spawnAtLocation((ServerLevel) level, jar);
+        if (Compat.port().fx().isAvailable()) {
+            Compat.port().fx().containmentCapture(level,
+                new Vec3(living.getX(), living.getY() + living.getBbHeight() / 2.0F, living.getZ()), 0xCC66FF);
+        }
+        living.discard();
     }
 
     private static ItemStack tcStack(String name) {

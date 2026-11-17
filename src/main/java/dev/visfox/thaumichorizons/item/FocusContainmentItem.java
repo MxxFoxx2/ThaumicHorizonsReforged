@@ -1,5 +1,4 @@
 package dev.visfox.thaumichorizons.item;
-        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/slow.png"),
 
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.entity.LostSoul;
@@ -39,6 +38,7 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusContainmentItem extends FocusItem {
     public static final FocusUpgradeType SLOW = new FocusUpgradeType(36, "slow",
+        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/slow.png"),
         new AspectList().add(Aspect.TRAP, 8));
     public static final HashMap<String, Entity> hitCritters = new HashMap<>();
     public static final HashMap<String, Float> contain = new HashMap<>();

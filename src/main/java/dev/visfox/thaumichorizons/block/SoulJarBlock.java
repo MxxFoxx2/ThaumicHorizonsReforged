@@ -4,6 +4,7 @@ import dev.visfox.thaumichorizons.blockentity.SoulJarBlockEntity;
 import dev.visfox.thaumichorizons.item.SoulJarKeys;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -50,6 +51,18 @@ public class SoulJarBlock extends Block implements EntityBlock {
         }
         return (tickLevel, pos, tickState, entity) -> SoulJarBlockEntity.tick(tickLevel, pos, tickState,
             (SoulJarBlockEntity) entity);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+        @Nullable LivingEntity placer, ItemStack stack) {
+        if (level.getBlockEntity(pos) instanceof SoulJarBlockEntity jar) {
+            SoulJarKeys.SoulJarData data = SoulJarKeys.DATA.get(stack);
+            if (data != null) {
+                jar.jarData = data;
+                jar.setChanged();
+            }
+        }
     }
 
     @Override

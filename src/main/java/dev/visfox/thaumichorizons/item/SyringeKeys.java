@@ -68,9 +68,6 @@ public final class SyringeKeys {
 
     public static final StackKey<SampleData> SAMPLE = StackKey.register("syringe_sample", SampleData.CODEC, SampleData.STREAM_CODEC);
 
-    public static void init() {
-    }
-
     private SyringeKeys() {
     }
 }
