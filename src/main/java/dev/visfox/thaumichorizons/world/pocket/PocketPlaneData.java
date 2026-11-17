@@ -88,8 +88,8 @@ public class PocketPlaneData {
         };
     }
 
-    public void setPortal(int which, int x, int y, int z, String dimension) {
-        int[] position = new int[] { x, y, z };
+    public void setPortal(int which, int x, int y, int z, String dimension, boolean xAligned) {
+        int[] position = new int[] { x, y, z, xAligned ? 1 : 0 };
         switch (which) {
             case 1 -> {
                 portalA = position;
