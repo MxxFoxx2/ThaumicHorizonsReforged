@@ -45,6 +45,11 @@ public class KeystoneItem extends Item {
         return tag;
     }
 
+    public static int getPlaneColor(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? 0xFFFFFF : data.copyTag().getIntOr("color", 0xFFFFFF) & 0xFFFFFF;
+    }
+
     public static ItemStack create(int planeID) {
         ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(planeID)));
@@ -77,7 +82,7 @@ public class KeystoneItem extends Item {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (!slot.insertKeystone(planeID)) {
+        if (!slot.insertKeystone(planeID, getPlaneColor(stack))) {
             return InteractionResult.PASS;
         }
         stack.shrink(1);

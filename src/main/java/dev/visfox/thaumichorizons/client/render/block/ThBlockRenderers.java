@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.client.render.block;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
+import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,5 +20,6 @@ public final class ThBlockRenderers {
         event.registerBlockEntityRenderer(ThBlockEntities.CLOUD.get(), CloudBlockRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.SPIKE.get(), SpikeBlockRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.RECOMBINATOR.get(), RecombinatorRenderer::new);
+        event.registerBlockEntityRenderer(PocketRegistry.SLOT_BE.get(), SlotBlockRenderer::new);
     }
 }

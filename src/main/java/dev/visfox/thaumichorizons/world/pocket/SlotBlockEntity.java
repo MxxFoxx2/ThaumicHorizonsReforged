@@ -6,6 +6,11 @@ import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,6 +32,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     private boolean hasKeystone;
     private boolean portalOpen;
     private int pocketID;
+    private int keystoneColor = 0xFFFFFF;
     private int which;
     private boolean xAligned;
 
@@ -52,6 +58,10 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
 
     public int pocketID() {
         return pocketID;
+    }
+
+    public int keystoneColor() {
+        return keystoneColor;
     }
 
     public int which() {
@@ -288,12 +298,13 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         return level != null && level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).getBlock() == expected;
     }
 
-    public boolean insertKeystone(int planeID) {
+    public boolean insertKeystone(int planeID, int color) {
         if (hasKeystone || !PocketPlanes.validPlane(planeID)) {
             return false;
         }
         hasKeystone = true;
         pocketID = planeID;
+        keystoneColor = color & 0xFFFFFF;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -308,6 +319,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
         hasKeystone = false;
         pocketID = 0;
+        keystoneColor = 0xFFFFFF;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -349,11 +361,22 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveCustomOnly(registries);
+    }
+
+    @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean("hasKeystone", hasKeystone);
         output.putBoolean("portalOpen", portalOpen);
         output.putInt("pocketPlaneID", pocketID);
+        output.putInt("keystoneColor", keystoneColor);
         output.putInt("which", which);
         output.putBoolean("aligned", xAligned);
     }
@@ -364,6 +387,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         hasKeystone = input.getBooleanOr("hasKeystone", false);
         portalOpen = input.getBooleanOr("portalOpen", false);
         pocketID = input.getIntOr("pocketPlaneID", 0);
+        keystoneColor = input.getIntOr("keystoneColor", 0xFFFFFF) & 0xFFFFFF;
         which = input.getIntOr("which", 0);
         xAligned = input.getBooleanOr("aligned", false);
     }
