@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
+import thaumcraft.damage.ModDamageTypes;
+import thaumcraft.entity.AspectOrb;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.aspect.AspectHelper;
@@ -330,6 +333,17 @@ public final class TcReforgedPort implements ThaumcraftPort {
         public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
             return stack.getItem() instanceof thaumcraft.wand.WandItem wand
                 && wand.consumeVis(stack, player, aspect, amount, crafting);
+        }
+
+        @Override
+        public boolean hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
+            return entity.hurt(level.damageSources().source(ModDamageTypes.DISSOLVE), amount);
+        }
+
+        @Override
+        public boolean spawnAspectOrb(ServerLevel level, double x, double y, double z, Aspect aspect, int amount) {
+            AspectOrb orb = AspectOrb.create(level, x, y, z, aspect, amount);
+            return orb != null && level.addFreshEntity(orb);
         }
 
         @Override

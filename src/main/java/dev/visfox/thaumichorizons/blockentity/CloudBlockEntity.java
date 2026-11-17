@@ -1,66 +1,109 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.block.CloudBlock;
+import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.entity.EntityGolemTH;
+import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
+import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
+import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.phys.AABB;
+import thaumcraft.aspect.Aspect;
 
 /**
- * Server-side weather processing for legacy cloud variants.
- *
- * The original cloud used the Overworld weather state for every dimension and
- * periodically applied its precipitation effect to the first block below it.
+ * Server-side weather and periodic effects for the ten legacy cloud variants.
+ * The cloud still uses Overworld rain state in every dimension, as TileCloud did.
  */
 public final class CloudBlockEntity extends BlockEntity {
+    private static final int[] DROP_TIMERS = {-1, -1, 120, -1, 480, 480, 80, 360, 280, 550};
+
     private int dropTimer = -1;
     private int weatherTicks;
 
-    private static final int[] DROP_TIMERS = {-1, -1, 120, -1, 480, 480, 80, 360, 280, 550};
-
     public CloudBlockEntity(BlockPos pos, BlockState state) {
         super(ThBlockEntities.CLOUD.get(), pos, state);
-        int type = state.getValue(CloudBlock.TYPE);
-        dropTimer = DROP_TIMERS[type];
+        dropTimer = DROP_TIMERS[state.getValue(dev.visfox.thaumichorizons.block.CloudBlock.TYPE)];
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, CloudBlockEntity cloud) {
-        if (!(level instanceof ServerLevel serverLevel)) {
+        int type = state.getValue(dev.visfox.thaumichorizons.block.CloudBlock.TYPE);
+        if (level.isClientSide()) {
+            cloud.renderFiniteLightning(level, pos, type);
+            return;
+        }
+        if (!(level instanceof ServerLevel serverLevel)
+                || !serverLevel.getServer().overworld().isRaining()) {
             return;
         }
 
-        boolean raining = serverLevel.getServer().overworld().isRaining();
-        if (raining) {
-            if (++cloud.weatherTicks % 10 == 0) {
-                cloud.applyPrecipitation(serverLevel, state.getValue(CloudBlock.TYPE));
+        if (++cloud.weatherTicks % 10 == 0) {
+            cloud.applyPrecipitation(serverLevel, type);
+        }
+        cloud.tickDropTimer(serverLevel, type);
+        cloud.applyEntityEffects(serverLevel, type);
+    }
+
+    /**
+     * TileCloud's finite bolt draws an arc from the cloud down to the impact
+     * block on every client tick while its vanilla lightning entity is alive.
+     */
+    private void renderFiniteLightning(Level level, BlockPos pos, int type) {
+        if ((type != 2 && type != 9) || !Compat.port().fx().isAvailable()) {
+            return;
+        }
+
+        AABB column = new AABB(pos.getX(), level.getMinY(), pos.getZ(),
+            pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0);
+        for (LightningBolt bolt : level.getEntitiesOfClass(LightningBolt.class, column)) {
+            BlockPos strike = bolt.blockPosition();
+            if (strike.getX() != pos.getX() || strike.getZ() != pos.getZ()) {
+                continue;
             }
-            cloud.tickDropTimer(serverLevel, state.getValue(CloudBlock.TYPE));
-            cloud.applyEntityEffects(serverLevel, state.getValue(CloudBlock.TYPE));
+            var random = level.getRandom();
+            Vec3 from = new Vec3(
+                pos.getX() + random.nextDouble(),
+                pos.getY() + 0.5,
+                pos.getZ() + random.nextDouble()
+            );
+            Vec3 to = new Vec3(
+                pos.getX() + random.nextDouble(),
+                strike.getY() + 1.0,
+                pos.getZ() + random.nextDouble()
+            );
+            Compat.port().fx().arcLightning(level, from, to, 0xFFFFFF);
         }
     }
 
-
     /**
-     * Timed effects from the original TileCloud. The timer advances only while
-     * the Overworld reports rain, matching the legacy rain-state gate.
+     * The old timer advanced only while the cloud's shared rain state was true.
+     * Each variant re-arms with a random delay in the upper half of its base interval.
      */
     private void tickDropTimer(ServerLevel level, int type) {
         if (dropTimer < 0 || type < 0 || type >= DROP_TIMERS.length) {
@@ -71,44 +114,135 @@ public final class CloudBlockEntity extends BlockEntity {
         }
 
         int base = DROP_TIMERS[type];
-        if (base > 0) {
-            dropTimer = base / 2 + level.getRandom().nextInt(base / 2);
-        }
+        dropTimer = base / 2 + level.getRandom().nextInt(base / 2);
+        BlockPos ground = findGroundBelow(level);
 
-        BlockPos target = findGroundBelow(level);
         switch (type) {
-            // Type 2 uses the legacy finite-length lightning entity. It is
-            // intentionally deferred until that custom entity is ported.
-            case 5 -> {
-                ItemStack drop = switch (level.getRandom().nextInt(10)) {
-                    case 0 -> new ItemStack(Items.BEEF);
-                    case 1 -> new ItemStack(Items.PORKCHOP);
-                    case 2 -> new ItemStack(Items.CHICKEN);
-                    case 3 -> new ItemStack(switch (level.getRandom().nextInt(3)) {
-                        case 0 -> Items.COD;
-                        case 1 -> Items.SALMON;
-                        default -> Items.TROPICAL_FISH;
-                    });
-                    default -> new ItemStack(ThItems.MEAT.get());
-                };
-                ItemEntity item = new ItemEntity(level, worldPosition.getX() + level.getRandom().nextDouble(),
-                    worldPosition.getY() + 0.5, worldPosition.getZ() + level.getRandom().nextDouble(), drop);
-                level.addFreshEntity(item);
+            case 2 -> spawnLightning(level, ground);
+            case 4 -> dropAlloyNugget(level);
+            case 5 -> dropMeat(level);
+            case 6 -> spawnAspectDrop(level);
+            case 7 -> spawnExperienceDrop(level);
+            case 8 -> applyGrowthDrop(level, ground);
+            case 9 -> {
+                animateGroundBlock(level, ground);
+                spawnLightning(level, ground);
             }
-            case 8 -> applyGrowthDrop(level, target);
+            default -> {
+                // Variants 0, 1 and 3 have no timed item/entity drop.
+            }
         }
         setChanged();
     }
 
+    private void spawnLightning(ServerLevel level, BlockPos ground) {
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+        if (bolt == null) {
+            return;
+        }
+        bolt.setPos(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5);
+        level.addFreshEntity(bolt);
+    }
 
     /**
-     * Applies the cloud's continuous entity effects over the vertical column
-     * between the cloud and the first solid block below it.
+     * Animus cloud uses the same whitelist and temporary berserk-golem setup as
+     * FocusAnimationItem, but with the legacy 1200-tick lifetime and no upgrades.
+     */
+    private void animateGroundBlock(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0F
+                || (!state.isSolidRender() && !FocusAnimationItem.isWhitelisted(state))) {
+            return;
+        }
+
+        EntityGolemTH golem = new EntityGolemTH(ThEntities.GOLEM_TH.get(), level);
+        golem.loadGolem(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
+            state.getBlock(), 0, 1200, false, true, false);
+        golem.setHome(golem.blockPosition(), Direction.UP);
+        golem.setRemainingFireTicks(0);
+        golem.setHealth(golem.getMaxHealth());
+
+        level.removeBlock(pos, false);
+        if (level.addFreshEntity(golem)) {
+            level.broadcastEntityEvent(golem, (byte) 7);
+        }
+    }
+
+    private void dropAlloyNugget(ServerLevel level) {
+        int roll = level.getRandom().nextInt(75);
+        String id = roll < 6 ? null
+            : roll < 12 ? "silver_nugget"
+            : roll < 20 ? "copper_nugget"
+            : roll < 30 ? "tin_nugget"
+            : roll < 40 ? "lead_nugget"
+            : roll < 50 ? "quicksilver_drop"
+            : null;
+
+        var itemCompat = Compat.port().items();
+        var item = id == null || !itemCompat.isAvailable()
+            ? null
+            : itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", id));
+        spawnCloudDrop(level, new ItemStack(item != null ? item : (id == null ? Items.GOLD_NUGGET : Items.IRON_NUGGET)));
+    }
+
+    private void dropMeat(ServerLevel level) {
+        var random = level.getRandom();
+        ItemStack stack = switch (random.nextInt(10)) {
+            case 0 -> new ItemStack(Items.BEEF);
+            case 1 -> new ItemStack(Items.PORKCHOP);
+            case 2 -> new ItemStack(Items.CHICKEN);
+            case 3 -> new ItemStack(switch (random.nextInt(3)) {
+                case 0 -> Items.COD;
+                case 1 -> Items.SALMON;
+                default -> Items.TROPICAL_FISH;
+            });
+            default -> new ItemStack(ThItems.MEAT.get());
+        };
+        spawnCloudDrop(level, stack);
+    }
+
+    private void spawnAspectDrop(ServerLevel level) {
+        Aspect[] aspects = {
+            Aspect.WATER, Aspect.FIRE, Aspect.ORDER, Aspect.ENTROPY, Aspect.AIR, Aspect.EARTH
+        };
+        Aspect aspect = aspects[level.getRandom().nextInt(aspects.length)];
+        var items = Compat.port().items();
+        if (items.isAvailable()) {
+            items.spawnAspectOrb(level,
+                worldPosition.getX() + level.getRandom().nextDouble(),
+                worldPosition.getY() + 0.5,
+                worldPosition.getZ() + level.getRandom().nextDouble(),
+                aspect, 1);
+        }
+    }
+
+    private void spawnExperienceDrop(ServerLevel level) {
+        ExperienceOrb.award(level, new Vec3(
+            worldPosition.getX() + level.getRandom().nextDouble(),
+            worldPosition.getY() + 0.5,
+            worldPosition.getZ() + level.getRandom().nextDouble()
+        ), level.getRandom().nextInt(4));
+    }
+
+    private void spawnCloudDrop(ServerLevel level, ItemStack stack) {
+        InvulnerableItemEntity item = new InvulnerableItemEntity(level,
+            worldPosition.getX() + level.getRandom().nextDouble(),
+            worldPosition.getY() + 0.5,
+            worldPosition.getZ() + level.getRandom().nextDouble(),
+            stack);
+        level.addFreshEntity(item);
+    }
+
+    /**
+     * Entity effects cover the full vertical column below the cloud. The upper
+     * AABB bound is the cloud Y, not the ground Y (the old port had zero height).
      */
     private void applyEntityEffects(ServerLevel level, int type) {
         BlockPos ground = findGroundBelow(level);
-        AABB column = new AABB(worldPosition.getX(), ground.getY(), worldPosition.getZ(),
-            worldPosition.getX() + 1.0, worldPosition.getY(), worldPosition.getZ() + 1.0);
+        AABB column = new AABB(
+            worldPosition.getX(), ground.getY(), worldPosition.getZ(),
+            worldPosition.getX() + 1.0, worldPosition.getY() + 1.0, worldPosition.getZ() + 1.0
+        );
         boolean warm = level.getBiome(worldPosition).value().getBaseTemperature() >= 0.15F;
 
         for (Entity entity : level.getEntitiesOfClass(Entity.class, column)) {
@@ -117,22 +251,45 @@ public final class CloudBlockEntity extends BlockEntity {
                 continue;
             }
             if (type == 3) {
-                entity.hurt(level.damageSources().magic(), 1.0F);
+                var items = Compat.port().items();
+                if (items.isAvailable()) {
+                    items.hurtWithDissolve(level, entity, 1.0F);
+                } else {
+                    entity.hurt(level.damageSources().magic(), 1.0F);
+                }
                 continue;
             }
             if (!warm) {
                 continue;
             }
+
             String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
-            if (entityId.equals("enderman") || entityId.equals("blaze")) {
+            if (entityId.equals("enderman") || entityId.equals("blaze") || entityId.equals("firebat")) {
                 entity.hurt(level.damageSources().drown(), 1.0F);
             }
             if (entity.isOnFire()) {
                 entity.setRemainingFireTicks(0);
             }
-            // Type 8's cow-to-mooshroom conversion is kept separate from
-            // generic entity effects until the target entity factory is verified.
+            if (type == 8 && (entityId.equals("cow") || entityId.equals("chocolatecow"))
+                    && entity instanceof LivingEntity cow) {
+                convertCowToMooshroom(level, cow);
+            }
         }
+    }
+
+    private void convertCowToMooshroom(ServerLevel level, LivingEntity cow) {
+        Entity converted = EntityType.MOOSHROOM.create(level, EntitySpawnReason.CONVERSION);
+        if (!(converted instanceof LivingEntity mooshroom)) {
+            return;
+        }
+        double x = cow.getX();
+        double y = cow.getY();
+        double z = cow.getZ();
+        mooshroom.moveTo(x, y, z, cow.getYRot(), cow.getXRot());
+        mooshroom.setHealth(cow.getHealth());
+        cow.discard();
+        level.addFreshEntity(mooshroom);
+        level.sendParticles(ParticleTypes.EXPLOSION, x, y + cow.getBbHeight() / 2.0, z, 1, 0.0, 0.0, 0.0, 0.0);
     }
 
     private void applyGrowthDrop(ServerLevel level, BlockPos ground) {
@@ -144,13 +301,14 @@ public final class CloudBlockEntity extends BlockEntity {
         BlockState soil = level.getBlockState(ground);
         var random = level.getRandom();
         if (soil.is(Blocks.FARMLAND)) {
-            switch (random.nextInt(8)) {
-                case 1 -> level.setBlock(above, Blocks.MELON_STEM.defaultBlockState(), 3);
-                case 2 -> level.setBlock(above, Blocks.PUMPKIN_STEM.defaultBlockState(), 3);
-                case 3 -> level.setBlock(above, Blocks.CARROTS.defaultBlockState(), 3);
-                case 4 -> level.setBlock(above, Blocks.POTATOES.defaultBlockState(), 3);
-                default -> level.setBlock(above, Blocks.WHEAT.defaultBlockState(), 3);
-            }
+            BlockState crop = switch (random.nextInt(8)) {
+                case 1 -> Blocks.MELON_STEM.defaultBlockState();
+                case 2 -> Blocks.PUMPKIN_STEM.defaultBlockState();
+                case 3 -> Blocks.CARROTS.defaultBlockState();
+                case 4 -> Blocks.POTATOES.defaultBlockState();
+                default -> Blocks.WHEAT.defaultBlockState();
+            };
+            level.setBlock(above, crop, 3);
             return;
         }
         if (soil.is(Blocks.DIRT)) {
@@ -164,8 +322,10 @@ public final class CloudBlockEntity extends BlockEntity {
             return;
         }
         if (soil.is(Blocks.SAND)) {
-            level.setBlock(above, random.nextInt(10) == 4
-                ? Blocks.DEAD_BUSH.defaultBlockState() : Blocks.CACTUS.defaultBlockState(), 3);
+            BlockState plant = random.nextInt(10) == 4
+                ? thaumcraftPlant("cinderpearl", Blocks.CACTUS.defaultBlockState())
+                : Blocks.CACTUS.defaultBlockState();
+            level.setBlock(above, plant, 3);
             return;
         }
         if (soil.is(Blocks.SOUL_SAND)) {
@@ -173,26 +333,43 @@ public final class CloudBlockEntity extends BlockEntity {
             return;
         }
         if (soil.is(Blocks.GRASS_BLOCK)) {
-            int roll = random.nextInt(1000);
-            if (roll < 750) {
-                level.setBlock(above, switch (random.nextInt(6)) {
-                    case 0 -> Blocks.SHORT_GRASS.defaultBlockState();
-                    case 1 -> Blocks.FERN.defaultBlockState();
-                    case 2 -> Blocks.DANDELION.defaultBlockState();
-                    case 3 -> Blocks.POPPY.defaultBlockState();
-                    case 4 -> Blocks.AZURE_BLUET.defaultBlockState();
-                    default -> Blocks.OXEYE_DAISY.defaultBlockState();
-                }, 3);
-            } else if (roll < 950) {
-                level.setBlock(above, switch (random.nextInt(6)) {
-                    case 0 -> Blocks.OAK_SAPLING.defaultBlockState();
-                    case 1 -> Blocks.SPRUCE_SAPLING.defaultBlockState();
-                    case 2 -> Blocks.BIRCH_SAPLING.defaultBlockState();
-                    case 3 -> Blocks.JUNGLE_SAPLING.defaultBlockState();
-                    case 4 -> Blocks.ACACIA_SAPLING.defaultBlockState();
-                    default -> Blocks.DARK_OAK_SAPLING.defaultBlockState();
-                }, 3);
-            } else if (roll < 975) {
+            int plant = random.nextInt(1000);
+            if (plant == 666) {
+                level.setBlock(above, thaumcraftPlant("silverwood_sapling", Blocks.OAK_SAPLING.defaultBlockState()), 3);
+            } else if (plant < 750) {
+                BlockState[] plants = {
+                    Blocks.SHORT_GRASS.defaultBlockState(),
+                    Blocks.FERN.defaultBlockState(),
+                    Blocks.DANDELION.defaultBlockState(),
+                    Blocks.POPPY.defaultBlockState(),
+                    Blocks.POPPY.defaultBlockState(),
+                    Blocks.BLUE_ORCHID.defaultBlockState(),
+                    Blocks.ALLIUM.defaultBlockState(),
+                    Blocks.AZURE_BLUET.defaultBlockState(),
+                    Blocks.RED_TULIP.defaultBlockState(),
+                    Blocks.ORANGE_TULIP.defaultBlockState(),
+                    Blocks.WHITE_TULIP.defaultBlockState(),
+                    Blocks.PINK_TULIP.defaultBlockState(),
+                    Blocks.OXEYE_DAISY.defaultBlockState(),
+                    Blocks.SUGAR_CANE.defaultBlockState()
+                };
+                level.setBlock(above, plants[random.nextInt(plants.length)], 3);
+            } else if (plant < 950) {
+                int sapling = random.nextInt(100);
+                if (sapling < 10) {
+                    level.setBlock(above,
+                        thaumcraftPlant("greatwood_sapling", Blocks.OAK_SAPLING.defaultBlockState()), 3);
+                } else {
+                    level.setBlock(above, switch (random.nextInt(6)) {
+                        case 0 -> Blocks.OAK_SAPLING.defaultBlockState();
+                        case 1 -> Blocks.SPRUCE_SAPLING.defaultBlockState();
+                        case 2 -> Blocks.BIRCH_SAPLING.defaultBlockState();
+                        case 3 -> Blocks.JUNGLE_SAPLING.defaultBlockState();
+                        case 4 -> Blocks.ACACIA_SAPLING.defaultBlockState();
+                        default -> Blocks.DARK_OAK_SAPLING.defaultBlockState();
+                    }, 3);
+                }
+            } else if (plant < 975) {
                 level.setBlock(above, Blocks.LILAC.defaultBlockState(), 3);
             } else {
                 level.setBlock(above, Blocks.ROSE_BUSH.defaultBlockState(), 3);
@@ -200,9 +377,15 @@ public final class CloudBlockEntity extends BlockEntity {
         }
     }
 
+    private BlockState thaumcraftPlant(String path, BlockState fallback) {
+        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("thaumcraft", path));
+        return block == Blocks.AIR ? fallback : block.defaultBlockState();
+    }
+
     private BlockPos findGroundBelow(ServerLevel level) {
         BlockPos.MutableBlockPos cursor = worldPosition.mutable();
-        while (cursor.getY() > level.getMinY() && level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
+        while (cursor.getY() > level.getMinY()
+                && level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
             cursor.move(0, -1, 0);
         }
         return cursor.immutable();
@@ -212,7 +395,8 @@ public final class CloudBlockEntity extends BlockEntity {
         BlockHitResult hit = level.clip(new ClipContext(
             new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() - 0.5, worldPosition.getZ() + 0.5),
             new Vec3(worldPosition.getX() + 0.5, level.getMinY(), worldPosition.getZ() + 0.5),
-            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()));
+            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()
+        ));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -237,7 +421,7 @@ public final class CloudBlockEntity extends BlockEntity {
                 case 6 -> level.setBlock(targetPos, Blocks.LAVA.defaultBlockState(), 3);
                 default -> {
                     if (flammable) {
-                        level.setBlock(targetPos.above(), Blocks.FIRE.defaultBlockState(), 3);
+                        level.setBlock(targetPos, Blocks.FIRE.defaultBlockState(), 3);
                     }
                 }
             }
@@ -258,13 +442,16 @@ public final class CloudBlockEntity extends BlockEntity {
             if (target.isSolidRender() && level.isEmptyBlock(above)) {
                 level.setBlock(above, Blocks.SNOW.defaultBlockState(), 3);
             }
-        } else {
-            if (target.is(Blocks.FARMLAND) && target.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE)
-                    && target.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE) != 7) {
-                level.setBlock(targetPos, target.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE, 7), 3);
-            } else if (level.getBlockState(above).is(Blocks.FIRE)) {
-                level.removeBlock(above, false);
-            }
+        } else if (target.is(Blocks.FARMLAND)
+                && target.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE)
+                && target.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE) != 7) {
+            level.setBlock(targetPos,
+                target.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE, 7), 3);
+        } else if (level.getBlockState(above).is(Blocks.FIRE)) {
+            level.removeBlock(above, false);
+        } else if (target.is(Blocks.CAULDRON)) {
+            level.setBlock(targetPos,
+                Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), 3);
         }
     }
 

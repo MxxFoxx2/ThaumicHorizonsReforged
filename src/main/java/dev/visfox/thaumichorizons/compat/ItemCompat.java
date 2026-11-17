@@ -1,6 +1,8 @@
 package dev.visfox.thaumichorizons.compat;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +28,14 @@ public interface ItemCompat {
     }
 
     default boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
+        throw new UnsupportedOperationException();
+    }
+
+    default boolean hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
+        throw new UnsupportedOperationException();
+    }
+
+    default boolean spawnAspectOrb(ServerLevel level, double x, double y, double z, Aspect aspect, int amount) {
         throw new UnsupportedOperationException();
     }
 

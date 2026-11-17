@@ -5,10 +5,14 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 ## Cloud blocks — PR #2, code and CI only
 
 - [ ] Place all ten cloud item variants; confirm each places the matching cloud texture/type and remains correct after save/reload.
-- [ ] Without `planarClouds`, confirm wand use does not remove the cloud or consume vis. With the research and at least 100 AIR vis, confirm one right-click removes the cloud, consumes exactly 100 AIR vis and drops the matching invulnerable cloud item.
+- [ ] Without planarClouds, confirm wand use does not remove the cloud or consume vis. With the research and at least 100 AIR vis, confirm one right-click removes the cloud, consumes exactly 100 AIR vis and drops the matching invulnerable cloud item.
 - [ ] Confirm each picked-up variant can be placed again without changing its type; test multiplayer pickup and ensure no duplicate item.
 - [ ] Test precipitation and entity effects in Overworld rain, including warm/cold biomes, fire/acid clouds, growth clouds and rain pause/resume. Save/reload while raining.
-- [ ] Remaining parity checks: finite lightning, alloy nugget drops, vis aspect orbs, XP orbs, cow-to-mooshroom conversion, full plant distribution, weather-column rendering and rain-state visual sync.
+- [ ] Test periodic lightning from thunderclouds and Animus clouds; confirm Animus clouds only convert eligible blocks and spawn temporary berserk TH golems.
+- [ ] Test alloy nugget and meat drops, primal aspect orbs, XP orbs, cow-to-mooshroom conversion and soil-specific growth results.
+- [ ] Test acidic-cloud Thaumcraft dissolve damage and verify the full entity column is processed; test fire, enderman, blaze and firebat effects.
+- [ ] Remaining visual parity checks: the full weather-column renderer for rain/snow/embers and synced rain-state persistence.
+
 
 ## Gate 1 — after machines + creatures (V-phase)
 

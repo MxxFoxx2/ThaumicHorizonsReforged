@@ -27,10 +27,14 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 
 ## Cloud blocks — partial port
 
-- The original ten cloud metadata values are represented by the `CloudBlock.TYPE` block-state property. Separate item variants preserve the selected type through pickup and placement.
-- Wand pickup follows the legacy gate: the player must have `planarClouds`, the held item must be a Thaumcraft wand, and the wand must pay 100 AIR vis. The dropped item uses the existing invulnerable item entity.
-- Cloud weather processing and the first-pass precipitation/entity-contact effects are server-side. The current implementation is not yet full parity with `TileCloud`.
-- Still missing from the original behavior: finite lightning, alloy nugget drop selection, aspect orbs, XP orbs, cow-to-mooshroom conversion, the complete vegetation table, weather-column rendering and rain-state visual sync. See `verification.md` for manual checks.
+- The original ten cloud metadata values are represented by the CloudBlock.TYPE block-state property. Dedicated item variants preserve the selected type through pickup and placement.
+- Wand pickup follows the legacy gate: the player must have planarClouds, hold a Thaumcraft wand and pay 100 AIR vis. The dropped cloud item uses the invulnerable item entity.
+- Server rain processing covers periodic precipitation transformations and the full vertical entity column, including Thaumcraft's DISSOLVE damage type, fire effects, warm-biome extinguishing/drowning effects and mooshroom conversion for cows under spore clouds.
+- Timed effects include lightning from thunderclouds and animus clouds, alloy nuggets, meat, primal aspect orbs, XP orbs, growth vegetation and the Animus cloud's temporary berserk TH golem conversion.
+- Legacy alloy nugget metadata 5 is mapped to TC4R's quicksilver_drop; metal outputs otherwise use the matching TC4R nugget item IDs, with an iron-nugget fallback when a matching ID is unavailable.
+- The growth table preserves the original Thaumcraft plant variants used by TileCloud: greatwood sapling (meta 0), silverwood sapling (meta 1) and cinderpearl (meta 3), in addition to the vanilla flower/sapling and soil-specific branches.
+- Still not complete: the dedicated long-column weather renderer for rain/snow/embers and the legacy rain-state client sync/persistence behavior. Client runtime checks are pending; see verification.md.
+
 
 ## Machines — documented deviations
 
