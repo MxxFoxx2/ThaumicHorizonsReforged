@@ -1,6 +1,6 @@
 # Fidelity
 
- deviations from the 1.7.10 original, phase by phase. Everything not listed here is 1:1.
+Known deviations and incomplete port areas relative to the 1.7.10 reference. Unlisted behavior has not necessarily been exhaustively verified as 1:1.
 
 ## Player infusions (Chameleon Skin) — intentional redesign
 
@@ -31,7 +31,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Vortex creative variant (`cheat` meta) not exposed as an item variant.
 - Transducer `status = -1` reset on TC4R transducers skipped (no public setter).
 - Recombinator not ported yet: needs TC4-internal node lock/identity checks absent from the public API.
-- Machine FX (alchemite FX, block zaps, hungry-node FX, vortex sound) routed through vanilla particles/sounds until the FX compat phase.
+- FX compatibility is no longer entirely a vanilla fallback: `TcReforgedPort.TcFx` delegates wisp trails, bursts, node bolts, block sparkles, essentia trails, blocksplosions, containment capture, bubbles and dead-creature FX to TC4R's `FxProxy`. Individual call sites and visual parity still need testing; the dedicated looping `VortexSound` implementation remains absent.
 - VisDynamo aspect-toggle GUI deferred to the menu phase; toggles exist as BE fields.
 
 ## Souls / Vat / blood phase — documented deviations
@@ -41,8 +41,9 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Vat stabilizer symmetry scan counts only vanilla skulls (needs an InfusionCompat block predicate for TC4R skull variants).
 - `resetStats` skipped (the port has no `IEntityInfusedStats` equivalent).
 - Instilled-loyalty gate implemented via goalSelector priority instead of the original flag.
-- Critter recipes 20/21/22 (undead horses, nightmare) complete but spawn nothing until those entities are ported.
-- Deferred: `EntitySyringe`/`EntityBlastPhial` projectiles (injector charge/fire logic works, spawn pending), brain-jar feeding seam, block/blockstate/item models for the ten soul/vat blocks (client phase), containment beam FX, creative empty-soul-jar sub-item.
+- Critter recipes 20/21/22 (undead horses, nightmare) exist but cannot produce their intended TH entities until HorseZombie, HorseSkeleton and NightmareTH are ported.
+- Deferred: `EntitySyringe`/`EntityBlastPhial` projectiles (injector charge/fire logic works, projectile spawning is pending), brain-jar feeding seam, creative empty-soul-jar sub-item, and the remaining special/multiblock visuals. The static blockstates/models for the ten soul/vat blocks have been added; Node Monitor also has a dedicated renderer.
+- Soul Jar capture/release code is now present: an infused creature is serialized into a jar item, placement copies the data into the BlockEntity, and wand use attempts to restore the entity. This was committed in `6fd7614`; the full capture → item persistence → placement → release cycle is not yet game-verified (see `verification.md`).
 - `VatTrigger.register()` was dead code (never called); now registered from `FMLCommonSetupEvent` via `enqueueWork`. In-world formation verified 2026-11-16: the glass/pressure-plate/levitator blueprint converts to VAT/VAT_SOLID/VAT_INTERIOR on wand use, server-side replace with client-side gate.
 - Vat formation pays crafting vis through the wand cap modifier (iron cap +10%, TC4 parity): 50 vis per aspect costs 5500 centivis with an iron cap, so a wand stocked with exactly 5000 per aspect legitimately fails to form the vat.
 
@@ -56,20 +57,23 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Liquefaction "nuggets" upgrade is inert (TC4R removed the smelting-bonus registry); purity uses TC4R `SpecialMining.find`.
 - Disposable-wand recharge-prevention hack unnecessary (TC4R nodes recharge only the base `Wands.isWand` item).
 
-## Pocket plane — deferred at ~60%
+## Pocket plane — deferred; local progress not verifiable from public main
 
-- Stopped mid-task by quota window; in-flight files preserved in `.deferred-pocket/` with a resume manifest (`RESUME_MANIFEST.md`). DONE: SavedData (`PocketPlanes`), PocketPlaneData schema, PocketPlaneGenerator (layers/caves/pockets/biomes 1:1), custom ChunkGenerator codec. TODO: PocketRegistry, SlotBlockEntity, PortalTHBlock/SlotBlock, Keystone/PlanarConduit items, dimension JSONs, Vortex-collapse integration. Resume in a 300M window.
+- The earlier work log claimed SavedData (`PocketPlanes`), PocketPlaneData schema, PocketPlaneGenerator and a custom ChunkGenerator codec were implemented in `.deferred-pocket/`. That directory is git-ignored and absent from the public `main` tree, so the current state and the previously quoted ~60% completion cannot be verified from GitHub. Keep a backup and publish a safe branch before resuming.
+- Publicly visible remaining work includes PocketRegistry, SlotBlockEntity, PortalTH/Slot blocks, Planar Keystone, dimension JSON/registration and Vortex-collapse integration. Planar Conduit is no longer missing: its item and the `planarTheory` recipe were added in `408e6cc`.
 - Deviations already baked in: TC4 meta blocks mapped to named TC4R blocks (arcane_levitator, obsidian_tile, infused stones, crusted_taint...), biome assignment via `thaumcraft.taint.TaintBiomes.set`, dimension is data-driven and gated by `pocketPlaneEnabled` config, PocketNoise uses a different noise algorithm than 1.7.10 octaves.
 
 ## Phased deferrals (tracked, not lost)
 
-- Client renderers for entities and special machine models — client phase.
-- Spawn-egg items — skipped (vanilla summon works).
-- Synthetic-node wisp-essence refilling and essence drops — needs aspect-container item API.
-- Crystal-essence conversion of destroyed nodes/blocks — needs TC4R crystal-essence item API.
-- Flux gas/goo spill from overloaded transducers, wisp spawning (salis mundus), crystal-wand void crafting — pending flux/wisp/golem systems.
-- Warp tumor store caps use the config value (50) exactly like the original config default.
-- Entities still unported: HorseZombie, HorseSkeleton, NightmareTH, BoatGreatwood, BoatThaumium, BlastPhial, Syringe projectile, EggIncubated, finite LightningBolt, ItemEggIncubated logic.
+## Remaining content and behavior gaps
+
+- Missing modern block registrations: Recombinator, Spike variants (iron/wood/tooth), Slot, PortalTH and Gateway. Missing original BlockEntity counterparts include TileCloud, TileLight, TileRecombinator, TileSpike and TileSlot. `TileCloud` is gameplay logic (weather, block/entity interactions and finite lightning), not merely a rendering task.
+- Missing entities/projectiles/vehicles: HorseZombie, HorseSkeleton, NightmareTH, BoatGreatwood, BoatThaumium, BlastPhial and Syringe projectile. Incubated Egg and its projectile are now implemented in code (commits `5119c15` and `6fd7614`); verify rendering and gameplay in-game. `EntityLightningBoltFinite` is spawned by the original cloud behavior and is not a separately registered mod entity.
+- Missing items: Mirror Amulet and Planar Keystone. Planar Conduit and Incubated Egg are now registered.
+- Missing recipes/behaviors: Void Putty repair (`RecipeVoidPuttyRepair`) and Focus Illumination dye recoloring (`RecipesFocusIlluminationDyes`). Planar Theory, Transduction Amplifier, Vortex Stabilizer and Alch Incubation recipes have since been added.
+- Synthetic-node wisp-essence refilling/drops needs an aspect-container item seam; crystal-essence conversion needs a TC4R crystal-essence item seam; overloaded Transducer flux gas/goo and wisp spawning remain pending.
+- Warp tumor store caps use the config value (50), matching the original config default.
+- Render/FX polish still outstanding: Vat multiblock renderer/animation, VortexSound, Familiar hat layer and any missing special projectile renderers. The 20 creature renderers, Node Monitor renderer, and several static machine models are already present.
 
 ## Asset pipeline & client-safety — documented deviations
 
@@ -115,7 +119,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - The inert crystal wand is a crafting ingredient in the original (`ItemCrystalWand extends Item`), not a wand; it is "recognized" in two ways, both of which were missing in the port.
 - Scan: the original registers an object tag `CRYSTAL 6 + MAGIC 4`. `ConfigAspects` now registers `vitreus 6 + praecantatio 4` for `CRYSTAL_WAND`, so the thaumometer detects it (previously the scan returned nothing because `AspectRegistry.getObjectTags` had no entry). Verified in-game with `/thaumcraft aspects item thaumichorizons:crystalwand` → `Vitreus ×6, Praecantatio ×4`; the charged wand returns `Praecantatio ×64, Instrumentum ×64` via the `Wands.isWand` rod/cap path.
 - Vortex: the original `TileVortex.handleVoidCrafting` converts a thrown inert wand into the charged crystalline wand (crystal rod/cap + 25000 vis per primal). `VortexBlockEntity.handleVoidCrafting` now does the same, producing `WAND_CASTING_DISPOSABLE` (whose defaults already carry the crystal parts and full vis). This is the survival path to the charged wand. Not yet exercised in-game (needs a stabilized vortex); covered by Gate 2.
-- The remaining original object tags are registered as of the focus-completion pass: syringes (`SYRINGE_EMPTY`, `SYRINGE_BLOOD_SAMPLE`, `SYRINGE_BLOOD`, `SYRINGE_INJECTION`), `NUTRIENTS`, `ALCHEMITE`, `VAT`, `VAT_SOLID`, `SOUL_BEACON`, `VORTEX`. Still unregistered because their targets are not ported: `amuletMirror`, `focusAnimation`, `portal`, `spike`, `spikeWood`, `spikeTooth`, `itemEggIncubated`.
+- The remaining original object tags are registered as of the focus-completion pass: syringes (`SYRINGE_EMPTY`, `SYRINGE_BLOOD_SAMPLE`, `SYRINGE_BLOOD`, `SYRINGE_INJECTION`), `NUTRIENTS`, `ALCHEMITE`, `VAT`, `VAT_SOLID`, `SOUL_BEACON`, `VORTEX`. Still unregistered because their targets are not ported: `amuletMirror`, `portal`, `spike`, `spikeWood`, `spikeTooth`. `focusAnimation` and `itemEggIncubated` are now registered.
 
 ## SyntheticNode vis-network seam (range-0 sources)
 
@@ -151,7 +155,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - `lightsolar` did not exist as a block, so the SOLAR upgrade of the illumination focus resolved the id through `BuiltInRegistries.BLOCK.getValue` (a defaulted registry) and received **air**, deleting the targeted block. The reference `BlockLightSolar` is registered as `lightsolar`; the port now has `LightSolarBlock` (same properties as `light`) which additionally ignites undead entities that touch it, matching `BlockLightSolar.onEntityCollidedWithBlock`. The focus now uses the registered holders directly instead of a registry lookup.
 - `FocusContainmentItem.SLOW` used the 2-argument `FocusUpgradeType` constructor, which defaults the icon to `thaumcraft:textures/foci/slow.png`; the texture ships as `thaumichorizons:textures/foci/slow.png`. Now passed explicitly, like the other six focus upgrades.
 - The brain block drops the brain block itself; the reference `BlockBrain` drops 2–3 `thaumcraft:zombie_brain`. The loot table now does that.
-- Remaining "unknown recipe" research warnings (`alchIncubation`, `mirrorAmulet`, `greatwoodBoat`, `thaumiumBoat`, `planarTheory`, `planarKeystone`, `transductionAmplifier`, `vortexStabilizer`, `recombinator`, `pocketPlane`) all reference items that are not ported yet (incubated egg, mirror amulet, greatwood/thaumium boats, planar conduit, planar keystone, recombinator, pocket plane); their recipes cannot be written before those items exist.
+- Remaining recipe/research gaps include `mirrorAmulet`, `greatwoodBoat`, `thaumiumBoat`, `planarKeystone`, `recombinator` and `pocketPlane`. The previously missing `alchIncubation`, `planarTheory`, `transductionAmplifier` and `vortexStabilizer` recipes were added in commits `5119c15` and `408e6cc`.
 
 ## Creature scan aspects (entity tags never registered)
 
@@ -167,3 +171,10 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - `EndersteedRenderer.getTextureLocation` now reproduces the reference `RenderEndersteed.getEntityTexture` armour switch on the modern signal: `state.bodyArmorItem` iron/gold/diamond horse armour selects the matching body sheet, and `state.isBaby` selects the baby-layout variant of that same sheet (the reference scaled the armored adult sheet for foals; the port keeps the modern baby UVs but preserves the armored look). The legacy `ArmorItem` summon tag no longer exists in 26.3; armour lives in the equipment body slot (`armor.body` in commands).
 - Verified in-game after client restarts with the regenerated sheets: plain adult renders as a solid black horse (body/neck/head/ears/legs/tail, no slabs or holes); a foal (`Age:-1`) renders solid on the baby sheet with the legacy markers intact (purple eye, green mouth); equipping iron horse armour visibly swaps to the iron body sheet on both the adult (grey plates on neck/legs, red harness on the body) and the foal (same plates on the baby layout), keeping the purple eye. Gold/diamond use the same switch branch as iron.
 - Open seams (out of scope here): `EndersteedRenderer` adds no vanilla-style saddle/armour overlay layers (`HorseMarkingLayer` / `SimpleEquipmentLayer`), so armour is only the body-texture swap exactly like the reference; the `nightmare` entity itself is not ported yet, its 4 sheets + baby variants are ready for when it is.
+
+
+## Additions on main through 2026-11-17
+
+- `PlanarConduit` item plus `planarTheory`, `transductionAmplifier` and `vortexStabilizer` recipes: commit [`408e6cc`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/408e6cc49b87d9c9922442ad8e0de8b13174d9e2).
+- `EggIncubatedItem`, `EggIncubatedEntity` and `alchIncubation` recipe: commit [`5119c15`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/5119c1582e24a798a436ffa67f01fadb06304f64). The projectile and hatching behavior still need an in-game check, including renderer registration.
+- Soul Jar creature serialization/capture, item-data transfer on placement and wand-release implementation: commit [`6fd7614`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/6fd7614d00ceb22d282ab6009483ca1f0f14e6e1). This is code presence, not a passed gameplay test.
