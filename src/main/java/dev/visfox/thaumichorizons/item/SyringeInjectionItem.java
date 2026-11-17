@@ -50,13 +50,14 @@ public class SyringeInjectionItem extends Item {
     public net.minecraft.world.InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (isPhial(stack)) {
+            ItemStack projectileStack = stack.copy();
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
             world.playSound(null, player.blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 0.5F,
                 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
             if (!world.isClientSide()) {
-                world.addFreshEntity(new BlastPhialProjectile(world, player, stack, 0.5F));
+                world.addFreshEntity(new BlastPhialProjectile(world, player, projectileStack, 0.5F));
             }
             return net.minecraft.world.InteractionResult.SUCCESS;
         }
