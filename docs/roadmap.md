@@ -1,6 +1,6 @@
 # Roadmap and current state
 
-Snapshot of the public `main` branch at `5df0b4b` (2026-11-17). This is a source/documentation audit, not a new build or playtest. Code presence and in-game verification are tracked separately in `verification.md`.
+Snapshot of the public `main` branch at `cd7920c` (2026-11-17). This is a source/documentation audit, not a new build or playtest. Code presence and in-game verification are tracked separately in `verification.md`.
 
 ## Current foundation
 
