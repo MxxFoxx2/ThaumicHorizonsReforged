@@ -77,10 +77,11 @@ public class FocusIlluminationItem extends FocusItem {
             || !wand.consumeAllVis(stack, player, COST, true, false)) {
             return InteractionResult.CONSUME;
         }
-        Block light = isUpgradedWith(Wands.getFocusItem(stack), SOLAR)
+        ItemStack focus = Wands.getFocusItem(stack);
+        Block light = isUpgradedWith(focus, SOLAR)
             ? ThBlocks.LIGHT_SOLAR.get()
             : ThBlocks.LIGHT.get();
-        int color = Math.max(0, Math.min(COLORS.length - 1, stack.getDamageValue()));
+        int color = Math.max(0, Math.min(COLORS.length - 1, focus.getDamageValue()));
         BlockState lightState = light.defaultBlockState().setValue(IlluminationLightBlock.COLOR, color);
         level.setBlock(pos, lightState, 3);
         player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
