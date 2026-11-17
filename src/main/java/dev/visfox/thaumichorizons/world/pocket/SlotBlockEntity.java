@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.world.pocket;
 
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
+import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import thaumcraft.aspect.Aspect;
@@ -193,20 +196,30 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
     }
 
+    private static BlockState cornerFrameState() {
+        Block block = TcBlocks.block("advanced_alchemical_construct");
+        return (block == null ? Blocks.IRON_BLOCK : block).defaultBlockState();
+    }
+
+    private static BlockState edgeFrameState() {
+        Block block = TcBlocks.block("ancient_stone");
+        return (block == null ? Blocks.STONE_BRICKS : block).defaultBlockState();
+    }
+
     private static void frameX(Level level, BlockPos pos, int dx, int dy) {
-        level.setBlockAndUpdate(pos.offset(dx, dy, 0), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(dx, dy, 0), cornerFrameState());
     }
 
     private static void frameZ(Level level, BlockPos pos, int dz, int dy) {
-        level.setBlockAndUpdate(pos.offset(0, dy, dz), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(0, dy, dz), cornerFrameState());
     }
 
     private static void coreX(Level level, BlockPos pos, int dx, int dy) {
-        level.setBlockAndUpdate(pos.offset(dx, dy, 0), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(dx, dy, 0), edgeFrameState());
     }
 
     private static void coreZ(Level level, BlockPos pos, int dz, int dy) {
-        level.setBlockAndUpdate(pos.offset(0, dy, dz), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(0, dy, dz), edgeFrameState());
     }
 
     public boolean checkPortalX() {
@@ -220,18 +233,23 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                 }
             }
         }
+        Block corner = TcBlocks.block("advanced_alchemical_construct");
+        Block edge = TcBlocks.block("ancient_stone");
+        if (corner == null || edge == null) {
+            return false;
+        }
         for (int x : new int[] { -2, 2 }) {
-            if (!isFrameBlock(x, 0) || !isFrameBlock(x, -4)) {
+            if (!isFrameBlock(x, 0, corner) || !isFrameBlock(x, -4, corner)) {
                 return false;
             }
             for (int y = -1; y >= -3; y--) {
-                if (!isFrameBlock(x, y)) {
+                if (!isFrameBlock(x, y, edge)) {
                     return false;
                 }
             }
         }
-        return isFrameBlock(-1, 0) && isFrameBlock(1, 0)
-            && isFrameBlock(-1, -4) && isFrameBlock(0, -4) && isFrameBlock(1, -4);
+        return isFrameBlock(-1, 0, edge) && isFrameBlock(1, 0, edge)
+            && isFrameBlock(-1, -4, edge) && isFrameBlock(0, -4, edge) && isFrameBlock(1, -4, edge);
     }
 
     public boolean checkPortalZ() {
@@ -245,26 +263,31 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                 }
             }
         }
+        Block corner = TcBlocks.block("advanced_alchemical_construct");
+        Block edge = TcBlocks.block("ancient_stone");
+        if (corner == null || edge == null) {
+            return false;
+        }
         for (int z : new int[] { -2, 2 }) {
-            if (!isFrameBlockZ(z, 0) || !isFrameBlockZ(z, -4)) {
+            if (!isFrameBlockZ(z, 0, corner) || !isFrameBlockZ(z, -4, corner)) {
                 return false;
             }
             for (int y = -1; y >= -3; y--) {
-                if (!isFrameBlockZ(z, y)) {
+                if (!isFrameBlockZ(z, y, edge)) {
                     return false;
                 }
             }
         }
-        return isFrameBlockZ(-1, 0) && isFrameBlockZ(1, 0)
-            && isFrameBlockZ(-1, -4) && isFrameBlockZ(0, -4) && isFrameBlockZ(1, -4);
+        return isFrameBlockZ(-1, 0, edge) && isFrameBlockZ(1, 0, edge)
+            && isFrameBlockZ(-1, -4, edge) && isFrameBlockZ(0, -4, edge) && isFrameBlockZ(1, -4, edge);
     }
 
-    private boolean isFrameBlock(int xOffset, int yOffset) {
-        return level != null && !level.getBlockState(worldPosition.offset(xOffset, yOffset, 0)).isAir();
+    private boolean isFrameBlock(int xOffset, int yOffset, Block expected) {
+        return level != null && level.getBlockState(worldPosition.offset(xOffset, yOffset, 0)).getBlock() == expected;
     }
 
-    private boolean isFrameBlockZ(int zOffset, int yOffset) {
-        return level != null && !level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).isAir();
+    private boolean isFrameBlockZ(int zOffset, int yOffset, Block expected) {
+        return level != null && level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).getBlock() == expected;
     }
 
     public boolean insertKeystone(int planeID) {

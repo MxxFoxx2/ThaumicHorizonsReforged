@@ -26,6 +26,7 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 - The Slot receptacle recipe is registered under `planarKeystoneSlot`: Planar Conduit central ingredient, four Gold Ingots and four Void Metal Ingots, with VOID 32 / TRAVEL 24 / MECHANISM 24 / ELDRITCH 24 and instability 8.
 - Research pages now reference the correct recipe keys. PocketRegistry items (Keystone, Planar Conduit and Slot) are exposed in the Thaumic Horizons creative tab. Keystone and Slot item models exist; Slot has a static frame model using the original receptacle texture.
 - The modern ResearchPage API currently has no page type for the original custom 5×5 PlanarGateway infusion display, so the legacy multi-block recipe visualization is not yet ported. The Slot model also does not yet draw the inserted Keystone or its plane color; this remains visual work.
+- The gateway frame now restores the original TC4R mapping: the four corners use `advanced_alchemical_construct` (legacy `blockMetalDevice:3`), and the 11 remaining border blocks use `ancient_stone` (legacy `blockCosmeticSolid:11`). Frame validation requires these exact block IDs rather than accepting any non-air block.
 - All recipe registration, crafting, binding, insertion/extraction and gateway activation still require client/world verification.
 
 ## Creature entities — modern-parent substitutions
