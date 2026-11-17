@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -76,13 +75,8 @@ public final class CloudBlockEntity extends BlockEntity {
 
         BlockPos target = findGroundBelow(level);
         switch (type) {
-            case 2 -> {
-                Entity lightning = EntityType.LIGHTNING_BOLT.create(level);
-                if (lightning != null) {
-                    lightning.setPos(target.getX() + 0.5, target.getY(), target.getZ() + 0.5);
-                    level.addFreshEntity(lightning);
-                }
-            }
+            // Type 2 uses the legacy finite-length lightning entity. It is
+            // intentionally deferred until that custom entity is ported.
             case 5 -> {
                 ItemStack drop = switch (level.getRandom().nextInt(10)) {
                     case 0 -> new ItemStack(Items.BEEF);
