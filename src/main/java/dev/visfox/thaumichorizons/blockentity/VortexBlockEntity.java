@@ -68,6 +68,13 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         if (collapsing) {
             count++;
             if (count > 25) {
+                if (!level.isClientSide() && createdDimension && level instanceof ServerLevel source
+                        && PocketPlanes.validPlane(dimensionID)) {
+                    ServerLevel pocket = PocketDimension.level(source.getServer());
+                    if (pocket != null) {
+                        pocket.removeBlock(new BlockPos(0, 129, 256 * dimensionID), false);
+                    }
+                }
                 if (level.isClientSide()) {
                     Compat.port().fx().burst(level, Vec3.atCenterOf(worldPosition), 16777215, 16);
                 }
