@@ -22,7 +22,7 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 - **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
 - **Golems.** TH golem materials from grass to void salt, placed from blocks with golem powder, paired with the TH bell.
 - **Lenses and foci.** Five arcane lenses with the lens case, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
-- **Pocket plane.** Per-player, per-aspect themed dimension *(in flight — deferred to the next session, see the roadmap below)*.
+- **Pocket plane.** Per-player, per-aspect themed dimension *(dimension loads on the dedicated server; terrain, portal, Keystone, and client-asset verification remain in flight)*.
 
 ## Installation
 
@@ -51,7 +51,7 @@ Agent and contribution rules live in [CLAUDE.md](CLAUDE.md) and [AGENTS.md](AGEN
 
 ## Status and roadmap
 
-Ported and building: registration, aspects, the full research tree (74 entries), five mob effects, simple content, eight essentia/vis machines, twenty creatures with AI and infusion recipes, golems, lenses and foci, the souls/blood/Vat system with all eight menus. In flight: client renderers. Deferred to the next session: pocket plane (60% done, preserved in `.deferred-pocket/`), remaining entities, crafting recipes, FX polish — see the roadmap section in `docs/fidelity.md`.
+Ported and building: registration, aspects, the full research tree (74 entries), five mob effects, simple content, eight essentia/vis machines, twenty creatures with AI and infusion recipes, golems, lenses and foci, the souls/blood/Vat system with nine menus, the Mirror Amulet with death-item transport, Void Putty repair and Illumination Focus dyeing. The Pocket Plane compiles and its dimension loads on the dedicated server; terrain generation, portal/Keystone behavior, remaining entities, client renderers, and FX polish remain in flight — see `docs/roadmap.md` and `docs/verification.md`.
 
 ## Authors and license
 

@@ -1,6 +1,6 @@
 # Roadmap and current state
 
-Snapshot of the public `main` branch at `0804cadd` (2026-11-17). This is a source/documentation audit, not a new build or playtest. Code presence and in-game verification are tracked separately in `verification.md`.
+Snapshot of the public `main` branch at `7eb9b8c` (2026-11-17). Build, seam-check, and dedicated-server facts in this snapshot were verified locally; code presence and in-game verification are tracked separately in `verification.md`.
 
 ## Current foundation
 
@@ -19,8 +19,11 @@ Snapshot of the public `main` branch at `0804cadd` (2026-11-17). This is a sourc
 - **Planar Conduit** item and the `planarTheory`, `transductionAmplifier` and `vortexStabilizer` recipes: [`408e6cc`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/408e6cc49b87d9c9922442ad8e0de8b13174d9e2).
 - **Incubated Egg** item, throwable entity and `alchIncubation` crucible recipe: [`5119c15`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/5119c1582e24a798a436ffa67f01fadb06304f64).
 - **Soul Jar capture/release code**: creature NBT is serialized into the jar item; placement transfers its data to the BlockEntity; wand use attempts to restore the creature. [`6fd7614`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/6fd7614d00ceb22d282ab6009483ca1f0f14e6e1). The full cycle is not yet game-verified.
+- **Mirror Amulet**: registered as a TC4R amulet bauble, linked to ordinary mirrors through the compatibility seam, and used by the player-death handler to transport inventory and bauble items through the linked mirror. Its infusion recipe and research page are present. [`8538a7f`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8538a7f). Runtime behavior still needs an in-game check.
+- **Void Putty repair and Illumination Focus dye recipes**: custom recipe serializers and recipes are registered. [`8512e83`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8512e83). Both still need an in-game check.
+- **Pocket Plane dimension data**: dimension type and biome definitions were migrated to the Minecraft 26.3 codecs. The dedicated server now loads `thaumichorizons:pocket_plane`. [`7eb9b8c`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/7eb9b8c).
 
-## Pocket Plane — compile-clean, runtime verification pending
+## Pocket Plane — dimension loads, gameplay verification pending
 
 Commit [`e38d16a`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/e38d16ae8e68544a3dc6d45627b00cc1cf19ce47) moved substantial Pocket Plane work into tracked source files:
 
@@ -29,25 +32,25 @@ Commit [`e38d16a`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/e3
 - Registration and item: `PocketRegistry`, `KeystoneItem`, `PlanarConduitItem`; the `Teleport` TC4R seam is added to the allowlist.
 - Data resources: dimension, dimension type and biome JSONs for `pocket_plane`.
 
-This is **not a playable/verified dimension yet**. The Pocket Plane sources now compile against Minecraft 26.3 / NeoForge 26.3: the ChunkGenerator contract, SavedData codec, block-removal hook, entity-inside hook, item tooltip API, registry lookup APIs, and block-entity ticker were migrated. The duplicate `thaumichorizons:planarconduit` registration was consolidated into `PocketRegistry`. The dedicated server boots with the mod loaded, but the Pocket Plane runtime checks below remain open.
+This is **not a playable/verified dimension yet**. The Pocket Plane sources compile against Minecraft 26.3 / NeoForge 26.3: the ChunkGenerator contract, SavedData codec, block-removal hook, entity-inside hook, item tooltip API, registry lookup APIs, and block-entity ticker were migrated. The duplicate `thaumichorizons:planarconduit` registration was consolidated into `PocketRegistry`. The dimension type and biome definitions were migrated to the current codecs in `7eb9b8c`; a fresh dedicated-server run reached `Done` and loaded `thaumichorizons:pocket_plane`.
 
-Still pending after the WIP compile fixes: portal/slot in-game behavior, dimension load and terrain generation, keystone binding, portal transfers/return positions, Vortex-collapse integration, and client assets/rendering for the new blocks. The old `.deferred-pocket/` directory remains ignored and absent; the current public WIP is now in `src/main/java` and `src/main/resources`.
+Still pending: generated terrain layers/caves/pockets, portal/slot in-game behavior, keystone binding, portal transfers/return positions, Vortex-collapse integration, saved-data restart behavior, and client assets/rendering for the new blocks. The historical `.deferred-pocket/` staging directory is no longer part of the public source state; the current public WIP is in `src/main/java` and `src/main/resources`.
 
 ## Remaining work — priority order
 
-1. **Validate Pocket Plane runtime behavior.** Build and seam checks are green. Test dimension load, terrain, slot/keystone, all portal states, portal teardown, transfers in both directions, saved data and Vortex-collapse integration.
+1. **Validate Pocket Plane runtime behavior.** Build, seam checks, server boot, and dimension load are green. Test generated terrain, slot/keystone, all portal states, portal teardown, transfers in both directions, saved data and Vortex-collapse integration.
 2. **Finish Gate 2 verification.** Test Soul Jar capture/release, Containment Focus, curative Vat mode, creature infusion, Corpse Effigy cloning, syringe draw/inject, all nine menus and Inspiratron research completion.
 3. **Restore missing world content.** Recombinator and Spike variants are still absent. Original `TileCloud` and `TileLight` behavior is not ported; `TileCloud` includes weather interaction, block/entity effects and finite lightning, not just particles. Slot and portal equivalents now exist as WIP source; they should no longer be described as wholly absent.
 4. **Finish the two keybinds.** M (Morphic Fingers) now sends an `open_fingers` payload and opens the `FingersMenu` server-side when the infusion is present; V (Arcane Lens radial HUD) is still registered but its client tick handler only consumes the press. C/X are wired to server payloads.
 5. **Port remaining entities/projectiles/vehicles:** HorseZombie, HorseSkeleton, NightmareTH, Greatwood Boat, Thaumium Boat, Syringe projectile and BlastPhial projectile. Incubated Egg and its projectile are present in code with the thrown-item renderer registered; they still need a gameplay check. Finite lightning belongs with the Cloud behavior and is not a separately registered mod entity in the original.
-6. **Complete item/research and recipe gaps.** Mirror Amulet remains missing. Planar Keystone now has a WIP item class, but its recipe/research flow and actual use need completion. Void Putty repair and Focus Illumination dye recipes remain absent. Planar Conduit, Planar Theory, Transduction Amplifier, Vortex Stabilizer and Incubated Egg recipes are present in code.
+6. **Complete item/research and recipe gaps.** Mirror Amulet, its infusion recipe, link behavior, death transport, Void Putty repair, and Focus Illumination dyeing are present in code and need runtime verification. Planar Keystone has a WIP item class, but its recipe/research flow and actual use need completion. Planar Conduit, Planar Theory, Transduction Amplifier, Vortex Stabilizer and Incubated Egg recipes are present in code.
 7. **Finish machine and compatibility behavior:** Recombinator; SyntheticNode wisp-essence refilling/drops; crystal-essence conversion; overloaded Transducer flux gas/goo and wisp spawning; Liquefaction nuggets upgrade; remaining TC4R taint-poison/blurred-vision and skull-variant compatibility.
 8. **Client polish:** Vat multiblock renderer/animation, VortexSound, Familiar hat layer, new Pocket Plane block/item assets, missing projectile rendering and parity checks for remaining FX. Do not redo existing creature renderers, Node Monitor renderer or completed static machine models.
 9. **Release validation and backports:** clean-checkout build, `tools/check_seams.py`, dedicated-server boot, save/reload, full Gate 1/Gate 2 and two-client invisibility checks. Backport branches (`mc/26.1.2`, `mc/1.21.1`) only after 26.3 stabilizes.
 
 ## Verification / CI status
 
-`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree. The current working tree passes `gradlew.bat build --no-configuration-cache` and `python tools/check_seams.py`; the Pocket Plane runtime checks remain manual and open.
+`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree. At `7eb9b8c`, `gradlew.bat build --no-configuration-cache` and `python tools/check_seams.py` pass, and a fresh dedicated-server run reaches `Done` with the Pocket Plane dimension loaded. The remaining Pocket Plane and Gate 2 gameplay checks are manual and open.
 
 ## Upstream
 

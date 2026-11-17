@@ -38,6 +38,9 @@ python -I tools/check_seams.py
 - [ ] Incubated Egg: obtain via `alchIncubation`, throw it, confirm projectile renders and hatches a baby chicken on impact.
 - [ ] Planar Conduit: craft using `planarTheory`; verify the Transduction Amplifier arcane recipe and Vortex Stabilizer infusion recipe against the reference ingredients/aspect costs.
 - [ ] Confirm the thrown Incubated Egg renders in-game. `ThrownItemRenderer` is now registered for `ThaumicHorizons:eggincubated`; no missing-renderer log or invisible projectile in a live client.
+- [ ] Mirror Amulet: craft it, link it to an ordinary TC4R mirror, die with inventory and bauble items, and confirm the items are transported through the mirror and the amulet is consumed.
+- [ ] Void Putty repair: combine a damaged repairable item with Void Putty and confirm the repaired item is returned with damage reset.
+- [ ] Focus Illumination dyeing: combine an Illumination Focus with one or more dyes and confirm the focus color changes to the legacy dye color.
 
 ## Invisibility checklist (community requirement — run every phase touching infusions)
 
@@ -59,9 +62,9 @@ Two clients on the same server:
 - [ ] Backport branches (26.1.2, 1.21.1) build and pass Gate 1
 
 
-## Pocket Plane WIP verification (commit `e38d16a`)
+## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 
-The Pocket Plane classes and data JSONs are tracked, and the sources now compile against MC 26.3 / NeoForge 26.3. Build, seam, and dedicated-server startup pass; the runtime checks below remain open.
+The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open.
 
 - [x] `gradlew.bat build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
 - [x] `python tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
