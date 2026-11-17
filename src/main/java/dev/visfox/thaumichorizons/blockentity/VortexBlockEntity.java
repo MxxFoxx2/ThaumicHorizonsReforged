@@ -18,6 +18,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -137,7 +139,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         if (primordialPearl != null && ThaumicHorizonsConfig.pocketPlaneEnabled()) {
             for (ItemEntity item : entities) {
-                if (item.getItem().is(primordialPearl) && createPocketPlane(source)) {
+                if (item.getItem().is(primordialPearl) && createPocketPlane(source, item)) {
                     item.discard();
                     return;
                 }
@@ -146,12 +148,24 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         handleVoidCrafting();
     }
 
-    private boolean createPocketPlane(ServerLevel source) {
+    private boolean createPocketPlane(ServerLevel source, ItemEntity pearl) {
         MinecraftServer server = source.getServer();
         PocketPlanes.get(server);
         int newPlaneID = PocketPlanes.pocketPlaneMAXID;
         PocketPlaneData data = new PocketPlaneData();
-        data.name = "Pocket Plane";
+
+        // Match the reference: renamed pearls name the plane; otherwise use
+        // the thrower's name plus the localized Pocket Plane suffix.
+        ItemStack pearlStack = pearl.getItem();
+        Component customName = pearlStack.get(DataComponents.CUSTOM_NAME);
+        if (customName != null) {
+            data.name = customName.getString();
+        } else {
+            Entity thrower = pearl.getOwner();
+            data.name = thrower == null
+                ? Component.translatable("tc.research_name.pocketPlane").getString()
+                : thrower.getName().getString() + Component.translatable("thaumichorizons.pocketplane").getString();
+        }
         boolean created = PocketPlanes.generatePocketPlane(aspects, data, server,
             worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
             source.dimension().identifier().toString());
