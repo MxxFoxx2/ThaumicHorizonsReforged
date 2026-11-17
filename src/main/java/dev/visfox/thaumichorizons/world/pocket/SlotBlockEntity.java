@@ -163,10 +163,9 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             coreX(level, pos, -1, -4);
             coreX(level, pos, 0, -4);
             coreX(level, pos, 1, -4);
-            for (int x = -2; x <= 2; x++) {
-                coreX(level, pos, x, -1);
-                coreX(level, pos, x, -2);
-                coreX(level, pos, x, -3);
+            for (int y = -1; y >= -3; y--) {
+                coreX(level, pos, -2, y);
+                coreX(level, pos, 2, y);
             }
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y >= -3; y--) {
@@ -183,10 +182,9 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             coreZ(level, pos, -1, -4);
             coreZ(level, pos, 0, -4);
             coreZ(level, pos, 1, -4);
-            for (int z = -2; z <= 2; z++) {
-                coreZ(level, pos, z, -1);
-                coreZ(level, pos, z, -2);
-                coreZ(level, pos, z, -3);
+            for (int y = -1; y >= -3; y--) {
+                coreZ(level, pos, -2, y);
+                coreZ(level, pos, 2, y);
             }
             for (int z = -1; z <= 1; z++) {
                 for (int y = -1; y >= -3; y--) {

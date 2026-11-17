@@ -85,7 +85,8 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - VisDynamo aspect-toggle GUI deferred to the menu phase; toggles exist as BE fields.
 
 - Vortex parity: the legacy vortex does not consume the surrounding 5×5×5 device area, run hungry-node behavior, or begin its 2400-tick collapse while inside the Pocket Plane dimension. The modern tick now preserves these three dimension exclusions; the generated plane vortex remains separately protected by its `cheat` state.
-- Vortex item reactions now cover the legacy drop interactions: TC4R `void_metal_ingot` becomes Void Putty in the wand-retrievable output queue; each `salis_mundus` spawns 1–4 TC4R Wisps with a random stored Vortex aspect when available; owner-thrown TH Golem Powder spawns one temporary uncoreed TH golem per powder, assigns the thrower as owner, and emits the legacy wand sound/event. The void-metal mapping replaces the previous incorrect `void_seed` lookup.
+- Vortex item reactions now cover the legacy drop interactions: TC4R `void_metal_ingot` becomes Void Putty in the wand-retrievable output queue; each `salis_mundus` spawns 1–4 TC4R Wisps with a random stored Vortex aspect when available via the ItemCompat seam; owner-thrown TH Golem Powder spawns one temporary uncoreed TH golem per powder, assigns the thrower as owner, and emits the legacy wand sound/event. The void-metal mapping replaces the previous incorrect `void_seed` lookup.
+- Slot portal teardown restores only the side pillars around the 3×3 opening; the original portal aperture remains empty so the same frame can be reopened without manual clearing.
 ## Souls / Vat / blood phase — documented deviations
 
 - Soul-jar villager profession stored as a registry id string.

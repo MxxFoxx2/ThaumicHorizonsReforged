@@ -355,7 +355,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
             for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
                 int wispCount = level.getRandom().nextInt(4) + 1;
                 for (int i = 0; i < wispCount; i++) {
-                    Wisp wisp = ModEntities.WISP.get().create(level, EntitySpawnReason.TRIGGER);
+                    Wisp wisp = ModEntities.WISP.get().create(level, EntitySpawnReason.TRIGGERED);
                     if (wisp == null) {
                         continue;
                     }
