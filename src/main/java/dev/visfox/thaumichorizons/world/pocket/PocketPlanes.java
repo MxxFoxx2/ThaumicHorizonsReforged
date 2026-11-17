@@ -122,6 +122,7 @@ public class PocketPlanes extends SavedData {
         if (te instanceof VortexBlockEntity vortex) {
             vortex.cheat = true;
             vortex.createdDimension = true;
+            vortex.dimensionID = planes.size();
             vortex.setChanged();
         }
         data.clearPortal(1);
