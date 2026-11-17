@@ -22,7 +22,7 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 - **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
 - **Golems.** TH golem materials from grass to void salt, placed from blocks with golem powder, paired with the TH bell.
 - **Lenses and foci.** Five arcane lenses with the lens case, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
-- **Pocket plane.** Per-player, per-aspect themed dimension *(dimension loads on the dedicated server; terrain, portal, Keystone, and client-asset verification remain in flight)*.
+- **Pocket plane.** Shared, aspect-themed pocket dimensions created through the Vortex; a Planar Keystone binds a player to one pocket plane *(dimension loads on the dedicated server; terrain, portal, Keystone, and client-asset verification remain in flight)*.
 
 ## Installation
 
