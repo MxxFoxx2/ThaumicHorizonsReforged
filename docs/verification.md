@@ -57,3 +57,21 @@ Two clients on the same server:
 - [ ] Full texture pass: no missing-model purple/black cubes
 - [ ] Dedicated server boot + `/reload` + world save/reload
 - [ ] Backport branches (26.1.2, 1.21.1) build and pass Gate 1
+
+
+## Pocket Plane WIP verification (commit `e38d16a`)
+
+The Pocket Plane classes and data JSONs are now tracked, but the WIP roadmap reports compile errors. Do not attempt to mark the runtime checks below complete until build and seam checks pass.
+
+- [ ] `./gradlew build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
+- [ ] `python -I tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
+- [ ] Consolidate `thaumichorizons:planarconduit` so it is registered exactly once; confirm mod registry startup.
+- [ ] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
+- [ ] PocketPlaneGenerator produces the intended layers/caves/pockets; test several seeds and verify deterministic chunk generation.
+- [ ] Keystone item creates/binds the intended pocket plane and preserves its plane id through inventory, drop/pickup and save/reload.
+- [ ] Slot multiblock detection works in both orientations; portal creation consumes the expected vis and persists portal state.
+- [ ] Portal teardown restores the frame and clears the saved portal entry.
+- [ ] Travel from the Overworld into the Pocket Plane and back reaches the correct portal/return position, preserves player state and orientation, and handles missing/unloaded destinations safely.
+- [ ] PocketPlanes SavedData survives server restart and world save/reload.
+- [ ] Vortex-collapse integration creates/tears down the Pocket Plane as intended.
+- [ ] Portal, Gateway and Slot blocks have complete blockstates, models, textures and no missing-renderer/model log.
