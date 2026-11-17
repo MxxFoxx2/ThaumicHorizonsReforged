@@ -6,10 +6,14 @@ import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
+import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import dev.visfox.thaumichorizons.entity.EntityGolemTH;
+import dev.visfox.thaumichorizons.lib.THSounds;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -17,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +38,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
+import thaumcraft.entity.monster.Wisp;
+import thaumcraft.registry.ModEntities;
 import thaumcraft.wand.WandInteractable;
 import thaumcraft.platform.Teleport;
 
@@ -209,28 +216,71 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
     }
 
     void handleVoidCrafting() {
-        if (level == null || level.isClientSide()) {
+        if (!(level instanceof ServerLevel server) || level.isClientSide()) {
             return;
         }
-        Item seed = Compat.port().items().lookup(voidSeedId());
-        if (seed == null) {
-            return;
-        }
-        List<ItemEntity> ents = level.getEntitiesOfClass(ItemEntity.class, new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
+        Item voidMetal = Compat.port().items().lookup(voidMetalIngotId());
+        Item salisMundus = Compat.port().items().lookup(salisMundusId());
+        List<ItemEntity> ents = level.getEntitiesOfClass(ItemEntity.class,
+            new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         for (ItemEntity item : ents) {
             ItemStack stack = item.getItem();
-            if (stack.is(seed)) {
+            if (voidMetal != null && stack.is(voidMetal)) {
+                // Legacy itemResource metadata 16: void metal ingot -> Void Putty.
                 items.add(new ItemStack(ThItems.VOID_PUTTY.get(), stack.getCount()));
+                item.discard();
+            } else if (salisMundus != null && stack.is(salisMundus)) {
+                // Legacy itemResource metadata 14: each Salis Mundus releases 1–4 Wisps.
+                spawnWisps(server, stack.getCount());
                 item.discard();
             } else if (stack.is(ThItems.CRYSTAL_WAND.get())) {
                 items.add(new ItemStack(ThItems.WAND_CASTING_DISPOSABLE.get()));
+                item.discard();
+            } else if (stack.is(ThItems.GOLEM_POWDER.get()) && item.getOwner() != null) {
+                // The original requires a thrower so the temporary golems have an owner.
+                Entity owner = item.getOwner();
+                for (int i = 0; i < stack.getCount(); i++) {
+                    EntityGolemTH golem = new EntityGolemTH(EntityGolemTH.thType(), server);
+                    golem.loadGolem(worldPosition.getX() + 0.5D, worldPosition.getY(),
+                        worldPosition.getZ() + 0.5D, null, 0, -420, false, false, false);
+                    golem.setOwnerUUID(owner.getUUID());
+                    golem.setHome(worldPosition, Direction.UP);
+                    THSounds.play(server, Vec3.atCenterOf(worldPosition),
+                        "wand", net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+                    server.addFreshEntity(golem);
+                    server.broadcastEntityEvent(golem, (byte) 7);
+                }
                 item.discard();
             }
         }
     }
 
-    private static Identifier voidSeedId() {
-        return Identifier.fromNamespaceAndPath("thaumcraft", "void_seed");
+    private void spawnWisps(ServerLevel server, int salisMundusCount) {
+        List<Aspect> storedAspects = aspects.getAspects();
+        for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
+            int wispCount = server.getRandom().nextInt(4) + 1;
+            for (int i = 0; i < wispCount; i++) {
+                Wisp wisp = ModEntities.WISP.get().create(server, EntitySpawnReason.TRIGGER);
+                if (wisp == null) {
+                    continue;
+                }
+                wisp.setPos(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D,
+                    worldPosition.getZ() + 0.5D);
+                if (!storedAspects.isEmpty()) {
+                    Aspect aspect = storedAspects.get(server.getRandom().nextInt(storedAspects.size()));
+                    wisp.setAspect(aspect);
+                }
+                server.addFreshEntity(wisp);
+            }
+        }
+    }
+
+    private static Identifier voidMetalIngotId() {
+        return Identifier.fromNamespaceAndPath("thaumcraft", "void_metal_ingot");
+    }
+
+    private static Identifier salisMundusId() {
+        return Identifier.fromNamespaceAndPath("thaumcraft", "salis_mundus");
     }
 
     void handleHungryNode() {
