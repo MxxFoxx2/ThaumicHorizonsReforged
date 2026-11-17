@@ -8,6 +8,14 @@ import thaumcraft.aspect.AspectList;
 import org.jspecify.annotations.Nullable;
 
 public interface ItemCompat {
+    default boolean isAvailable() {
+        return false;
+    }
+
+    default @Nullable Item getSmeltingBonus(ItemStack input) {
+        throw new UnsupportedOperationException();
+    }
+
     default @Nullable Item lookup(Identifier id) {
         throw new UnsupportedOperationException();
     }
