@@ -3,9 +3,7 @@ package dev.visfox.thaumichorizons.client.render.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
-import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import net.minecraft.client.model.animal.feline.AbstractFelineModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -38,7 +36,6 @@ public final class FamiliarHatLayer extends RenderLayer<FelineRenderState, Abstr
             return;
         }
 
-        this.model.head.copyFrom(this.getParentModel().root().getChild("head"));
         renderColoredCutoutModel(
             this.model,
             TEXTURE,

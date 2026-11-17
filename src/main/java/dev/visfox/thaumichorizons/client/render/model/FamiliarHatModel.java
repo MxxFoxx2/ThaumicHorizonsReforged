@@ -10,6 +10,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.FelineRenderState;
+import net.minecraft.util.Mth;
 
 /**
  * The Familiar's original wizard hat from the 1.7.10 ModelFamiliar.
@@ -28,10 +29,19 @@ public final class FamiliarHatModel extends EntityModel<FelineRenderState> {
         this.head = root.getChild("head");
     }
 
+    @Override
+    public void setupAnim(FelineRenderState state) {
+        super.setupAnim(state);
+        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
+        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
+    }
+
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
+        // AdultOcelotModel uses the same head pivot as the 1.7.10 familiar model.
+        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(),
+            PartPose.offset(0.0F, 15.0F, -9.0F));
 
         // Original ModelFamiliar UVs on textures/entity/familiar.png (64x32).
         head.addOrReplaceChild("hat_buckle",
