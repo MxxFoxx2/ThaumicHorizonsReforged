@@ -424,5 +424,11 @@
   "item.thaumichorizons.cloudglowingth_vis": "Облако Вис",
   "item.thaumichorizons.cloudglowingth_glyph": "Глифовое облако",
   "item.thaumichorizons.cloudth_spore": "Споровое облако",
-  "item.thaumichorizons.cloudglowingth_animus": "Анимус-облако"
+  "item.thaumichorizons.cloudglowingth_animus": "Анимус-облако",
+  "item.thaumichorizons.horse_zombie_spawn_egg": "Яйцо призыва лошади-зомби",
+  "item.thaumichorizons.horse_skeleton_spawn_egg": "Яйцо призыва лошади-скелета",
+  "item.thaumichorizons.nightmare_spawn_egg": "Яйцо призыва Кошмара",
+  "entity.thaumichorizons.horse_zombie": "Лошадь-зомби",
+  "entity.thaumichorizons.horse_skeleton": "Лошадь-скелет",
+  "entity.thaumichorizons.nightmare": "Кошмар"
 }

@@ -424,5 +424,11 @@
   "item.thaumichorizons.cloudglowingth_vis": "Vis Cloud",
   "item.thaumichorizons.cloudglowingth_glyph": "Glyph Cloud",
   "item.thaumichorizons.cloudth_spore": "Spore Cloud",
-  "item.thaumichorizons.cloudglowingth_animus": "Animus Cloud"
+  "item.thaumichorizons.cloudglowingth_animus": "Animus Cloud",
+  "item.thaumichorizons.horse_zombie_spawn_egg": "Zombie Horse Spawn Egg",
+  "item.thaumichorizons.horse_skeleton_spawn_egg": "Skeleton Horse Spawn Egg",
+  "item.thaumichorizons.nightmare_spawn_egg": "Nightmare Spawn Egg",
+  "entity.thaumichorizons.horse_zombie": "Zombie Horse",
+  "entity.thaumichorizons.horse_skeleton": "Skeleton Horse",
+  "entity.thaumichorizons.nightmare": "Nightmare"
 }

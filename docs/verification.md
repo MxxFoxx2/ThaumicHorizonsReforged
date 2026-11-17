@@ -31,6 +31,17 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Test both projectiles with two clients and through save/reload while embedded/in flight. Check that projectile state and potion payload remain synchronized.
 - [ ] Inspect projectile appearance in hand, flight and impact. The syringe currently uses a 2D syringe item sprite via ThrownItemRenderer; replace/verify against the legacy 3D model and check Blast Phial tint/scale/orientation.
 
+## Undead horses and NightmareTH — source and CI coverage only
+
+- [ ] Spawn `thaumichorizons:horse_zombie`, `thaumichorizons:horse_skeleton` and `thaumichorizons:nightmare`; confirm each entity type, display name, collision size, and renderer load without model/texture errors.
+- [ ] Use all three spawn eggs on valid ground in survival and creative. Confirm each egg creates only its matching entity and consumes only in survival.
+- [ ] Confirm HorseZombie is treated as undead and has the vanilla zombie-horse base attributes plus exactly +20 max health. Confirm HorseSkeleton is undead and has exactly +0.1 movement speed. Save/reload and verify modifiers do not stack.
+- [ ] Mount and saddle all three mounts; test adult/foal state, save/reload, rider dismount and multiplayer tracking. Check Zombie/Skeleton equipment layers and Nightmare's four armor textures plus saddle layer.
+- [ ] Complete `nightmareInfusion` in the Vat. Confirm the output is `thaumichorizons:nightmare`, not `thaumichorizons:endersteed`, and its Thaumometer aspects match Beast 3, Eldritch 4, Fire 4 and Travel 4.
+- [ ] With a rider, test low/medium Nightmare jump charges and confirm short-range Endersteed blink. In the Overworld and Nether, use a full jump charge and confirm travel to the other dimension, rider remains mounted, orientation is preserved, and arrival is collision-free with no liquid overlap. Confirm other dimensions never invoke cross-dimensional travel.
+- [ ] Confirm Nightmare is fire immune, can rise through lava without accumulating fall damage, turns grass underfoot into dirt, burns legacy plant/web/leaves blocks at body/head level, and is not slowed by cobwebs. Confirm the source explosion appears only on successful dimension travel.
+- [ ] Test repeated dimension trips, death/respawn, server restart, dismount before full jump, and destination with no safe landing column. Check for duplicate Nightmare entities, detached riders, or lost passengers.
+
 ## Gate 1 — after machines + creatures (V-phase)
 
 ```sh

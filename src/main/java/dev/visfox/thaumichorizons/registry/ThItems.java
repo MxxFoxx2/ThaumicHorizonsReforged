@@ -37,6 +37,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import java.util.function.Supplier;
@@ -93,6 +94,12 @@ public final class ThItems {
         SyringeBloodSampleItem::new);
     public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new,
         properties -> properties.stacksTo(1).enchantable(3));
+    public static final DeferredItem<SpawnEggItem> HORSE_ZOMBIE_SPAWN_EGG = ITEMS.registerItem(
+        "horse_zombie_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_ZOMBIE.get())));
+    public static final DeferredItem<SpawnEggItem> HORSE_SKELETON_SPAWN_EGG = ITEMS.registerItem(
+        "horse_skeleton_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_SKELETON.get())));
+    public static final DeferredItem<SpawnEggItem> NIGHTMARE_SPAWN_EGG = ITEMS.registerItem(
+        "nightmare_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.NIGHTMARE.get())));
     public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseeffigy",
         CorpseEffigyItem::new);
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);

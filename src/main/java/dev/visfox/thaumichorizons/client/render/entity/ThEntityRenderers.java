@@ -4,6 +4,9 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
 import net.minecraft.client.renderer.entity.SheepRenderer;
+import net.minecraft.client.renderer.entity.UndeadHorseRenderer;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -38,6 +41,13 @@ public final class ThEntityRenderers {
         event.registerEntityRenderer(ThEntities.ORE_PIG.get(), OrePigRenderer::new);
         event.registerEntityRenderer(ThEntities.TAINT_EATER_PIG.get(), TaintEaterPigRenderer::new);
         event.registerEntityRenderer(ThEntities.ENDERSTEED.get(), EndersteedRenderer::new);
+        event.registerEntityRenderer(ThEntities.HORSE_ZOMBIE.get(), context ->
+            new UndeadHorseRenderer(context, EquipmentClientInfo.LayerType.ZOMBIE_HORSE_SADDLE,
+                ModelLayers.ZOMBIE_HORSE_SADDLE, UndeadHorseRenderer.Type.ZOMBIE, UndeadHorseRenderer.Type.ZOMBIE_BABY));
+        event.registerEntityRenderer(ThEntities.HORSE_SKELETON.get(), context ->
+            new UndeadHorseRenderer(context, EquipmentClientInfo.LayerType.SKELETON_HORSE_SADDLE,
+                ModelLayers.SKELETON_HORSE_SADDLE, UndeadHorseRenderer.Type.SKELETON, UndeadHorseRenderer.Type.SKELETON_BABY));
+        event.registerEntityRenderer(ThEntities.NIGHTMARE.get(), NightmareRenderer::new);
         event.registerEntityRenderer(ThEntities.SEAWOLF.get(), SeawolfRenderer::new);
         event.registerEntityRenderer(ThEntities.NETHER_HOUND.get(), NetherHoundRenderer::new);
         event.registerEntityRenderer(ThEntities.LUNAR_WOLF.get(), LunarWolfRenderer::new);
