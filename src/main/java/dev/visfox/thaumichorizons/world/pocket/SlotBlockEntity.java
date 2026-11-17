@@ -114,7 +114,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
 
         String sourceDimension = level.dimension().identifier().toString();
         PocketPlanes.makePortal(pocketID, portalNum, worldPosition.getX(), worldPosition.getY(),
-            worldPosition.getZ(), sourceDimension, server.getServer());
+            worldPosition.getZ(), sourceDimension, xAligned, server.getServer());
         portalOpen = true;
         which = portalNum;
         setChanged();
