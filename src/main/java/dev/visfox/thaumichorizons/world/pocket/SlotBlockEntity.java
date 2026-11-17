@@ -308,7 +308,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     @Override
-    protected void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
         if (!(level instanceof ServerLevel server)) {
             return;
