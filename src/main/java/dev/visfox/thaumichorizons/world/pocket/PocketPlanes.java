@@ -199,7 +199,7 @@ public class PocketPlanes extends SavedData {
     }
 
     public static void makePortal(int id, int which, int xCoord, int yCoord, int zCoord,
-            String dimension, MinecraftServer server) {
+            String dimension, boolean xAligned, MinecraftServer server) {
         ServerLevel world = PocketDimension.level(server);
         if (world == null || !validPlane(id) || net.minecraft.resources.Identifier.tryParse(dimension) == null) {
             return;
