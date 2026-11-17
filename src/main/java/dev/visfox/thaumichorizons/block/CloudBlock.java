@@ -75,8 +75,10 @@ public class CloudBlock extends Block implements EntityBlock, WandInteractable {
 
     @Override
     public InteractionResult onWandUseOn(Level level, BlockPos pos, Player player, ItemStack wand, Direction side) {
-        if (!Compat.port().items().isWand(wand)
-                || !Compat.port().research().isComplete(player, "planarClouds")) {
+        var items = Compat.port().items();
+        var research = Compat.port().research();
+        if (!items.isAvailable() || !research.isAvailable()
+                || !items.isWand(wand) || !research.isComplete(player, "planarClouds")) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
