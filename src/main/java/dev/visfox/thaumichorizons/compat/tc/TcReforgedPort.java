@@ -34,6 +34,7 @@ import thaumcraft.device.MirrorBlock;
 import thaumcraft.device.MirrorBlockEntity;
 import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
+import thaumcraft.device.SmeltingBonuses;
 import thaumcraft.entity.TaintedMob;
 import thaumcraft.node.NodeHooks;
 import thaumcraft.node.NodeTransducerBlockEntity;
@@ -298,6 +299,16 @@ public final class TcReforgedPort implements ThaumcraftPort {
     }
 
     static final class TcItems implements ItemCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public @Nullable Item getSmeltingBonus(ItemStack input) {
+            return SmeltingBonuses.get(input);
+        }
+
         @Override
         public @Nullable Item lookup(Identifier id) {
             Item item = BuiltInRegistries.ITEM.getValue(id);
