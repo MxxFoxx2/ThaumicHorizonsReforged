@@ -19,7 +19,7 @@ public final class Compat {
         return port;
     }
 
-    private static final class UnavailablePort implements ThaumcraftPort, AspectCompat, ResearchCompat, WarpCompat, EssentiaCompat, NodeCompat, VisNetCompat, GolemCompat, InfusionCompat, FxCompat, ScanCompat, PotionCompat, ItemCompat {
+    private static final class UnavailablePort implements ThaumcraftPort, AspectCompat, ResearchCompat, WarpCompat, EssentiaCompat, NodeCompat, VisNetCompat, GolemCompat, InfusionCompat, FxCompat, ScanCompat, PotionCompat, ItemCompat, MirrorCompat, BaubleCompat {
         @Override
         public String portId() {
             return "unavailable";
@@ -87,6 +87,16 @@ public final class Compat {
 
         @Override
         public ItemCompat items() {
+            return this;
+        }
+
+        @Override
+        public MirrorCompat mirrors() {
+            return this;
+        }
+
+        @Override
+        public BaubleCompat baubles() {
             return this;
         }
     }

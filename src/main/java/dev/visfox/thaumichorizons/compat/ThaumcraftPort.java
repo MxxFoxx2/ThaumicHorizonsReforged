@@ -26,4 +26,8 @@ public interface ThaumcraftPort {
     PotionCompat potions();
 
     ItemCompat items();
+
+    MirrorCompat mirrors();
+
+    BaubleCompat baubles();
 }

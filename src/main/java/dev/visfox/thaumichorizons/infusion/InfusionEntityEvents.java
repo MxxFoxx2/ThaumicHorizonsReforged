@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.infusion;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.compat.BaubleCompat;
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
@@ -10,8 +11,10 @@ import dev.visfox.thaumichorizons.entity.ai.OwnerHurtByTargetGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.OwnerHurtTargetGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.SitGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.WanderGoalTH;
+import dev.visfox.thaumichorizons.item.AmuletMirrorItem;
 import dev.visfox.thaumichorizons.item.SoulJarKeys;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
+import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,7 +45,9 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -299,6 +304,57 @@ public final class InfusionEntityEvents {
                 CreatureInfusion.setInfusion(serverPlayer, 0, 0);
             }
             CreatureInfusion.DATA.set(player, CreatureInfusionData.EMPTY);
+            returnDeathItems(player, level);
+        }
+    }
+
+    private static void returnDeathItems(Player player, ServerLevel level) {
+        if (!Compat.port().baubles().isAvailable() || !Compat.port().mirrors().isAvailable()) {
+            return;
+        }
+        BaubleCompat baubles = Compat.port().baubles();
+        int amuletSlot = -1;
+        for (int slot = 0; slot < baubles.slotCount(); slot++) {
+            if (baubles.get(player, slot).getItem() instanceof AmuletMirrorItem) {
+                amuletSlot = slot;
+                break;
+            }
+        }
+        if (amuletSlot < 0) {
+            return;
+        }
+        ItemStack amulet = baubles.get(player, amuletSlot);
+        boolean transported = false;
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (!stack.isEmpty() && AmuletMirrorItem.transport(amulet, stack, player, level)) {
+                player.getInventory().setItem(slot, ItemStack.EMPTY);
+                transported = true;
+            }
+        }
+        for (int slot = 0; slot < baubles.slotCount(); slot++) {
+            if (slot == amuletSlot) {
+                continue;
+            }
+            ItemStack stack = baubles.get(player, slot);
+            if (!stack.isEmpty() && AmuletMirrorItem.transport(amulet, stack, player, level)) {
+                baubles.set(player, slot, ItemStack.EMPTY);
+                transported = true;
+            }
+        }
+        if (!transported) {
+            return;
+        }
+        baubles.set(player, amuletSlot, ItemStack.EMPTY);
+        player.getInventory().setChanged();
+        Vec3 eye = player.position().add(0.0, player.getEyeHeight(), 0.0);
+        Compat.port().fx().containmentCapture(level, eye, 29631);
+        THSounds.play(level, eye, "craftfail", SoundSource.PLAYERS, 1.0F, 1.0F);
+        Item pearl = Compat.port().items().lookup(Identifier.parse("thaumcraft:primordial_pearl"));
+        if (pearl != null) {
+            ItemEntity drop = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), new ItemStack(pearl));
+            drop.setUnlimitedLifetime();
+            level.addFreshEntity(drop);
         }
     }
 

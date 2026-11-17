@@ -35,6 +35,7 @@ public final class ThRecipes {
         infusion2();
         infusion3();
         infusion4();
+        mirrorAmulet();
     }
 
     private static void registerPhialData() {
@@ -306,5 +307,14 @@ public final class ThRecipes {
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("thaumcraft:scribing_tools"), TcIngredient.item("thaumcraft:entropy_shard"),
                 TcIngredient.item("minecraft:book"), TcIngredient.item("thaumcraft:order_shard"))));
+    }
+
+    private static void mirrorAmulet() {
+        TcRecipes.register(new InfusionRecipe("mirrorAmulet", "mirrorAmulet", TcStack.of("thaumichorizons:amuletmirror"), 6,
+            new AspectList().add(Aspect.DEATH, 16).add(Aspect.ENTROPY, 32).add(Aspect.VOID, 32),
+            TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
+                TcIngredient.item("thaumcraft:mundane_amulet"),
+                TcIngredient.item("minecraft:map"),
+                TcIngredient.item("thaumcraft:magic_mirror"))));
     }
 }

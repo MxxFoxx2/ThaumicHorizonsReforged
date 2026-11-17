@@ -3,11 +3,15 @@ package dev.visfox.thaumichorizons.compat.tc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,11 +29,18 @@ import thaumcraft.aspect.AspectList;
 import thaumcraft.aspect.AspectRegistry;
 import thaumcraft.aspect.AspectHelper;
 import thaumcraft.aspect.AspectSync;
+import thaumcraft.device.HandMirrorItem;
+import thaumcraft.device.MirrorBlock;
+import thaumcraft.device.MirrorBlockEntity;
+import thaumcraft.device.MirrorKeys;
+import thaumcraft.device.MirrorLinks;
 import thaumcraft.entity.TaintedMob;
 import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.node.Node;
 import thaumcraft.node.NodeGenerator;
 import thaumcraft.node.NodeModifier;
+import thaumcraft.platform.Baubles;
+import thaumcraft.registry.ModSounds;
 import thaumcraft.research.Knowledge;
 import thaumcraft.research.ResearchCategories;
 import thaumcraft.research.ResearchGate;
@@ -43,12 +54,14 @@ import thaumcraft.research.ScanManager;
 import thaumcraft.vis.VisNet;
 import dev.visfox.thaumichorizons.compat.AspectCompat;
 import dev.visfox.thaumichorizons.compat.AspectCompat.AspectDataRegistrar;
+import dev.visfox.thaumichorizons.compat.BaubleCompat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.EssentiaCompat;
 import dev.visfox.thaumichorizons.compat.FxCompat;
 import dev.visfox.thaumichorizons.compat.GolemCompat;
 import dev.visfox.thaumichorizons.compat.InfusionCompat;
 import dev.visfox.thaumichorizons.compat.ItemCompat;
+import dev.visfox.thaumichorizons.compat.MirrorCompat;
 import dev.visfox.thaumichorizons.compat.NodeCompat;
 import dev.visfox.thaumichorizons.compat.PotionCompat;
 import dev.visfox.thaumichorizons.compat.ResearchCompat;
@@ -71,6 +84,8 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final ScanCompat scan = new TcScan();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
+    private final MirrorCompat mirrors = new TcMirrors();
+    private final BaubleCompat baubles = new TcBaubles();
 
     @Override
     public String portId() {
@@ -135,6 +150,16 @@ public final class TcReforgedPort implements ThaumcraftPort {
     @Override
     public ItemCompat items() {
         return items;
+    }
+
+    @Override
+    public MirrorCompat mirrors() {
+        return mirrors;
+    }
+
+    @Override
+    public BaubleCompat baubles() {
+        return baubles;
     }
 
     static final class TcAspects implements AspectCompat {
@@ -316,6 +341,70 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public boolean isEssentiaJar(ItemStack stack) {
             return false;
+        }
+    }
+
+    static final class TcMirrors implements MirrorCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public boolean isMirror(Level level, BlockPos pos) {
+            return level.getBlockState(pos).getBlock() instanceof MirrorBlock mirror && !mirror.isEssentia();
+        }
+
+        @Override
+        public boolean isLinked(ItemStack stack) {
+            return MirrorKeys.LINK.has(stack);
+        }
+
+        @Override
+        public void link(ItemStack stack, Player player, Level level, BlockPos pos) {
+            if (!(level.getBlockEntity(pos) instanceof MirrorBlockEntity)) {
+                return;
+            }
+            MirrorKeys.LINK.set(stack, GlobalPos.of(level.dimension(), pos));
+            level.playSound(null, pos, ModSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
+            player.sendSystemMessage(Component.translatable("tc.handmirrorlinked")
+                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+            player.inventoryMenu.broadcastChanges();
+        }
+
+        @Override
+        public void appendLink(ItemStack stack, Consumer<Component> builder) {
+            GlobalPos link = MirrorKeys.LINK.get(stack);
+            if (link != null) {
+                MirrorLinks.appendLink(link, builder);
+            }
+        }
+
+        @Override
+        public boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
+            return HandMirrorItem.transport(mirror, items, player, level);
+        }
+    }
+
+    static final class TcBaubles implements BaubleCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public int slotCount() {
+            return Baubles.slotCount();
+        }
+
+        @Override
+        public ItemStack get(Player player, int slot) {
+            return Baubles.get(player, slot);
+        }
+
+        @Override
+        public void set(Player player, int slot, ItemStack stack) {
+            Baubles.set(player, slot, stack);
         }
     }
 

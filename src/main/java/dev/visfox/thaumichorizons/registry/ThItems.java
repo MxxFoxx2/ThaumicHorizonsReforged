@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.compat.tc.BaubleAmuletMirrorItem;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
 import dev.visfox.thaumichorizons.item.CorpseEffigyItem;
 import dev.visfox.thaumichorizons.item.EggIncubatedItem;
@@ -33,6 +34,7 @@ import dev.visfox.thaumichorizons.item.SuicidePillItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -52,6 +54,8 @@ public final class ThItems {
         Item::new, properties -> properties.stacksTo(16));
     public static final DeferredItem<Item> VOID_PUTTY = ITEMS.registerItem("voidputty",
         Item::new, properties -> properties.stacksTo(16));
+    public static final DeferredItem<BaubleAmuletMirrorItem> AMULET_MIRROR = ITEMS.registerItem("amuletmirror",
+        BaubleAmuletMirrorItem::new, properties -> properties.stacksTo(1).rarity(Rarity.RARE));
     public static final DeferredItem<SuicidePillItem> SUICIDE_PILL = ITEMS.registerItem("suicidepill", SuicidePillItem::new);
     public static final DeferredItem<Item> DUMMY = ITEMS.registerItem("dummy", Item::new);
     public static final DeferredItem<Item> DUMMY_VAT = ITEMS.registerItem("dummyvat", Item::new);
