@@ -15,5 +15,6 @@ public final class ThBlockRenderers {
     @SubscribeEvent
     static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ThBlockEntities.NODE_MONITOR.get(), NodeMonitorRenderer::new);
+        event.registerBlockEntityRenderer(ThBlockEntities.SPIKE.get(), SpikeRenderer::new);
     }
 }
