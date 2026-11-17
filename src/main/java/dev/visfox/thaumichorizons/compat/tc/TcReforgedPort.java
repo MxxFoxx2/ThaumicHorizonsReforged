@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
 import thaumcraft.aspect.Aspect;
+import thaumcraft.aspect.AspectList;
+import thaumcraft.item.AspectTooltips;
 import thaumcraft.aspect.AspectRegistry;
 import thaumcraft.aspect.AspectSync;
 import thaumcraft.device.HandMirrorItem;
@@ -293,6 +295,16 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public boolean isEssentiaJar(ItemStack stack) {
             return false;
+        }
+
+        @Override
+        public AspectList getAspects(ItemStack stack) {
+            return AspectTooltips.getAspects(stack);
+        }
+
+        @Override
+        public void setSingleAspect(ItemStack stack, Aspect aspect, int amount) {
+            AspectTooltips.setSingle(stack, aspect, amount);
         }
     }
 
