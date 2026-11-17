@@ -35,6 +35,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
     boolean ateDevices;
     public boolean collapsing;
     public boolean createdDimension;
+    public int dimensionID;
     public boolean cheat;
     public ArrayList<ItemStack> items = new ArrayList<>();
     private int lastSyncedBeams = -1;
@@ -237,6 +238,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         ateDevices = input.getBooleanOr("ateDevices", false);
         collapsing = input.getBooleanOr("collapsing", false);
         createdDimension = input.getBooleanOr("createdDimension", false);
+        dimensionID = input.getIntOr("dimensionID", 0);
         cheat = input.getBooleanOr("cheat", false);
         aspects = input.read("aspects", AspectList.CODEC).orElseGet(AspectList::new);
         items = new ArrayList<>(input.read("items", ItemStack.OPTIONAL_CODEC.listOf()).orElseGet(ArrayList::new));
@@ -250,6 +252,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         output.putBoolean("ateDevices", ateDevices);
         output.putBoolean("collapsing", collapsing);
         output.putBoolean("createdDimension", createdDimension);
+        output.putInt("dimensionID", dimensionID);
         output.putBoolean("cheat", cheat);
         output.store("aspects", AspectList.CODEC, aspects);
         if (!items.isEmpty()) {
