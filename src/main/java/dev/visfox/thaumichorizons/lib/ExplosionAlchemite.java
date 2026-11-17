@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.lib;
 
 import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.ItemCompat;
 import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -179,19 +180,21 @@ public class ExplosionAlchemite {
                     this.explosionX, this.explosionY, this.explosionZ, 1.0, 0.0, 0.0);
             }
         }
-        if (this.level instanceof ServerLevel serverLevel && Compat.port().items().isAvailable()) {
-            var itemCompat = Compat.port().items();
-            Item essenceItem = itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"));
+        if (this.level instanceof ServerLevel serverLevel) {
+            ItemCompat itemCompat = Compat.port().items();
+            boolean itemsAvailable = itemCompat.isAvailable();
+            Item essenceItem = itemsAvailable
+                ? itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"))
+                : null;
             for (BlockPos blockpos : this.affectedBlockPositions) {
                 BlockState block = serverLevel.getBlockState(blockpos);
                 if (serverLevel.getBlockEntity(blockpos) instanceof Node node) {
                     double d = serverLevel.getRandom().nextDouble();
                     if (d < 0.25) {
-                        if (essenceItem != null) {
-                            dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem);
-                            if (Compat.port().fx().isAvailable()) {
-                                Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
-                            }
+                        if (essenceItem != null
+                            && dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem)
+                            && Compat.port().fx().isAvailable()) {
+                            Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         }
                         serverLevel.destroyBlock(blockpos, false);
                     } else if (d < 0.5) {
@@ -204,11 +207,11 @@ public class ExplosionAlchemite {
                     }
                 } else if (!block.isAir()) {
                     Item blockItem = block.getBlock().asItem();
-                    AspectList aspects = blockItem == Items.AIR
+                    AspectList aspects = !itemsAvailable || blockItem == Items.AIR
                         ? null
                         : itemCompat.getObjectAspects(new ItemStack(blockItem));
-                    if (essenceItem != null && aspects != null && !aspects.isEmpty()) {
-                        dropCrystallizedEssence(serverLevel, blockpos, aspects, essenceItem);
+                    if (essenceItem != null && aspects != null && !aspects.isEmpty()
+                        && dropCrystallizedEssence(serverLevel, blockpos, aspects, essenceItem)) {
                         if (Compat.port().fx().isAvailable()) {
                             Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         }
@@ -221,7 +224,8 @@ public class ExplosionAlchemite {
         }
     }
 
-    private static void dropCrystallizedEssence(ServerLevel level, BlockPos pos, AspectList aspects, Item item) {
+    private static boolean dropCrystallizedEssence(ServerLevel level, BlockPos pos, AspectList aspects, Item item) {
+        boolean dropped = false;
         for (Aspect aspect : aspects.getAspects()) {
             int amount = aspects.getAmount(aspect);
             if (amount <= 0) {
@@ -231,6 +235,8 @@ public class ExplosionAlchemite {
             Compat.port().items().setSingleAspect(essence, aspect, 1);
             level.addFreshEntity(new InvulnerableItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5,
                 pos.getZ() + 0.5, essence));
+            dropped = true;
         }
+        return dropped;
     }
 }
