@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.blockentity;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.compat.Compat;
 import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -36,6 +37,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
     public int drainColor = 16777215;
     public int targetColor = 16777215;
     public int color = 16777215;
+    private boolean essenceDropsGenerated;
 
     public SyntheticNodeBlockEntity(BlockPos pos, BlockState state) {
         super(ThBlockEntities.SYNTH_NODE.get(), pos, state);
@@ -88,12 +90,12 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
         if (wispEssence == null || !heldItem.is(wispEssence) || heldItem.isEmpty()) {
             return false;
         }
-        Aspect[] essenceAspects = Compat.port().items().getAspects(heldItem).getAspects();
-        if (essenceAspects.length == 0 || level == null) {
+        List<Aspect> essenceAspects = Compat.port().items().getAspects(heldItem).getAspects();
+        if (essenceAspects.isEmpty() || level == null) {
             return false;
         }
         if (!level.isClientSide()) {
-            Aspect aspect = essenceAspects[0];
+            Aspect aspect = essenceAspects.get(0);
             int amount = heldItem.getCount() * 4;
             aspectsMax.add(aspect, amount);
             aspects.add(aspect, 0);
@@ -106,6 +108,10 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
 
     public ArrayList<ItemStack> createEssenceDrops() {
         ArrayList<ItemStack> drops = new ArrayList<>();
+        if (essenceDropsGenerated) {
+            return drops;
+        }
+        essenceDropsGenerated = true;
         Item wispEssence = Compat.port().items().lookup(
             Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
         if (wispEssence == null) {
