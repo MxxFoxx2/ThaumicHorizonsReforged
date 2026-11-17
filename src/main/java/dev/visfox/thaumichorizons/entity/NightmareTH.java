@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.portal.TeleportTransition;
+import dev.visfox.thaumichorizons.platform.NightmareTeleport;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -71,8 +71,7 @@ public final class NightmareTH extends Endersteed {
 
         // Entity.teleport carries passengers across dimensions and re-mounts
         // them on the replacement vehicle; no client-only mount packet needed.
-        this.teleport(new TeleportTransition(destination, arrival, Vec3.ZERO,
-            this.getYRot(), this.getXRot(), TeleportTransition.PLAY_PORTAL_SOUND));
+        NightmareTeleport.transfer(this, destination, arrival);
     }
 
     private Vec3 findSafeArrival(ServerLevel destination) {
