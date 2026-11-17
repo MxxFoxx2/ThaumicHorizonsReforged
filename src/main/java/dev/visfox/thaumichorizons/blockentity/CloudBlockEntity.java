@@ -51,7 +51,7 @@ public final class CloudBlockEntity extends BlockEntity {
     private void applyPrecipitation(ServerLevel level, int type) {
         BlockHitResult hit = level.clip(new ClipContext(
             new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() - 0.5, worldPosition.getZ() + 0.5),
-            new Vec3(worldPosition.getX() + 0.5, level.getMinBuildHeight(), worldPosition.getZ() + 0.5),
+            new Vec3(worldPosition.getX() + 0.5, level.getMinY(), worldPosition.getZ() + 0.5),
             ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
@@ -94,12 +94,12 @@ public final class CloudBlockEntity extends BlockEntity {
         }
 
         BlockPos above = targetPos.above();
-        if (level.getBiome(targetPos).value().coldEnoughToSnow(targetPos)) {
-            if (target.isSolidRender(level, targetPos) && level.isEmptyBlock(above)) {
+        if (level.getBiome(targetPos).value().coldEnoughToSnow(targetPos, level.getSeaLevel())) {
+            if (target.isSolidRender() && level.isEmptyBlock(above)) {
                 level.setBlock(above, Blocks.SNOW.defaultBlockState(), 3);
             }
         } else {
-            if (target.is(Blocks.FARMLAND) && target.hasProperty(net.minecraft.world.level.block.FarmBlock.MOISTURE)
+            if (target.is(Blocks.FARMLAND) && target.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE)
                     && target.getValue(net.minecraft.world.level.block.FarmBlock.MOISTURE) != 7) {
                 level.setBlock(targetPos, target.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7), 3);
             } else if (level.getBlockState(above).is(Blocks.FIRE)) {
