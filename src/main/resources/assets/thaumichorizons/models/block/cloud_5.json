@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "thaumichorizons:block/fleshcloudtop",
+    "side": "thaumichorizons:block/fleshcloud",
+    "bottom": "thaumichorizons:block/fleshcloudtop"
+  },
+  "render_type": "minecraft:translucent"
+}
