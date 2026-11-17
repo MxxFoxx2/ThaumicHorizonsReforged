@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.item;
 
 import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
 import dev.visfox.thaumichorizons.entity.SyringeProjectile;
+import dev.visfox.thaumichorizons.registry.ThItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.HolderGetter;
