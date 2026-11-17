@@ -61,6 +61,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         if (level == null) {
             return;
         }
+        boolean inPocketPlane = level.dimension().equals(PocketDimension.POCKET_PLANE);
         if (!level.isClientSide() && beams != lastSyncedBeams) {
             sync();
             lastSyncedBeams = beams;
@@ -86,7 +87,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             count++;
         } else {
             if (!ateDevices) {
-                if (!cheat) {
+                if (!cheat && !inPocketPlane) {
                     for (int dx = -2; dx <= 2; dx++) {
                         for (int dy = -2; dy <= 2; dy++) {
                             for (int dz = -2; dz <= 2; dz++) {
@@ -103,7 +104,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                 }
                 ateDevices = true;
             }
-            if (beams < 6 && !cheat) {
+            if (beams < 6 && !cheat && !inPocketPlane) {
                 handleHungryNode();
             } else if (!createdDimension) {
                 handlePocketPlaneStuff();
@@ -113,7 +114,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             if (!cheat) {
                 count += Math.max(0, 6 - beams);
             }
-            if (count > MAX_COUNT && !cheat) {
+            if (count > MAX_COUNT && !cheat && !inPocketPlane) {
                 collapsing = true;
                 count = 0;
             }

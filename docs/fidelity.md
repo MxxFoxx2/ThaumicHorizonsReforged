@@ -83,6 +83,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Vortex audio is now implemented as a client-side tickable looping sound, registered as `thaumichorizons:vortex`, streamed and limited to a 64-block range. Its position follows the block entity and its volume uses the legacy `1 / (1 + distance / 8)` curve; it stops when the block entity disappears or leaves the tracked nearby-chunk area. Confirm actual audibility, fade and teardown in a live client.
 - VisDynamo aspect-toggle GUI deferred to the menu phase; toggles exist as BE fields.
 
+- Vortex parity: the legacy vortex does not consume the surrounding 5×5×5 device area, run hungry-node behavior, or begin its 2400-tick collapse while inside the Pocket Plane dimension. The modern tick now preserves these three dimension exclusions; the generated plane vortex remains separately protected by its `cheat` state.
 ## Souls / Vat / blood phase — documented deviations
 
 - Soul-jar villager profession stored as a registry id string.
