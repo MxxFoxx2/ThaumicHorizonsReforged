@@ -1,6 +1,5 @@
 package dev.visfox.thaumichorizons.block.pocket;
 
-import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -12,7 +11,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jspecify.annotations.Nullable;
 
 public class GatewayPortalBlock extends Block {
-    public static final MapCodec<GatewayPortalBlock> CODEC = simpleCodec(GatewayPortalBlock::new);
     public static final IntegerProperty MD = IntegerProperty.create("gateway_md", 0, 14);
 
     public GatewayPortalBlock(Properties properties) {
@@ -21,19 +19,15 @@ public class GatewayPortalBlock extends Block {
     }
 
     @Override
-    protected MapCodec<? extends GatewayPortalBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(MD);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        super.onRemove(state, level, pos, newState, movedByPiston);
-        if (!state.is(newState.getBlock())) {
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
+            BlockPos pos, boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        {
             int md = state.getValue(MD);
             int slotX = 0;
             int slotY = 0;
@@ -94,8 +88,8 @@ public class GatewayPortalBlock extends Block {
                 }
             }
             BlockEntity te = level.getBlockEntity(new BlockPos(slotX, slotY, slotZ));
-            if (te instanceof SlotBlockEntity slot && slot.portalOpen) {
-                slot.destroyPortal();
+            if (te instanceof SlotBlockEntity slot && slot.portalOpen()) {
+                SlotBlockEntity.destroyPortal(level, new BlockPos(slotX, slotY, slotZ));
             }
         }
     }

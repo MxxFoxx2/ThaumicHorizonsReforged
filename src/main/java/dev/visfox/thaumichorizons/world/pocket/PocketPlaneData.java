@@ -1,6 +1,5 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
@@ -15,6 +14,7 @@ public class PocketPlaneData {
     public @Nullable int[] portalC;
     public @Nullable int[] portalD;
     public String name = "Generic Pocket Plane";
+    public net.minecraft.resources.@Nullable ResourceKey<net.minecraft.world.level.biome.Biome> biome;
 
     public PocketPlaneData() {
         this.radius = 32;
@@ -43,7 +43,7 @@ public class PocketPlaneData {
         return tag;
     }
 
-    public static PocketPlaneData read(CompoundTag tag, HolderLookup.Provider registries) {
+    public static PocketPlaneData read(CompoundTag tag) {
         PocketPlaneData data = new PocketPlaneData();
         data.radius = tag.getIntOr("radius", 32);
         data.potionEffects = tag.getIntArray("effects").orElse(null);
@@ -70,7 +70,6 @@ public class PocketPlaneData {
         if (potionEffects == null || index < 0 || index >= potionEffects.length) {
             return null;
         }
-        MobEffect effect = BuiltInRegistries.MOB_EFFECT.getValue(potionEffects[index]);
-        return effect == null ? null : effect;
+        return BuiltInRegistries.MOB_EFFECT.byId(potionEffects[index]);
     }
 }

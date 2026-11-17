@@ -31,7 +31,11 @@ public class SlotBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return SlotBlockEntity::serverTick;
+        if (type != dev.visfox.thaumichorizons.registry.PocketRegistry.SLOT_BE.get()) {
+            return null;
+        }
+        return (tickLevel, tickPos, tickState, entity) -> SlotBlockEntity.serverTick(tickLevel, tickPos, tickState,
+            (SlotBlockEntity) entity);
     }
 
     @Override

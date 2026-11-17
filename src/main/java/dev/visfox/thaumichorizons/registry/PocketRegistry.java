@@ -8,6 +8,7 @@ import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
 import dev.visfox.thaumichorizons.item.pocket.PlanarConduitItem;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlaneChunkGenerator;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,7 +20,8 @@ public final class PocketRegistry {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ThaumicHorizons.MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ThaumicHorizons.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ThaumicHorizons.MODID);
-    public static final DeferredRegister<ChunkGenerator> CHUNK_GENERATORS = DeferredRegister.create(Registries.CHUNK_GENERATOR, Thaumichorizons.MODID);
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS = DeferredRegister.create(
+        Registries.CHUNK_GENERATOR, ThaumicHorizons.MODID);
 
     public static final net.neoforged.neoforge.registries.DeferredBlock<GatewayPortalBlock> GATEWAY_TH = BLOCKS.registerBlock("gatewayth",
         GatewayPortalBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 7));
@@ -31,10 +33,10 @@ public final class PocketRegistry {
         KeystoneItem::new, properties -> properties.stacksTo(1));
     public static final net.neoforged.neoforge.registries.DeferredItem<PlanarConduitItem> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
         PlanarConduitItem::new, properties -> properties.stacksTo(1));
-    public static final java.util.function.Supplier<BlockEntityType<SlotBlockEntity>> SLOT_BE = BLOCK_ENTITIES.register("slotth",
+    public static final Supplier<BlockEntityType<SlotBlockEntity>> SLOT_BE = BLOCK_ENTITIES.register("slotth",
         () -> new BlockEntityType<>(SlotBlockEntity::new, SLOT.get()));
-    public static final net.neoforged.neoforge.registries.DeferredHolder<ChunkGenerator, PocketPlaneChunkGenerator> POCKET_GENERATOR = CHUNK_GENERATORS.register(
-        "pocket_plane", PocketPlaneChunkGenerator::CODEC);
+    public static final Supplier<com.mojang.serialization.MapCodec<? extends ChunkGenerator>> POCKET_GENERATOR = CHUNK_GENERATORS.register(
+        "pocket_plane", () -> PocketPlaneChunkGenerator.CODEC);
 
     private PocketRegistry() {
     }

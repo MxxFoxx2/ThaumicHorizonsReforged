@@ -1,28 +1,23 @@
 package dev.visfox.thaumichorizons.world.pocket;
-import dev.visfox.thaumichorizons.registry.PocketRegistry;
 
-import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
-import dev.visfox.thaumichorizons.block.pocket.SlotBlock;
+import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
+import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import thaumcraft.platform.Teleport;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
-import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
+import thaumcraft.platform.Teleport;
+import thaumcraft.wand.Wands;
 
 public class SlotBlockEntity extends BlockEntity {
     private boolean hasKeystone;
@@ -254,7 +249,10 @@ public class SlotBlockEntity extends BlockEntity {
             return InteractionResult.SUCCESS;
         }
         if (hasKeystone && portalOpen) {
-            Teleport.to(serverPlayer, server.getLevel(PocketDimension.POCKET), serverPlayer.position(), 0, 0);
+            ServerLevel pocket = PocketDimension.level(server.getServer());
+            if (pocket != null) {
+                Teleport.to(serverPlayer, pocket, serverPlayer.position(), player.getYRot(), player.getXRot());
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

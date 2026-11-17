@@ -36,7 +36,8 @@ public class PortalTHBlock extends Block {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+            net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.isClientSide() || !(entity instanceof ServerPlayer player) || player.isSpectator()) {
             return;
         }
@@ -51,7 +52,10 @@ public class PortalTHBlock extends Block {
         if (returnPos == null) {
             return;
         }
-        thaumcraft.platform.Teleport.to(player, PocketDimension.level(server.getServer()), player.position(), player.getYRot(), player.getXRot());
+        ServerLevel pocket = PocketDimension.level(server.getServer());
+        if (pocket != null) {
+            thaumcraft.platform.Teleport.to(player, pocket, player.position(), player.getYRot(), player.getXRot());
+        }
     }
 
     @Override

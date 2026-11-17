@@ -1,27 +1,31 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import com.mojang.serialization.Codec;
+import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
 import dev.visfox.thaumichorizons.blockentity.VortexBlockEntity;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import java.util.HashMap;
 import java.util.LinkedList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 
 public class PocketPlanes extends SavedData {
-    public static final String FILE_ID = "pocketplane";
+    public static final Codec<PocketPlanes> CODEC = CompoundTag.CODEC.xmap(PocketPlanes::load, PocketPlanes::save);
+    public static final SavedDataType<PocketPlanes> TYPE = new SavedDataType<>(ThaumicHorizons.id("pocketplane"),
+        PocketPlanes::new, CODEC);
     public static final LinkedList<PocketPlaneData> planes = new LinkedList<>();
     public static final HashMap<Integer, BlockPos> positions = new HashMap<>();
     public static int pocketPlaneMAXID = 0;
@@ -32,12 +36,11 @@ public class PocketPlanes extends SavedData {
     }
 
     public static PocketPlanes get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(
-            new SavedData.Factory<>(PocketPlanes::new, PocketPlanes::load), FILE_ID);
+        return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
-    @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+    private static CompoundTag save(PocketPlanes data) {
+        CompoundTag tag = new CompoundTag();
         CompoundTag positionz = new CompoundTag();
         for (HashMap.Entry<Integer, BlockPos> idToPos : positions.entrySet()) {
             positionz.putIntArray(idToPos.getKey().toString(),
@@ -46,22 +49,22 @@ public class PocketPlanes extends SavedData {
         tag.putInt("MaxID", pocketPlaneMAXID);
         tag.put("Positions", positionz);
         ListTag planeNBT = new ListTag();
-        for (PocketPlaneData data : planes) {
-            if (data != null) {
-                planeNBT.add(data.write(new CompoundTag()));
+        for (PocketPlaneData plane : planes) {
+            if (plane != null) {
+                planeNBT.add(plane.write(new CompoundTag()));
             }
         }
         tag.put("Data", planeNBT);
         return tag;
     }
 
-    public static PocketPlanes load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static PocketPlanes load(CompoundTag tag) {
         PocketPlanes data = new PocketPlanes();
         planes.clear();
         ListTag planeNBT = tag.getListOrEmpty("Data");
         pocketPlaneMAXID = tag.getIntOr("MaxID", 0);
         for (int i = 0; i < planeNBT.size(); ++i) {
-            planes.add(PocketPlaneData.read(planeNBT.getCompoundOrEmpty(i), registries));
+            planes.add(PocketPlaneData.read(planeNBT.getCompoundOrEmpty(i)));
         }
         positions.clear();
         CompoundTag positionz = tag.getCompoundOrEmpty("Positions");
@@ -91,6 +94,7 @@ public class PocketPlanes extends SavedData {
         }
         data.color = PocketPlaneGenerator.getColor(aspects);
         ResourceKey<Biome> bio = PocketPlaneGenerator.setBiome(xCenter, Y_CENTER, zCenter, data, world, aspects);
+        data.biome = bio;
         int noise = PocketPlaneGenerator.fastFloor(PocketPlaneGenerator.calcNoise(aspects));
         int life = PocketPlaneGenerator.fastFloor(PocketPlaneGenerator.calcLife(aspects));
         PocketPlaneGenerator.drawLayers(xCenter, Y_CENTER, zCenter, data, world, aspects, noise, bio, life);
@@ -127,7 +131,7 @@ public class PocketPlanes extends SavedData {
         planes.add(data);
         positions.put(pocketPlaneMAXID, new BlockPos(vortexX, vortexY, vortexZ));
         ++pocketPlaneMAXID;
-        setDirty();
+        PocketPlanes.get(server).setDirty();
     }
 
     public static int firstAvailablePortal(int num) {
@@ -182,7 +186,7 @@ public class PocketPlanes extends SavedData {
             }
             data.portalD = new int[] { 0, 0, 0, 0 };
         }
-        setDirty();
+        PocketPlanes.get(server).setDirty();
     }
 
     public static void makePortal(int id, int which, int xCoord, int yCoord, int zCoord, MinecraftServer server) {
@@ -224,7 +228,7 @@ public class PocketPlanes extends SavedData {
             }
             data.portalD = new int[] { xCoord, yCoord, zCoord };
         }
-        setDirty();
+        PocketPlanes.get(server).setDirty();
     }
 
     public static int planeIndexAt(int z) {

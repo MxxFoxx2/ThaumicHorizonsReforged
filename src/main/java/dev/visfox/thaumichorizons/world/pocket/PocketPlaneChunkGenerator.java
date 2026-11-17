@@ -1,31 +1,33 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.FixedBiomeSource;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.world.level.levelgen.structure.StructureManager;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
+import org.jspecify.annotations.Nullable;
 
 public class PocketPlaneChunkGenerator extends ChunkGenerator {
-    public static final MapCodec<PocketPlaneChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(
-        instance -> instance.group(Biome.CODEC.fieldOf("biome").forGetter(gen -> gen.biome))
-            .apply(instance, PocketPlaneChunkGenerator::new));
+    public static final MapCodec<PocketPlaneChunkGenerator> CODEC = Biome.CODEC.fieldOf("biome")
+        .xmap(PocketPlaneChunkGenerator::new, generator -> generator.biome)
+        .stable();
 
     private final Holder<Biome> biome;
 
@@ -40,23 +42,14 @@ public class PocketPlaneChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState,
-            StructureManager structureManager, ChunkAccess chunk) {
+    public CompletableFuture<ChunkAccess> buildTerrain(ChunkAccess chunk, Blender blender, RandomState randomState,
+            StructureManager structureManager, BiomeManager biomeManager, @Nullable WorldGenRegion carverBiomeRegion,
+            Set<Holder<Biome>> possibleBiomes) {
         return CompletableFuture.completedFuture(chunk);
     }
 
     @Override
-    public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random,
-            ChunkAccess chunk) {
-    }
-
-    @Override
-    public void applyCarvers(WorldGenRegion level, long seed, RandomState random, BiomeManager biomeManager,
-            StructureManager structureManager, ChunkAccess chunk, GenerationStep.Carving step) {
-    }
-
-    @Override
-    public void spawnOriginalMobs(WorldGenRegion level) {
+    public void spawnOriginalMobs(WorldGenRegion region) {
     }
 
     @Override
@@ -75,17 +68,21 @@ public class PocketPlaneChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) {
-        return 0;
+    public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor,
+            RandomState randomState) {
+        return heightAccessor.getMinY();
     }
 
     @Override
-    public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor height, RandomState random) {
-        return new NoiseColumn(height.getMinBuildHeight(), new BlockState[0]);
+    public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor heightAccessor, RandomState randomState) {
+        BlockState[] blocks = new BlockState[heightAccessor.getHeight()];
+        Arrays.fill(blocks, Blocks.AIR.defaultBlockState());
+        return new NoiseColumn(heightAccessor.getMinY(), blocks);
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
-        info.add("Pocket plane");
+    public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos,
+            SamplerContext samplerContext) {
+        result.add("Pocket plane");
     }
 }
