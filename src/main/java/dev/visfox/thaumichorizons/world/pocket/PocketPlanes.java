@@ -124,10 +124,10 @@ public class PocketPlanes extends SavedData {
             vortex.createdDimension = true;
             vortex.setChanged();
         }
-        data.portalA = new int[4];
-        data.portalB = new int[4];
-        data.portalC = new int[4];
-        data.portalD = new int[4];
+        data.clearPortal(1);
+        data.clearPortal(2);
+        data.clearPortal(3);
+        data.clearPortal(4);
         planes.add(data);
         positions.put(pocketPlaneMAXID, new BlockPos(vortexX, vortexY, vortexZ));
         ++pocketPlaneMAXID;
@@ -135,66 +135,75 @@ public class PocketPlanes extends SavedData {
     }
 
     public static int firstAvailablePortal(int num) {
+        if (!validPlane(num)) {
+            return 0;
+        }
         PocketPlaneData data = planes.get(num);
-        if (data.portalA != null && data.portalA[0] == 0 && data.portalA[1] == 0 && data.portalA[2] == 0) {
+        if (isPortalUnused(data.portalA)) {
             return 1;
         }
-        if (data.portalB != null && data.portalB[0] == 0 && data.portalB[1] == 0 && data.portalB[2] == 0) {
+        if (isPortalUnused(data.portalB)) {
             return 2;
         }
-        if (data.portalC != null && data.portalC[0] == 0 && data.portalC[1] == 0 && data.portalC[2] == 0) {
+        if (isPortalUnused(data.portalC)) {
             return 3;
         }
-        if (data.portalD != null && data.portalD[0] == 0 && data.portalD[1] == 0 && data.portalD[2] == 0) {
+        if (isPortalUnused(data.portalD)) {
             return 4;
         }
         return 0;
     }
 
+    private static boolean isPortalUnused(@Nullable int[] portal) {
+        return portal == null || portal.length < 3
+            || portal[0] == 0 && portal[1] == 0 && portal[2] == 0;
+    }
+
     public static void destroyPortal(int id, int which, MinecraftServer server) {
         ServerLevel world = PocketDimension.level(server);
-        PocketPlaneData data = planes.get(id);
-        if (world == null || data == null) {
+        if (world == null || !validPlane(id)) {
             return;
         }
+        PocketPlaneData data = planes.get(id);
         if (which == 1) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius, ThBlocks.VOID.get());
                 }
             }
-            data.portalA = new int[] { 0, 0, 0, 0 };
+            data.clearPortal(1);
         } else if (which == 2) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius, ThBlocks.VOID.get());
                 }
             }
-            data.portalB = new int[] { 0, 0, 0, 0 };
+            data.clearPortal(2);
         } else if (which == 3) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setBlockPublic(world, data.radius, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
-            data.portalC = new int[] { 0, 0, 0, 0 };
+            data.clearPortal(3);
         } else if (which == 4) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setBlockPublic(world, -data.radius, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
-            data.portalD = new int[] { 0, 0, 0, 0 };
+            data.clearPortal(4);
         }
         PocketPlanes.get(server).setDirty();
     }
 
-    public static void makePortal(int id, int which, int xCoord, int yCoord, int zCoord, MinecraftServer server) {
+    public static void makePortal(int id, int which, int xCoord, int yCoord, int zCoord,
+            String dimension, MinecraftServer server) {
         ServerLevel world = PocketDimension.level(server);
-        PocketPlaneData data = planes.get(id);
-        if (world == null || data == null) {
+        if (world == null || !validPlane(id) || net.minecraft.resources.Identifier.tryParse(dimension) == null) {
             return;
         }
+        PocketPlaneData data = planes.get(id);
         if (which == 1) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
@@ -202,7 +211,7 @@ public class PocketPlanes extends SavedData {
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius + 1, ThBlocks.VOID.get());
                 }
             }
-            data.portalA = new int[] { xCoord, yCoord, zCoord };
+            data.setPortal(which, xCoord, yCoord, zCoord, dimension);
         } else if (which == 2) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
@@ -210,7 +219,7 @@ public class PocketPlanes extends SavedData {
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius - 1, ThBlocks.VOID.get());
                 }
             }
-            data.portalB = new int[] { xCoord, yCoord, zCoord };
+            data.setPortal(which, xCoord, yCoord, zCoord, dimension);
         } else if (which == 3) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
@@ -218,7 +227,7 @@ public class PocketPlanes extends SavedData {
                     PocketPlaneGenerator.setBlockPublic(world, data.radius + 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
-            data.portalC = new int[] { xCoord, yCoord, zCoord };
+            data.setPortal(which, xCoord, yCoord, zCoord, dimension);
         } else if (which == 4) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
@@ -226,7 +235,7 @@ public class PocketPlanes extends SavedData {
                     PocketPlaneGenerator.setBlockPublic(world, -data.radius - 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
-            data.portalD = new int[] { xCoord, yCoord, zCoord };
+            data.setPortal(which, xCoord, yCoord, zCoord, dimension);
         }
         PocketPlanes.get(server).setDirty();
     }
