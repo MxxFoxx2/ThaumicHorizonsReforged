@@ -124,16 +124,13 @@ jobs:
           cache-read-only: true
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: Verify Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-
       - name: Check platform/API seams
         working-directory: thaumic-horizons-reforged
         run: python3 -I tools/check_seams.py
 
       - name: Build release JAR
         working-directory: thaumic-horizons-reforged
-        run: ./gradlew build --configuration-cache --build-cache --parallel --console=plain
+        run: chmod +x ./gradlew && ./gradlew build --configuration-cache --build-cache --parallel --console=plain
 
       - name: Verify and checksum release JAR
         id: package

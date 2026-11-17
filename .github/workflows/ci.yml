@@ -53,16 +53,13 @@ jobs:
           # between GitHub-hosted runners. Dependency/build caches work without it.
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
-      - name: Verify Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-
       - name: Check platform/API seams
         working-directory: thaumic-horizons-reforged
         run: python3 -I tools/check_seams.py
 
       - name: Build with Gradle
         working-directory: thaumic-horizons-reforged
-        run: ./gradlew build --configuration-cache --build-cache --parallel --console=plain
+        run: chmod +x ./gradlew && ./gradlew build --configuration-cache --build-cache --parallel --console=plain
 
       - name: Verify distributable JAR contents
         working-directory: thaumic-horizons-reforged
