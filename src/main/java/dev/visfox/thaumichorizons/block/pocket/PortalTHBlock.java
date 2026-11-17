@@ -48,7 +48,7 @@ public class PortalTHBlock extends Block {
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
             net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.isClientSide() || !(entity instanceof ServerPlayer player)
-            || player.isPassenger() || player.hasPassengers()) {
+            || player.isPassenger() || player.isVehicle()) {
             return;
         }
         if (player.getPortalCooldown() > 0) {
