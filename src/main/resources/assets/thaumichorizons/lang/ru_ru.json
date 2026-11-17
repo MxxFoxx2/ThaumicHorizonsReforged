@@ -414,5 +414,8 @@
   "thaumichorizons.golemWarning3": "Неподалёку Вы слышите маниакальный смех.",
   "tooltip.thaumichorizons.syringe.empty": "Пусто",
   "container.thaumichorizons.lenscase": "Футляр для линз",
-  "entity.thaumichorizons.alchemiteprimed.name": "Заряженный алхимит"
+  "entity.thaumichorizons.alchemiteprimed.name": "Заряженный алхимит",
+  "block.thaumichorizons.spiketh": "Металлический шип",
+  "block.thaumichorizons.spikewoodth": "Шип из великого дерева",
+  "block.thaumichorizons.spiketoothth": "Костяной шип"
 }
