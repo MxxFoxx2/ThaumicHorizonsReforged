@@ -17,6 +17,7 @@ public class PocketPlaneData {
     public String portalBDimension = "";
     public String portalCDimension = "";
     public String portalDDimension = "";
+    public String sourceDimension = "";
     public String name = "Generic Pocket Plane";
     public net.minecraft.resources.@Nullable ResourceKey<net.minecraft.world.level.biome.Biome> biome;
 
@@ -48,6 +49,7 @@ public class PocketPlaneData {
         tag.putString("portalBDimension", portalBDimension);
         tag.putString("portalCDimension", portalCDimension);
         tag.putString("portalDDimension", portalDDimension);
+        tag.putString("sourceDimension", sourceDimension);
         return tag;
     }
 
@@ -65,6 +67,7 @@ public class PocketPlaneData {
         data.portalBDimension = tag.getStringOr("portalBDimension", "");
         data.portalCDimension = tag.getStringOr("portalCDimension", "");
         data.portalDDimension = tag.getStringOr("portalDDimension", "");
+        data.sourceDimension = tag.getStringOr("sourceDimension", "");
         return data;
     }
 
