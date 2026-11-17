@@ -5,8 +5,8 @@ import dev.visfox.thaumichorizons.blockentity.VortexBlockEntity;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
+import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.network.chat.Component;
@@ -34,7 +34,7 @@ public class KeystoneItem extends Item {
     }
 
     public static ItemStack create(int planeID) {
-        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id("keystoneth")));
+        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
         CompoundTag tag = new CompoundTag();
         tag.putInt("dimension", planeID);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -66,10 +66,14 @@ public class KeystoneItem extends Item {
         if (!(blockEntity instanceof SlotBlockEntity slot) || !PocketPlanes.validPlane(planeID)) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide() && slot.insertKeystone(planeID)) {
-            stack.shrink(1);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
-        return slot.hasKeystone() ? InteractionResult.PASS : InteractionResult.SUCCESS;
+        if (!slot.insertKeystone(planeID)) {
+            return InteractionResult.PASS;
+        }
+        stack.shrink(1);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
