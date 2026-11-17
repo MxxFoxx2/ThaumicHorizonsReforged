@@ -68,7 +68,7 @@ Two clients on the same server:
 
 ## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 
-The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open. Portal source endpoints now persist a dimension identifier, coordinates and frame orientation. Portal blocks implement both entry into the Pocket Plane and return to the recorded source world; Keystone binding/insertion/extraction and wand-triggered slot opening are wired. The gateway geometry check now validates the 3×3 opening and 15 frame blocks. These are code/CI checks only; no live-world portal travel has been claimed as tested.
+The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open. The source Vortex now consumes a primordial_pearl item after stabilization, creates the pocket plane, and records the source dimension + return coordinates. The generated vortex and source vortex both use the same saved plane ID for bidirectional player travel. CI validates compilation and JAR contents only; no live-world travel has been marked tested. Portal source endpoints now persist a dimension identifier, coordinates and frame orientation. Portal blocks implement both entry into the Pocket Plane and return to the recorded source world; Keystone binding/insertion/extraction and wand-triggered slot opening are wired. The gateway geometry check now validates the 3×3 opening and 15 frame blocks. These are code/CI checks only; no live-world portal travel has been claimed as tested.
 
 - [x] `gradlew.bat build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
 - [x] `python tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
@@ -80,6 +80,9 @@ The Pocket Plane classes and data JSONs are tracked, and the sources compile aga
 - [ ] Keystone bind at a Pocket Plane vortex, insert into a Slot, extract with an empty hand, inventory-full drop, and save/reload all preserve the exact plane ID.
 - [ ] Portal teardown restores the frame and clears only the matching saved portal entry; destroying the Slot or removing its Keystone does not leave a stale entrance.
 - [ ] Create four portals linked to one Pocket Plane and verify each surface/metadata mapping (A/C/B/D) enters and returns through the correct side.
+- [ ] Drop a TC4R Primordial Pearl (thaumcraft:primordial_pearl; legacy Eldritch Object metadata 3) into a source Vortex with six stabilizing beams. Confirm exactly one Pocket Plane is generated, the pearl is consumed only on success, the source vortex records the plane ID, and the pocket vortex is created at (0, 129, 256 × plane ID).
+- [ ] Stand on the source Vortex and confirm transfer to its Pocket Plane after the vortex is created; confirm the Pocket Plane vortex returns to the recorded source dimension and original vortex coordinates.
+- [ ] Save/restart the world, repeat both directions, and confirm the saved source dimension and return coordinates are restored.
 - [ ] Travel from Overworld and a non-Overworld source dimension into the Pocket Plane and back reaches the correct source dimension/position and exit orientation, preserves player state, and safely handles missing/unloaded destinations.
 - [ ] PocketPlanes SavedData survives server restart and world save/reload.
 - [ ] Vortex-collapse integration creates/tears down the Pocket Plane as intended.
