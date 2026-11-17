@@ -36,6 +36,7 @@ import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
 import thaumcraft.entity.TaintedMob;
 import thaumcraft.node.NodeHooks;
+import thaumcraft.node.NodeTransducerBlockEntity;
 import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.platform.Baubles;
 import thaumcraft.registry.ModSounds;
@@ -57,6 +58,7 @@ import dev.visfox.thaumichorizons.compat.FxCompat;
 import dev.visfox.thaumichorizons.compat.FluxCompat;
 import dev.visfox.thaumichorizons.compat.ItemCompat;
 import dev.visfox.thaumichorizons.compat.MirrorCompat;
+import dev.visfox.thaumichorizons.compat.NodeCompat;
 import dev.visfox.thaumichorizons.compat.PotionCompat;
 import dev.visfox.thaumichorizons.compat.ResearchCompat;
 import dev.visfox.thaumichorizons.compat.ThaumcraftPort;
@@ -70,6 +72,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final EssentiaCompat essentia = new TcEssentia();
     private final FxCompat fx = new TcFx();
     private final FluxCompat flux = new TcFlux();
+    private final NodeCompat nodes = new TcNodes();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
     private final MirrorCompat mirrors = new TcMirrors();
@@ -108,6 +111,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
     @Override
     public FluxCompat flux() {
         return flux;
+    }
+
+    @Override
+    public NodeCompat nodes() {
+        return nodes;
     }
 
     @Override
@@ -418,6 +426,20 @@ public final class TcReforgedPort implements ThaumcraftPort {
             }
             NodeHooks.spillFlux(level, pos, gas);
             return !level.isEmptyBlock(pos);
+        }
+    }
+
+    static final class TcNodes implements NodeCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public void stopTransducerForVortexConversion(ServerLevel level, BlockPos transducerPos) {
+            if (level.getBlockEntity(transducerPos) instanceof NodeTransducerBlockEntity transducer) {
+                transducer.stopForVortexConversion();
+            }
         }
     }
 
