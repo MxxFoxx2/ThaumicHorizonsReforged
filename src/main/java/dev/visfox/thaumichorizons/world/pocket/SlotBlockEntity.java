@@ -5,7 +5,6 @@ import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -16,10 +15,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
-import thaumcraft.platform.Teleport;
 import thaumcraft.wand.WandInteractable;
 import thaumcraft.wand.WandItem;
-import thaumcraft.wand.Wands;
 
 public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     private boolean hasKeystone;
@@ -258,11 +255,11 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
 
     public int removeKeystone() {
         int removed = pocketID;
-        hasKeystone = false;
-        pocketID = 0;
         if (portalOpen && level != null) {
             destroyPortal(level, worldPosition);
         }
+        hasKeystone = false;
+        pocketID = 0;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -274,23 +271,13 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         if (level == null || level.isClientSide() || !hasKeystone) {
             return InteractionResult.PASS;
         }
-        if (portalOpen) {
-            destroyPortal(level, worldPosition);
-        }
-        ItemStack keystone = KeystoneItem.create(removeKeystoneState());
+        ItemStack keystone = KeystoneItem.create(removeKeystone());
         if (!player.getInventory().add(keystone)) {
-            level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, keystone));
+            level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(level,
+                worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
+                worldPosition.getZ() + 0.5, keystone));
         }
         return InteractionResult.SUCCESS;
-    }
-
-    private int removeKeystoneState() {
-        int removed = pocketID;
-        hasKeystone = false;
-        pocketID = 0;
-        setChanged();
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        return removed;
     }
 
     @Override
