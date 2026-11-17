@@ -41,8 +41,7 @@ public final class NightmareRenderer extends AbstractHorseRenderer<NightmareTH, 
             EquipmentClientInfo.LayerType.HORSE_SADDLE,
             state -> state.saddle,
             new EquineSaddleModel(context.bakeLayer(ModelLayers.HORSE_SADDLE)),
-            new EquineSaddleModel(context.bakeLayer(ModelLayers.HORSE_BABY_SADDLE)),
-            2
+            null
         ));
     }
 

@@ -91,8 +91,8 @@ public final class NightmareTH extends Endersteed {
             }
         }
 
-        BlockPos spawn = destination.getSharedSpawnPos();
-        return safeColumn(destination, spawn.getX(), spawn.getZ());
+        // Do not relocate a Nightmare to an unrelated spawn point if no safe nearby landing exists.
+        return null;
     }
 
     private Vec3 safeColumn(ServerLevel destination, int x, int z) {
