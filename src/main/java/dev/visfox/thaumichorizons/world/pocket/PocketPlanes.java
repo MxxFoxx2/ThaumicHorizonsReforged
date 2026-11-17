@@ -186,40 +186,41 @@ public class PocketPlanes extends SavedData {
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
-        ServerLevel world = PocketDimension.level(server);
-        if (world == null || !validPlane(id)) {
+        if (!validPlane(id) || which < 1 || which > 4) {
             return;
         }
         PocketPlaneData data = planes.get(id);
-        if (which == 1) {
-            for (int x = -1; x <= 1; ++x) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius, ThBlocks.VOID.get());
+        ServerLevel world = PocketDimension.level(server);
+        // Always release the saved portal index, even if the dimension is
+        // unavailable (for example after changing the startup config).
+        if (world != null) {
+            if (which == 1) {
+                for (int x = -1; x <= 1; ++x) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius, ThBlocks.VOID.get());
+                    }
+                }
+            } else if (which == 2) {
+                for (int x = -1; x <= 1; ++x) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius, ThBlocks.VOID.get());
+                    }
+                }
+            } else if (which == 3) {
+                for (int z = -1; z <= 1; ++z) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, data.radius, y, 256 * id + z, ThBlocks.VOID.get());
+                    }
+                }
+            } else {
+                for (int z = -1; z <= 1; ++z) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, -data.radius, y, 256 * id + z, ThBlocks.VOID.get());
+                    }
                 }
             }
-            data.clearPortal(1);
-        } else if (which == 2) {
-            for (int x = -1; x <= 1; ++x) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(2);
-        } else if (which == 3) {
-            for (int z = -1; z <= 1; ++z) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, data.radius, y, 256 * id + z, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(3);
-        } else if (which == 4) {
-            for (int z = -1; z <= 1; ++z) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, -data.radius, y, 256 * id + z, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(4);
         }
+        data.clearPortal(which);
         PocketPlanes.get(server).setDirty();
     }
 
