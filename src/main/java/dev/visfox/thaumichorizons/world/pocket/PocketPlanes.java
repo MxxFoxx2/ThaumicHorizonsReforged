@@ -76,15 +76,18 @@ public class PocketPlanes extends SavedData {
         return data;
     }
 
-    public static void generatePocketPlane(AspectList aspects, PocketPlaneData data, MinecraftServer server,
-            int vortexX, int vortexY, int vortexZ, int returnID) {
-        if (!ThaumicHorizonsConfig.pocketPlaneEnabled()) {
-            return;
+    public static boolean generatePocketPlane(AspectList aspects, PocketPlaneData data, MinecraftServer server,
+            int vortexX, int vortexY, int vortexZ, String returnDimension) {
+        PocketPlanes saved = get(server);
+        if (!ThaumicHorizonsConfig.pocketPlaneEnabled()
+                || net.minecraft.resources.Identifier.tryParse(returnDimension) == null) {
+            return false;
         }
         ServerLevel world = PocketDimension.level(server);
         if (world == null) {
-            return;
+            return false;
         }
+        data.sourceDimension = returnDimension;
         int xCenter = 0;
         int zCenter = 256 * planes.size();
         if (aspects.visSize() * 0.75F < 128.0F) {
@@ -132,7 +135,8 @@ public class PocketPlanes extends SavedData {
         planes.add(data);
         positions.put(pocketPlaneMAXID, new BlockPos(vortexX, vortexY, vortexZ));
         ++pocketPlaneMAXID;
-        PocketPlanes.get(server).setDirty();
+        saved.setDirty();
+        return true;
     }
 
     public static int firstAvailablePortal(int num) {
@@ -247,6 +251,10 @@ public class PocketPlanes extends SavedData {
 
     public static @Nullable BlockPos returnPosition(int planeNum) {
         return positions.get(planeNum);
+    }
+
+    public static String returnDimension(int planeNum) {
+        return validPlane(planeNum) ? planes.get(planeNum).sourceDimension : "";
     }
 
     public static boolean validPlane(int planeNum) {
