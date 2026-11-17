@@ -279,7 +279,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
         ItemStack keystone = KeystoneItem.create(removeKeystoneState());
         if (!player.getInventory().add(keystone)) {
-            player.drop(keystone, false);
+            level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, keystone));
         }
         return InteractionResult.SUCCESS;
     }
