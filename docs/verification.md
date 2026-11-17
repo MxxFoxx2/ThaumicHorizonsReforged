@@ -37,8 +37,7 @@ python -I tools/check_seams.py
 
 - [ ] Incubated Egg: obtain via `alchIncubation`, throw it, confirm projectile renders and hatches a baby chicken on impact.
 - [ ] Planar Conduit: craft using `planarTheory`; verify the Transduction Amplifier arcane recipe and Vortex Stabilizer infusion recipe against the reference ingredients/aspect costs.
-- [ ] Soul Jar: test creature NBT and custom name through capture, item drop/pickup, inventory, placement, save/reload and release. Confirm a failed entity decode does not silently lose the jar/contained entity.
-- [ ] Confirm the missing projectile renderer does not produce a missing-renderer log or invisible projectile.
+- [ ] Confirm an appropriate renderer is registered for the thrown Incubated Egg entity; no missing-renderer log or invisible projectile.
 
 ## Invisibility checklist (community requirement — run every phase touching infusions)
 
