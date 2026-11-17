@@ -122,9 +122,10 @@ public class PocketPlanes extends SavedData {
         PocketPlaneGenerator.addEffects(data, aspects);
         PocketPlaneGenerator.drawRings(xCenter, Y_CENTER, zCenter, data, world, aspects);
         PocketPlaneGenerator.drawSphere(xCenter, Y_CENTER, zCenter, data.radius, ThBlocks.VOID.get(), 0, world);
-        Block cosmetic = dev.visfox.thaumichorizons.lib.TcBlocks.block("obsidian_tile");
+        // Legacy blockCosmeticSolid metadata 6 maps to TC4R arcane_stone.
+        Block cosmetic = dev.visfox.thaumichorizons.lib.TcBlocks.block("arcane_stone");
         if (cosmetic == null) {
-            cosmetic = net.minecraft.world.level.block.Blocks.OBSIDIAN;
+            cosmetic = net.minecraft.world.level.block.Blocks.STONE_BRICKS;
         }
         for (int x = -2; x <= 2; ++x) {
             for (int z = -2; z <= 2; ++z) {
