@@ -1,5 +1,6 @@
 package dev.visfox.thaumichorizons.item.focus;
 
+import dev.visfox.thaumichorizons.compat.Compat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -282,6 +284,28 @@ public class FocusLiquefactionItem extends FocusItem {
                     }
                 }
             }
+
+            // Legacy Nuggets upgrade: each level independently has a 45% chance
+            // to drop one bonus item from Thaumcraft's smelting-bonus table.
+            int nuggetLevel = Wands.getFocusUpgrade(stack, NUGGETS);
+            if (nuggetLevel > 0 && Compat.port().items().isAvailable()) {
+                Item bonusItem = Compat.port().items().getSmeltingBonus(new ItemStack(blockState.getBlock()));
+                if (bonusItem != null) {
+                    int bonusCount = 0;
+                    for (int i = 0; i < nuggetLevel; i++) {
+                        if (serverLevel.getRandom().nextFloat() < 0.45F) {
+                            bonusCount++;
+                        }
+                    }
+                    if (bonusCount > 0) {
+                        ItemStack bonusStack = new ItemStack(bonusItem, bonusCount);
+                        ItemEntity bonusDrop = new ItemEntity(serverLevel, pos.getX() + 0.5, pos.getY() + 0.5,
+                            pos.getZ() + 0.5, bonusStack);
+                        serverLevel.addFreshEntity(bonusDrop);
+                    }
+                }
+            }
+
             Block resultBlock = Block.byItem(result.getItem());
             if (resultBlock != null) {
                 serverLevel.setBlock(pos, resultBlock.defaultBlockState(), 3);
