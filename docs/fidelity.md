@@ -25,6 +25,13 @@ Authoritative source: the host's own table `../thaumcraft-4-reforged/tools/data/
 
 Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-variant recipes keep the bare original key for variant 0 plus `1..n` suffixes (`alcheponics1..4`, `meatGrowth1..2`, `fleshLeather1..2`, `shardTrans1..5`); the syringe arcane/infusion key collision resolved as `essentiaInjectionSyringe`; blast-phial variant data carried via a `TcStack.registerDataHandler/Matcher("phial", ...)` pair.
 
+## Cloud blocks — partial port
+
+- The original ten cloud metadata values are represented by the `CloudBlock.TYPE` block-state property. Separate item variants preserve the selected type through pickup and placement.
+- Wand pickup follows the legacy gate: the player must have `planarClouds`, the held item must be a Thaumcraft wand, and the wand must pay 100 AIR vis. The dropped item uses the existing invulnerable item entity.
+- Cloud weather processing and the first-pass precipitation/entity-contact effects are server-side. The current implementation is not yet full parity with `TileCloud`.
+- Still missing from the original behavior: finite lightning, alloy nugget drop selection, aspect orbs, XP orbs, cow-to-mooshroom conversion, the complete vegetation table, weather-column rendering and rain-state visual sync. See `verification.md` for manual checks.
+
 ## Machines — documented deviations
 
 - EssentiaDynamo: broken saves with `ticks > 0` but no stored aspect reset to 0 (original divided 12/0).
