@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.entity;
 
+import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.FxCompat;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 
 import java.util.List;
@@ -62,6 +64,21 @@ public class Familiar extends TamableAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
+        if (this.level().isClientSide()) {
+            FxCompat fx = Compat.port().fx();
+            if (fx.isAvailable() && this.getRandom().nextFloat() > 0.97F) {
+                float angle = this.getRandom().nextFloat() * (float) (Math.PI * 2.0);
+                fx.sparkle(
+                    this.level(),
+                    (float) this.getX() + this.getBbWidth() * (float) Math.cos(angle),
+                    (float) this.getY() + this.getBbHeight() * (this.getRandom().nextFloat() - 0.1F) * 1.2F,
+                    (float) this.getZ() + this.getBbWidth() * (float) Math.sin(angle),
+                    2.0F,
+                    0,
+                    0.0F
+                );
+            }
+        }
         if (!(this.level() instanceof ServerLevel level) || this.tickCount % 10 != 0) {
             return;
         }

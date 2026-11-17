@@ -556,6 +556,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
 
         @Override
+        public void sparkle(Level level, float x, float y, float z, float size, int color, float gravity) {
+            fx().sparkle(level, x, y, z, size, color, gravity);
+        }
+
+        @Override
         public void wisp(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color, boolean longer) {
             fx().essentiaTrail(level, BlockPos.containing(from), BlockPos.containing(to), longer ? 16 : 8, color, 1.0F);
         }

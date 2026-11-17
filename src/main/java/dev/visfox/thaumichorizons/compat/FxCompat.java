@@ -9,6 +9,10 @@ public interface FxCompat {
         return false;
     }
 
+    default void sparkle(Level level, float x, float y, float z, float size, int color, float gravity) {
+        throw new UnsupportedOperationException();
+    }
+
     default void wisp(Level level, Vec3 from, Vec3 to, int color, boolean longer) {
         throw new UnsupportedOperationException();
     }

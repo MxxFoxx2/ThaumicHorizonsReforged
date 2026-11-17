@@ -25,6 +25,7 @@ python -I tools/check_seams.py
 
 - [ ] Soul jar: wand-right-click an infused critter → jars it (name label), item survives inventory/drop/save/reload, placement preserves NBT, wand release restores the original entity. Capture, data transfer and release code were added in `6fd7614`; the full cycle has not yet been reproduced in-game.
 - [ ] Containment focus captures LostSoul
+- [ ] Familiar: confirm occasional Thaumcraft sparkles appear around it with normal particle settings and do not appear when particles are disabled/minimal.
 - [x] Vat multiblock forms *(reproduced in-world 2026-11-16: blueprint converts to VAT blocks and vis is consumed server-side after trigger-registration fix)*
 - [ ] Curative Vat mode cures with containment foci
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
