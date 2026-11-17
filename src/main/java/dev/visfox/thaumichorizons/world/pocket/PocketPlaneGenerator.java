@@ -96,25 +96,42 @@ public final class PocketPlaneGenerator {
     }
 
     private static Block customPlant(int md) {
+        // blockCustomPlant metadata mapping from the TC4R migration table.
         return switch (md) {
-            case 0 -> tc("shimmerleaf", Blocks.OXEYE_DAISY);
-            case 1 -> tc("ethereal_bloom", Blocks.OXEYE_DAISY);
-            case 2 -> tc("vishroom", Blocks.RED_MUSHROOM);
+            case 0 -> tc("greatwood_sapling", Blocks.OAK_SAPLING);
+            case 1 -> tc("silverwood_sapling", Blocks.BIRCH_SAPLING);
+            case 2 -> tc("shimmerleaf", Blocks.OXEYE_DAISY);
             case 3 -> tc("cinderpearl", Blocks.DEAD_BUSH);
-            case 5 -> tc("mana_pod", Blocks.OXEYE_DAISY);
+            case 4 -> tc("ethereal_bloom", Blocks.OXEYE_DAISY);
+            case 5 -> tc("vishroom", Blocks.RED_MUSHROOM);
             default -> Blocks.OXEYE_DAISY;
         };
     }
 
     private static Block taint(int md) {
+        // blockTaint metadata: 0 crusted taint, 1 tainted soil, 2 flesh.
         return switch (md) {
-            case 1 -> tc("crusted_taint", Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE));
+            case 0 -> tc("crusted_taint", Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE));
+            case 1 -> tc("tainted_soil", Blocks.DIRT);
             case 2 -> tc("flesh_block", Blocks.WOOL.pick(DyeColor.RED));
-            default -> tc("fibrous_taint", Blocks.WOOL.pick(DyeColor.PURPLE));
+            default -> Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE);
+        };
+    }
+
+    private static Block taintFiber(int md) {
+        // blockTaintFibres is a separate legacy registry from blockTaint.
+        return switch (md) {
+            case 0 -> tc("fibrous_taint", Blocks.WOOL.pick(DyeColor.PURPLE));
+            case 1 -> tc("tainted_grass", Blocks.GRASS_BLOCK);
+            case 2 -> tc("tainted_plant", Blocks.TALL_GRASS);
+            case 3 -> tc("spore_stalk", Blocks.WARPED_STEM);
+            case 4 -> tc("mature_spore_stalk", Blocks.WARPED_STEM);
+            default -> Blocks.WOOL.pick(DyeColor.PURPLE);
         };
     }
 
     private static Block flower(int md) {
+        // 1.7.10 red_flower accepts metadata 0–8; invalid values fall back to Poppy.
         return switch (md) {
             case 1 -> Blocks.BLUE_ORCHID;
             case 2 -> Blocks.ALLIUM;
@@ -124,10 +141,6 @@ public final class PocketPlaneGenerator {
             case 6 -> Blocks.WHITE_TULIP;
             case 7 -> Blocks.PINK_TULIP;
             case 8 -> Blocks.OXEYE_DAISY;
-            case 9 -> Blocks.CORNFLOWER;
-            case 10 -> Blocks.LILY_OF_THE_VALLEY;
-            case 11 -> Blocks.WITHER_ROSE;
-            case 12 -> Blocks.TORCHFLOWER;
             default -> Blocks.POPPY;
         };
     }
@@ -489,9 +502,11 @@ public final class PocketPlaneGenerator {
                                             if (random <= 15) {
                                                 setBlock(world, x + xCenter, y + level + 1, z + zCenter, flower(random), 0);
                                             } else if (random == 16) {
-                                                setBlock(world, x + xCenter, y + level + 1, z + zCenter, Blocks.SHORT_GRASS, 0);
+                                                // Legacy tallgrass metadata 0 = dead bush.
+                                                setBlock(world, x + xCenter, y + level + 1, z + zCenter, Blocks.DEAD_BUSH, 0);
                                             } else {
-                                                setBlock(world, x + xCenter, y + level + 1, z + zCenter, Blocks.FERN, 0);
+                                                // Legacy tallgrass metadata 1 = ordinary grass.
+                                                setBlock(world, x + xCenter, y + level + 1, z + zCenter, Blocks.SHORT_GRASS, 0);
                                             }
                                         }
                                     }
@@ -574,7 +589,7 @@ public final class PocketPlaneGenerator {
                                 setBlock(world, x + xCenter, y + level + 1, z + zCenter, tc("table", Blocks.CRAFTING_TABLE), 0);
                             }
                             if (aspects.getAmount(Aspect.TAINT) > 0 && rand.nextInt(100) > 98) {
-                                setBlock(world, x + xCenter, y + level, z + zCenter, taint(0), 0);
+                                setBlock(world, x + xCenter, y + level, z + zCenter, taintFiber(0), 0);
                             }
                             if (aspects.getAmount(Aspect.TAINT) > 0 && rand.nextInt(200) > 198 && creatures < MAX_CREATURES) {
                                 spawnTc4Entity(world, "taintacle", x + xCenter, y + level + 1, z + zCenter);
