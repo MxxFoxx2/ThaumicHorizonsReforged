@@ -31,11 +31,21 @@ public class PocketPlanes extends SavedData {
     public static int pocketPlaneMAXID = 0;
 
     private static final int Y_CENTER = 128;
+    private static @Nullable MinecraftServer activeServer;
 
     public PocketPlanes() {
     }
 
     public static PocketPlanes get(MinecraftServer server) {
+        // These collections are retained for the legacy static access pattern,
+        // but their contents must never leak from one integrated server/world
+        // into another one running in the same client JVM.
+        if (activeServer != server) {
+            planes.clear();
+            positions.clear();
+            pocketPlaneMAXID = 0;
+            activeServer = server;
+        }
         return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
