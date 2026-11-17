@@ -45,6 +45,13 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - The original `spike.obj` mesh and metal/wood/tooth textures are used by a dedicated block-entity renderer. Inventory/hand items currently use generated 2D texture icons; the legacy 3D inventory renderer is not yet reproduced.
 - Manual checks for all mounting faces, support removal, damage, renderer orientation and save/reload remain open in `verification.md`.
 
+## Recombinator renderer — code port, runtime checks pending
+
+- The original base geometry remains a static block model. Its resting pearl cuboid is removed from the world model and drawn dynamically by `RecombinatorRenderer`, using the original `sin(count / 8) * 2` vertical offset and the same model texture UVs.
+- When activated, the renderer displays the TC4R `lightningringv` animated strip (16 horizontal frames) at the legacy position and updates one persistent TC4R BeamFx between the machine and the aura node directly below.
+- The item model keeps a separate full static copy of the original geometry, including the pearl, so inventory rendering is unaffected by the dynamic world-only pearl.
+- The renderer uses the original TH `recombinator.png` and TC4R ring/beam textures. Animation timing, scale and alpha still need a live-client comparison with 1.7.10.
+
 ## Machines — documented deviations
 
 - EssentiaDynamo: broken saves with `ticks > 0` but no stored aspect reset to 0 (original divided 12/0).

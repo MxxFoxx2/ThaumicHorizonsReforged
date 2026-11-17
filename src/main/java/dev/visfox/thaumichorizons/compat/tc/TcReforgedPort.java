@@ -590,6 +590,12 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
 
         @Override
+        public void beam(Level level, BlockPos key, net.minecraft.world.phys.Vec3 from,
+            net.minecraft.world.phys.Vec3 to, int color, float width, int type) {
+            fx().machineBeam(level, key, from, to, color, width, type);
+        }
+
+        @Override
         public void blockSparkle(Level level, BlockPos pos, int color, int count) {
             fx().blockSparkle(level, pos, color, count);
         }

@@ -18,5 +18,6 @@ public final class ThBlockRenderers {
         event.registerBlockEntityRenderer(ThBlockEntities.NODE_MONITOR.get(), NodeMonitorRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.CLOUD.get(), CloudBlockRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.SPIKE.get(), SpikeBlockRenderer::new);
+        event.registerBlockEntityRenderer(ThBlockEntities.RECOMBINATOR.get(), RecombinatorRenderer::new);
     }
 }
