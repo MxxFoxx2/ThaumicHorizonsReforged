@@ -14,6 +14,7 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 ## Creature entities — modern-parent substitutions
 
 - Panther / Gravekeeper / Familiar extend `TamableAnimal` instead of the ocelot lineage (modern `Cat`/`Ocelot` carry variant and avoid-player AI baggage). Always-tamed semantics and TH owner AI preserved.
+- Familiar's wizard hat is restored as a dedicated cutout render layer. It ports the five hat parts and their original UV coordinates from `ModelFamiliar` on the existing `familiar.png` texture, copying the modern Ocelot head pose so it follows head rotation. In-game fit/occlusion still needs a visual check.
 - Gravekeeper's eight per-class undead target selectors → one `EntityTypeTags.UNDEAD` goal selector (covers TC4R undead too).
 - Slime variants reuse vanilla split logic through `getType()`.
 - LostSoul follows the TC4R Wisp movement idiom (`travelFlying`, waypoint motion).

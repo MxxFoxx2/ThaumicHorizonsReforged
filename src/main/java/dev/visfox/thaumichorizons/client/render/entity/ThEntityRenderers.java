@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.client.render.entity;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.registry.ThEntities;
+import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
 import net.minecraft.client.renderer.entity.SheepRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
@@ -13,6 +14,11 @@ import thaumcraft.client.render.entity.golem.GolemRenderer;
 @EventBusSubscriber(modid = ThaumicHorizons.MODID, value = Dist.CLIENT)
 public final class ThEntityRenderers {
     private ThEntityRenderers() {
+    }
+
+    @SubscribeEvent
+    static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(FamiliarHatModel.LAYER, FamiliarHatModel::createLayer);
     }
 
     @SubscribeEvent
