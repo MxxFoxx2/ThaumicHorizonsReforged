@@ -73,11 +73,24 @@ public final class PocketPlaneGenerator {
     }
 
     private static Block cosmeticSolid(int md) {
+        // Mapping confirmed against TC4R tools/data/id_map.json:
+        // blockCosmeticSolid metadata 0, 1, 6 and 11 are not interchangeable.
         return switch (md) {
-            case 0 -> tc("ancient_rock", Blocks.STONE);
-            case 1 -> tc("ancient_stone", Blocks.STONE);
-            case 6 -> tc("obsidian_tile", Blocks.OBSIDIAN);
-            case 11 -> tc("arcane_stone", Blocks.STONE_BRICKS);
+            case 0 -> tc("obsidian_totem", Blocks.OBSIDIAN);
+            case 1 -> tc("obsidian_tile", Blocks.OBSIDIAN);
+            case 2 -> tc("travel_paving_stone", Blocks.STONE_BRICKS);
+            case 3 -> tc("warding_paving_stone", Blocks.STONE_BRICKS);
+            case 4 -> tc("thaumium_block", Blocks.IRON_BLOCK);
+            case 5 -> tc("tallow_block", Blocks.HONEY_BLOCK);
+            case 6 -> tc("arcane_stone", Blocks.STONE_BRICKS);
+            case 7 -> tc("arcane_stone_bricks", Blocks.STONE_BRICKS);
+            case 8 -> tc("charged_obsidian_totem", Blocks.OBSIDIAN);
+            case 9, 10 -> tc("golem_fetter", Blocks.IRON_BLOCK);
+            case 11 -> tc("ancient_stone", Blocks.STONE_BRICKS);
+            case 12 -> tc("ancient_rock", Blocks.STONE);
+            case 13 -> tc("ancient_stone_no_spawn", Blocks.STONE);
+            case 14 -> tc("crusted_stone", Blocks.STONE);
+            case 15 -> tc("ancient_stone_pedestal", Blocks.STONE);
             default -> Blocks.STONE;
         };
     }
