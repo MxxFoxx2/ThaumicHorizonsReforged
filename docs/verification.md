@@ -66,7 +66,7 @@ The Pocket Plane classes and data JSONs are tracked, and the sources now compile
 - [x] `gradlew.bat build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
 - [x] `python tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
 - [x] `thaumichorizons:planarconduit` is registered exactly once in `PocketRegistry`; the dedicated server starts with the mod loaded.
-- [ ] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
+- [x] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
 - [ ] PocketPlaneGenerator produces the intended layers/caves/pockets; test several seeds and verify deterministic chunk generation.
 - [ ] Keystone item creates/binds the intended pocket plane and preserves its plane id through inventory, drop/pickup and save/reload.
 - [ ] Slot multiblock detection works in both orientations; portal creation consumes the expected vis and persists portal state.
