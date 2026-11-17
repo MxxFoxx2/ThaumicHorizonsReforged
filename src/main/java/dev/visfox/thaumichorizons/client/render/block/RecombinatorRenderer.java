@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.RecombinatorBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
@@ -90,8 +91,13 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
             float u0 = frame / 16.0F;
             float u1 = (frame + 1) / 16.0F;
             float centerY = 1.5F + 0.2F * sine;
+            poseStack.pushPose();
+            poseStack.translate(0.5F, centerY, 0.5F);
+            poseStack.rotateDegrees(Axis.YP, -camera.yRot);
+            poseStack.rotateDegrees(Axis.XP, camera.xRot);
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(RING_TEXTURE),
-                (pose, buffer) -> renderRing(pose, buffer, state.lightCoords, centerY, u0, u1));
+                (pose, buffer) -> renderRing(pose, buffer, state.lightCoords, u0, u1));
+            poseStack.popPose();
         }
     }
 
@@ -153,24 +159,14 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
     }
 
     private static void renderRing(PoseStack.Pose pose, VertexConsumer buffer, int light,
-        float centerY, float u0, float u1) {
-        float left = 0.5F - 0.75F;
-        float right = 0.5F + 0.75F;
-        float bottom = centerY - 0.45F;
-        float top = centerY + 0.45F;
-        float z = 0.5F;
+        float u0, float u1) {
+        // One camera-facing quad, matching UtilsFX.renderFacingQuad rather than a fixed world-axis plane.
         quad(pose, buffer, light,
-            left, bottom, z, u0, 1.0F,
-            left, top, z, u0, 0.0F,
-            right, top, z, u1, 0.0F,
-            right, bottom, z, u1, 1.0F,
+            -0.75F, -0.45F, 0.0F, u0, 1.0F,
+            -0.75F, 0.45F, 0.0F, u0, 0.0F,
+            0.75F, 0.45F, 0.0F, u1, 0.0F,
+            0.75F, -0.45F, 0.0F, u1, 1.0F,
             0.0F, 0.0F, 1.0F);
-        quad(pose, buffer, light,
-            0.5F, bottom, left, u0, 1.0F,
-            0.5F, top, left, u0, 0.0F,
-            0.5F, top, right, u1, 0.0F,
-            0.5F, bottom, right, u1, 1.0F,
-            1.0F, 0.0F, 0.0F);
     }
 
     private static void quad(PoseStack.Pose pose, VertexConsumer buffer, int light,
