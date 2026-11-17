@@ -1,6 +1,6 @@
 # Roadmap and current state
 
-Snapshot of the public `main` branch at `7eb9b8c` (2026-11-17). Build, seam-check, and dedicated-server facts in this snapshot were verified locally; code presence and in-game verification are tracked separately in `verification.md`.
+Snapshot updated on 2026-11-17. Build, seam-check, and dedicated-server facts are recorded separately from code presence and manual in-game verification in `verification.md`.
 
 ## Current foundation
 
@@ -22,6 +22,7 @@ Snapshot of the public `main` branch at `7eb9b8c` (2026-11-17). Build, seam-chec
 - **Mirror Amulet**: registered as a TC4R amulet bauble, linked to ordinary mirrors through the compatibility seam, and used by the player-death handler to transport inventory and bauble items through the linked mirror. Its infusion recipe and research page are present. [`8538a7f`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8538a7f). Runtime behavior still needs an in-game check.
 - **Void Putty repair and Illumination Focus dye recipes**: custom recipe serializers and recipes are registered. [`8512e83`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8512e83). Both still need an in-game check.
 - **Pocket Plane dimension data**: dimension type and biome definitions were migrated to the Minecraft 26.3 codecs. The dedicated server now loads `thaumichorizons:pocket_plane`. [`7eb9b8c`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/7eb9b8c).
+- **Arcane Lens radial HUD**: V-key hold/release selection and Shift+V removal are implemented in `ArcaneLensHud` and `THKeyHandler`. This is code presence only; mouse capture, selection and lens-case behavior still require live-client verification. Commits [`ac8d4ab`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/ac8d4ab4158551ac04bda09e392efc467b3133b0) and [`75c9338`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/75c9338638fce89a94dc9d90b1e169890054d1d4).
 
 ## Pocket Plane — dimension loads, gameplay verification pending
 
@@ -41,7 +42,7 @@ Still pending: generated terrain layers/caves/pockets, portal/slot in-game behav
 1. **Validate Pocket Plane runtime behavior.** Build, seam checks, server boot, and dimension load are green. Test generated terrain, slot/keystone, all portal states, portal teardown, transfers in both directions, saved data and Vortex-collapse integration.
 2. **Finish Gate 2 verification.** Test Soul Jar capture/release, Containment Focus, curative Vat mode, creature infusion, Corpse Effigy cloning, syringe draw/inject, all nine menus and Inspiratron research completion.
 3. **Restore missing world content.** Recombinator and Spike variants are still absent. Original `TileCloud` behavior is not ported; it includes weather interaction, block/entity effects and finite lightning, not just particles. Illumination `TileLight` color persistence and ambient FX are now present in code, pending visual verification. Slot and portal equivalents now exist as WIP source; they should no longer be described as wholly absent.
-4. **Finish the two keybinds.** M (Morphic Fingers) now sends an `open_fingers` payload and opens the `FingersMenu` server-side when the infusion is present; V (Arcane Lens radial HUD) is still registered but its client tick handler only consumes the press. C/X are wired to server payloads.
+4. **Finish keybind and interaction verification.** M (Morphic Fingers), C/X (infusion toggles), and V (Arcane Lens radial HUD) are wired. V's HUD and selection logic are implemented; manual checks are open in `verification.md`.
 5. **Port remaining entities/projectiles/vehicles:** HorseZombie, HorseSkeleton, NightmareTH, Greatwood Boat, Thaumium Boat, Syringe projectile and BlastPhial projectile. Incubated Egg and its projectile are present in code with the thrown-item renderer registered; they still need a gameplay check. Finite lightning belongs with the Cloud behavior and is not a separately registered mod entity in the original.
 6. **Complete item/research and recipe gaps.** Mirror Amulet, its infusion recipe, link behavior, death transport, Void Putty repair, and Focus Illumination dyeing are present in code and need runtime verification. Planar Keystone has a WIP item class, but its recipe/research flow and actual use need completion. Planar Conduit, Planar Theory, Transduction Amplifier, Vortex Stabilizer and Incubated Egg recipes are present in code.
 7. **Finish machine and compatibility behavior:** Recombinator; SyntheticNode wisp-essence refilling/drops; crystal-essence conversion; overloaded Transducer flux gas/goo and wisp spawning; Liquefaction nuggets upgrade; remaining TC4R taint-poison/blurred-vision and skull-variant compatibility.
