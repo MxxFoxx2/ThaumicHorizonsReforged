@@ -15,8 +15,8 @@ import net.minecraft.util.Mth;
 /**
  * The Familiar's original wizard hat from the 1.7.10 ModelFamiliar.
  *
- * <p>The geometry is kept relative to the feline head pivot. The render layer
- * copies the live parent model's head transform before submitting this model.</p>
+ * <p>The geometry uses the modern Ocelot head pivot. Pitch and yaw are taken
+ * from the extracted feline render state.</p>
  */
 public final class FamiliarHatModel extends EntityModel<FelineRenderState> {
     public static final ModelLayerLocation LAYER =
