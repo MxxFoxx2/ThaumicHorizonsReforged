@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.compat.tc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -36,11 +37,15 @@ import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
 import thaumcraft.device.SmeltingBonuses;
 import thaumcraft.entity.TaintedMob;
+import thaumcraft.network.NodeZapPayload;
+import thaumcraft.node.NodeBlockEntity;
 import thaumcraft.node.NodeHooks;
 import thaumcraft.node.NodeTransducerBlockEntity;
 import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.platform.Baubles;
+import thaumcraft.platform.ModNetwork;
 import thaumcraft.registry.ModSounds;
+import thaumcraft.registry.ModBlocks;
 import thaumcraft.research.Knowledge;
 import thaumcraft.research.ResearchCategories;
 import thaumcraft.research.ResearchGate;
@@ -444,6 +449,79 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public boolean isAvailable() {
             return true;
+        }
+
+        @Override
+        public boolean tryRecombine(ServerLevel level, BlockPos machinePos, BlockPos targetPos) {
+            if (!(level.getBlockEntity(machinePos.below()) instanceof NodeBlockEntity source)
+                    || !(level.getBlockEntity(targetPos) instanceof NodeBlockEntity target)
+                    || !level.getBlockState(targetPos).is(ModBlocks.AURA_NODE.get())
+                    || target.getLock() > 0
+                    || target.getAspects().isEmpty()
+                    || source.getId().equals(target.getId())) {
+                return false;
+            }
+
+            List<Aspect> combinations = List.of();
+            for (int priority = 0; priority < 4 && combinations.isEmpty(); priority++) {
+                combinations = findCombinations(source, target, priority);
+            }
+            if (combinations.isEmpty()) {
+                return false;
+            }
+
+            Aspect result = combinations.get(level.getRandom().nextInt(combinations.size()));
+            Aspect[] components = result.getComponents();
+            if (components == null || components.length != 2) {
+                return false;
+            }
+            Aspect sourceAspect = source.getAspectsBase().getAmount(components[0]) > 0
+                ? components[0]
+                : components[1];
+            Aspect targetAspect = sourceAspect.equals(components[0]) ? components[1] : components[0];
+
+            source.getAspectsBase().add(result, 1);
+            source.getAspects().add(result, 1);
+            source.getAspectsBase().remove(sourceAspect, 1);
+            source.getAspects().remove(sourceAspect, 1);
+            target.getAspects().remove(targetAspect, 1);
+            if (level.getRandom().nextInt(3) == 0) {
+                target.setNodeVisBase(targetAspect, target.getNodeVisBase(targetAspect) - 1);
+            }
+
+            source.sync();
+            target.sync();
+            ModNetwork.sendToNear(level, null, machinePos.getX(), machinePos.getY(), machinePos.getZ(), 32.0,
+                new NodeZapPayload(
+                    targetPos.getX() + 0.5F,
+                    targetPos.getY() + 0.5F,
+                    targetPos.getZ() + 0.5F,
+                    machinePos.getX() + 0.5F,
+                    machinePos.getY() + 0.5F,
+                    machinePos.getZ() + 0.5F));
+            return true;
+        }
+
+        private List<Aspect> findCombinations(NodeBlockEntity source, NodeBlockEntity target, int priority) {
+            LinkedHashSet<Aspect> combinations = new LinkedHashSet<>();
+            for (Aspect sourceAspect : source.getAspectsBase().getAspects()) {
+                for (Aspect targetAspect : target.getAspectsBase().getAspects()) {
+                    if (priority == 0 && (!sourceAspect.isPrimal() || !targetAspect.isPrimal())) {
+                        continue;
+                    }
+                    if (priority == 1 && !sourceAspect.isPrimal()) {
+                        continue;
+                    }
+                    if (priority == 2 && !targetAspect.isPrimal()) {
+                        continue;
+                    }
+                    Aspect combined = Aspect.combine(sourceAspect, targetAspect);
+                    if (combined != null) {
+                        combinations.add(combined);
+                    }
+                }
+            }
+            return List.copyOf(combinations);
         }
 
         @Override
