@@ -414,5 +414,8 @@
   "thaumichorizons.golemWarning3": "In the distance you hear hollow laughter.",
   "tooltip.thaumichorizons.syringe.empty": "Empty",
   "container.thaumichorizons.lenscase": "Lens Case",
-  "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite"
+  "entity.thaumichorizons.alchemiteprimed.name": "Primed Alchemite",
+  "block.thaumichorizons.spiketh": "Metal Spike",
+  "block.thaumichorizons.spikewoodth": "Greatwood Spike",
+  "block.thaumichorizons.spiketoothth": "Bone Spike"
 }
