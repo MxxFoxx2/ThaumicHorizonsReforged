@@ -49,6 +49,15 @@ public class PocketPlanes extends SavedData {
         return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
+    public static void onServerStopped(MinecraftServer server) {
+        if (activeServer == server) {
+            planes.clear();
+            positions.clear();
+            pocketPlaneMAXID = 0;
+            activeServer = null;
+        }
+    }
+
     private static CompoundTag save(PocketPlanes data) {
         CompoundTag tag = new CompoundTag();
         CompoundTag positionz = new CompoundTag();
