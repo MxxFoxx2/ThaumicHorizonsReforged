@@ -14,6 +14,13 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] In a live client, verify long-column rain/snow/ember rendering, variant tints, UV scrolling, warm/cold biome texture selection, rain start/stop synchronization, column-depth updates and chunk unload/reload persistence.
 
 
+## Spike blocks — source and CI coverage only
+
+- [ ] Place metal, wood and tooth spikes on all six sturdy support faces; confirm they orient away from the support and survive save/reload.
+- [ ] Remove each support block; confirm the spike drops exactly one matching block item and disappears.
+- [ ] Walk through/stand against each spike orientation; confirm the collision bounds match the old 1/16 inset and entity contact applies 1 cactus damage per collision tick.
+- [ ] Check the OBJ render and all three textures from every direction; check block/item icons in inventory and hand. The current inventory/hand model is a generated 2D texture icon, not the old 3D inventory model.
+
 ## Gate 1 — after machines + creatures (V-phase)
 
 ```sh

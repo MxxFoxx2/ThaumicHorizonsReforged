@@ -36,6 +36,15 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - The dedicated long-column weather renderer is ported with scrolling UVs, original variant tint colors, fire-rain selection and warm/cold biome rain/snow selection. The server synchronizes the shared Overworld rain flag and the measured column depth to clients and persists both values with the block entity. Client runtime checks are pending; see verification.md.
 
 
+## Spike blocks — code port, runtime checks pending
+
+- The original `spikeTH`, `spikeWoodTH` and `spikeToothTH` registrations are represented by three modern blocks: `spiketh`, `spikewoodth`, and `spiketoothth`.
+- All variants use the old six-direction mounting metadata as the `facing` block-state property (DOWN=0, UP=1, NORTH=2, SOUTH=3, WEST=4, EAST=5). This replaces `TileSpike.dir` NBT with normal block-state persistence and synchronization.
+- Placement requires the corresponding support face to be sturdy. Removing that support schedules a check; unsupported spikes drop their own block item and are removed.
+- The original 1.0 cactus damage on entity contact is retained, and the original directional inset collision bounds are represented by 1/16-block VoxelShapes.
+- The original `spike.obj` mesh and metal/wood/tooth textures are used by a dedicated block-entity renderer. Inventory/hand items currently use generated 2D texture icons; the legacy 3D inventory renderer is not yet reproduced.
+- Manual checks for all mounting faces, support removal, damage, renderer orientation and save/reload remain open in `verification.md`.
+
 ## Machines — documented deviations
 
 - EssentiaDynamo: broken saves with `ticks > 0` but no stored aspect reset to 0 (original divided 12/0).
