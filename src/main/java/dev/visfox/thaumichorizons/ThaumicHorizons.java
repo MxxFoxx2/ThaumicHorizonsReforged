@@ -36,6 +36,7 @@ public class ThaumicHorizons {
         ThEffects.register(modEventBus);
         ThBlocks.register(modEventBus);
         ThItems.register(modEventBus);
+        dev.visfox.thaumichorizons.registry.ThRecipeSerializers.register(modEventBus);
         ThBlockEntities.register(modEventBus);
         ThEntities.register(modEventBus);
         dev.visfox.thaumichorizons.registry.PocketRegistry.register(modEventBus);
