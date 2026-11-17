@@ -47,7 +47,7 @@ public class CloudBlock extends Block {
                                 InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         int type = state.getValue(TYPE);
         if (type == 1 || type == 4) {
-            entity.setSecondsOnFire(6);
+            entity.setRemainingFireTicks(6 * 20);
         } else if (type == 3) {
             entity.hurt(level.damageSources().magic(), 1.0F);
         }
