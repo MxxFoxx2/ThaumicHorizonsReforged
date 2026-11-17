@@ -8,12 +8,14 @@ import dev.visfox.thaumichorizons.client.screen.SoulExtractorScreen;
 import dev.visfox.thaumichorizons.client.screen.SoulforgeScreen;
 import dev.visfox.thaumichorizons.client.screen.VatScreen;
 import dev.visfox.thaumichorizons.client.screen.VisDynamoScreen;
+import dev.visfox.thaumichorizons.client.render.item.KeystoneTintSource;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @Mod(value = ThaumicHorizons.MODID, dist = Dist.CLIENT)
@@ -21,9 +23,14 @@ public class ThaumicHorizonsClient {
     public ThaumicHorizonsClient(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::registerScreens);
+        modEventBus.addListener(this::registerItemTintSources);
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
+    }
+
+    private void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(ThaumicHorizons.id("keystone"), KeystoneTintSource.MAP_CODEC);
     }
 
     private void registerScreens(RegisterMenuScreensEvent event) {

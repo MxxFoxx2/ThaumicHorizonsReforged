@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.item.pocket;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VortexBlockEntity;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
+import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
@@ -37,7 +38,9 @@ public class KeystoneItem extends Item {
         CompoundTag tag = new CompoundTag();
         tag.putInt("dimension", planeID);
         if (PocketPlanes.validPlane(planeID)) {
-            tag.putString("name", PocketPlanes.planes.get(planeID).name);
+            PocketPlaneData plane = PocketPlanes.planes.get(planeID);
+            tag.putString("name", plane.name);
+            tag.putInt("color", plane.color);
         }
         return tag;
     }
