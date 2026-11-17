@@ -100,8 +100,8 @@ public final class CloudBlockEntity extends BlockEntity {
             }
         } else {
             if (target.is(Blocks.FARMLAND) && target.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE)
-                    && target.getValue(net.minecraft.world.level.block.FarmBlock.MOISTURE) != 7) {
-                level.setBlock(targetPos, target.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7), 3);
+                    && target.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE) != 7) {
+                level.setBlock(targetPos, target.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.MOISTURE, 7), 3);
             } else if (level.getBlockState(above).is(Blocks.FIRE)) {
                 level.removeBlock(above, false);
             }
