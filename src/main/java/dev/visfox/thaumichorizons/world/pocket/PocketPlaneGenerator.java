@@ -586,7 +586,9 @@ public final class PocketPlaneGenerator {
                                 setBlock(world, x + xCenter, y + level + 3, z + zCenter, cosmeticSolid(0), 0);
                             }
                             if (aspects.getAmount(Aspect.CRAFT) > 0 && rand.nextInt(200) > 198) {
-                                setBlock(world, x + xCenter, y + level + 1, z + zCenter, tc("table", Blocks.CRAFTING_TABLE), 0);
+                                // Legacy blockStoneDevice metadata 1 maps to TC4R arcane_pedestal.
+                                setBlock(world, x + xCenter, y + level + 1, z + zCenter,
+                                    tc("arcane_pedestal", Blocks.CRAFTING_TABLE), 0);
                             }
                             if (aspects.getAmount(Aspect.TAINT) > 0 && rand.nextInt(100) > 98) {
                                 setBlock(world, x + xCenter, y + level, z + zCenter, taintFiber(0), 0);
