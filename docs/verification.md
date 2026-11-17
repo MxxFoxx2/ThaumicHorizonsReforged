@@ -68,7 +68,7 @@ Two clients on the same server:
 
 ## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 
-The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open.
+The Pocket Plane classes and data JSONs are tracked, and the sources compile against MC 26.3 / NeoForge 26.3. Build, seam, dedicated-server startup, and dimension load pass; the gameplay checks below remain open. Portal source endpoints now persist a dimension identifier, coordinates and frame orientation. Portal blocks implement both entry into the Pocket Plane and return to the recorded source world; Keystone binding/insertion/extraction and wand-triggered slot opening are wired. The gateway geometry check now validates the 3×3 opening and 15 frame blocks. These are code/CI checks only; no live-world portal travel has been claimed as tested.
 
 - [x] `gradlew.bat build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
 - [x] `python tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
@@ -76,9 +76,11 @@ The Pocket Plane classes and data JSONs are tracked, and the sources compile aga
 - [x] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
 - [ ] PocketPlaneGenerator produces the intended layers/caves/pockets; test several seeds and verify deterministic chunk generation.
 - [ ] Keystone item creates/binds the intended pocket plane and preserves its plane id through inventory, drop/pickup and save/reload.
-- [ ] Slot multiblock detection works in both orientations; portal creation consumes the expected vis and persists portal state.
-- [ ] Portal teardown restores the frame and clears the saved portal entry.
-- [ ] Travel from the Overworld into the Pocket Plane and back reaches the correct portal/return position, preserves player state and orientation, and handles missing/unloaded destinations safely.
+- [ ] Slot gateway frame detection works in both orientations; only the 3×3 opening is empty, all 15 perimeter blocks are present, and wand activation consumes the expected vis from the wand in hand.
+- [ ] Keystone bind at a Pocket Plane vortex, insert into a Slot, extract with an empty hand, inventory-full drop, and save/reload all preserve the exact plane ID.
+- [ ] Portal teardown restores the frame and clears only the matching saved portal entry; destroying the Slot or removing its Keystone does not leave a stale entrance.
+- [ ] Create four portals linked to one Pocket Plane and verify each surface/metadata mapping (A/C/B/D) enters and returns through the correct side.
+- [ ] Travel from Overworld and a non-Overworld source dimension into the Pocket Plane and back reaches the correct source dimension/position and exit orientation, preserves player state, and safely handles missing/unloaded destinations.
 - [ ] PocketPlanes SavedData survives server restart and world save/reload.
 - [ ] Vortex-collapse integration creates/tears down the Pocket Plane as intended.
 - [ ] Portal, Gateway and Slot blocks have complete blockstates, models, textures and no missing-renderer/model log.
