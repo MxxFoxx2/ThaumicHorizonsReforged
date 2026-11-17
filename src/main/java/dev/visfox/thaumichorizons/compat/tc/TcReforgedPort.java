@@ -12,7 +12,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,9 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
 import thaumcraft.aspect.Aspect;
-import thaumcraft.aspect.AspectList;
 import thaumcraft.aspect.AspectRegistry;
-import thaumcraft.aspect.AspectHelper;
 import thaumcraft.aspect.AspectSync;
 import thaumcraft.device.HandMirrorItem;
 import thaumcraft.device.MirrorBlock;
@@ -36,9 +33,6 @@ import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
 import thaumcraft.entity.TaintedMob;
 import thaumcraft.essentia.EssentiaHandler;
-import thaumcraft.node.Node;
-import thaumcraft.node.NodeGenerator;
-import thaumcraft.node.NodeModifier;
 import thaumcraft.platform.Baubles;
 import thaumcraft.registry.ModSounds;
 import thaumcraft.research.Knowledge;
@@ -50,24 +44,17 @@ import thaumcraft.research.ResearchPage;
 import thaumcraft.research.PlayerKnowledge;
 import thaumcraft.research.Warp;
 import thaumcraft.research.WarpType;
-import thaumcraft.research.ScanManager;
-import thaumcraft.vis.VisNet;
 import dev.visfox.thaumichorizons.compat.AspectCompat;
 import dev.visfox.thaumichorizons.compat.AspectCompat.AspectDataRegistrar;
 import dev.visfox.thaumichorizons.compat.BaubleCompat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.EssentiaCompat;
 import dev.visfox.thaumichorizons.compat.FxCompat;
-import dev.visfox.thaumichorizons.compat.GolemCompat;
-import dev.visfox.thaumichorizons.compat.InfusionCompat;
 import dev.visfox.thaumichorizons.compat.ItemCompat;
 import dev.visfox.thaumichorizons.compat.MirrorCompat;
-import dev.visfox.thaumichorizons.compat.NodeCompat;
 import dev.visfox.thaumichorizons.compat.PotionCompat;
 import dev.visfox.thaumichorizons.compat.ResearchCompat;
-import dev.visfox.thaumichorizons.compat.ScanCompat;
 import dev.visfox.thaumichorizons.compat.ThaumcraftPort;
-import dev.visfox.thaumichorizons.compat.VisNetCompat;
 import dev.visfox.thaumichorizons.compat.WarpCompat;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 
@@ -76,12 +63,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final ResearchCompat research = new TcResearch();
     private final WarpCompat warp = new TcWarp();
     private final EssentiaCompat essentia = new TcEssentia();
-    private final NodeCompat nodes = new TcNodes();
-    private final VisNetCompat visNet = new TcVisNet();
-    private final GolemCompat golems = new UnavailableGolems();
-    private final InfusionCompat infusion = new UnavailableInfusion();
     private final FxCompat fx = new TcFx();
-    private final ScanCompat scan = new TcScan();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
     private final MirrorCompat mirrors = new TcMirrors();
@@ -113,33 +95,8 @@ public final class TcReforgedPort implements ThaumcraftPort {
     }
 
     @Override
-    public NodeCompat nodes() {
-        return nodes;
-    }
-
-    @Override
-    public VisNetCompat visNet() {
-        return visNet;
-    }
-
-    @Override
-    public GolemCompat golems() {
-        return golems;
-    }
-
-    @Override
-    public InfusionCompat infusion() {
-        return infusion;
-    }
-
-    @Override
     public FxCompat fx() {
         return fx;
-    }
-
-    @Override
-    public ScanCompat scan() {
-        return scan;
     }
 
     @Override
@@ -177,11 +134,6 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public void registerAspectData(Consumer<AspectDataRegistrar> registrar) {
             AspectSync.addRegistrar(registry -> registrar.accept(new DataRegistrar(registry)));
-        }
-
-        @Override
-        public CompatAspectList getObjectAspects(ItemStack stack) {
-            return TcConversions.toCompat(AspectHelper.getObjectTags(stack));
         }
     }
 
@@ -432,119 +384,6 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcNodes implements NodeCompat {
-        @Override
-        public boolean isAvailable() {
-            return true;
-        }
-
-        @Override
-        public NodeInfo nodeAt(Level level, BlockPos pos) {
-            if (!(level.getBlockEntity(pos) instanceof Node node)) {
-                return null;
-            }
-            NodeModifier modifier = node.getNodeModifier();
-            return new NodeInfo(
-                TcConversions.toCompat(node.getAspects()),
-                TcConversions.toCompat(node.getAspectsBase()),
-                toCompatType(node.getNodeType()),
-                modifier == null ? null : modifier.getSerializedName()
-            );
-        }
-
-        @Override
-        public boolean createNode(Level level, BlockPos pos, CompatAspectList aspects, NodeType type) {
-            thaumcraft.node.NodeType tcType = toTcType(type);
-            if (tcType == null) {
-                return false;
-            }
-            NodeGenerator.createNodeAt(level, pos, tcType, null, TcConversions.toAspectList(aspects));
-            return true;
-        }
-
-        @Override
-        public CompatAspectList consumeNode(Level level, BlockPos pos) {
-            if (!(level.getBlockEntity(pos) instanceof Node node)) {
-                return new CompatAspectList();
-            }
-            CompatAspectList drained = TcConversions.toCompat(node.getAspects());
-            level.removeBlock(pos, false);
-            return drained;
-        }
-
-        private thaumcraft.node.@Nullable NodeType toTcType(NodeCompat.NodeType type) {
-            return switch (type) {
-                case NORMAL -> thaumcraft.node.NodeType.NORMAL;
-                case UNSTABLE -> thaumcraft.node.NodeType.UNSTABLE;
-                case SINISTER -> thaumcraft.node.NodeType.DARK;
-                case TAINTED -> thaumcraft.node.NodeType.TAINTED;
-                case HUNGRY -> thaumcraft.node.NodeType.HUNGRY;
-                case PURE -> thaumcraft.node.NodeType.PURE;
-                case ENERGIZED -> null;
-                case SYNTHETIC -> thaumcraft.node.NodeType.SYNTHETIC;
-                case ETHEREAL -> thaumcraft.node.NodeType.ETHEREAL;
-            };
-        }
-
-        private NodeCompat.NodeType toCompatType(thaumcraft.node.NodeType type) {
-            return switch (type) {
-                case NORMAL -> NodeCompat.NodeType.NORMAL;
-                case UNSTABLE -> NodeCompat.NodeType.UNSTABLE;
-                case DARK -> NodeCompat.NodeType.SINISTER;
-                case TAINTED -> NodeCompat.NodeType.TAINTED;
-                case HUNGRY -> NodeCompat.NodeType.HUNGRY;
-                case PURE -> NodeCompat.NodeType.PURE;
-                case SYNTHETIC -> NodeCompat.NodeType.SYNTHETIC;
-                case ETHEREAL -> NodeCompat.NodeType.ETHEREAL;
-            };
-        }
-    }
-
-    static final class TcVisNet implements VisNetCompat {
-        @Override
-        public boolean isAvailable() {
-            return true;
-        }
-
-        @Override
-        public int drainVis(Level level, BlockPos pos, String aspectTag, int amount, int range) {
-            Aspect aspect = Aspect.getAspect(aspectTag);
-            if (aspect == null || amount <= 0) {
-                return 0;
-            }
-            return VisNet.drainVis(level, pos, aspect, amount);
-        }
-
-        @Override
-        public int addVisToNode(Level level, BlockPos nodePos, String aspectTag, int amount) {
-            Aspect aspect = Aspect.getAspect(aspectTag);
-            if (aspect == null || amount <= 0 || !(level.getBlockEntity(nodePos) instanceof Node node)) {
-                return 0;
-            }
-            int leftover = node.addToContainer(aspect, amount);
-            return amount - leftover;
-        }
-    }
-
-    static final class TcScan implements ScanCompat {
-        @Override
-        public boolean isAvailable() {
-            return true;
-        }
-
-        @Override
-        public CompatAspectList resolveEntity(Entity entity) {
-            ScanManager.Target target = ScanManager.resolveEntity(entity);
-            return target == null ? new CompatAspectList() : TcConversions.toCompat(target.aspects());
-        }
-    }
-
-    static final class UnavailableGolems implements GolemCompat {
-    }
-
-    static final class UnavailableInfusion implements InfusionCompat {
-    }
-
     static final class TcFx implements FxCompat {
         private static thaumcraft.fx.FxProxy fx() {
             return thaumcraft.fx.Fx.get();
@@ -604,9 +443,6 @@ public final class TcReforgedPort implements ThaumcraftPort {
         public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
             fx().deadCreature(level, pos.x, pos.y, pos.z, color);
         }
-    }
-
-    static final class UnavailableScan implements ScanCompat {
     }
 
     static final class UnavailablePotions implements PotionCompat {

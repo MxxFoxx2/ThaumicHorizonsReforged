@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
 public interface AspectCompat {
@@ -17,10 +16,6 @@ public interface AspectCompat {
     }
 
     default void registerAspectData(Consumer<AspectDataRegistrar> registrar) {
-        throw new UnsupportedOperationException();
-    }
-
-    default CompatAspectList getObjectAspects(ItemStack stack) {
         throw new UnsupportedOperationException();
     }
 

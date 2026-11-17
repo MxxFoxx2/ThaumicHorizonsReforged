@@ -1,33 +1,62 @@
 package dev.visfox.thaumichorizons.compat;
 
 public interface ThaumcraftPort {
-    String portId();
+    AspectCompat UNAVAILABLE_ASPECTS = new AspectCompat() {
+    };
+    ResearchCompat UNAVAILABLE_RESEARCH = new ResearchCompat() {
+    };
+    WarpCompat UNAVAILABLE_WARP = new WarpCompat() {
+    };
+    EssentiaCompat UNAVAILABLE_ESSENTIA = new EssentiaCompat() {
+    };
+    FxCompat UNAVAILABLE_FX = new FxCompat() {
+    };
+    PotionCompat UNAVAILABLE_POTIONS = new PotionCompat() {
+    };
+    ItemCompat UNAVAILABLE_ITEMS = new ItemCompat() {
+    };
+    MirrorCompat UNAVAILABLE_MIRRORS = new MirrorCompat() {
+    };
+    BaubleCompat UNAVAILABLE_BAUBLES = new BaubleCompat() {
+    };
 
-    AspectCompat aspects();
+    default String portId() {
+        return "unavailable";
+    }
 
-    ResearchCompat research();
+    default AspectCompat aspects() {
+        return UNAVAILABLE_ASPECTS;
+    }
 
-    WarpCompat warp();
+    default ResearchCompat research() {
+        return UNAVAILABLE_RESEARCH;
+    }
 
-    EssentiaCompat essentia();
+    default WarpCompat warp() {
+        return UNAVAILABLE_WARP;
+    }
 
-    NodeCompat nodes();
+    default EssentiaCompat essentia() {
+        return UNAVAILABLE_ESSENTIA;
+    }
 
-    VisNetCompat visNet();
+    default FxCompat fx() {
+        return UNAVAILABLE_FX;
+    }
 
-    GolemCompat golems();
+    default PotionCompat potions() {
+        return UNAVAILABLE_POTIONS;
+    }
 
-    InfusionCompat infusion();
+    default ItemCompat items() {
+        return UNAVAILABLE_ITEMS;
+    }
 
-    FxCompat fx();
+    default MirrorCompat mirrors() {
+        return UNAVAILABLE_MIRRORS;
+    }
 
-    ScanCompat scan();
-
-    PotionCompat potions();
-
-    ItemCompat items();
-
-    MirrorCompat mirrors();
-
-    BaubleCompat baubles();
+    default BaubleCompat baubles() {
+        return UNAVAILABLE_BAUBLES;
+    }
 }
