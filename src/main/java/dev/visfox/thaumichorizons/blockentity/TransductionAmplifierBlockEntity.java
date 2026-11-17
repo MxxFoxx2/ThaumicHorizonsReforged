@@ -39,6 +39,9 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
     private void tick() {
         if (!fireOnce) {
             fireOnce = true;
+            if (!level.isClientSide()) {
+                shouldActivate = level.hasNeighborSignal(worldPosition);
+            }
         }
         if (activated) {
             count++;
