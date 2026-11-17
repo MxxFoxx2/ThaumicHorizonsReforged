@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: MxxFoxx2/thaumcraft-4-reforged
-          ref: dd1d6e729260fa7363b943a471cc78e1ef9c603f
+          ref: aab828481f4bb7578bda2125917504d8b20c2fc1
           path: thaumcraft-4-reforged
           persist-credentials: false
 
