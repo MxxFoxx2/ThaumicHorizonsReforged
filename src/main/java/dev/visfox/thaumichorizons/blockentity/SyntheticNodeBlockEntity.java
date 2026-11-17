@@ -18,7 +18,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
-import thaumcraft.item.AspectTooltips;
 import thaumcraft.node.Node;
 import thaumcraft.node.NodeModifier;
 import thaumcraft.node.NodeType;
@@ -89,7 +88,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
         if (wispEssence == null || !heldItem.is(wispEssence) || heldItem.isEmpty()) {
             return false;
         }
-        Aspect[] essenceAspects = AspectTooltips.getAspects(heldItem).getAspects();
+        Aspect[] essenceAspects = Compat.port().items().getAspects(heldItem).getAspects();
         if (essenceAspects.length == 0 || level == null) {
             return false;
         }
@@ -118,7 +117,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
                 continue;
             }
             ItemStack essence = new ItemStack(wispEssence, count);
-            AspectTooltips.setSingle(essence, aspect, 2);
+            Compat.port().items().setSingleAspect(essence, aspect, 2);
             drops.add(essence);
         }
         return drops;
