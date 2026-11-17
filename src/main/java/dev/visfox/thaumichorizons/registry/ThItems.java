@@ -106,8 +106,6 @@ public final class ThItems {
         ItemLensOrderEntropy::new);
     public static final DeferredItem<ItemLensCase> LENS_CASE = ITEMS.registerItem("lenscase",
         ItemLensCase::new, ItemLensCase::properties);
-    public static final DeferredItem<Item> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
-        Item::new, properties -> properties.stacksTo(1));
     public static final DeferredItem<EggIncubatedItem> EGG_INCUBATED = ITEMS.registerItem("eggincubated",
         EggIncubatedItem::new, properties -> properties.stacksTo(16));
 
