@@ -1,0 +1,124 @@
+package dev.visfox.thaumichorizons.blockentity;
+
+import dev.visfox.thaumichorizons.block.CloudBlock;
+import dev.visfox.thaumichorizons.registry.ThBlockEntities;
+import dev.visfox.thaumichorizons.registry.ThItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TntBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+
+/**
+ * Server-side weather processing for legacy cloud variants.
+ *
+ * The original cloud used the Overworld weather state for every dimension and
+ * periodically applied its precipitation effect to the first block below it.
+ */
+public final class CloudBlockEntity extends BlockEntity {
+    private int dropTimer = -1;
+    private int weatherTicks;
+
+    private static final int[] DROP_TIMERS = {-1, -1, 120, -1, 480, 480, 80, 360, 280, 550};
+
+    public CloudBlockEntity(BlockPos pos, BlockState state) {
+        super(ThBlockEntities.CLOUD.get(), pos, state);
+        int type = state.getValue(CloudBlock.TYPE);
+        dropTimer = DROP_TIMERS[type];
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, CloudBlockEntity cloud) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (++cloud.weatherTicks % 10 == 0 && serverLevel.getServer().overworld().isRaining()) {
+            cloud.applyPrecipitation(serverLevel, state.getValue(CloudBlock.TYPE));
+        }
+    }
+
+    private void applyPrecipitation(ServerLevel level, int type) {
+        BlockHitResult hit = level.clip(new ClipContext(
+            new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() - 0.5, worldPosition.getZ() + 0.5),
+            new Vec3(worldPosition.getX() + 0.5, level.getMinBuildHeight(), worldPosition.getZ() + 0.5),
+            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()));
+        if (hit.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+
+        BlockPos targetPos = hit.getBlockPos();
+        BlockState target = level.getBlockState(targetPos);
+        int meltable = ThItems.FOCUS_LIQUEFACTION.get().isMeltableBlock(target);
+        boolean flammable = target.isFlammable(level, targetPos, Direction.UP);
+
+        if (type == 1 || type == 4) {
+            switch (meltable) {
+                case 1 -> level.removeBlock(targetPos, false);
+                case 2 -> {
+                    if (level.dimension() != Level.NETHER) {
+                        level.setBlock(targetPos, Blocks.WATER.defaultBlockState(), 3);
+                    } else {
+                        level.removeBlock(targetPos, false);
+                    }
+                }
+                case 3 -> level.setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 3);
+                case 4 -> TntBlock.prime(level, targetPos);
+                case 6 -> level.setBlock(targetPos, Blocks.LAVA.defaultBlockState(), 3);
+                default -> {
+                    if (flammable) {
+                        level.setBlock(targetPos.above(), Blocks.FIRE.defaultBlockState(), 3);
+                    }
+                }
+            }
+            return;
+        }
+
+        if (type == 3) {
+            if (meltable == 1 || (meltable == 0 && flammable)) {
+                level.removeBlock(targetPos, false);
+            } else if (meltable == 3) {
+                level.setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 3);
+            }
+            return;
+        }
+
+        BlockPos above = targetPos.above();
+        if (level.getBiome(targetPos).value().coldEnoughToSnow(targetPos)) {
+            if (target.isSolidRender(level, targetPos) && level.isEmptyBlock(above)) {
+                level.setBlock(above, Blocks.SNOW.defaultBlockState(), 3);
+            }
+        } else {
+            if (target.is(Blocks.FARMLAND) && target.hasProperty(net.minecraft.world.level.block.FarmBlock.MOISTURE)
+                    && target.getValue(net.minecraft.world.level.block.FarmBlock.MOISTURE) != 7) {
+                level.setBlock(targetPos, target.setValue(net.minecraft.world.level.block.FarmBlock.MOISTURE, 7), 3);
+            } else if (level.getBlockState(above).is(Blocks.FIRE)) {
+                level.removeBlock(above, false);
+            }
+        }
+    }
+
+    @Override
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        dropTimer = input.getIntOr("dropTimer", -1);
+        weatherTicks = input.getIntOr("weatherTicks", 0);
+    }
+
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("dropTimer", dropTimer);
+        output.putInt("weatherTicks", weatherTicks);
+    }
+}
