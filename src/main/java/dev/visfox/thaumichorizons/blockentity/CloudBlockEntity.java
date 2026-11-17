@@ -7,6 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -52,6 +58,7 @@ public final class CloudBlockEntity extends BlockEntity {
                 cloud.applyPrecipitation(serverLevel, state.getValue(CloudBlock.TYPE));
             }
             cloud.tickDropTimer(serverLevel, state.getValue(CloudBlock.TYPE));
+            cloud.applyEntityEffects(serverLevel, state.getValue(CloudBlock.TYPE));
         }
     }
 
@@ -96,6 +103,48 @@ public final class CloudBlockEntity extends BlockEntity {
             case 8 -> applyGrowthDrop(level, target);
         }
         setChanged();
+    }
+
+
+    /**
+     * Applies the cloud's continuous entity effects over the vertical column
+     * between the cloud and the first solid block below it.
+     */
+    private void applyEntityEffects(ServerLevel level, int type) {
+        BlockPos ground = findGroundBelow(level);
+        AABB column = new AABB(worldPosition.getX(), ground.getY(), worldPosition.getZ(),
+            worldPosition.getX() + 1.0, worldPosition.getY(), worldPosition.getZ() + 1.0);
+        boolean warm = level.getBiome(worldPosition).value().getBaseTemperature() >= 0.15F;
+
+        for (Entity entity : level.getEntities(null, column, Entity::isAlive)) {
+            if (type == 1 || type == 4) {
+                entity.setRemainingFireTicks(6 * 20);
+                continue;
+            }
+            if (type == 3) {
+                entity.hurt(level.damageSources().magic(), 1.0F);
+                continue;
+            }
+            if (!warm) {
+                continue;
+            }
+            if (entity instanceof EnderMan || entity instanceof Blaze) {
+                entity.hurt(level.damageSources().drown(), 1.0F);
+            }
+            if (entity.isOnFire()) {
+                entity.setRemainingFireTicks(0);
+            }
+            if (type == 8 && entity instanceof Cow cow && !(entity instanceof MushroomCow)) {
+                MushroomCow mushroomCow = EntityType.MOOSHROOM.create(level, EntitySpawnReason.CONVERSION);
+                if (mushroomCow != null) {
+                    mushroomCow.moveTo(entity.getX(), entity.getY(), entity.getZ(),
+                        entity.getYRot(), entity.getXRot());
+                    mushroomCow.setHealth(cow.getHealth());
+                    entity.discard();
+                    level.addFreshEntity(mushroomCow);
+                }
+            }
+        }
     }
 
     private void applyGrowthDrop(ServerLevel level, BlockPos ground) {
