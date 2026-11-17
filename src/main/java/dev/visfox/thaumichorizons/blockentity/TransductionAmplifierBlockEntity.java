@@ -97,14 +97,16 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
             if (isActivatedTransducer(ecks, why, zee - 1)) {
                 transducers++;
             }
-            if (transducers > 3 && count % 50 == 0) {
-                unboostNodeAt(ecks, why, zee);
-                AspectList aspects = new AspectList();
-                if (level.getBlockEntity(new BlockPos(ecks, why, zee)) instanceof EnergizedNodeBlockEntity node) {
-                    aspects = node.getAuraBase().copy();
+            BlockPos nodePos = new BlockPos(ecks, why, zee);
+            if (transducers > 3 && count % 50 == 0 && level instanceof ServerLevel serverLevel
+                    && level.getBlockEntity(nodePos) instanceof EnergizedNodeBlockEntity node) {
+                unboostNode(node);
+                AspectList aspects = node.getAuraBase().copy();
+                if (Compat.port().nodes().isAvailable()) {
+                    Compat.port().nodes().stopTransducerForVortexConversion(serverLevel, nodePos.above());
                 }
-                level.setBlock(new BlockPos(ecks, why, zee), ThBlocks.VORTEX.get().defaultBlockState(), 3);
-                if (level.getBlockEntity(new BlockPos(ecks, why, zee)) instanceof VortexBlockEntity vortex) {
+                serverLevel.setBlock(nodePos, ThBlocks.VORTEX.get().defaultBlockState(), 3);
+                if (serverLevel.getBlockEntity(nodePos) instanceof VortexBlockEntity vortex) {
                     vortex.aspects = aspects;
                     vortex.sync();
                 }
