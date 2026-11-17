@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +35,7 @@ import thaumcraft.device.MirrorBlockEntity;
 import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
 import thaumcraft.entity.TaintedMob;
+import thaumcraft.node.NodeHooks;
 import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.platform.Baubles;
 import thaumcraft.registry.ModSounds;
@@ -52,6 +54,7 @@ import dev.visfox.thaumichorizons.compat.BaubleCompat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.EssentiaCompat;
 import dev.visfox.thaumichorizons.compat.FxCompat;
+import dev.visfox.thaumichorizons.compat.FluxCompat;
 import dev.visfox.thaumichorizons.compat.ItemCompat;
 import dev.visfox.thaumichorizons.compat.MirrorCompat;
 import dev.visfox.thaumichorizons.compat.PotionCompat;
@@ -66,6 +69,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final WarpCompat warp = new TcWarp();
     private final EssentiaCompat essentia = new TcEssentia();
     private final FxCompat fx = new TcFx();
+    private final FluxCompat flux = new TcFlux();
     private final PotionCompat potions = new UnavailablePotions();
     private final ItemCompat items = new TcItems();
     private final MirrorCompat mirrors = new TcMirrors();
@@ -99,6 +103,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
     @Override
     public FxCompat fx() {
         return fx;
+    }
+
+    @Override
+    public FluxCompat flux() {
+        return flux;
     }
 
     @Override
@@ -393,6 +402,22 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public boolean isTaintedMob(LivingEntity entity) {
             return entity instanceof TaintedMob;
+        }
+    }
+
+    static final class TcFlux implements FluxCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public boolean spill(ServerLevel level, BlockPos pos, boolean gas) {
+            if (!level.hasChunkAt(pos) || !level.isEmptyBlock(pos)) {
+                return false;
+            }
+            NodeHooks.spillFlux(level, pos, gas);
+            return !level.isEmptyBlock(pos);
         }
     }
 
