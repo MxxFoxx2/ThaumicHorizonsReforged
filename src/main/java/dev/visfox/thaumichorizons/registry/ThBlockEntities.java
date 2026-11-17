@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.BloodInfuserBlockEntity;
+import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.EssentiaDynamoBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.IlluminationLightBlockEntity;
@@ -30,6 +31,9 @@ public final class ThBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ThaumicHorizons.MODID);
 
+    public static final Supplier<BlockEntityType<CloudBlockEntity>> CLOUD = BLOCK_ENTITIES.register(
+        "cloud", () -> new BlockEntityType<>(CloudBlockEntity::new,
+            java.util.Set.of(ThBlocks.CLOUD.get(), ThBlocks.CLOUD_GLOWING.get())));
     public static final Supplier<BlockEntityType<VisDynamoBlockEntity>> VIS_DYNAMO = BLOCK_ENTITIES.register(
         "visdynamo", () -> new BlockEntityType<>(VisDynamoBlockEntity::new, ThBlocks.VIS_DYNAMO.get()));
     public static final Supplier<BlockEntityType<EssentiaDynamoBlockEntity>> ESSENTIA_DYNAMO = BLOCK_ENTITIES.register(
