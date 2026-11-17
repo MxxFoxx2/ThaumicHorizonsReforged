@@ -17,9 +17,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.platform.Teleport;
+import thaumcraft.wand.WandInteractable;
+import thaumcraft.wand.WandItem;
 import thaumcraft.wand.Wands;
 
-public class SlotBlockEntity extends BlockEntity {
+public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     private boolean hasKeystone;
     private boolean portalOpen;
     private int pocketID;
@@ -58,34 +60,32 @@ public class SlotBlockEntity extends BlockEntity {
         return xAligned;
     }
 
-    public static void makePortal(Level level, BlockPos pos, Player player) {
-        if (!(level.getBlockEntity(pos) instanceof SlotBlockEntity slot) || level.isClientSide()) {
-            return;
+    private boolean makePortal(Player player, ItemStack wand) {
+        if (!(level instanceof ServerLevel server) || portalOpen || !hasKeystone || !PocketPlanes.validPlane(pocketID)) {
+            return false;
         }
-        if (slot.portalOpen) {
-            return;
+        int portalNum = PocketPlanes.firstAvailablePortal(pocketID);
+        if (portalNum == 0 || !(wand.getItem() instanceof WandItem wandItem)) {
+            return false;
         }
-        int portalNum = PocketPlanes.firstAvailablePortal(slot.pocketID);
-        if (portalNum == 0) {
-            return;
+
+        boolean xPlane = checkPortalX();
+        boolean zPlane = !xPlane && checkPortalZ();
+        if (!xPlane && !zPlane) {
+            return false;
         }
-        ItemStack wand = player.getMainHandItem();
-        if (!Wands.isWand(wand)) {
-            return;
+
+        AspectList cost = PocketPlanes.primalCost();
+        if (!wandItem.consumeAllVisCrafting(wand, player, cost, true)) {
+            return false;
         }
-        AspectList cost = new AspectList()
-            .add(Aspect.WATER, 250).add(Aspect.EARTH, 250).add(Aspect.ORDER, 250)
-            .add(Aspect.FIRE, 250).add(Aspect.AIR, 250).add(Aspect.ENTROPY, 250);
-        if (!(level instanceof ServerLevel server) || !thaumcraft.wand.WandManager.consumeVisFromInventory(player, cost)) {
-            return;
-        }
-        boolean made = false;
-        if (slot.checkPortalX()) {
-            slot.xAligned = true;
+
+        if (xPlane) {
+            xAligned = true;
             int md = 0;
             for (int x = -2; x <= 2; x++) {
                 for (int y = 0; y >= -4; y--) {
-                    BlockPos target = pos.offset(x, y, 0);
+                    BlockPos target = worldPosition.offset(x, y, 0);
                     if (!level.getBlockState(target).isAir() && (x != 0 || y != 0)) {
                         level.setBlock(target, PocketRegistry.GATEWAY_TH.get().defaultBlockState()
                             .setValue(PortalTHBlock.MD, md), 3);
@@ -95,13 +95,12 @@ public class SlotBlockEntity extends BlockEntity {
                     }
                 }
             }
-            made = true;
-        } else if (slot.checkPortalZ()) {
-            slot.xAligned = false;
+        } else {
+            xAligned = false;
             int md = 0;
             for (int z = -2; z <= 2; z++) {
                 for (int y = 0; y >= -4; y--) {
-                    BlockPos target = pos.offset(0, y, z);
+                    BlockPos target = worldPosition.offset(0, y, z);
                     if (!level.getBlockState(target).isAir() && (z != 0 || y != 0)) {
                         level.setBlock(target, PocketRegistry.GATEWAY_TH.get().defaultBlockState()
                             .setValue(PortalTHBlock.MD, md), 3);
@@ -111,15 +110,22 @@ public class SlotBlockEntity extends BlockEntity {
                     }
                 }
             }
-            made = true;
         }
-        if (made) {
-            slot.portalOpen = true;
-            slot.which = portalNum;
-            slot.setChanged();
-            PocketPlanes.makePortal(slot.pocketID, portalNum, pos.getX(), pos.getY(), pos.getZ(), server.getServer());
-            level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        }
+
+        String sourceDimension = level.dimension().identifier().toString();
+        PocketPlanes.makePortal(pocketID, portalNum, worldPosition.getX(), worldPosition.getY(),
+            worldPosition.getZ(), sourceDimension, server.getServer());
+        portalOpen = true;
+        which = portalNum;
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        return true;
+    }
+
+    @Override
+    public InteractionResult onWandUse(Level level, BlockPos pos, Player player, ItemStack wand) {
+        return makePortal(player, wand) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
     public static void destroyPortal(Level level, BlockPos pos) {
@@ -237,25 +243,54 @@ public class SlotBlockEntity extends BlockEntity {
         return true;
     }
 
+    public boolean insertKeystone(int planeID) {
+        if (hasKeystone || !PocketPlanes.validPlane(planeID)) {
+            return false;
+        }
+        hasKeystone = true;
+        pocketID = planeID;
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+        return true;
+    }
+
+    public int removeKeystone() {
+        int removed = pocketID;
+        hasKeystone = false;
+        pocketID = 0;
+        if (portalOpen && level != null) {
+            destroyPortal(level, worldPosition);
+        }
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+        return removed;
+    }
+
     public InteractionResult useWithoutItem(Player player) {
-        if (!(level instanceof ServerLevel server) || !(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResult.SUCCESS;
+        if (level == null || level.isClientSide() || !hasKeystone) {
+            return InteractionResult.PASS;
         }
-        ItemStack main = player.getMainHandItem();
-        if (main.getItem() instanceof KeystoneItem && !hasKeystone) {
-            hasKeystone = true;
-            pocketID = KeystoneItem.getPlaneID(main);
-            setChanged();
-            return InteractionResult.SUCCESS;
+        if (portalOpen) {
+            destroyPortal(level, worldPosition);
         }
-        if (hasKeystone && portalOpen) {
-            ServerLevel pocket = PocketDimension.level(server.getServer());
-            if (pocket != null) {
-                Teleport.to(serverPlayer, pocket, serverPlayer.position(), player.getYRot(), player.getXRot());
-            }
-            return InteractionResult.SUCCESS;
+        ItemStack keystone = KeystoneItem.create(removeKeystoneState());
+        if (!player.getInventory().add(keystone)) {
+            player.drop(keystone, false);
         }
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
+    }
+
+    private int removeKeystoneState() {
+        int removed = pocketID;
+        hasKeystone = false;
+        pocketID = 0;
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        return removed;
     }
 
     @Override
