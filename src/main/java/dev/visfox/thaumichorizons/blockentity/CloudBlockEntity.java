@@ -224,7 +224,7 @@ public final class CloudBlockEntity extends BlockEntity {
 
         if (type == 1 || type == 4) {
             switch (meltable) {
-                case 1 -> level.removeBlock(targetPos, false);
+                case 1 -> level.setBlock(targetPos, Blocks.FIRE.defaultBlockState(), 3);
                 case 2 -> {
                     if (level.dimension() != Level.NETHER) {
                         level.setBlock(targetPos, Blocks.WATER.defaultBlockState(), 3);
