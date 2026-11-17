@@ -122,7 +122,7 @@ public class PocketPlanes extends SavedData {
         if (te instanceof VortexBlockEntity vortex) {
             vortex.cheat = true;
             vortex.createdDimension = true;
-            vortex.dimensionID = planes.size();
+            vortex.dimensionID = pocketPlaneMAXID;
             vortex.setChanged();
         }
         data.clearPortal(1);
@@ -156,8 +156,8 @@ public class PocketPlanes extends SavedData {
     }
 
     private static boolean isPortalUnused(@Nullable int[] portal) {
-        return portal == null || portal.length < 3
-            || portal[0] == 0 && portal[1] == 0 && portal[2] == 0;
+        return portal == null || portal.length < 4
+            && (portal.length < 3 || portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
