@@ -35,7 +35,7 @@ public final class ThaumiumBoat extends Boat {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide && this.isInLava()) {
+        if (!this.level().isClientSide() && this.isInLava()) {
             for (Entity passenger : this.getPassengers()) {
                 passenger.clearFire();
                 if (passenger instanceof LivingEntity living) {
