@@ -37,7 +37,7 @@ python -I tools/check_seams.py
 
 - [ ] Incubated Egg: obtain via `alchIncubation`, throw it, confirm projectile renders and hatches a baby chicken on impact.
 - [ ] Planar Conduit: craft using `planarTheory`; verify the Transduction Amplifier arcane recipe and Vortex Stabilizer infusion recipe against the reference ingredients/aspect costs.
-- [ ] Confirm an appropriate renderer is registered for the thrown Incubated Egg entity; no missing-renderer log or invisible projectile.
+- [ ] Confirm the thrown Incubated Egg renders in-game. `ThrownItemRenderer` is now registered for `ThaumicHorizons:eggincubated`; no missing-renderer log or invisible projectile in a live client.
 
 ## Invisibility checklist (community requirement — run every phase touching infusions)
 
@@ -65,7 +65,7 @@ The Pocket Plane classes and data JSONs are now tracked, but the WIP roadmap rep
 
 - [ ] `./gradlew build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
 - [ ] `python -I tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
-- [ ] Consolidate `thaumichorizons:planarconduit` so it is registered exactly once; confirm mod registry startup.
+- [ ] Confirm mod registry startup after consolidating `thaumichorizons:planarconduit` to the single `PocketRegistry` registration (the duplicate `ThItems` entry is removed).
 - [ ] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
 - [ ] PocketPlaneGenerator produces the intended layers/caves/pockets; test several seeds and verify deterministic chunk generation.
 - [ ] Keystone item creates/binds the intended pocket plane and preserves its plane id through inventory, drop/pickup and save/reload.
