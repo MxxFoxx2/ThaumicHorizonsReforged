@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.block.TransductionAmplifierBlock;
+import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import java.util.List;
@@ -8,13 +9,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.node.EnergizedNodeBlockEntity;
@@ -108,13 +109,32 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
                     vortex.sync();
                 }
             }
-            if (transducers > 1 && count % 50 == 0) {
-                List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
+            if (transducers > 2 && count % 50 == 0 && level instanceof ServerLevel serverLevel
+                    && serverLevel.getRandom().nextInt(4) == 2 && Compat.port().flux().isAvailable()) {
+                int dx = serverLevel.getRandom().nextInt(16) - 8;
+                int dy = serverLevel.getRandom().nextInt(16) - 8;
+                int dz = serverLevel.getRandom().nextInt(16) - 8;
+                BlockPos fluxPos = worldPosition.offset(dx, dy, dz);
+                if (serverLevel.isEmptyBlock(fluxPos)
+                        && Compat.port().flux().spill(serverLevel, fluxPos, dy > 0)
+                        && Compat.port().fx().isAvailable()) {
+                    Compat.port().fx().arcLightning(serverLevel,
+                        Vec3.atCenterOf(worldPosition), Vec3.atCenterOf(fluxPos), 0xFFFFFF);
+                }
+            }
+            if (transducers > 1 && count % 50 == 0 && level instanceof ServerLevel serverLevel) {
+                List<LivingEntity> targets = serverLevel.getEntitiesOfClass(LivingEntity.class,
                     new AABB(worldPosition).inflate(10.0, 10.0, 10.0));
                 if (!targets.isEmpty()) {
-                    DamageSource magic = level.damageSources().magic();
-                    for (Entity target : targets) {
-                        target.hurtServer((ServerLevel) level, magic, 4 + level.getRandom().nextInt(1));
+                    DamageSource magic = serverLevel.damageSources().magic();
+                    for (LivingEntity target : targets) {
+                        if (Compat.port().fx().isAvailable()) {
+                            Compat.port().fx().arcLightning(serverLevel,
+                                Vec3.atCenterOf(worldPosition),
+                                new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ()),
+                                0xFFFFFF);
+                        }
+                        target.hurtServer(serverLevel, magic, 4.0F);
                     }
                 }
             }
