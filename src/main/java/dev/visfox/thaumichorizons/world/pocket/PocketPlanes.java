@@ -87,6 +87,7 @@ public class PocketPlanes extends SavedData {
         if (world == null) {
             return false;
         }
+        PocketPlaneGenerator.beginGeneration(world);
         data.sourceDimension = returnDimension;
         int xCenter = 0;
         int zCenter = 256 * planes.size();

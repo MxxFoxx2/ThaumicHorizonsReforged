@@ -3,11 +3,13 @@ package dev.visfox.thaumichorizons.world.pocket;
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
+import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -58,7 +60,8 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     private boolean makePortal(Player player, ItemStack wand) {
-        if (!(level instanceof ServerLevel server) || portalOpen || !hasKeystone || !PocketPlanes.validPlane(pocketID)) {
+        if (!(level instanceof ServerLevel server) || PocketDimension.level(server.getServer()) == null
+                || portalOpen || !hasKeystone || !PocketPlanes.validPlane(pocketID)) {
             return false;
         }
         int portalNum = PocketPlanes.firstAvailablePortal(pocketID);
@@ -302,6 +305,26 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                 worldPosition.getZ() + 0.5, keystone));
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+
+        // Match the legacy BlockSlot break behavior: close both portal ends and
+        // drop the plane-bound Keystone instead of silently deleting it.
+        if (portalOpen) {
+            destroyPortal(server, pos);
+        }
+        if (hasKeystone) {
+            int planeID = removeKeystone();
+            ItemStack keystone = KeystoneItem.create(planeID);
+            server.addFreshEntity(new ItemEntity(server, pos.getX() + 0.5D, pos.getY() + 0.5D,
+                pos.getZ() + 0.5D, keystone));
+        }
     }
 
     @Override

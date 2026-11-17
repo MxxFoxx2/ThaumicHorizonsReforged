@@ -34,9 +34,18 @@ import thaumcraft.taint.TaintBiomes;
 public final class PocketPlaneGenerator {
     private static final short MAX_CREATURES = 100;
     private static short creatures = 0;
-    private static final RandomSource rand = RandomSource.create();
+    private static RandomSource rand = RandomSource.create();
 
     private PocketPlaneGenerator() {
+    }
+
+    /**
+     * Starts a new plane generation pass. The legacy generator used the
+     * dimension world's RNG and reset its creature budget after each plane.
+     */
+    static void beginGeneration(ServerLevel world) {
+        creatures = 0;
+        rand = world.getRandom();
     }
 
     static int fastFloor(double value) {
