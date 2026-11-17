@@ -1,13 +1,20 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
+import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
+import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
+import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -16,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -26,6 +34,7 @@ import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.WandInteractable;
+import thaumcraft.platform.Teleport;
 
 public class VortexBlockEntity extends ThBlockEntity implements WandInteractable {
     private static final int MAX_COUNT = 2400;
@@ -89,6 +98,8 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             }
             if (beams < 6 && !cheat) {
                 handleHungryNode();
+            } else if (!createdDimension) {
+                handlePocketPlaneStuff();
             } else {
                 handleVoidCrafting();
             }
@@ -98,6 +109,93 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             if (count > MAX_COUNT && !cheat) {
                 collapsing = true;
                 count = 0;
+            }
+            if (createdDimension) {
+                handleDimensionTravel();
+            }
+        }
+    }
+
+    private void handlePocketPlaneStuff() {
+        if (!(level instanceof ServerLevel source) || level.isClientSide() || createdDimension) {
+            return;
+        }
+        Item primordialPearl = Compat.port().items().lookup(
+            Identifier.fromNamespaceAndPath("thaumcraft", "primordial_pearl"));
+        List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class,
+            new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
+        if (primordialPearl != null && ThaumicHorizonsConfig.pocketPlaneEnabled()) {
+            for (ItemEntity item : entities) {
+                if (item.getItem().is(primordialPearl) && createPocketPlane(source)) {
+                    item.discard();
+                    return;
+                }
+            }
+        }
+        handleVoidCrafting();
+    }
+
+    private boolean createPocketPlane(ServerLevel source) {
+        MinecraftServer server = source.getServer();
+        PocketPlanes.get(server);
+        int newPlaneID = PocketPlanes.pocketPlaneMAXID;
+        PocketPlaneData data = new PocketPlaneData();
+        data.name = "Pocket Plane";
+        boolean created = PocketPlanes.generatePocketPlane(aspects, data, server,
+            worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+            source.dimension().identifier().toString());
+        if (!created) {
+            return false;
+        }
+        dimensionID = newPlaneID;
+        createdDimension = true;
+        setChanged();
+        sync();
+        return true;
+    }
+
+    private void handleDimensionTravel() {
+        if (!(level instanceof ServerLevel current) || level.isClientSide()) {
+            return;
+        }
+        MinecraftServer server = current.getServer();
+        PocketPlanes.get(server);
+        List<ServerPlayer> players = current.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition));
+        for (ServerPlayer player : players) {
+            if (player.isPassenger() || player.isVehicle() || player.getPortalCooldown() > 0) {
+                continue;
+            }
+
+            ServerLevel destinationLevel;
+            Vec3 destination;
+            if (current.dimension().equals(PocketDimension.POCKET_PLANE)) {
+                if (!PocketPlanes.validPlane(dimensionID)) {
+                    continue;
+                }
+                BlockPos returnPos = PocketPlanes.returnPosition(dimensionID);
+                String returnDimension = PocketPlanes.returnDimension(dimensionID);
+                Identifier identifier = Identifier.tryParse(returnDimension);
+                if (returnPos == null || identifier == null) {
+                    continue;
+                }
+                ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, identifier);
+                destinationLevel = server.getLevel(dimensionKey);
+                if (destinationLevel == null) {
+                    continue;
+                }
+                destination = new Vec3(returnPos.getX(), returnPos.getY(), returnPos.getZ());
+            } else {
+                destinationLevel = PocketDimension.level(server);
+                if (destinationLevel == null || !PocketPlanes.validPlane(dimensionID)) {
+                    continue;
+                }
+                destination = new Vec3(0.5, 129.0, 256 * dimensionID + 0.5);
+            }
+
+            Entity teleported = Teleport.to(player, destinationLevel, destination,
+                player.getYRot(), player.getXRot());
+            if (teleported != null) {
+                teleported.setPortalCooldown(200);
             }
         }
     }
