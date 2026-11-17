@@ -1,11 +1,18 @@
 package dev.visfox.thaumichorizons.block;
 
+import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
+import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -17,7 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * A legacy cloud block. The variant is kept in block state rather than legacy metadata.
  * Server-side weather processing is implemented by CloudBlockEntity in the follow-up pass.
  */
-public class CloudBlock extends Block {
+public class CloudBlock extends Block implements EntityBlock {
     public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 9);
 
     public CloudBlock(Properties properties, int defaultType) {
@@ -40,6 +47,21 @@ public class CloudBlock extends Block {
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
                                   CollisionContext context) {
         return Shapes.block();
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new CloudBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state,
+            BlockEntityType<T> type) {
+        if (type != ThBlockEntities.CLOUD.get()) {
+            return null;
+        }
+        return (tickLevel, pos, tickState, entity) ->
+            CloudBlockEntity.tick(tickLevel, pos, tickState, (CloudBlockEntity) entity);
     }
 
     @Override
