@@ -1,8 +1,11 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
+import dev.visfox.thaumichorizons.compat.Compat;
 import java.util.ArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +18,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
+import thaumcraft.item.AspectTooltips;
 import thaumcraft.node.Node;
 import thaumcraft.node.NodeModifier;
 import thaumcraft.node.NodeType;
@@ -77,6 +81,47 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
 
     public AspectList getMaxAspects() {
         return aspectsMax;
+    }
+
+    public boolean addEssence(ItemStack heldItem) {
+        Item wispEssence = Compat.port().items().lookup(
+            Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
+        if (wispEssence == null || !heldItem.is(wispEssence) || heldItem.isEmpty()) {
+            return false;
+        }
+        Aspect[] essenceAspects = AspectTooltips.getAspects(heldItem).getAspects();
+        if (essenceAspects.length == 0 || level == null) {
+            return false;
+        }
+        if (!level.isClientSide()) {
+            Aspect aspect = essenceAspects[0];
+            int amount = heldItem.getCount() * 4;
+            aspectsMax.add(aspect, amount);
+            aspects.add(aspect, 0);
+            fractionalAspects.add(aspect, 0);
+            heldItem.shrink(heldItem.getCount());
+            sync();
+        }
+        return true;
+    }
+
+    public ArrayList<ItemStack> createEssenceDrops() {
+        ArrayList<ItemStack> drops = new ArrayList<>();
+        Item wispEssence = Compat.port().items().lookup(
+            Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
+        if (wispEssence == null) {
+            return drops;
+        }
+        for (Aspect aspect : aspectsMax.getAspects()) {
+            int count = aspectsMax.getAmount(aspect) / 4;
+            if (count <= 0) {
+                continue;
+            }
+            ItemStack essence = new ItemStack(wispEssence, count);
+            AspectTooltips.setSingle(essence, aspect, 2);
+            drops.add(essence);
+        }
+        return drops;
     }
 
     public boolean addFractionalToContainer(Aspect tag, int amount) {
