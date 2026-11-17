@@ -1,32 +1,41 @@
 # Roadmap and current state
 
-Snapshot after the initial full-port sprint and the pocket-plane WIP session (see `git log` and [fidelity.md](fidelity.md) for details). Everything is pushed to origin/main.
+Snapshot of the public `main` branch at `6fd7614` (2026-11-17). This is a source-level status report; a feature is not marked game-verified unless `verification.md` records an in-game check.
 
-## Done (build green)
+## Current foundation
 
-- Build skeleton: ModDevGradle, composite `includeBuild` of Thaumcraft 4: Reforged, mixin config, mods.toml, license LGPL-3.0-or-later.
-- Compat layer: `thaumichorizons.compat` interfaces + `TcReforgedPort` (ServiceLoader), capability `isAvailable()` gates, THAUMCRAFT_API allowlist in check_seams.
-- Version seams `platform/` + `client/platform/` (DataKey attachments, StackKey data components, ModNetwork/ClientNetwork) + `tools/check_seams.py`.
-- Content: simple items/blocks, five mob effects, aspects, the full 74-entry research tree, lang en/ru (382 keys each), loot tables for all 21 breakable blocks.
-- Machines: VisDynamo, EssentiaDynamo, NodeMonitor, SyntheticNode, TransductionAmplifier, Vortex, VortexStabilizer, Alchemite (+ primed entity + explosion).
-- Creatures: 20 entities, 12 AI classes, 30 critter + 10 self-infusion recipes, EventHandlerEntity port, creature infusion state attachment.
-- Player infusions: `CreatureInfusionData` attachment, chameleon skin without the original bug, spider climb, warp tumor via `WarpCompat`, X/C keybinds, `/thaumichorizons chameleon`.
-- Golems, lenses, foci, Case menu + GuiCase, disposable wand (`WandRegistry` hooks).
-- Souls/blood/Vat: 10 BEs, 10 blocks, syringes, containment focus, 8 menus + 8 screens.
-- Recipes: 43 TC4R registrations + 11 vanilla JSONs, keys 1:1 (wired via `ThRecipes.init()`).
-- Client: renderers for all 20 creatures + AlchemitePrimed + golem, blockstates/models for the ten soul/vat blocks, item models, machine atlas-UV render polish (successor session).
-- In-game verification: successor ran the client (main menu reached), fixed 6 first-launch bugs (lazy ItemStack, lowercase paths, lang suffixes, VariantProperty range, focus upgrade id clash), documented in `docs/fidelity.md` and `CLAUDE.md` pitfalls section.
+- Target: Minecraft 26.3 / NeoForge 26.3, as an add-on for Thaumcraft 4: Reforged.
+- Compatibility interfaces and the `TcReforgedPort` ServiceLoader adapter isolate TC4R APIs; version-specific seams live in `platform/` and `client/platform/`.
+- The 74-entry research tree, aspects, English/Russian localization, player infusion attachment, Chameleon Skin redesign, Spider Climb and Warp Tumor are present.
+- The main content pass includes 20 creature types, their AI and infusion recipes; golems, lenses, foci; machines; souls, blood and Vat systems.
+- Nine menu types are registered: Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers and Vis Dynamo.
+- Entity renderers are registered for the 20 creature types plus AlchemitePrimed and the TH golem. Node Monitor has a dedicated block-entity renderer. Several machine models are now static JSON models with corrected atlas UVs; Vat still needs its special multiblock renderer/animation.
+- The TC4R FX adapter `TcFx` calls the fork's `FxProxy` methods. This does not mean every original TH effect has been matched or visually verified.
 
-## In flight / next (priority order)
+## Newly completed since the earlier roadmap snapshot
 
-1. **Pocket plane — WIP at `e38d16a`, needs ~30 min of API adaptation to compile.** Classes written (PocketRegistry, SlotBlockEntity, SlotBlock, PortalTHBlock, KeystoneItem, PlanarConduitItem, dimension JSONs, wiring, allowlist Teleport) but ~25 compile errors remain: `PocketPlaneChunkGenerator` vs 26.3 ChunkGenerator API (GenerationStep package move, addDebugScreenInfo, fillFromNoise signatures), `PocketPlaneData:73 getValue(int)`, `GatewayPortalBlock` private-field access on SlotBlockEntity, `KeystoneItem` API, `PocketRegistry:22` chunk-generator generics. **Fix all, get build+seams green, commit.** Then: pocket dimension is playable (portal, keystone, Vortex-collapse hook still pending — see G's RESUME_MANIFEST).
-2. **Remaining entities (~8)**: HorseZombie, HorseSkeleton, NightmareTH, BoatGreatwood, BoatThaumium, BlastPhial, Syringe projectile, EggIncubated, finite LightningBolt. Server-side logic; renderers in the client pass. Recipes 20/21/22 go live when they land. Agent D's partial `EggIncubatedEntity` is already in `6fd7614` — verify and extend.
-3. **Client polish**: FX (real `ClientFx` implementations instead of approximations), radial lens HUD (V key), VortexSound, Familiar hat layer, Endersteed armor variants, OBJ machine models (successor started `tools/preview_obj.py`).
-4. **Recombinator** — needs TC4R node-internals API (NodeView allowlist or upstream hook).
-5. **Verification**: user runs `docs/verification.md` Gate 1 + Gate 2 + the invisibility checklist with two clients. Nothing fully visually verified yet — successor verified wands and machine rendering only.
-6. **Backports**: `mc/26.1.2`, `mc/1.21.1` after main stabilizes (TC4R backport procedure).
-7. **Upstream**: `feat/addon-api` branch (5 additive hooks) is on the `MxxFoxx2` fork (TC4R repo). Open an upstream PR when the owner decides.
+- **Case menu and screen** registered and wired: [`c195288`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/c195288b6d28d5045ea6598a4688671faba30a63).
+- **Focus items and recipes**, plus Solar Light and missing aspect tags: [`3878b55`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/3878b550e05306186a5c50fb917d1e7ccb36dece).
+- **Planar Conduit** item and the `planarTheory`, `transductionAmplifier` and `vortexStabilizer` recipes: [`408e6cc`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/408e6cc49b87d9c9922442ad8e0de8b13174d9e2).
+- **Incubated Egg** item, throwable entity and `alchIncubation` crucible recipe: [`5119c15`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/5119c1582e24a798a436ffa67f01fadb06304f64).
+- **Soul Jar capture path** now serializes an infused creature into a jar item; jar placement restores the block-entity data, and wand use has a release implementation: [`6fd7614`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/6fd7614d00ceb22d282ab6009483ca1f0f14e6e1). This is source-level implementation only; the complete cycle remains unverified in-game.
+
+## Remaining work — priority order
+
+1. **Finish Gate 2 verification.** Test Soul Jar capture/release, Containment Focus, curative Vat mode, creature infusion, Corpse Effigy cloning, syringe draw/inject, all nine menus and Inspiratron research completion. Separate implemented code from verified behavior in `verification.md`.
+2. **Restore missing world blocks and BlockEntities.** The modern registries still lack the original Cloud and Light BlockEntities, Recombinator, Spike variants, Slot, PortalTH and Gateway. In particular, `TileCloud` contains substantial gameplay behavior (weather interaction, block/entity effects and finite lightning), not just particles.
+3. **Finish the two keybinds.** V (Arcane Lens radial HUD) and M (Morphic Fingers) are registered but their client tick handlers currently only consume the presses. C/X are wired to server payloads.
+4. **Port the remaining entities/projectiles and vehicles:** HorseZombie, HorseSkeleton, NightmareTH, Greatwood Boat, Thaumium Boat, Syringe projectile and BlastPhial projectile. The Incubated Egg and its projectile are no longer outstanding. The finite lightning behavior belongs with the missing Cloud system; it is not a separately registered entity type in the original.
+5. **Complete remaining item/research content:** Mirror Amulet and Planar Keystone; add the missing recipes/behaviors for those items. Revisit Void Putty repair and Focus Illumination dye recipes. Planar Conduit, Planar Theory, Transduction Amplifier, Vortex Stabilizer and Incubated Egg recipes are now present in code.
+6. **Finish machine and compatibility behavior:** Recombinator; SyntheticNode wisp-essence refilling/drops; crystal-essence conversion; overloaded Transducer flux gas/goo and wisp spawning; Liquefaction nuggets upgrade; remaining TC4R taint-poison/blurred-vision and skull-variant compatibility.
+7. **Pocket Plane.** Planar Conduit is now present, but Planar Keystone, portal/slot blocks and BlockEntities, dimension registration/data, and Vortex-collapse integration remain. The earlier `.deferred-pocket/` directory is git-ignored and is not present in the public `main` tree; its claimed ~60% local progress cannot be verified from GitHub. Preserve a local backup and publish a safe branch before resuming.
+8. **Client polish:** Vat multiblock renderer/animation, Soul Jar and other special machine visuals as needed, VortexSound, Familiar hat layer, missing projectile rendering, and parity checks for remaining FX. Do not redo the existing creature renderers, Node Monitor renderer or completed static machine models.
+9. **Release validation and backports:** clean-checkout build, `tools/check_seams.py`, dedicated-server boot, save/reload, full Gate 1/Gate 2 and two-client invisibility checks. Backport branches (`mc/26.1.2`, `mc/1.21.1`) only after 26.3 stabilizes.
+
+## Verification / CI status
+
+`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree, so do not infer that the latest `main` passed CI. The current HEAD has not been independently built or launched as part of this documentation update.
 
 ## Upstream
 
-`feat/addon-api` branch (5 additive hooks: NodeType SYNTHETIC/ETHEREAL, ResearchPage.creatureInfusion, FxProxy extensions, VisCostModifiers, GolemType materials) is pushed to the `MxxFoxx2` fork of `notlikethiss/thaumcraft-4-reforged`. TH-R builds through includeBuild and needs no mixins.
+The `feat/addon-api` branch contains additive TC4R hooks used by this port (including creature-infusion research pages, FX extensions and golem type support). The add-on currently uses a local composite `includeBuild` for development; verify against the intended published TC4R artifact before release.
