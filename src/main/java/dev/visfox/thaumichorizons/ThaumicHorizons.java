@@ -45,6 +45,7 @@ public class ThaumicHorizons {
         ConfigAspects.init();
         dev.visfox.thaumichorizons.crafting.ThRecipes.init();
         ToggleInfusionPayload.register();
+        dev.visfox.thaumichorizons.network.OpenFingersPayload.register();
         dev.visfox.thaumichorizons.item.lenses.LensChangePayload.register();
     }
 

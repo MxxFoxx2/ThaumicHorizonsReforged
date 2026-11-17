@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.client;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ClientNetwork;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusion;
+import dev.visfox.thaumichorizons.network.OpenFingersPayload;
 import dev.visfox.thaumichorizons.network.ToggleInfusionPayload;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -38,7 +39,9 @@ public final class THKeyHandler {
         while (TOGGLE_INVISIBLE.consumeClick()) {
             ClientNetwork.sendToServer(new ToggleInfusionPayload(CreatureInfusion.CHAMELEON_SKIN));
         }
-        MORPHIC_FINGERS.consumeClick();
+        while (MORPHIC_FINGERS.consumeClick()) {
+            ClientNetwork.sendToServer(new OpenFingersPayload());
+        }
         ARCANE_LENS.consumeClick();
     }
 }
