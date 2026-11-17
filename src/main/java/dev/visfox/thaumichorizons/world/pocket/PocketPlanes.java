@@ -181,8 +181,10 @@ public class PocketPlanes extends SavedData {
     }
 
     private static boolean isPortalUnused(@Nullable int[] portal) {
-        return portal == null || portal.length < 4
-            && (portal.length < 3 || portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
+        // Legacy firstAvailablePortal() treats the first three zero coordinates
+        // as empty even when the saved array still has its fourth dimension slot.
+        return portal == null || portal.length < 3
+            || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
