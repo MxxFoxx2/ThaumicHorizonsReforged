@@ -32,6 +32,10 @@ public interface ItemCompat {
         throw new UnsupportedOperationException();
     }
 
+    default @Nullable AspectList getObjectAspects(ItemStack stack) {
+        return null;
+    }
+
     default void setSingleAspect(ItemStack stack, Aspect aspect, int amount) {
         throw new UnsupportedOperationException();
     }
