@@ -5,10 +5,9 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class LightSolarBlock extends Block {
+public class LightSolarBlock extends IlluminationLightBlock {
 
     public LightSolarBlock(Properties properties) {
         super(properties);

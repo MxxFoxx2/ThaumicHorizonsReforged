@@ -4,6 +4,7 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.BloodInfuserBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.EssentiaDynamoBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
+import dev.visfox.thaumichorizons.blockentity.IlluminationLightBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.NodeMonitorBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulExtractorBlockEntity;
@@ -34,6 +35,9 @@ public final class ThBlockEntities {
         "essentiadynamo", () -> new BlockEntityType<>(EssentiaDynamoBlockEntity::new, ThBlocks.ESSENTIA_DYNAMO.get()));
     public static final Supplier<BlockEntityType<NodeMonitorBlockEntity>> NODE_MONITOR = BLOCK_ENTITIES.register(
         "nodemonitor", () -> new BlockEntityType<>(NodeMonitorBlockEntity::new, ThBlocks.NODE_MONITOR.get()));
+    public static final Supplier<BlockEntityType<IlluminationLightBlockEntity>> ILLUMINATION_LIGHT = BLOCK_ENTITIES.register(
+        "illumination_light", () -> new BlockEntityType<>(IlluminationLightBlockEntity::new,
+            java.util.Set.of(ThBlocks.LIGHT.get(), ThBlocks.LIGHT_SOLAR.get())));
     public static final Supplier<BlockEntityType<SyntheticNodeBlockEntity>> SYNTH_NODE = BLOCK_ENTITIES.register(
         "synthnode", () -> new BlockEntityType<>(SyntheticNodeBlockEntity::new, ThBlocks.SYNTH_NODE.get()));
     public static final Supplier<BlockEntityType<TransductionAmplifierBlockEntity>> TRANSDUCTION_AMPLIFIER =

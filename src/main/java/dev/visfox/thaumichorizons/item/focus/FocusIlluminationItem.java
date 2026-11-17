@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.item.focus;
 
 import dev.visfox.thaumichorizons.lib.THSounds;
+import dev.visfox.thaumichorizons.block.IlluminationLightBlock;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -79,7 +80,9 @@ public class FocusIlluminationItem extends FocusItem {
         Block light = isUpgradedWith(Wands.getFocusItem(stack), SOLAR)
             ? ThBlocks.LIGHT_SOLAR.get()
             : ThBlocks.LIGHT.get();
-        level.setBlock(pos, light.defaultBlockState(), 3);
+        int color = Math.max(0, Math.min(COLORS.length - 1, stack.getDamageValue()));
+        BlockState lightState = light.defaultBlockState().setValue(IlluminationLightBlock.COLOR, color);
+        level.setBlock(pos, lightState, 3);
         player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
         if (!level.isClientSide()) {
             THSounds.play(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), "wand", SoundSource.PLAYERS, 1.0F, 1.0F);

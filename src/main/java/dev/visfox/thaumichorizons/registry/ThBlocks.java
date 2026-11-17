@@ -8,6 +8,7 @@ import dev.visfox.thaumichorizons.block.DropsBlock;
 import dev.visfox.thaumichorizons.block.DustBlock;
 import dev.visfox.thaumichorizons.block.EssentiaDynamoBlock;
 import dev.visfox.thaumichorizons.block.InspiratronBlock;
+import dev.visfox.thaumichorizons.block.IlluminationLightBlock;
 import dev.visfox.thaumichorizons.block.LeviathanBlock;
 import dev.visfox.thaumichorizons.block.LightSolarBlock;
 import dev.visfox.thaumichorizons.block.ModifiedMatrixBlock;
@@ -51,8 +52,8 @@ public final class ThBlocks {
     public static final DeferredBlock<DropsBlock> FLESH = withItem(BLOCKS.registerBlock("fleshth",
         properties -> new DropsBlock(properties, Items.BONE, 3),
         properties -> properties.mapColor(MapColor.COLOR_RED).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
-    public static final DeferredBlock<Block> LIGHT = BLOCKS.registerBlock("light",
-        Block::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()
+    public static final DeferredBlock<IlluminationLightBlock> LIGHT = BLOCKS.registerBlock("light",
+        IlluminationLightBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()
             .lightLevel(state -> 14).sound(SoundType.WOOL));
     public static final DeferredBlock<LightSolarBlock> LIGHT_SOLAR = BLOCKS.registerBlock("lightsolar",
         LightSolarBlock::new, properties -> properties.mapColor(MapColor.NONE).strength(0.0F).noCollision().noLootTable()
