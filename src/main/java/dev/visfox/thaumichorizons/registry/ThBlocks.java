@@ -13,6 +13,7 @@ import dev.visfox.thaumichorizons.block.LeviathanBlock;
 import dev.visfox.thaumichorizons.block.LightSolarBlock;
 import dev.visfox.thaumichorizons.block.ModifiedMatrixBlock;
 import dev.visfox.thaumichorizons.block.NodeMonitorBlock;
+import dev.visfox.thaumichorizons.block.RecombinatorBlock;
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
 import dev.visfox.thaumichorizons.block.SoulExtractorBlock;
 import dev.visfox.thaumichorizons.block.SoulforgeBlock;
@@ -91,6 +92,9 @@ public final class ThBlocks {
     public static final DeferredBlock<TransductionAmplifierBlock> TRANSDUCTION_AMPLIFIER =
         withItem(BLOCKS.registerBlock("transductionamplifier", TransductionAmplifierBlock::new,
             properties -> properties.mapColor(MapColor.METAL).strength(0.0F, 0.0F).sound(SoundType.STONE)));
+    public static final DeferredBlock<RecombinatorBlock> RECOMBINATOR = withItem(BLOCKS.registerBlock(
+        "recombinator", RecombinatorBlock::new,
+        properties -> properties.mapColor(MapColor.STONE).strength(3.0F, 5.0F).noOcclusion().sound(SoundType.STONE)));
     public static final DeferredBlock<VortexBlock> VORTEX = withItem(BLOCKS.registerBlock("vortexth",
         VortexBlock::new, properties -> properties.mapColor(MapColor.COLOR_PURPLE).strength(-1.0F, 20000.0F)
             .noLootTable().noCollision().lightLevel(state -> 15).sound(SoundType.WOOL)));
