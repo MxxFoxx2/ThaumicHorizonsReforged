@@ -107,6 +107,7 @@ THAUMCRAFT_API = [
     "thaumcraft.crafting.ShapelessArcaneRecipe",
     "thaumcraft.crafting.CraftingRecipeRef",
     "thaumcraft.api.addon.*",
+    "thaumcraft.platform.Teleport",
 ]
 
 IMPORT_PATTERN = re.compile(r"^\s*import\s+(?:static\s+)?([\w.]+(?:\.\*)?)\s*;")

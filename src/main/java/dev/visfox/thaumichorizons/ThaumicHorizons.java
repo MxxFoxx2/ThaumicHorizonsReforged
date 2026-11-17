@@ -38,6 +38,7 @@ public class ThaumicHorizons {
         ThItems.register(modEventBus);
         ThBlockEntities.register(modEventBus);
         ThEntities.register(modEventBus);
+        dev.visfox.thaumichorizons.registry.PocketRegistry.register(modEventBus);
         ThMenus.register(modEventBus);
         ThCreativeTabs.register(modEventBus);
         ConfigResearch.init();

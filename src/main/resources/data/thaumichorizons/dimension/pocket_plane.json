@@ -1,0 +1,7 @@
+{
+  "type": "thaumichorizons:pocket_plane",
+  "generator": {
+    "type": "thaumichorizons:pocket_plane",
+    "biome": "thaumichorizons:pocket_plane"
+  }
+}
