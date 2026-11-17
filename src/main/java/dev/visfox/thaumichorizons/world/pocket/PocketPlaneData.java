@@ -13,6 +13,10 @@ public class PocketPlaneData {
     public @Nullable int[] portalB;
     public @Nullable int[] portalC;
     public @Nullable int[] portalD;
+    public String portalADimension = "";
+    public String portalBDimension = "";
+    public String portalCDimension = "";
+    public String portalDDimension = "";
     public String name = "Generic Pocket Plane";
     public net.minecraft.resources.@Nullable ResourceKey<net.minecraft.world.level.biome.Biome> biome;
 
@@ -40,6 +44,10 @@ public class PocketPlaneData {
         if (portalD != null) {
             tag.putIntArray("portalD", portalD);
         }
+        tag.putString("portalADimension", portalADimension);
+        tag.putString("portalBDimension", portalBDimension);
+        tag.putString("portalCDimension", portalCDimension);
+        tag.putString("portalDDimension", portalDDimension);
         return tag;
     }
 
@@ -53,10 +61,14 @@ public class PocketPlaneData {
         data.portalB = tag.getIntArray("portalB").orElse(null);
         data.portalC = tag.getIntArray("portalC").orElse(null);
         data.portalD = tag.getIntArray("portalD").orElse(null);
+        data.portalADimension = tag.getStringOr("portalADimension", "");
+        data.portalBDimension = tag.getStringOr("portalBDimension", "");
+        data.portalCDimension = tag.getStringOr("portalCDimension", "");
+        data.portalDDimension = tag.getStringOr("portalDDimension", "");
         return data;
     }
 
-    public int[] portal(int which) {
+    public @Nullable int[] portal(int which) {
         return switch (which) {
             case 1 -> portalA;
             case 2 -> portalB;
@@ -64,6 +76,61 @@ public class PocketPlaneData {
             case 4 -> portalD;
             default -> null;
         };
+    }
+
+    public String portalDimension(int which) {
+        return switch (which) {
+            case 1 -> portalADimension;
+            case 2 -> portalBDimension;
+            case 3 -> portalCDimension;
+            case 4 -> portalDDimension;
+            default -> "";
+        };
+    }
+
+    public void setPortal(int which, int x, int y, int z, String dimension) {
+        int[] position = new int[] { x, y, z };
+        switch (which) {
+            case 1 -> {
+                portalA = position;
+                portalADimension = dimension;
+            }
+            case 2 -> {
+                portalB = position;
+                portalBDimension = dimension;
+            }
+            case 3 -> {
+                portalC = position;
+                portalCDimension = dimension;
+            }
+            case 4 -> {
+                portalD = position;
+                portalDDimension = dimension;
+            }
+            default -> throw new IllegalArgumentException("Unknown pocket portal: " + which);
+        }
+    }
+
+    public void clearPortal(int which) {
+        switch (which) {
+            case 1 -> {
+                portalA = null;
+                portalADimension = "";
+            }
+            case 2 -> {
+                portalB = null;
+                portalBDimension = "";
+            }
+            case 3 -> {
+                portalC = null;
+                portalCDimension = "";
+            }
+            case 4 -> {
+                portalD = null;
+                portalDDimension = "";
+            }
+            default -> throw new IllegalArgumentException("Unknown pocket portal: " + which);
+        }
     }
 
     public @Nullable MobEffect potionEffect(int index) {
