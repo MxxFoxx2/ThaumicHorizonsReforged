@@ -13,6 +13,7 @@ import dev.visfox.thaumichorizons.network.ToggleInfusionPayload;
 import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import dev.visfox.thaumichorizons.registry.ThMenus;
+import dev.visfox.thaumichorizons.registry.ThSounds;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -34,6 +35,7 @@ public class ThaumicHorizons {
         DataAttachments.register(modEventBus);
         dev.visfox.thaumichorizons.platform.StackData.register(modEventBus);
         ThEffects.register(modEventBus);
+        ThSounds.register(modEventBus);
         ThBlocks.register(modEventBus);
         ThItems.register(modEventBus);
         dev.visfox.thaumichorizons.registry.ThRecipeSerializers.register(modEventBus);

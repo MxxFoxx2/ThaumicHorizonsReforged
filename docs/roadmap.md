@@ -45,12 +45,12 @@ Still pending: generated terrain layers/caves/pockets, portal/slot in-game behav
 5. **Port remaining entities/projectiles/vehicles:** HorseZombie, HorseSkeleton, NightmareTH, Greatwood Boat, Thaumium Boat, Syringe projectile and BlastPhial projectile. Incubated Egg and its projectile are present in code with the thrown-item renderer registered; they still need a gameplay check. Finite lightning belongs with the Cloud behavior and is not a separately registered mod entity in the original.
 6. **Complete item/research and recipe gaps.** Mirror Amulet, its infusion recipe, link behavior, death transport, Void Putty repair, and Focus Illumination dyeing are present in code and need runtime verification. Planar Keystone has a WIP item class, but its recipe/research flow and actual use need completion. Planar Conduit, Planar Theory, Transduction Amplifier, Vortex Stabilizer and Incubated Egg recipes are present in code.
 7. **Finish machine and compatibility behavior:** Recombinator; SyntheticNode wisp-essence refilling/drops; crystal-essence conversion; overloaded Transducer flux gas/goo and wisp spawning; Liquefaction nuggets upgrade; remaining TC4R taint-poison/blurred-vision and skull-variant compatibility.
-8. **Client polish:** Vat multiblock renderer/animation, VortexSound, Familiar hat layer, new Pocket Plane block/item assets, missing projectile rendering and parity checks for remaining FX. Do not redo existing creature renderers, Node Monitor renderer or completed static machine models.
+8. **Client polish:** Vat multiblock renderer/animation, Familiar hat layer, new Pocket Plane block/item assets, missing projectile rendering and parity checks for remaining FX. Do not redo existing creature renderers, Node Monitor renderer or completed static machine models.
 9. **Release validation and backports:** clean-checkout build, `tools/check_seams.py`, dedicated-server boot, save/reload, full Gate 1/Gate 2 and two-client invisibility checks. Backport branches (`mc/26.1.2`, `mc/1.21.1`) only after 26.3 stabilizes.
 
 ## Verification / CI status
 
-`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree. At `7eb9b8c`, `gradlew.bat build --no-configuration-cache` and `python tools/check_seams.py` pass, and a fresh dedicated-server run reaches `Done` with the Pocket Plane dimension loaded. The remaining Pocket Plane and Gate 2 gameplay checks are manual and open.
+`docs/verification.md` is the manual test record. GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, Java 25 Gradle build with configuration/build caches, and distributable-JAR validation. The client audio checklist remains a manual test. The remaining Pocket Plane and Gate 2 gameplay checks are manual and open.
 
 ## Upstream
 

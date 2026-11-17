@@ -6,7 +6,7 @@
 
     "sounds": [
 
-      { "name": "thaumichorizons:vortex", "stream": true }
+      { "name": "thaumichorizons:vortex", "stream": true, "attenuation_distance": 64 }
 
     ]
 

@@ -31,7 +31,8 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Vortex creative variant (`cheat` meta) not exposed as an item variant.
 - Transducer `status = -1` reset on TC4R transducers skipped (no public setter).
 - Recombinator not ported yet: needs TC4-internal node lock/identity checks absent from the public API.
-- FX compatibility is no longer entirely a vanilla fallback: `TcReforgedPort.TcFx` delegates wisp trails, bursts, node bolts, block sparkles, essentia trails, blocksplosions, containment capture, bubbles, dead-creature FX and Familiar's ambient sparkle to TC4R's `FxProxy`. Familiar now requests the legacy size-2, type-0 sparkle at a 3% chance per client tick (frame-rate independent); its in-game appearance and cadence still need a visual check. The dedicated looping `VortexSound` implementation remains absent.
+- FX compatibility is no longer entirely a vanilla fallback: `TcReforgedPort.TcFx` delegates wisp trails, bursts, node bolts, block sparkles, essentia trails, blocksplosions, containment capture, bubbles, dead-creature FX and Familiar's ambient sparkle to TC4R's `FxProxy`. Familiar now requests the legacy size-2, type-0 sparkle at a 3% chance per client tick (frame-rate independent); its in-game appearance and cadence still need a visual check.
+- Vortex audio is now implemented as a client-side tickable looping sound, registered as `thaumichorizons:vortex`, streamed and limited to a 64-block range. Its position follows the block entity and its volume uses the legacy `1 / (1 + distance / 8)` curve; it stops when the block entity disappears or leaves the tracked nearby-chunk area. Confirm actual audibility, fade and teardown in a live client.
 - VisDynamo aspect-toggle GUI deferred to the menu phase; toggles exist as BE fields.
 
 ## Souls / Vat / blood phase — documented deviations
