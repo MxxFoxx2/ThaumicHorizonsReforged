@@ -20,7 +20,7 @@ Snapshot of the public `main` branch at `cd7920c` (2026-11-17). This is a source
 - **Incubated Egg** item, throwable entity and `alchIncubation` crucible recipe: [`5119c15`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/5119c1582e24a798a436ffa67f01fadb06304f64).
 - **Soul Jar capture/release code**: creature NBT is serialized into the jar item; placement transfers its data to the BlockEntity; wand use attempts to restore the creature. [`6fd7614`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/6fd7614d00ceb22d282ab6009483ca1f0f14e6e1). The full cycle is not yet game-verified.
 
-## Pocket Plane — committed WIP, not build-ready
+## Pocket Plane — compile-clean, runtime verification pending
 
 Commit [`e38d16a`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/e38d16ae8e68544a3dc6d45627b00cc1cf19ce47) moved substantial Pocket Plane work into tracked source files:
 
@@ -29,15 +29,13 @@ Commit [`e38d16a`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/e3
 - Registration and item: `PocketRegistry`, `KeystoneItem`, `PlanarConduitItem`; the `Teleport` TC4R seam is added to the allowlist.
 - Data resources: dimension, dimension type and biome JSONs for `pocket_plane`.
 
-This is **not a playable/verified dimension yet**. The follow-up roadmap commit [`ea2a04d`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/ea2a04d23a16a47415fb0079fb1d32e31a2c1df6) reports roughly 25 compile errors remaining in the WIP, including ChunkGenerator API mismatches, `PocketPlaneData` API usage, Keystone API usage and SlotBlockEntity access from `GatewayPortalBlock`. I have not independently run Gradle, so treat that count as the WIP author's report, not a fresh build result.
-
-Additional source-level integration issue found during this audit was the duplicate `thaumichorizons:planarconduit` id (present in both `ThItems` and `PocketRegistry`); the `ThItems` entry has since been removed so `PocketRegistry`'s `PlanarConduitItem` is the single registration.
+This is **not a playable/verified dimension yet**. The Pocket Plane sources now compile against Minecraft 26.3 / NeoForge 26.3: the ChunkGenerator contract, SavedData codec, block-removal hook, entity-inside hook, item tooltip API, registry lookup APIs, and block-entity ticker were migrated. The duplicate `thaumichorizons:planarconduit` registration was consolidated into `PocketRegistry`. The dedicated server boots with the mod loaded, but the Pocket Plane runtime checks below remain open.
 
 Still pending after the WIP compile fixes: portal/slot in-game behavior, dimension load and terrain generation, keystone binding, portal transfers/return positions, Vortex-collapse integration, and client assets/rendering for the new blocks. The old `.deferred-pocket/` directory remains ignored and absent; the current public WIP is now in `src/main/java` and `src/main/resources`.
 
 ## Remaining work — priority order
 
-1. **Make Pocket Plane compile and validate registration.** Resolve the WIP API mismatches; consolidate the duplicate `planarconduit` item registration; run build + seam checker. Then test dimension load, terrain, slot/keystone, all portal states, portal teardown, transfers in both directions, saved data and Vortex-collapse integration.
+1. **Validate Pocket Plane runtime behavior.** Build and seam checks are green. Test dimension load, terrain, slot/keystone, all portal states, portal teardown, transfers in both directions, saved data and Vortex-collapse integration.
 2. **Finish Gate 2 verification.** Test Soul Jar capture/release, Containment Focus, curative Vat mode, creature infusion, Corpse Effigy cloning, syringe draw/inject, all nine menus and Inspiratron research completion.
 3. **Restore missing world content.** Recombinator and Spike variants are still absent. Original `TileCloud` and `TileLight` behavior is not ported; `TileCloud` includes weather interaction, block/entity effects and finite lightning, not just particles. Slot and portal equivalents now exist as WIP source; they should no longer be described as wholly absent.
 4. **Finish the two keybinds.** M (Morphic Fingers) now sends an `open_fingers` payload and opens the `FingersMenu` server-side when the infusion is present; V (Arcane Lens radial HUD) is still registered but its client tick handler only consumes the press. C/X are wired to server payloads.
@@ -49,7 +47,7 @@ Still pending after the WIP compile fixes: portal/slot in-game behavior, dimensi
 
 ## Verification / CI status
 
-`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree. The Pocket Plane WIP author's roadmap reports compile errors; the current HEAD must not be described as build-green until a clean `./gradlew build --no-configuration-cache` and `python -I tools/check_seams.py` pass.
+`docs/verification.md` is the manual test record. No GitHub Actions workflow is present in the public repository tree. The current working tree passes `gradlew.bat build --no-configuration-cache` and `python tools/check_seams.py`; the Pocket Plane runtime checks remain manual and open.
 
 ## Upstream
 

@@ -61,11 +61,11 @@ Two clients on the same server:
 
 ## Pocket Plane WIP verification (commit `e38d16a`)
 
-The Pocket Plane classes and data JSONs are now tracked, but the WIP roadmap reports compile errors. Do not attempt to mark the runtime checks below complete until build and seam checks pass.
+The Pocket Plane classes and data JSONs are tracked, and the sources now compile against MC 26.3 / NeoForge 26.3. Build, seam, and dedicated-server startup pass; the runtime checks below remain open.
 
-- [ ] `./gradlew build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
-- [ ] `python -I tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
-- [ ] Confirm mod registry startup after consolidating `thaumichorizons:planarconduit` to the single `PocketRegistry` registration (the duplicate `ThItems` entry is removed).
+- [x] `gradlew.bat build --no-configuration-cache` passes after adapting `PocketPlaneChunkGenerator` to the 26.3 ChunkGenerator API.
+- [x] `python tools/check_seams.py` passes with the `thaumcraft.platform.Teleport` seam.
+- [x] `thaumichorizons:planarconduit` is registered exactly once in `PocketRegistry`; the dedicated server starts with the mod loaded.
 - [ ] Pocket dimension loads on a dedicated server; dimension, dimension type and biome JSONs resolve.
 - [ ] PocketPlaneGenerator produces the intended layers/caves/pockets; test several seeds and verify deterministic chunk generation.
 - [ ] Keystone item creates/binds the intended pocket plane and preserves its plane id through inventory, drop/pickup and save/reload.
