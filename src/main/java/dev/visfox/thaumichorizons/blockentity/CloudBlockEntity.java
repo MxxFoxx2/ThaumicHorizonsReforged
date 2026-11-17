@@ -7,8 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -43,9 +47,68 @@ public final class CloudBlockEntity extends BlockEntity {
             return;
         }
 
-        if (++cloud.weatherTicks % 10 == 0 && serverLevel.getServer().overworld().isRaining()) {
-            cloud.applyPrecipitation(serverLevel, state.getValue(CloudBlock.TYPE));
+        boolean raining = serverLevel.getServer().overworld().isRaining();
+        if (raining) {
+            if (++cloud.weatherTicks % 10 == 0) {
+                cloud.applyPrecipitation(serverLevel, state.getValue(CloudBlock.TYPE));
+            }
+            cloud.tickDropTimer(serverLevel, state.getValue(CloudBlock.TYPE));
         }
+    }
+
+
+    /**
+     * Timed effects from the original TileCloud. The timer advances only while
+     * the Overworld reports rain, matching the legacy rain-state gate.
+     */
+    private void tickDropTimer(ServerLevel level, int type) {
+        if (dropTimer < 0 || type < 0 || type >= DROP_TIMERS.length) {
+            return;
+        }
+        if (--dropTimer > 0) {
+            return;
+        }
+
+        int base = DROP_TIMERS[type];
+        if (base > 0) {
+            dropTimer = base / 2 + level.getRandom().nextInt(base / 2);
+        }
+
+        BlockPos target = findGroundBelow(level);
+        switch (type) {
+            case 2 -> {
+                Entity lightning = EntityType.LIGHTNING_BOLT.create(level);
+                if (lightning != null) {
+                    lightning.setPos(target.getX() + 0.5, target.getY(), target.getZ() + 0.5);
+                    level.addFreshEntity(lightning);
+                }
+            }
+            case 5 -> {
+                ItemStack drop = switch (level.getRandom().nextInt(10)) {
+                    case 0 -> new ItemStack(Items.BEEF);
+                    case 1 -> new ItemStack(Items.PORKCHOP);
+                    case 2 -> new ItemStack(Items.CHICKEN);
+                    case 3 -> new ItemStack(switch (level.getRandom().nextInt(3)) {
+                        case 0 -> Items.COD;
+                        case 1 -> Items.SALMON;
+                        default -> Items.TROPICAL_FISH;
+                    });
+                    default -> new ItemStack(ThItems.MEAT.get());
+                };
+                ItemEntity item = new ItemEntity(level, worldPosition.getX() + level.getRandom().nextDouble(),
+                    worldPosition.getY() + 0.5, worldPosition.getZ() + level.getRandom().nextDouble(), drop);
+                level.addFreshEntity(item);
+            }
+        }
+        setChanged();
+    }
+
+    private BlockPos findGroundBelow(ServerLevel level) {
+        BlockPos.MutableBlockPos cursor = worldPosition.mutable();
+        while (cursor.getY() > level.getMinY() && level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
+            cursor.move(0, -1, 0);
+        }
+        return cursor.immutable();
     }
 
     private void applyPrecipitation(ServerLevel level, int type) {
