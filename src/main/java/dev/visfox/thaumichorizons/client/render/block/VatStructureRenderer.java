@@ -2,12 +2,9 @@ package dev.visfox.thaumichorizons.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
 import java.util.Map;
 import java.util.WeakHashMap;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
@@ -18,11 +15,13 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -106,7 +105,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                 }
                 if (cached != null) {
                     state.containedEntity = entityRenderer.extractEntity(cached.entity(), partialTicks);
-                    state.containedEntityBob = (float) Math.cos(clientLevel.getGameTime() + partialTicks) * 0.1F;
+                    state.containedEntityBob = (float) Math.cos(Math.toRadians(clientLevel.getGameTime() + partialTicks)) * 0.1F;
                 }
             } else {
                 previewEntities.remove(entity);
