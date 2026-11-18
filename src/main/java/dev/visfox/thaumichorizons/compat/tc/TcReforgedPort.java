@@ -14,6 +14,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +27,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
+import thaumcraft.damage.ModDamageTypes;
+import thaumcraft.entity.AspectOrb;
+import thaumcraft.entity.monster.Wisp;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.aspect.AspectHelper;
@@ -46,6 +51,7 @@ import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.platform.Baubles;
 import thaumcraft.platform.ModNetwork;
 import thaumcraft.registry.ModSounds;
+import thaumcraft.registry.ModEntities;
 import thaumcraft.registry.ModBlocks;
 import thaumcraft.research.Knowledge;
 import thaumcraft.research.ResearchCategories;
@@ -327,6 +333,43 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
 
         @Override
+        public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
+            return stack.getItem() instanceof thaumcraft.wand.WandItem wand
+                && wand.consumeVis(stack, player, aspect, amount, crafting);
+        }
+
+        @Override
+        public void hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
+            entity.hurt(level.damageSources().source(ModDamageTypes.DISSOLVE), amount);
+        }
+
+        @Override
+        public boolean spawnAspectOrb(ServerLevel level, double x, double y, double z, Aspect aspect, int amount) {
+            AspectOrb orb = AspectOrb.create(level, x, y, z, aspect, amount);
+            return orb != null && level.addFreshEntity(orb);
+        }
+
+        @Override
+        public void spawnWisps(ServerLevel level, BlockPos pos, AspectList aspects, int salisMundusCount) {
+            List<Aspect> storedAspects = aspects.getAspects();
+            for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
+                int wispCount = level.getRandom().nextInt(4) + 1;
+                for (int i = 0; i < wispCount; i++) {
+                    Wisp wisp = ModEntities.WISP.get().create(level, EntitySpawnReason.TRIGGERED);
+                    if (wisp == null) {
+                        continue;
+                    }
+                    wisp.setPos(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+                    if (!storedAspects.isEmpty()) {
+                        Aspect aspect = storedAspects.get(level.getRandom().nextInt(storedAspects.size()));
+                        wisp.setAspect(aspect);
+                    }
+                    level.addFreshEntity(wisp);
+                }
+            }
+        }
+
+        @Override
         public boolean isEssentiaJar(ItemStack stack) {
             return false;
         }
@@ -567,6 +610,12 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public void arcLightning(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color) {
             fx().nodeBolt(level, (float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) to.y, (float) to.z);
+        }
+
+        @Override
+        public void beam(Level level, BlockPos key, net.minecraft.world.phys.Vec3 from,
+            net.minecraft.world.phys.Vec3 to, int color, float width, int type) {
+            fx().machineBeam(level, key, from, to, color, width, type);
         }
 
         @Override

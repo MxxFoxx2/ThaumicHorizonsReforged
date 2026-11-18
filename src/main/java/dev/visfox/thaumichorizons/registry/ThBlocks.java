@@ -4,6 +4,7 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.AlchemiteBlock;
 import dev.visfox.thaumichorizons.block.BloodInfuserBlock;
 import dev.visfox.thaumichorizons.block.CrystalBlock;
+import dev.visfox.thaumichorizons.block.CloudBlock;
 import dev.visfox.thaumichorizons.block.DropsBlock;
 import dev.visfox.thaumichorizons.block.DustBlock;
 import dev.visfox.thaumichorizons.block.EssentiaDynamoBlock;
@@ -15,6 +16,7 @@ import dev.visfox.thaumichorizons.block.ModifiedMatrixBlock;
 import dev.visfox.thaumichorizons.block.NodeMonitorBlock;
 import dev.visfox.thaumichorizons.block.RecombinatorBlock;
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
+import dev.visfox.thaumichorizons.block.SpikeBlock;
 import dev.visfox.thaumichorizons.block.SoulExtractorBlock;
 import dev.visfox.thaumichorizons.block.SoulforgeBlock;
 import dev.visfox.thaumichorizons.block.SoulJarBlock;
@@ -62,11 +64,21 @@ public final class ThBlocks {
     public static final DeferredBlock<Block> VOID = withItem(BLOCKS.registerBlock("voidth",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(-1.0F, 6000000.0F).noCollision()
             .lightLevel(state -> 15).sound(SoundType.WOOL)));
-    public static final DeferredBlock<Block> CLOUD = withItem(BLOCKS.registerBlock("cloudth",
-        Block::new, properties -> properties.mapColor(MapColor.SNOW).strength(-1.0F, 3600000.0F).noOcclusion().sound(SoundType.WOOL)));
-    public static final DeferredBlock<Block> CLOUD_GLOWING = withItem(BLOCKS.registerBlock("cloudglowingth",
-        Block::new, properties -> properties.mapColor(MapColor.SNOW).strength(-1.0F, 3600000.0F).noOcclusion()
-            .sound(SoundType.WOOL).lightLevel(state -> 15)));
+    public static final DeferredBlock<CloudBlock> CLOUD = BLOCKS.registerBlock("cloudth",
+        properties -> new CloudBlock(properties, 0), properties -> properties.mapColor(MapColor.SNOW)
+            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL));
+    public static final DeferredBlock<CloudBlock> CLOUD_GLOWING = BLOCKS.registerBlock("cloudglowingth",
+        properties -> new CloudBlock(properties, 1), properties -> properties.mapColor(MapColor.SNOW)
+            .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL).lightLevel(state -> 15));
+    public static final DeferredBlock<SpikeBlock> SPIKE = withItem(BLOCKS.registerBlock("spiketh",
+        properties -> new SpikeBlock(properties, 0), properties -> properties.mapColor(MapColor.METAL)
+            .strength(3.0F, 3.0F).noOcclusion().sound(SoundType.METAL)));
+    public static final DeferredBlock<SpikeBlock> SPIKE_WOOD = withItem(BLOCKS.registerBlock("spikewoodth",
+        properties -> new SpikeBlock(properties, 1), properties -> properties.mapColor(MapColor.WOOD)
+            .strength(3.0F, 3.0F).noOcclusion().sound(SoundType.WOOD)));
+    public static final DeferredBlock<SpikeBlock> SPIKE_TOOTH = withItem(BLOCKS.registerBlock("spiketoothth",
+        properties -> new SpikeBlock(properties, 2), properties -> properties.mapColor(MapColor.STONE)
+            .strength(3.0F, 3.0F).noOcclusion().sound(SoundType.STONE)));
     public static final DeferredBlock<Block> BRAIN = withItem(BLOCKS.registerBlock("brainth",
         Block::new, properties -> properties.mapColor(MapColor.COLOR_PINK).strength(0.5F, 0.5F).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<CrystalBlock> CRYSTAL = withItem(BLOCKS.registerBlock("crystalth",

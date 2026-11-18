@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "thaumichorizons:block/glyphcloudtop",
+    "side": "thaumichorizons:block/glyphcloud",
+    "bottom": "thaumichorizons:block/glyphcloudtop"
+  },
+  "render_type": "minecraft:translucent"
+}

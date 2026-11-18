@@ -14,7 +14,12 @@ import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import dev.visfox.thaumichorizons.registry.ThSounds;
+import net.minecraft.core.dispenser.BoatDispenseItemBehavior;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.Mod;
@@ -28,6 +33,8 @@ public class ThaumicHorizons {
 
     public ThaumicHorizons(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        NeoForge.EVENT_BUS.addListener(this::serverStarted);
+        NeoForge.EVENT_BUS.addListener(this::serverStopped);
         modContainer.registerConfig(ModConfig.Type.STARTUP, ThaumicHorizonsConfig.SPEC);
         CreatureInfusion.init();
         dev.visfox.thaumichorizons.infusion.CreatureInfusions.init();
@@ -54,7 +61,21 @@ public class ThaumicHorizons {
         dev.visfox.thaumichorizons.item.lenses.LensChangePayload.register();
     }
 
+    private void serverStarted(ServerStartedEvent event) {
+        dev.visfox.thaumichorizons.world.pocket.PocketPlanes.get(event.getServer());
+    }
+
+    private void serverStopped(ServerStoppedEvent event) {
+        dev.visfox.thaumichorizons.world.pocket.PocketPlanes.onServerStopped(event.getServer());
+    }
+
     private void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            DispenserBlock.registerBehavior(ThItems.BOAT_GREATWOOD.get(),
+                new BoatDispenseItemBehavior(ThEntities.BOAT_GREATWOOD.get()));
+            DispenserBlock.registerBehavior(ThItems.BOAT_THAUMIUM.get(),
+                new BoatDispenseItemBehavior(ThEntities.BOAT_THAUMIUM.get()));
+        });
         LOGGER.info("Thaumic Horizons: Reforged loaded");
     }
 

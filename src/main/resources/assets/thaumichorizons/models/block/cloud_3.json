@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "thaumichorizons:block/acidcloudtop",
+    "side": "thaumichorizons:block/acidcloud",
+    "bottom": "thaumichorizons:block/acidcloudtop"
+  },
+  "render_type": "minecraft:translucent"
+}

@@ -2,9 +2,14 @@ package dev.visfox.thaumichorizons.registry;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.entity.AlchemitePrimedEntity;
+import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
+import dev.visfox.thaumichorizons.entity.SyringeProjectile;
 import dev.visfox.thaumichorizons.entity.ChocolateCow;
 import dev.visfox.thaumichorizons.entity.ChromaticSheep;
 import dev.visfox.thaumichorizons.entity.Endersteed;
+import dev.visfox.thaumichorizons.entity.HorseSkeleton;
+import dev.visfox.thaumichorizons.entity.HorseZombie;
+import dev.visfox.thaumichorizons.entity.NightmareTH;
 import dev.visfox.thaumichorizons.entity.EggIncubatedEntity;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.Familiar;
@@ -23,9 +28,11 @@ import dev.visfox.thaumichorizons.entity.Seawolf;
 import dev.visfox.thaumichorizons.entity.SelfShearingSheep;
 import dev.visfox.thaumichorizons.entity.Sheeder;
 import dev.visfox.thaumichorizons.entity.TaintEaterPig;
+import dev.visfox.thaumichorizons.entity.ThaumiumBoat;
 import dev.visfox.thaumichorizons.entity.VoltSlime;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,9 +45,26 @@ public final class ThEntities {
         ENTITIES.registerEntityType("alchemiteprimed", AlchemitePrimedEntity::new, MobCategory.MISC,
             builder -> builder.sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE =
+        ENTITIES.registerEntityType("syringe_projectile", SyringeProjectile::new, MobCategory.MISC,
+            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BlastPhialProjectile>> BLAST_PHIAL =
+        ENTITIES.registerEntityType("blast_phial", BlastPhialProjectile::new, MobCategory.MISC,
+            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
+
     public static final DeferredHolder<EntityType<?>, EntityType<EggIncubatedEntity>> EGG_INCUBATED =
         ENTITIES.registerEntityType("eggincubated", EggIncubatedEntity::new, MobCategory.MISC,
             builder -> builder.sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(20).fireImmune());
+
+    public static final DeferredHolder<EntityType<?>, EntityType<Boat>> BOAT_GREATWOOD =
+        ENTITIES.registerEntityType("boat_greatwood",
+            (type, level) -> new Boat(type, level, ThItems.BOAT_GREATWOOD::get), MobCategory.MISC,
+            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ThaumiumBoat>> BOAT_THAUMIUM =
+        ENTITIES.registerEntityType("boat_thaumium", ThaumiumBoat::new, MobCategory.MISC,
+            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3).fireImmune());
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChromaticSheep>> CHROMATIC_SHEEP = creature(
         "chromaticsheep", ChromaticSheep::new, builder -> builder.sized(0.9F, 1.3F).eyeHeight(1.213F));
@@ -64,6 +88,16 @@ public final class ThEntities {
         "tainteaterpig", TaintEaterPig::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.78F));
     public static final DeferredHolder<EntityType<?>, EntityType<Endersteed>> ENDERSTEED = creature(
         "endersteed", Endersteed::new, builder -> builder.sized(1.3965F, 1.6F).eyeHeight(1.473F));
+    public static final DeferredHolder<EntityType<?>, EntityType<HorseZombie>> HORSE_ZOMBIE =
+        ENTITIES.registerEntityType("horse_zombie", HorseZombie::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<HorseSkeleton>> HORSE_SKELETON =
+        ENTITIES.registerEntityType("horse_skeleton", HorseSkeleton::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<NightmareTH>> NIGHTMARE =
+        ENTITIES.registerEntityType("nightmare", NightmareTH::new, MobCategory.CREATURE,
+            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).fireImmune());
+
     public static final DeferredHolder<EntityType<?>, EntityType<Seawolf>> SEAWOLF = creature(
         "seawolf", Seawolf::new, builder -> builder.sized(0.6F, 0.85F).eyeHeight(0.425F));
     public static final DeferredHolder<EntityType<?>, EntityType<NetherHound>> NETHER_HOUND = creature(
@@ -112,6 +146,9 @@ public final class ThEntities {
         event.put(ORE_PIG.get(), OrePig.createAttributes().build());
         event.put(TAINT_EATER_PIG.get(), TaintEaterPig.createAttributes().build());
         event.put(ENDERSTEED.get(), Endersteed.createAttributes().build());
+        event.put(HORSE_ZOMBIE.get(), HorseZombie.createAttributes().build());
+        event.put(HORSE_SKELETON.get(), HorseSkeleton.createAttributes().build());
+        event.put(NIGHTMARE.get(), NightmareTH.createAttributes().build());
         event.put(SEAWOLF.get(), Seawolf.createAttributes().build());
         event.put(NETHER_HOUND.get(), NetherHound.createAttributes().build());
         event.put(LUNAR_WOLF.get(), LunarWolf.createAttributes().build());

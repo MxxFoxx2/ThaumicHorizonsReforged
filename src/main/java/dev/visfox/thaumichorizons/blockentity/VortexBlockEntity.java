@@ -7,14 +7,19 @@ import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import dev.visfox.thaumichorizons.entity.EntityGolemTH;
+import dev.visfox.thaumichorizons.lib.THSounds;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -61,6 +66,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         if (level == null) {
             return;
         }
+        boolean inPocketPlane = level.dimension().equals(PocketDimension.POCKET_PLANE);
         if (!level.isClientSide() && beams != lastSyncedBeams) {
             sync();
             lastSyncedBeams = beams;
@@ -86,7 +92,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             count++;
         } else {
             if (!ateDevices) {
-                if (!cheat) {
+                if (!cheat && !inPocketPlane) {
                     for (int dx = -2; dx <= 2; dx++) {
                         for (int dy = -2; dy <= 2; dy++) {
                             for (int dz = -2; dz <= 2; dz++) {
@@ -103,7 +109,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                 }
                 ateDevices = true;
             }
-            if (beams < 6 && !cheat) {
+            if (beams < 6 && !cheat && !inPocketPlane) {
                 handleHungryNode();
             } else if (!createdDimension) {
                 handlePocketPlaneStuff();
@@ -113,7 +119,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             if (!cheat) {
                 count += Math.max(0, 6 - beams);
             }
-            if (count > MAX_COUNT && !cheat) {
+            if (count > MAX_COUNT && !cheat && !inPocketPlane) {
                 collapsing = true;
                 count = 0;
             }
@@ -133,7 +139,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         if (primordialPearl != null && ThaumicHorizonsConfig.pocketPlaneEnabled()) {
             for (ItemEntity item : entities) {
-                if (item.getItem().is(primordialPearl) && createPocketPlane(source)) {
+                if (item.getItem().is(primordialPearl) && createPocketPlane(source, item)) {
                     item.discard();
                     return;
                 }
@@ -142,12 +148,24 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         handleVoidCrafting();
     }
 
-    private boolean createPocketPlane(ServerLevel source) {
+    private boolean createPocketPlane(ServerLevel source, ItemEntity pearl) {
         MinecraftServer server = source.getServer();
         PocketPlanes.get(server);
         int newPlaneID = PocketPlanes.pocketPlaneMAXID;
         PocketPlaneData data = new PocketPlaneData();
-        data.name = "Pocket Plane";
+
+        // Match the reference: renamed pearls name the plane; otherwise use
+        // the thrower's name plus the localized Pocket Plane suffix.
+        ItemStack pearlStack = pearl.getItem();
+        Component customName = pearlStack.get(DataComponents.CUSTOM_NAME);
+        if (customName != null) {
+            data.name = customName.getString();
+        } else {
+            Entity thrower = pearl.getOwner();
+            data.name = thrower == null
+                ? Component.translatable("tc.research_name.pocketPlane").getString()
+                : thrower.getName().getString() + Component.translatable("thaumichorizons.pocketplane").getString();
+        }
         boolean created = PocketPlanes.generatePocketPlane(aspects, data, server,
             worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
             source.dimension().identifier().toString());
@@ -208,28 +226,51 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
     }
 
     void handleVoidCrafting() {
-        if (level == null || level.isClientSide()) {
+        if (!(level instanceof ServerLevel server) || level.isClientSide()) {
             return;
         }
-        Item seed = Compat.port().items().lookup(voidSeedId());
-        if (seed == null) {
-            return;
-        }
-        List<ItemEntity> ents = level.getEntitiesOfClass(ItemEntity.class, new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
+        Item voidMetal = Compat.port().items().lookup(voidMetalIngotId());
+        Item salisMundus = Compat.port().items().lookup(salisMundusId());
+        List<ItemEntity> ents = level.getEntitiesOfClass(ItemEntity.class,
+            new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         for (ItemEntity item : ents) {
             ItemStack stack = item.getItem();
-            if (stack.is(seed)) {
+            if (voidMetal != null && stack.is(voidMetal)) {
+                // Legacy itemResource metadata 16: void metal ingot -> Void Putty.
                 items.add(new ItemStack(ThItems.VOID_PUTTY.get(), stack.getCount()));
+                item.discard();
+            } else if (salisMundus != null && stack.is(salisMundus)) {
+                // Legacy itemResource metadata 14: each Salis Mundus releases 1–4 Wisps.
+                Compat.port().items().spawnWisps(server, worldPosition, aspects, stack.getCount());
                 item.discard();
             } else if (stack.is(ThItems.CRYSTAL_WAND.get())) {
                 items.add(new ItemStack(ThItems.WAND_CASTING_DISPOSABLE.get()));
+                item.discard();
+            } else if (stack.is(ThItems.GOLEM_POWDER.get()) && item.getOwner() != null) {
+                // The original requires a thrower so the temporary golems have an owner.
+                Entity owner = item.getOwner();
+                for (int i = 0; i < stack.getCount(); i++) {
+                    EntityGolemTH golem = new EntityGolemTH(EntityGolemTH.thType(), server);
+                    golem.loadGolem(worldPosition.getX() + 0.5D, worldPosition.getY(),
+                        worldPosition.getZ() + 0.5D, null, 0, -420, false, false, false);
+                    golem.setOwnerUUID(owner.getUUID());
+                    golem.setHome(worldPosition, Direction.UP);
+                    THSounds.play(server, Vec3.atCenterOf(worldPosition),
+                        "wand", net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+                    server.addFreshEntity(golem);
+                    server.broadcastEntityEvent(golem, (byte) 7);
+                }
                 item.discard();
             }
         }
     }
 
-    private static Identifier voidSeedId() {
-        return Identifier.fromNamespaceAndPath("thaumcraft", "void_seed");
+    private static Identifier voidMetalIngotId() {
+        return Identifier.fromNamespaceAndPath("thaumcraft", "void_metal_ingot");
+    }
+
+    private static Identifier salisMundusId() {
+        return Identifier.fromNamespaceAndPath("thaumcraft", "salis_mundus");
     }
 
     void handleHungryNode() {

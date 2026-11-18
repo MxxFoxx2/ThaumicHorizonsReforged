@@ -31,12 +31,31 @@ public class PocketPlanes extends SavedData {
     public static int pocketPlaneMAXID = 0;
 
     private static final int Y_CENTER = 128;
+    private static @Nullable MinecraftServer activeServer;
 
     public PocketPlanes() {
     }
 
     public static PocketPlanes get(MinecraftServer server) {
+        // These collections are retained for the legacy static access pattern,
+        // but their contents must never leak from one integrated server/world
+        // into another one running in the same client JVM.
+        if (activeServer != server) {
+            planes.clear();
+            positions.clear();
+            pocketPlaneMAXID = 0;
+            activeServer = server;
+        }
         return server.overworld().getDataStorage().computeIfAbsent(TYPE);
+    }
+
+    public static void onServerStopped(MinecraftServer server) {
+        if (activeServer == server) {
+            planes.clear();
+            positions.clear();
+            pocketPlaneMAXID = 0;
+            activeServer = null;
+        }
     }
 
     private static CompoundTag save(PocketPlanes data) {
@@ -62,16 +81,38 @@ public class PocketPlanes extends SavedData {
         PocketPlanes data = new PocketPlanes();
         planes.clear();
         ListTag planeNBT = tag.getListOrEmpty("Data");
-        pocketPlaneMAXID = tag.getIntOr("MaxID", 0);
+        int storedMaxId = tag.getIntOr("MaxID", 0);
         for (int i = 0; i < planeNBT.size(); ++i) {
             planes.add(PocketPlaneData.read(planeNBT.getCompoundOrEmpty(i)));
         }
+
+        // Plane IDs are dense and append-only: the list index is also the
+        // generated plane's Z-slice (256 * id). Never trust a stale counter
+        // independently of the saved plane list.
+        pocketPlaneMAXID = planes.size();
+        if (storedMaxId != pocketPlaneMAXID) {
+            ThaumicHorizons.LOGGER.warn(
+                "Pocket Plane SavedData MaxID {} does not match {} saved planes; repairing the next plane ID",
+                storedMaxId, pocketPlaneMAXID);
+        }
+
         positions.clear();
         CompoundTag positionz = tag.getCompoundOrEmpty("Positions");
         for (String id : positionz.keySet()) {
-            int[] pos = positionz.getIntArray(id).orElse(new int[] { 0, 0, 0 });
-            positions.put(Integer.valueOf(id),
-                pos.length >= 3 ? new BlockPos(pos[0], pos[1], pos[2]) : BlockPos.ZERO);
+            final int planeId;
+            try {
+                planeId = Integer.parseInt(id);
+            } catch (NumberFormatException exception) {
+                ThaumicHorizons.LOGGER.warn("Ignoring invalid Pocket Plane return-position key '{}'", id);
+                continue;
+            }
+
+            int[] pos = positionz.getIntArray(id).orElse(null);
+            if (planeId < 0 || planeId >= planes.size() || pos == null || pos.length < 3) {
+                ThaumicHorizons.LOGGER.warn("Ignoring malformed Pocket Plane return-position entry '{}'", id);
+                continue;
+            }
+            positions.put(planeId, new BlockPos(pos[0], pos[1], pos[2]));
         }
         return data;
     }
@@ -87,9 +128,19 @@ public class PocketPlanes extends SavedData {
         if (world == null) {
             return false;
         }
+
+        int planeId = planes.size();
+        if (pocketPlaneMAXID != planeId) {
+            ThaumicHorizons.LOGGER.warn(
+                "Pocket Plane next ID {} does not match {} existing planes; repairing before generation",
+                pocketPlaneMAXID, planeId);
+            pocketPlaneMAXID = planeId;
+        }
+
+        PocketPlaneGenerator.beginGeneration(world);
         data.sourceDimension = returnDimension;
         int xCenter = 0;
-        int zCenter = 256 * planes.size();
+        int zCenter = 256 * planeId;
         if (aspects.visSize() * 0.75F < 128.0F) {
             data.radius = (int) Math.max(32.0F, aspects.visSize() * 0.75F);
         } else {
@@ -111,9 +162,10 @@ public class PocketPlanes extends SavedData {
         PocketPlaneGenerator.addEffects(data, aspects);
         PocketPlaneGenerator.drawRings(xCenter, Y_CENTER, zCenter, data, world, aspects);
         PocketPlaneGenerator.drawSphere(xCenter, Y_CENTER, zCenter, data.radius, ThBlocks.VOID.get(), 0, world);
-        Block cosmetic = dev.visfox.thaumichorizons.lib.TcBlocks.block("obsidian_tile");
+        // Legacy blockCosmeticSolid metadata 6 maps to TC4R arcane_stone.
+        Block cosmetic = dev.visfox.thaumichorizons.lib.TcBlocks.block("arcane_stone");
         if (cosmetic == null) {
-            cosmetic = net.minecraft.world.level.block.Blocks.OBSIDIAN;
+            cosmetic = net.minecraft.world.level.block.Blocks.STONE_BRICKS;
         }
         for (int x = -2; x <= 2; ++x) {
             for (int z = -2; z <= 2; ++z) {
@@ -125,7 +177,7 @@ public class PocketPlanes extends SavedData {
         if (te instanceof VortexBlockEntity vortex) {
             vortex.cheat = true;
             vortex.createdDimension = true;
-            vortex.dimensionID = pocketPlaneMAXID;
+            vortex.dimensionID = planeId;
             vortex.setChanged();
         }
         data.clearPortal(1);
@@ -133,8 +185,8 @@ public class PocketPlanes extends SavedData {
         data.clearPortal(3);
         data.clearPortal(4);
         planes.add(data);
-        positions.put(pocketPlaneMAXID, new BlockPos(vortexX, vortexY, vortexZ));
-        ++pocketPlaneMAXID;
+        positions.put(planeId, new BlockPos(vortexX, vortexY, vortexZ));
+        pocketPlaneMAXID = planeId + 1;
         saved.setDirty();
         return true;
     }
@@ -160,45 +212,48 @@ public class PocketPlanes extends SavedData {
     }
 
     private static boolean isPortalUnused(@Nullable int[] portal) {
-        return portal == null || portal.length < 4
-            && (portal.length < 3 || portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
+        // Legacy firstAvailablePortal() treats the first three zero coordinates
+        // as empty even when the saved array still has its fourth dimension slot.
+        return portal == null || portal.length < 3
+            || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
-        ServerLevel world = PocketDimension.level(server);
-        if (world == null || !validPlane(id)) {
+        if (!validPlane(id) || which < 1 || which > 4) {
             return;
         }
         PocketPlaneData data = planes.get(id);
-        if (which == 1) {
-            for (int x = -1; x <= 1; ++x) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius, ThBlocks.VOID.get());
+        ServerLevel world = PocketDimension.level(server);
+        // Always release the saved portal index, even if the dimension is
+        // unavailable (for example after changing the startup config).
+        if (world != null) {
+            if (which == 1) {
+                for (int x = -1; x <= 1; ++x) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius, ThBlocks.VOID.get());
+                    }
+                }
+            } else if (which == 2) {
+                for (int x = -1; x <= 1; ++x) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius, ThBlocks.VOID.get());
+                    }
+                }
+            } else if (which == 3) {
+                for (int z = -1; z <= 1; ++z) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, data.radius, y, 256 * id + z, ThBlocks.VOID.get());
+                    }
+                }
+            } else {
+                for (int z = -1; z <= 1; ++z) {
+                    for (int y = 126; y <= 128; ++y) {
+                        PocketPlaneGenerator.setBlockPublic(world, -data.radius, y, 256 * id + z, ThBlocks.VOID.get());
+                    }
                 }
             }
-            data.clearPortal(1);
-        } else if (which == 2) {
-            for (int x = -1; x <= 1; ++x) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(2);
-        } else if (which == 3) {
-            for (int z = -1; z <= 1; ++z) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, data.radius, y, 256 * id + z, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(3);
-        } else if (which == 4) {
-            for (int z = -1; z <= 1; ++z) {
-                for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setBlockPublic(world, -data.radius, y, 256 * id + z, ThBlocks.VOID.get());
-                }
-            }
-            data.clearPortal(4);
         }
+        data.clearPortal(which);
         PocketPlanes.get(server).setDirty();
     }
 

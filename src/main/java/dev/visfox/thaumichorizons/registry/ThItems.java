@@ -3,6 +3,8 @@ package dev.visfox.thaumichorizons.registry;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.tc.BaubleAmuletMirrorItem;
 import dev.visfox.thaumichorizons.item.BucketChocolateItem;
+import dev.visfox.thaumichorizons.item.CloudBlockItem;
+import dev.visfox.thaumichorizons.block.CloudBlock;
 import dev.visfox.thaumichorizons.item.CorpseEffigyItem;
 import dev.visfox.thaumichorizons.item.EggIncubatedItem;
 import dev.visfox.thaumichorizons.item.FocusContainmentItem;
@@ -32,11 +34,14 @@ import thaumcraft.entity.golem.GolemType;
 import thaumcraft.wand.focus.FocusItem;
 import dev.visfox.thaumichorizons.item.SuicidePillItem;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
+import java.util.function.Supplier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ThItems {
@@ -52,6 +57,10 @@ public final class ThItems {
         Item::new, properties -> properties.stacksTo(16));
     public static final DeferredItem<Item> GOLD_EGG = ITEMS.registerItem("goldegg",
         Item::new, properties -> properties.stacksTo(16));
+    public static final DeferredItem<BoatItem> BOAT_GREATWOOD = ITEMS.registerItem("boatgreatwood",
+        properties -> new BoatItem(ThEntities.BOAT_GREATWOOD.get(), properties.stacksTo(1)));
+    public static final DeferredItem<BoatItem> BOAT_THAUMIUM = ITEMS.registerItem("boatthaumium",
+        properties -> new BoatItem(ThEntities.BOAT_THAUMIUM.get(), properties.stacksTo(1)));
     public static final DeferredItem<Item> VOID_PUTTY = ITEMS.registerItem("voidputty",
         Item::new, properties -> properties.stacksTo(16));
     public static final DeferredItem<BaubleAmuletMirrorItem> AMULET_MIRROR = ITEMS.registerItem("amuletmirror",
@@ -66,6 +75,17 @@ public final class ThItems {
     public static final DeferredItem<Item> MEAT_NUGGET = ITEMS.registerItem("meatnuggetth",
         properties -> new Item(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build())));
 
+    public static final DeferredItem<CloudBlockItem> CLOUD = cloudItem("cloudth", () -> ThBlocks.CLOUD.get(), 0);
+    public static final DeferredItem<CloudBlockItem> CLOUD_FIRE = cloudItem("cloudglowingth", () -> ThBlocks.CLOUD_GLOWING.get(), 1);
+    public static final DeferredItem<CloudBlockItem> CLOUD_THUNDER = cloudItem("cloudth_thunder", () -> ThBlocks.CLOUD.get(), 2);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ACID = cloudItem("cloudth_acid", () -> ThBlocks.CLOUD.get(), 3);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ALLOY = cloudItem("cloudglowingth_alloy", () -> ThBlocks.CLOUD_GLOWING.get(), 4);
+    public static final DeferredItem<CloudBlockItem> CLOUD_FLESH = cloudItem("cloudth_flesh", () -> ThBlocks.CLOUD.get(), 5);
+    public static final DeferredItem<CloudBlockItem> CLOUD_VIS = cloudItem("cloudglowingth_vis", () -> ThBlocks.CLOUD_GLOWING.get(), 6);
+    public static final DeferredItem<CloudBlockItem> CLOUD_GLYPH = cloudItem("cloudglowingth_glyph", () -> ThBlocks.CLOUD_GLOWING.get(), 7);
+    public static final DeferredItem<CloudBlockItem> CLOUD_SPORE = cloudItem("cloudth_spore", () -> ThBlocks.CLOUD.get(), 8);
+    public static final DeferredItem<CloudBlockItem> CLOUD_ANIMUS = cloudItem("cloudglowingth_animus", () -> ThBlocks.CLOUD_GLOWING.get(), 9);
+
 
     public static final DeferredItem<SoulJarBlockItem> SOUL_JAR_ITEM = ITEMS.registerItem("souljar",
         properties -> new SoulJarBlockItem(ThBlocks.SOUL_JAR.get(), properties.stacksTo(1)));
@@ -77,7 +97,14 @@ public final class ThItems {
         SyringeBloodItem::new);
     public static final DeferredItem<SyringeBloodSampleItem> SYRINGE_BLOOD_SAMPLE = ITEMS.registerItem("syringebloodsample",
         SyringeBloodSampleItem::new);
-    public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new);
+    public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new,
+        properties -> properties.stacksTo(1).enchantable(3));
+    public static final DeferredItem<SpawnEggItem> HORSE_ZOMBIE_SPAWN_EGG = ITEMS.registerItem(
+        "horse_zombie_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_ZOMBIE.get())));
+    public static final DeferredItem<SpawnEggItem> HORSE_SKELETON_SPAWN_EGG = ITEMS.registerItem(
+        "horse_skeleton_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_SKELETON.get())));
+    public static final DeferredItem<SpawnEggItem> NIGHTMARE_SPAWN_EGG = ITEMS.registerItem(
+        "nightmare_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.NIGHTMARE.get())));
     public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseeffigy",
         CorpseEffigyItem::new);
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);
@@ -112,6 +139,10 @@ public final class ThItems {
         ItemLensCase::new, ItemLensCase::properties);
     public static final DeferredItem<EggIncubatedItem> EGG_INCUBATED = ITEMS.registerItem("eggincubated",
         EggIncubatedItem::new, properties -> properties.stacksTo(16));
+
+    private static DeferredItem<CloudBlockItem> cloudItem(String name, Supplier<CloudBlock> block, int type) {
+        return ITEMS.registerItem(name, properties -> new CloudBlockItem(block.get(), type, properties));
+    }
 
     private ThItems() {
     }

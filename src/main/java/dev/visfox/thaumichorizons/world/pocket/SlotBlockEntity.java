@@ -2,15 +2,25 @@ package dev.visfox.thaumichorizons.world.pocket;
 
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
+import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
+import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import thaumcraft.aspect.Aspect;
@@ -22,6 +32,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     private boolean hasKeystone;
     private boolean portalOpen;
     private int pocketID;
+    private int keystoneColor = 0xFFFFFF;
     private int which;
     private boolean xAligned;
 
@@ -49,6 +60,10 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         return pocketID;
     }
 
+    public int keystoneColor() {
+        return keystoneColor;
+    }
+
     public int which() {
         return which;
     }
@@ -58,7 +73,8 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     private boolean makePortal(Player player, ItemStack wand) {
-        if (!(level instanceof ServerLevel server) || portalOpen || !hasKeystone || !PocketPlanes.validPlane(pocketID)) {
+        if (!(level instanceof ServerLevel server) || PocketDimension.level(server.getServer()) == null
+                || portalOpen || !hasKeystone || !PocketPlanes.validPlane(pocketID)) {
             return false;
         }
         int portalNum = PocketPlanes.firstAvailablePortal(pocketID);
@@ -157,10 +173,9 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             coreX(level, pos, -1, -4);
             coreX(level, pos, 0, -4);
             coreX(level, pos, 1, -4);
-            for (int x = -2; x <= 2; x++) {
-                coreX(level, pos, x, -1);
-                coreX(level, pos, x, -2);
-                coreX(level, pos, x, -3);
+            for (int y = -1; y >= -3; y--) {
+                coreX(level, pos, -2, y);
+                coreX(level, pos, 2, y);
             }
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y >= -3; y--) {
@@ -177,10 +192,9 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
             coreZ(level, pos, -1, -4);
             coreZ(level, pos, 0, -4);
             coreZ(level, pos, 1, -4);
-            for (int z = -2; z <= 2; z++) {
-                coreZ(level, pos, z, -1);
-                coreZ(level, pos, z, -2);
-                coreZ(level, pos, z, -3);
+            for (int y = -1; y >= -3; y--) {
+                coreZ(level, pos, -2, y);
+                coreZ(level, pos, 2, y);
             }
             for (int z = -1; z <= 1; z++) {
                 for (int y = -1; y >= -3; y--) {
@@ -190,20 +204,30 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
     }
 
+    private static BlockState cornerFrameState() {
+        Block block = TcBlocks.block("advanced_alchemical_construct");
+        return (block == null ? Blocks.IRON_BLOCK : block).defaultBlockState();
+    }
+
+    private static BlockState edgeFrameState() {
+        Block block = TcBlocks.block("ancient_stone");
+        return (block == null ? Blocks.STONE_BRICKS : block).defaultBlockState();
+    }
+
     private static void frameX(Level level, BlockPos pos, int dx, int dy) {
-        level.setBlockAndUpdate(pos.offset(dx, dy, 0), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(dx, dy, 0), cornerFrameState());
     }
 
     private static void frameZ(Level level, BlockPos pos, int dz, int dy) {
-        level.setBlockAndUpdate(pos.offset(0, dy, dz), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(0, dy, dz), cornerFrameState());
     }
 
     private static void coreX(Level level, BlockPos pos, int dx, int dy) {
-        level.setBlockAndUpdate(pos.offset(dx, dy, 0), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(dx, dy, 0), edgeFrameState());
     }
 
     private static void coreZ(Level level, BlockPos pos, int dz, int dy) {
-        level.setBlockAndUpdate(pos.offset(0, dy, dz), net.minecraft.world.level.block.Blocks.IRON_BARS.defaultBlockState());
+        level.setBlockAndUpdate(pos.offset(0, dy, dz), edgeFrameState());
     }
 
     public boolean checkPortalX() {
@@ -217,18 +241,23 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                 }
             }
         }
+        Block corner = TcBlocks.block("advanced_alchemical_construct");
+        Block edge = TcBlocks.block("ancient_stone");
+        if (corner == null || edge == null) {
+            return false;
+        }
         for (int x : new int[] { -2, 2 }) {
-            if (!isFrameBlock(x, 0) || !isFrameBlock(x, -4)) {
+            if (!isFrameBlock(x, 0, corner) || !isFrameBlock(x, -4, corner)) {
                 return false;
             }
             for (int y = -1; y >= -3; y--) {
-                if (!isFrameBlock(x, y)) {
+                if (!isFrameBlock(x, y, edge)) {
                     return false;
                 }
             }
         }
-        return isFrameBlock(-1, 0) && isFrameBlock(1, 0)
-            && isFrameBlock(-1, -4) && isFrameBlock(0, -4) && isFrameBlock(1, -4);
+        return isFrameBlock(-1, 0, edge) && isFrameBlock(1, 0, edge)
+            && isFrameBlock(-1, -4, edge) && isFrameBlock(0, -4, edge) && isFrameBlock(1, -4, edge);
     }
 
     public boolean checkPortalZ() {
@@ -242,34 +271,40 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                 }
             }
         }
+        Block corner = TcBlocks.block("advanced_alchemical_construct");
+        Block edge = TcBlocks.block("ancient_stone");
+        if (corner == null || edge == null) {
+            return false;
+        }
         for (int z : new int[] { -2, 2 }) {
-            if (!isFrameBlockZ(z, 0) || !isFrameBlockZ(z, -4)) {
+            if (!isFrameBlockZ(z, 0, corner) || !isFrameBlockZ(z, -4, corner)) {
                 return false;
             }
             for (int y = -1; y >= -3; y--) {
-                if (!isFrameBlockZ(z, y)) {
+                if (!isFrameBlockZ(z, y, edge)) {
                     return false;
                 }
             }
         }
-        return isFrameBlockZ(-1, 0) && isFrameBlockZ(1, 0)
-            && isFrameBlockZ(-1, -4) && isFrameBlockZ(0, -4) && isFrameBlockZ(1, -4);
+        return isFrameBlockZ(-1, 0, edge) && isFrameBlockZ(1, 0, edge)
+            && isFrameBlockZ(-1, -4, edge) && isFrameBlockZ(0, -4, edge) && isFrameBlockZ(1, -4, edge);
     }
 
-    private boolean isFrameBlock(int xOffset, int yOffset) {
-        return level != null && !level.getBlockState(worldPosition.offset(xOffset, yOffset, 0)).isAir();
+    private boolean isFrameBlock(int xOffset, int yOffset, Block expected) {
+        return level != null && level.getBlockState(worldPosition.offset(xOffset, yOffset, 0)).getBlock() == expected;
     }
 
-    private boolean isFrameBlockZ(int zOffset, int yOffset) {
-        return level != null && !level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).isAir();
+    private boolean isFrameBlockZ(int zOffset, int yOffset, Block expected) {
+        return level != null && level.getBlockState(worldPosition.offset(0, yOffset, zOffset)).getBlock() == expected;
     }
 
-    public boolean insertKeystone(int planeID) {
+    public boolean insertKeystone(int planeID, int color) {
         if (hasKeystone || !PocketPlanes.validPlane(planeID)) {
             return false;
         }
         hasKeystone = true;
         pocketID = planeID;
+        keystoneColor = color & 0xFFFFFF;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -284,6 +319,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
         hasKeystone = false;
         pocketID = 0;
+        keystoneColor = 0xFFFFFF;
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -295,7 +331,10 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         if (level == null || level.isClientSide() || !hasKeystone) {
             return InteractionResult.PASS;
         }
-        ItemStack keystone = KeystoneItem.create(removeKeystone());
+        int planeID = pocketID;
+        int color = keystoneColor;
+        removeKeystone();
+        ItemStack keystone = KeystoneItem.create(planeID, color);
         if (!player.getInventory().add(keystone)) {
             level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(level,
                 worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
@@ -305,11 +344,44 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+
+        // Match the legacy BlockSlot break behavior: close both portal ends and
+        // drop the plane-bound Keystone instead of silently deleting it.
+        if (portalOpen) {
+            destroyPortal(server, pos);
+        }
+        if (hasKeystone) {
+            int planeID = pocketID;
+            int color = keystoneColor;
+            removeKeystone();
+            ItemStack keystone = KeystoneItem.create(planeID, color);
+            server.addFreshEntity(new ItemEntity(server, pos.getX() + 0.5D, pos.getY() + 0.5D,
+                pos.getZ() + 0.5D, keystone));
+        }
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveCustomOnly(registries);
+    }
+
+    @Override
     protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean("hasKeystone", hasKeystone);
         output.putBoolean("portalOpen", portalOpen);
         output.putInt("pocketPlaneID", pocketID);
+        output.putInt("keystoneColor", keystoneColor);
         output.putInt("which", which);
         output.putBoolean("aligned", xAligned);
     }
@@ -320,6 +392,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         hasKeystone = input.getBooleanOr("hasKeystone", false);
         portalOpen = input.getBooleanOr("portalOpen", false);
         pocketID = input.getIntOr("pocketPlaneID", 0);
+        keystoneColor = input.getIntOr("keystoneColor", 0xFFFFFF) & 0xFFFFFF;
         which = input.getIntOr("which", 0);
         xAligned = input.getBooleanOr("aligned", false);
     }

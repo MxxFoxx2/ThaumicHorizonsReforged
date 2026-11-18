@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.item;
 
 import java.util.List;
+import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -14,7 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;import net.minecraft.world.level.Level;
+import java.util.function.Consumer;
+import net.minecraft.world.level.Level;
 
 public class SyringeInjectionItem extends Item {
     public SyringeInjectionItem(Properties properties) {
@@ -48,11 +50,15 @@ public class SyringeInjectionItem extends Item {
     public net.minecraft.world.InteractionResult use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (isPhial(stack)) {
+            ItemStack projectileStack = stack.copy();
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
             world.playSound(null, player.blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 0.5F,
                 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
+            if (!world.isClientSide()) {
+                world.addFreshEntity(new BlastPhialProjectile(world, player, projectileStack, 0.5F));
+            }
             return net.minecraft.world.InteractionResult.SUCCESS;
         }
         player.startUsingItem(hand);
@@ -78,7 +84,7 @@ public class SyringeInjectionItem extends Item {
         stack.shrink(1);
     }
 
-    private static void applyEffects(ItemStack stack, LivingEntity target) {
+    public static void applyEffects(ItemStack stack, LivingEntity target) {
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
         if (contents != null) {
             for (MobEffectInstance effect : contents.getAllEffects()) {

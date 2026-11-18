@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-// 1:1 entity tags from the original addAspectsToAllTheThings (1.7.10); NightmareTH is not ported.
+// Entity tags from the original addAspectsToAllTheThings (1.7.10).
 @EventBusSubscriber(modid = ThaumicHorizons.MODID)
 public final class CreatureAspects {
     private CreatureAspects() {
@@ -35,6 +35,7 @@ public final class CreatureAspects {
             registrar.entity(ThEntities.NETHER_HOUND.get(), tags("bestia", 3, "terra", 3, "ignis", 3));
             registrar.entity(ThEntities.GOLEM_TH.get(), tags("aer", 2, "terra", 2, "praecantatio", 2));
             registrar.entity(ThEntities.ENDERSTEED.get(), tags("bestia", 3, "alienis", 4));
+            registrar.entity(ThEntities.NIGHTMARE.get(), tags("bestia", 3, "alienis", 4, "ignis", 4, "iter", 4));
             registrar.entity(ThEntities.SHEEDER.get(), tags("bestia", 3, "pannus", 4));
         });
     }

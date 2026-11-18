@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "thaumichorizons:block/sporecloudtop",
+    "side": "thaumichorizons:block/sporecloud",
+    "bottom": "thaumichorizons:block/sporecloudtop"
+  },
+  "render_type": "minecraft:translucent"
+}

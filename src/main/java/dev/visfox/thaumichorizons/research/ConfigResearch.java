@@ -456,7 +456,7 @@ public final class ConfigResearch {
             5, 8, 1, th("textures/item/boatgreatwood.png"),
             List.of(Flag.SECONDARY), List.of(), List.of(), List.of(), List.of(), 0,
             PageSpec.text("greatwoodBoat1"),
-            PageSpec.recipes(PageKind.CRAFTING, "greatwoodBoat"));
+            PageSpec.recipes(PageKind.ARCANE, "greatwoodBoat"));
     }
 
     private static void registerThaumiumBoat() {
@@ -464,7 +464,7 @@ public final class ConfigResearch {
             7, 8, 1, th("textures/item/boatthaumium.png"),
             List.of(), List.of("greatwoodBoat", "THAUMIUM"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("thaumiumBoat1"),
-            PageSpec.recipes(PageKind.CRAFTING, "thaumiumBoat"));
+            PageSpec.recipes(PageKind.ARCANE, "thaumiumBoat"));
     }
 
     private static void registerGolemPowder() {
@@ -594,7 +594,7 @@ public final class ConfigResearch {
             PageSpec.text("planarKeystone1"),
             PageSpec.recipes(PageKind.INFUSION, "planarKeystone"),
             PageSpec.text("planarKeystone2"),
-            PageSpec.recipes(PageKind.INFUSION, "planarKeystone"));
+            PageSpec.recipes(PageKind.INFUSION, "planarKeystoneSlot"));
     }
 
     private static void registerGeneralInfusion() {

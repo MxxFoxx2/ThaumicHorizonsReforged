@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.item.pocket;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VortexBlockEntity;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
+import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
@@ -33,10 +34,33 @@ public class KeystoneItem extends Item {
         return data.copyTag().getIntOr("dimension", 0);
     }
 
-    public static ItemStack create(int planeID) {
-        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
+    private static CompoundTag boundData(int planeID) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("dimension", planeID);
+        if (PocketPlanes.validPlane(planeID)) {
+            PocketPlaneData plane = PocketPlanes.planes.get(planeID);
+            tag.putString("name", plane.name);
+            tag.putInt("color", plane.color);
+        }
+        return tag;
+    }
+
+    public static int getPlaneColor(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? 0xFFFFFF : data.copyTag().getIntOr("color", 0xFFFFFF) & 0xFFFFFF;
+    }
+
+    public static ItemStack create(int planeID) {
+        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(planeID)));
+        return stack;
+    }
+
+    /** Recreates a bound Keystone using the exact tint previously stored by its Slot. */
+    public static ItemStack create(int planeID, int color) {
+        CompoundTag tag = boundData(planeID);
+        tag.putInt("color", color & 0xFFFFFF);
+        ItemStack stack = new ItemStack(PocketRegistry.KEYSTONE_TH.get());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return stack;
     }
@@ -55,9 +79,7 @@ public class KeystoneItem extends Item {
                 return InteractionResult.PASS;
             }
             if (!level.isClientSide()) {
-                CompoundTag tag = new CompoundTag();
-                tag.putInt("dimension", vortex.dimensionID);
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(vortex.dimensionID)));
             }
             return InteractionResult.SUCCESS;
         }
@@ -69,7 +91,7 @@ public class KeystoneItem extends Item {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (!slot.insertKeystone(planeID)) {
+        if (!slot.insertKeystone(planeID, getPlaneColor(stack))) {
             return InteractionResult.PASS;
         }
         stack.shrink(1);
@@ -83,6 +105,11 @@ public class KeystoneItem extends Item {
         int planeID = getPlaneID(stack);
         if (isBound(stack) && PocketPlanes.validPlane(planeID)) {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth"));
+            CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+            String planeName = data == null ? "" : data.copyTag().getStringOr("name", "");
+            if (!planeName.isBlank()) {
+                builder.accept(Component.literal(planeName));
+            }
         } else {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth_blank"));
         }

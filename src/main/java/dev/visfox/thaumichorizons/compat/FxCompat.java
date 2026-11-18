@@ -25,6 +25,11 @@ public interface FxCompat {
         throw new UnsupportedOperationException();
     }
 
+    /** Maintains one short-lived Thaumcraft beam between fixed block positions. */
+    default void beam(Level level, BlockPos key, Vec3 from, Vec3 to, int color, float width, int type) {
+        throw new UnsupportedOperationException();
+    }
+
     default void blockSparkle(Level level, BlockPos pos, int color, int count) {
         throw new UnsupportedOperationException();
     }
