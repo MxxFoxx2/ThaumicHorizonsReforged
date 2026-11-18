@@ -196,26 +196,29 @@ public class PocketPlanes extends SavedData {
             return 0;
         }
         PocketPlaneData data = planes.get(num);
-        if (isPortalUnused(data.portalA)) {
+        if (isPortalUnused(data, 1)) {
             return 1;
         }
-        if (isPortalUnused(data.portalB)) {
+        if (isPortalUnused(data, 2)) {
             return 2;
         }
-        if (isPortalUnused(data.portalC)) {
+        if (isPortalUnused(data, 3)) {
             return 3;
         }
-        if (isPortalUnused(data.portalD)) {
+        if (isPortalUnused(data, 4)) {
             return 4;
         }
         return 0;
     }
 
-    private static boolean isPortalUnused(@Nullable int[] portal) {
-        // Legacy firstAvailablePortal() treats the first three zero coordinates
-        // as empty even when the saved array still has its fourth dimension slot.
-        return portal == null || portal.length < 3
-            || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0);
+    private static boolean isPortalUnused(PocketPlaneData data, int which) {
+        int[] portal = data.portal(which);
+        // A usable endpoint needs coordinates, an orientation flag and a valid
+        // dimension key. Incomplete/corrupt records must not consume one of the
+        // four portal slots permanently.
+        return portal == null || portal.length < 4
+            || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0)
+            || net.minecraft.resources.Identifier.tryParse(data.portalDimension(which)) == null;
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
