@@ -1207,13 +1207,13 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
 
     /**
      * Client-side serialized subject used for rendering the creature inside the Vat.
-     * The returned tag is a copy so render code cannot mutate saved block-entity data.
+     * Treat the returned tag as read-only; the renderer caches a copy when it changes.
      */
     public @Nullable CompoundTag getEntityPreviewData() {
         if (entityNbtObj == null || "PLAYER".equals(entityNbtObj.getStringOr("id", ""))) {
             return null;
         }
-        return entityNbtObj.copy();
+        return entityNbtObj;
     }
 
     public void setEntityContained(@Nullable LivingEntity newEntity) {
