@@ -151,7 +151,9 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
     private boolean createPocketPlane(ServerLevel source, ItemEntity pearl) {
         MinecraftServer server = source.getServer();
         PocketPlanes.get(server);
-        int newPlaneID = PocketPlanes.pocketPlaneMAXID;
+        // Plane IDs are dense list indexes. Read the canonical next ID rather
+        // than the cached counter, which generatePocketPlane() may repair.
+        int newPlaneID = PocketPlanes.planes.size();
         PocketPlaneData data = new PocketPlaneData();
 
         // Match the reference: renamed pearls name the plane; otherwise use
