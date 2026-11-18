@@ -151,6 +151,13 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         if (!(level.getBlockEntity(pos) instanceof SlotBlockEntity slot) || level.isClientSide() || !slot.portalOpen) {
             return;
         }
+        // Close the source endpoint before replacing GatewayPortal blocks.
+        // Their affectNeighborsAfterRemoval callback also requests teardown;
+        // leaving portalOpen true here would re-enter this method while the
+        // frame is being restored with setBlockAndUpdate().
+        slot.portalOpen = false;
+        slot.setChanged();
+
         if (slot.xAligned) {
             fillFrame(level, pos, true);
         } else {
@@ -158,8 +165,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         }
         PocketPlanes.destroyPortal(slot.pocketID, slot.which, level.getServer());
         level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-        slot.portalOpen = false;
-        slot.setChanged();
+        level.sendBlockUpdated(pos, slot.getBlockState(), slot.getBlockState(), 3);
     }
 
     private static void fillFrame(Level level, BlockPos pos, boolean xAligned) {
