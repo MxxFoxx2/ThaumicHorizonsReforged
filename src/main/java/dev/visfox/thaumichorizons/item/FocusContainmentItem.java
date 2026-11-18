@@ -170,7 +170,7 @@ public class FocusContainmentItem extends FocusItem {
         Inventory inventory = p.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.getItem() == jarItem.getItem()) {
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, jarItem)) {
                 stack.shrink(1);
                 return;
             }
@@ -180,7 +180,8 @@ public class FocusContainmentItem extends FocusItem {
     boolean canJarEntity(Player p) {
         ItemStack jarItem = TcBlocks.emptyJar();
         boolean hasJar = !jarItem.isEmpty()
-            && p.getInventory().hasAnyMatching(stack -> stack.getItem() == jarItem.getItem());
+            && p.getInventory().hasAnyMatching(stack -> !stack.isEmpty()
+                && ItemStack.isSameItemSameComponents(stack, jarItem));
         boolean hasRoom = p.getInventory().getFreeSlot() != -1;
         return hasJar && hasRoom;
     }
