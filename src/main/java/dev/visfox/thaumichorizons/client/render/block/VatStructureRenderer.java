@@ -2,6 +2,12 @@ package dev.visfox.thaumichorizons.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import dev.visfox.thaumichorizons.lib.EntityNbt;
+import java.util.Map;
+import java.util.WeakHashMap;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
@@ -13,6 +19,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -48,13 +58,22 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
         new Box(0, 80, -8, -40, -8, 16, 2, 16)
     };
 
+    private final EntityRenderDispatcher entityRenderer;
+    private final Map<VatBlockEntity, CachedPreview> previewEntities = new WeakHashMap<>();
+
     public VatStructureRenderer(BlockEntityRendererProvider.Context context) {
+        this.entityRenderer = context.entityRenderer();
     }
 
     public static final class State extends BlockEntityRenderState {
+        public EntityRenderState containedEntity;
+        public float containedEntityBob;
     }
 
     private record Box(int u, int v, float x, float y, float z, float width, float height, float depth) {
+    }
+
+    private record CachedPreview(CompoundTag data, LivingEntity entity) {
     }
 
     @Override
@@ -66,6 +85,33 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     public void extractRenderState(VatBlockEntity entity, State state, float partialTicks,
         Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
         BlockEntityRenderState.extractBase(entity, state, overlay);
+        state.containedEntity = null;
+        state.containedEntityBob = 0.0F;
+        if (entity.getLevel() instanceof ClientLevel clientLevel) {
+            CompoundTag previewData = entity.getEntityPreviewData();
+            if (previewData != null) {
+                CachedPreview cached = previewEntities.get(entity);
+                if (cached == null || !cached.data().equals(previewData)) {
+                    Entity created = EntityNbt.load(previewData, clientLevel);
+                    if (created instanceof LivingEntity living) {
+                        living.snapTo(entity.getBlockPos().getX() + 0.5,
+                            entity.getBlockPos().getY() - 1.75,
+                            entity.getBlockPos().getZ() + 0.5, 0.0F, 0.0F);
+                        cached = new CachedPreview(previewData.copy(), living);
+                        previewEntities.put(entity, cached);
+                    } else {
+                        previewEntities.remove(entity);
+                        cached = null;
+                    }
+                }
+                if (cached != null) {
+                    state.containedEntity = entityRenderer.extractEntity(cached.entity(), partialTicks);
+                    state.containedEntityBob = (float) Math.cos(clientLevel.getGameTime() + partialTicks) * 0.1F;
+                }
+            } else {
+                previewEntities.remove(entity);
+            }
+        }
     }
 
     @Override
@@ -78,6 +124,13 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE),
             (pose, buffer) -> renderModel(pose, buffer, state.lightCoords));
         poseStack.popPose();
+
+        if (state.containedEntity != null) {
+            poseStack.pushPose();
+            entityRenderer.submit(state.containedEntity, camera, 0.5, -1.75 + state.containedEntityBob,
+                0.5, poseStack, collector);
+            poseStack.popPose();
+        }
     }
 
     private static void renderModel(PoseStack.Pose pose, VertexConsumer buffer, int light) {
