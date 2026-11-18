@@ -11,16 +11,19 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.client.geom.CubeGeometry;
+import thaumcraft.client.geom.InfusionHaloGeometry;
 import thaumcraft.client.geom.QuadSink;
 
 /**
  * Dynamic infusion-matrix visuals from the legacy TileVatMatrixRender.
  *
- * <p>The static block model remains responsible for the matrix base. This
- * renderer draws the eight animated cubes and their emissive overlay.</p>
+ * <p>Draws the eight animated cubes, their emissive overlay, and the additive
+ * infusion halo while the Vat is in infusion mode.</p>
  */
 public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlockEntity, VatMatrixRenderer.State> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
@@ -117,7 +120,7 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
                     float pulse = ((float) Math.sin((ticks + x * 2.0F + y * 3.0F + z * 4.0F) / 4.0F)
                         * 0.1F + 0.2F) * startup;
                     int alpha = Math.max(0, Math.min(255, Math.round(pulse * 255.0F)));
-                    int emissiveColor = (alpha << 24) | 0x00CC19FF;
+                    int emissiveColor = (alpha << 24) | 0x00CC1AFF;
                     if (alpha > 0) {
                         collector.submitCustomGeometry(poseStack, ThRenderTypes.eyes(TEXTURE),
                             (pose, buffer) -> renderCube(pose, buffer, 32, emissiveColor, FULL_BRIGHT));
@@ -127,6 +130,15 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
             }
         }
         poseStack.popPose();
+
+        if (state.mode == 2 && state.craftCount > 0.0F) {
+            int count = Math.max(0, Math.round(state.craftCount));
+            poseStack.pushPose();
+            poseStack.translate(0.5F, 0.5F, 0.5F);
+            collector.submitCustomGeometry(poseStack, ThRenderTypes.lightning(),
+                (pose, buffer) -> renderHalo(pose, buffer, count));
+            poseStack.popPose();
+        }
     }
 
     private static void renderCube(PoseStack.Pose pose, VertexConsumer buffer, int textureShift,
@@ -172,6 +184,55 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
         };
 
         CubeGeometry.render(sink, textureShift, argb, light);
+    }
+
+    /**
+     * TC4R converts the legacy triangle-fan rays to pairs of quads. The
+     * lightning render type is additive and does not sample a texture.
+     */
+    private static void renderHalo(PoseStack.Pose pose, VertexConsumer buffer, int count) {
+        float[][] positions = new float[4][3];
+        int[] colors = new int[4];
+        int[] vertexIndex = {0};
+
+        QuadSink sink = (x, y, z, u, v, color, packedLight) -> {
+            int index = vertexIndex[0]++ & 3;
+            positions[index][0] = x;
+            positions[index][1] = y;
+            positions[index][2] = z;
+            colors[index] = color;
+
+            if ((vertexIndex[0] & 3) == 0) {
+                float ux = positions[1][0] - positions[0][0];
+                float uy = positions[1][1] - positions[0][1];
+                float uz = positions[1][2] - positions[0][2];
+                float vx = positions[3][0] - positions[0][0];
+                float vy = positions[3][1] - positions[0][1];
+                float vz = positions[3][2] - positions[0][2];
+                float nx = uy * vz - uz * vy;
+                float ny = uz * vx - ux * vz;
+                float nz = ux * vy - uy * vx;
+                float length = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
+                if (length > 0.0F) {
+                    nx /= length;
+                    ny /= length;
+                    nz /= length;
+                }
+                for (int vertex = 0; vertex < 4; vertex++) {
+                    buffer.addVertex(pose, positions[vertex][0], positions[vertex][1], positions[vertex][2])
+                        .setColor(colors[vertex]);
+                }
+            }
+        };
+
+        InfusionHaloGeometry.render(sink, count, true, 0.0F, 0.0F, FULL_BRIGHT);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(VatMatrixBlockEntity entity) {
+        BlockPos pos = entity.getBlockPos();
+        return new AABB(pos.getX() - 2.0, pos.getY() - 2.0, pos.getZ() - 2.0,
+            pos.getX() + 3.0, pos.getY() + 3.0, pos.getZ() + 3.0);
     }
 
     @Override
