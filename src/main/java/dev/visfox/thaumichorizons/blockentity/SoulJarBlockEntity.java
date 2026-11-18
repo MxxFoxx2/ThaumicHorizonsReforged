@@ -45,10 +45,13 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
             return InteractionResult.PASS;
         }
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
-            drop = false;
-            level.removeBlock(pos, false);
+            // Do not consume the jar until its serialized entity has been reconstructed.
             Entity ent = EntityNbt.load(data.entity(), serverLevel);
             if (ent == null) {
+                return InteractionResult.PASS;
+            }
+            drop = false;
+            if (!level.removeBlock(pos, false)) {
                 return InteractionResult.PASS;
             }
             if (ent instanceof TamableAnimal tameable && !tameable.isTame()) {
