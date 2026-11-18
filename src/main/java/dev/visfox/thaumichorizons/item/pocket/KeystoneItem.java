@@ -23,15 +23,16 @@ public class KeystoneItem extends Item {
     }
 
     public static boolean isBound(ItemStack stack) {
-        return stack.get(DataComponents.CUSTOM_DATA) != null;
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data != null && data.copyTag().getIntOr("dimension", Integer.MIN_VALUE) != Integer.MIN_VALUE;
     }
 
     public static int getPlaneID(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         if (data == null) {
-            return 0;
+            return Integer.MIN_VALUE;
         }
-        return data.copyTag().getIntOr("dimension", 0);
+        return data.copyTag().getIntOr("dimension", Integer.MIN_VALUE);
     }
 
     private static CompoundTag boundData(int planeID) {
@@ -74,22 +75,32 @@ public class KeystoneItem extends Item {
         if (!isBound(stack)) {
             if (!level.dimension().equals(PocketDimension.POCKET_PLANE)
                 || !(blockEntity instanceof VortexBlockEntity vortex)
-                || !vortex.createdDimension
-                || !PocketPlanes.validPlane(vortex.dimensionID)) {
+                || !vortex.createdDimension) {
                 return InteractionResult.PASS;
             }
-            if (!level.isClientSide()) {
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(vortex.dimensionID)));
+            // The client does not own PocketPlanes SavedData. Let the server
+            // validate the plane ID after the interaction packet arrives.
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
             }
+            if (!PocketPlanes.validPlane(vortex.dimensionID)) {
+                return InteractionResult.PASS;
+            }
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(boundData(vortex.dimensionID)));
             return InteractionResult.SUCCESS;
         }
 
         int planeID = getPlaneID(stack);
-        if (!(blockEntity instanceof SlotBlockEntity slot) || !PocketPlanes.validPlane(planeID)) {
+        if (!(blockEntity instanceof SlotBlockEntity slot)) {
             return InteractionResult.PASS;
         }
+        // PocketPlanes SavedData exists on the server, not on remote clients.
+        // Predict the interaction locally and keep plane validation authoritative.
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
+        }
+        if (!PocketPlanes.validPlane(planeID)) {
+            return InteractionResult.PASS;
         }
         if (!slot.insertKeystone(planeID, getPlaneColor(stack))) {
             return InteractionResult.PASS;
@@ -103,7 +114,7 @@ public class KeystoneItem extends Item {
             net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder,
             TooltipFlag flag) {
         int planeID = getPlaneID(stack);
-        if (isBound(stack) && PocketPlanes.validPlane(planeID)) {
+        if (isBound(stack)) {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth"));
             CustomData data = stack.get(DataComponents.CUSTOM_DATA);
             String planeName = data == null ? "" : data.copyTag().getStringOr("name", "");
