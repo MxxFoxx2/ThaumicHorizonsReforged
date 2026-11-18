@@ -86,7 +86,8 @@ python -I tools/check_seams.py
 - [x] Vat multiblock forms *(reproduced in-world 2026-11-16: blueprint converts to VAT blocks and vis is consumed server-side after trigger-registration fix)*
 - [ ] Curative Vat mode cures with containment foci
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
-- [ ] Vat infusion matrix renderer: during active infusion, confirm eight cubes rotate around the center, wobble according to instability and show a pulsing emissive overlay; check texture orientation, brightness and render bounds in a live client.
+- [ ] Vat infusion matrix renderer: during active infusion, confirm eight cubes rotate around the center, wobble according to instability and show a pulsing emissive overlay. While `Vat.mode == 2`, confirm the additive halo appears, grows with `craftCount`, fades toward transparent ray tips and disappears outside infusion mode. Check texture orientation, brightness, halo bounds and visual parity in a live client.
+- [ ] Vat blockstate selectors: confirm `vat` variants 10 and 11 and `vatsolid` variants 4–7 all resolve without missing-state/model errors. This only verifies model lookup; the generic block models are not yet the original segmented 3×3 structure.
 - [ ] Corpse effigy + self-clone flow works
 - [ ] Blood infuser: syringe draw/inject cycle
 - [ ] All 9 registered menus (Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers, Vis Dynamo) open; slots behave and VisDynamo aspect toggles persist
