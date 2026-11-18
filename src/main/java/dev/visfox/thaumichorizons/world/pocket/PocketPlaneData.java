@@ -1,5 +1,6 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import dev.visfox.thaumichorizons.ThaumicHorizons;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
@@ -55,10 +56,19 @@ public class PocketPlaneData {
 
     public static PocketPlaneData read(CompoundTag tag) {
         PocketPlaneData data = new PocketPlaneData();
-        data.radius = tag.getIntOr("radius", 32);
+        int storedRadius = tag.getIntOr("radius", 32);
+        // Generated planes are constrained to radius 32..127 so their
+        // 256-block Z slices cannot overlap. Repair invalid persisted values
+        // before portal placement or teardown uses the radius.
+        data.radius = Math.max(32, Math.min(127, storedRadius));
+        if (storedRadius != data.radius) {
+            ThaumicHorizons.LOGGER.warn(
+                "Clamping invalid Pocket Plane radius {} to {} while loading SavedData",
+                storedRadius, data.radius);
+        }
         data.potionEffects = tag.getIntArray("effects").orElse(null);
         data.name = tag.getStringOr("name", "Generic Pocket Plane");
-        data.color = tag.getIntOr("color", 0);
+        data.color = tag.getIntOr("color", 0) & 0xFFFFFF;
         data.portalA = tag.getIntArray("portalA").orElse(null);
         data.portalB = tag.getIntArray("portalB").orElse(null);
         data.portalC = tag.getIntArray("portalC").orElse(null);
