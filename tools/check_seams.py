@@ -74,6 +74,8 @@ THAUMCRAFT_API = [
     "thaumcraft.entity.golem.GolemBase",
     "thaumcraft.entity.golem.GolemType",
     "thaumcraft.client.render.entity.golem.GolemRenderer",
+    "thaumcraft.client.geom.CubeGeometry",
+    "thaumcraft.client.geom.QuadSink",
     "thaumcraft.entity.golem.GolemKeys",
     "thaumcraft.entity.golem.GolemSnapshot",
     "thaumcraft.item.golem.GolemPlacerItem",
