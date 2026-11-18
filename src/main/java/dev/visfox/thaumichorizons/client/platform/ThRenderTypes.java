@@ -23,4 +23,8 @@ public final class ThRenderTypes {
     public static RenderType entityCutoutNoCull(Identifier texture) {
         return RenderTypes.entityCutout(texture, false);
     }
+
+    public static RenderType lightning() {
+        return RenderTypes.lightning();
+    }
 }
