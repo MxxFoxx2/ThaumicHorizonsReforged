@@ -84,7 +84,9 @@ public class PortalTHBlock extends Block {
         PocketPlaneData data = PocketPlanes.planes.get(planeID);
         int[] endpoint = data.portal(which);
         String dimensionName = data.portalDimension(which);
-        if (endpoint == null || endpoint.length < 4 || dimensionName.isBlank()) {
+        if (endpoint == null || endpoint.length < 4 || dimensionName.isBlank()
+            || (endpoint[0] == 0 && endpoint[1] == 0 && endpoint[2] == 0)
+            || (endpoint[3] != 0 && endpoint[3] != 1)) {
             return;
         }
         Identifier dimensionId = Identifier.tryParse(dimensionName);
