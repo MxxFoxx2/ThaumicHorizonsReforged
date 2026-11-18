@@ -25,6 +25,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
