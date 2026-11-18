@@ -139,7 +139,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Void Putty repair and Focus Illumination dye recoloring now have registered custom recipe serializers and recipes. Both still need an in-game check. Planar Theory, Transduction Amplifier, Vortex Stabilizer and Alch Incubation recipes are also present.
 - Synthetic-node Wisp Essence insertion/drops are implemented behind `ItemCompat` but still need an in-game check. Crystal-essence conversion needs a TC4R crystal-essence item seam. Transducer Flux Gas/Goo, lightning damage and node-converter shutdown are implemented; the overload sequence still needs live verification.
 - Warp tumor store caps use the config value (50), matching the original config default.
-- Render/FX polish still outstanding: Vat multiblock renderer/animation, VortexSound, Familiar hat layer and any missing special projectile renderers. The 20 creature renderers, Node Monitor renderer, and several static machine models are already present.
+- Render/FX polish still outstanding: Vat multiblock renderer/animation, the legacy 3D syringe projectile model, and visual parity for remaining effects. Vortex ambient audio is already registered and has a client-side looping handler; Familiar's hat layer is already implemented. Vortex sound behavior and Familiar hat fit remain runtime visual/audio checks in `verification.md`. The 20 creature renderers, Node Monitor renderer, and several static machine models are already present.
 
 ## Asset pipeline & client-safety — documented deviations
 
