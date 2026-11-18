@@ -37,6 +37,7 @@ public final class ThRecipes {
         infusion3();
         infusion4();
         infusionPocketPlane();
+        infusionRecombinator();
         mirrorAmulet();
     }
 
@@ -301,6 +302,22 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:amber"),
                 TcIngredient.item("thaumcraft:thaumium_ingot"))));
+    }
+
+    private static void infusionRecombinator() {
+        TcRecipes.register(new InfusionRecipe("recombinator", "recombinator",
+            TcStack.of("thaumichorizons:recombinator"), 9,
+            new AspectList().add(Aspect.EXCHANGE, 32).add(Aspect.AURA, 20).add(Aspect.CRAFT, 32)
+                .add(Aspect.ENERGY, 32),
+            TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
+                TcIngredient.item("thaumcraft:vis_filter"),
+                TcIngredient.item("thaumichorizons:planarconduit"),
+                TcIngredient.item("thaumcraft:vis_filter"),
+                TcIngredient.item("thaumcraft:node_transducer"),
+                TcIngredient.item("thaumcraft:vis_filter"),
+                TcIngredient.item("thaumichorizons:planarconduit"),
+                TcIngredient.item("thaumcraft:vis_filter"),
+                TcIngredient.item("thaumcraft:node_stabilizer"))));
     }
 
     private static void crucible5() {
