@@ -98,8 +98,8 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Vat stabilizer symmetry scan counts only vanilla skulls (needs an InfusionCompat block predicate for TC4R skull variants).
 - `resetStats` skipped (the port has no `IEntityInfusedStats` equivalent).
 - Instilled-loyalty gate implemented via goalSelector priority instead of the original flag.
-- Critter recipes 20/21/22 (undead horses, nightmare) exist but cannot produce their intended TH entities until HorseZombie, HorseSkeleton and NightmareTH are ported.
-- Deferred: `EntitySyringe`/`EntityBlastPhial` projectiles (injector charge/fire logic works, projectile spawning is pending), brain-jar feeding seam, creative empty-soul-jar sub-item, and the remaining special/multiblock visuals. The static blockstates/models for the ten soul/vat blocks have been added; Node Monitor also has a dedicated renderer.
+- Critter recipes 20/21/22 (undead horses, nightmare) now target the registered `HorseZombie`, `HorseSkeleton` and `NightmareTH` entity types; the full Vat infusion path and resulting entities still need live-world verification.
+- Deferred: brain-jar feeding seam and the remaining special/multiblock visuals. `EntitySyringe`/`EntityBlastPhial` projectiles have implementations and renderer registrations; gameplay and appearance still need live verification. The empty Stasis Jar is already exposed in the creative tab as a data-less `SoulJarBlockItem`; its creature-in-jar preview remains a renderer gap. The static blockstates/models for the ten soul/vat blocks have been added; Node Monitor also has a dedicated renderer.
 - Soul Jar capture/release code is now present: an infused creature is serialized into a jar item, placement copies the data into the BlockEntity, and wand use attempts to restore the entity. This was committed in `6fd7614`; the full capture → item persistence → placement → release cycle is not yet game-verified (see `verification.md`).
 - `VatTrigger.register()` was dead code (never called); now registered from `FMLCommonSetupEvent` via `enqueueWork`. In-world formation verified 2026-11-16: the glass/pressure-plate/levitator blueprint converts to VAT/VAT_SOLID/VAT_INTERIOR on wand use, server-side replace with client-side gate.
 - Vat formation pays crafting vis through the wand cap modifier (iron cap +10%, TC4 parity): 50 vis per aspect costs 5500 centivis with an iron cap, so a wand stocked with exactly 5000 per aspect legitimately fails to form the vat.
@@ -139,7 +139,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Void Putty repair and Focus Illumination dye recoloring now have registered custom recipe serializers and recipes. Both still need an in-game check. Planar Theory, Transduction Amplifier, Vortex Stabilizer and Alch Incubation recipes are also present.
 - Synthetic-node Wisp Essence insertion/drops are implemented behind `ItemCompat` but still need an in-game check. Crystal-essence conversion needs a TC4R crystal-essence item seam. Transducer Flux Gas/Goo, lightning damage and node-converter shutdown are implemented; the overload sequence still needs live verification.
 - Warp tumor store caps use the config value (50), matching the original config default.
-- Render/FX polish still outstanding: Vat multiblock renderer/animation, VortexSound, Familiar hat layer and any missing special projectile renderers. The 20 creature renderers, Node Monitor renderer, and several static machine models are already present.
+- Render/FX polish still outstanding: Vat's 3×3 structural multiblock and contained-entity renderers, VortexSound and parity checks for remaining FX. The Vat infusion matrix's eight-cube animation now has a dedicated renderer in source; VortexSound and the Familiar hat layer are also present in code and need runtime parity checks. The 20 creature renderers, Node Monitor renderer, and several static machine models are already present.
 
 ## Asset pipeline & client-safety — documented deviations
 
@@ -162,7 +162,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Added `tools/gen_machine_models.py`, which parses the reference `Model*.java` box specs (`addBox` + `setRotationPoint` + texture offset) and emits static JSON `elements` with per-face UVs into the atlas (standard box unwrap, scaled to the 16×16 JSON UV grid). The flipped-TESR transform `X=8+mx, Y=24−my, Z=8−mz` reproduces the reference stacking; the dynamo base slab uses the unflipped ground placement.
 - Ported static models: `visdynamo`, `essentiadynamo` (base slab), `inspiratron`, `soulforge` (minus animated brine), `bloodinfuser`, `soulbeacon`, `soulsieve`, `vortexstabilizer`. Verified in-game: each renders as its intended box geometry with correctly mapped atlas tiles, not a stretched cube.
 - Already correct (single square face): `synthnode` (32×32), `modmatrix` (`bone` 16×16), `transductionamplifier` (vanilla iron).
-- Still deferred (TESR/multiblock, not cube-representable): `vat` (3×3 multiblock over a 512×512 atlas the port does not ship). Its animated renderer belongs to the machine-renderer client phase.
+- Still deferred (TESR/multiblock, not cube-representable): the Vat's 3×3 glass/base/lid geometry and contained-entity preview. The original 512×512 atlas is already present at `textures/models/vat.png`; the missing part is the custom renderer, not the texture. The infusion matrix's eight-cube animation now has a dedicated `VatMatrixRenderer` in source; live-client texture, orientation and animation checks remain open.
 
 ## Textures larger than 16×16 — no splitting
 
