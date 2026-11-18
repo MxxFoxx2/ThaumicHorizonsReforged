@@ -81,16 +81,38 @@ public class PocketPlanes extends SavedData {
         PocketPlanes data = new PocketPlanes();
         planes.clear();
         ListTag planeNBT = tag.getListOrEmpty("Data");
-        pocketPlaneMAXID = tag.getIntOr("MaxID", 0);
+        int storedMaxId = tag.getIntOr("MaxID", 0);
         for (int i = 0; i < planeNBT.size(); ++i) {
             planes.add(PocketPlaneData.read(planeNBT.getCompoundOrEmpty(i)));
         }
+
+        // Plane IDs are dense and append-only: the list index is also the
+        // generated plane's Z-slice (256 * id). Never trust a stale counter
+        // independently of the saved plane list.
+        pocketPlaneMAXID = planes.size();
+        if (storedMaxId != pocketPlaneMAXID) {
+            ThaumicHorizons.LOGGER.warn(
+                "Pocket Plane SavedData MaxID {} does not match {} saved planes; repairing the next plane ID",
+                storedMaxId, pocketPlaneMAXID);
+        }
+
         positions.clear();
         CompoundTag positionz = tag.getCompoundOrEmpty("Positions");
         for (String id : positionz.keySet()) {
-            int[] pos = positionz.getIntArray(id).orElse(new int[] { 0, 0, 0 });
-            positions.put(Integer.valueOf(id),
-                pos.length >= 3 ? new BlockPos(pos[0], pos[1], pos[2]) : BlockPos.ZERO);
+            final int planeId;
+            try {
+                planeId = Integer.parseInt(id);
+            } catch (NumberFormatException exception) {
+                ThaumicHorizons.LOGGER.warn("Ignoring invalid Pocket Plane return-position key '{}'", id);
+                continue;
+            }
+
+            int[] pos = positionz.getIntArray(id).orElse(null);
+            if (planeId < 0 || planeId >= planes.size() || pos == null || pos.length < 3) {
+                ThaumicHorizons.LOGGER.warn("Ignoring malformed Pocket Plane return-position entry '{}'", id);
+                continue;
+            }
+            positions.put(planeId, new BlockPos(pos[0], pos[1], pos[2]));
         }
         return data;
     }
@@ -106,10 +128,19 @@ public class PocketPlanes extends SavedData {
         if (world == null) {
             return false;
         }
+
+        int planeId = planes.size();
+        if (pocketPlaneMAXID != planeId) {
+            ThaumicHorizons.LOGGER.warn(
+                "Pocket Plane next ID {} does not match {} existing planes; repairing before generation",
+                pocketPlaneMAXID, planeId);
+            pocketPlaneMAXID = planeId;
+        }
+
         PocketPlaneGenerator.beginGeneration(world);
         data.sourceDimension = returnDimension;
         int xCenter = 0;
-        int zCenter = 256 * planes.size();
+        int zCenter = 256 * planeId;
         if (aspects.visSize() * 0.75F < 128.0F) {
             data.radius = (int) Math.max(32.0F, aspects.visSize() * 0.75F);
         } else {
@@ -146,7 +177,7 @@ public class PocketPlanes extends SavedData {
         if (te instanceof VortexBlockEntity vortex) {
             vortex.cheat = true;
             vortex.createdDimension = true;
-            vortex.dimensionID = pocketPlaneMAXID;
+            vortex.dimensionID = planeId;
             vortex.setChanged();
         }
         data.clearPortal(1);
@@ -154,8 +185,8 @@ public class PocketPlanes extends SavedData {
         data.clearPortal(3);
         data.clearPortal(4);
         planes.add(data);
-        positions.put(pocketPlaneMAXID, new BlockPos(vortexX, vortexY, vortexZ));
-        ++pocketPlaneMAXID;
+        positions.put(planeId, new BlockPos(vortexX, vortexY, vortexZ));
+        pocketPlaneMAXID = planeId + 1;
         saved.setDirty();
         return true;
     }
