@@ -165,3 +165,10 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - [ ] PocketPlanes SavedData survives server restart and world save/reload. After joining the reloaded save, use a portal whose source-vortex chunk is not loaded and verify its endpoint and plane ID resolve correctly. In the same client process, switch from a save containing several Pocket Planes to a fresh save and confirm no prior plane IDs, coordinates or portal links leak into it. Also test a deliberately inconsistent `MaxID`, malformed/orphan `Positions` entries, and saved radii below 32 or above 127: load must recover the next dense plane ID, clamp the radius to 32..127 without a crash or silently mapping a malformed return point to `(0,0,0)`, and the source Vortex plus generated Pocket Vortex must both reference that recovered ID.
 - [ ] Remove or disable the source vortex's stabilizer beams until it collapses; after the 25-tick collapse delay, confirm only the matching pocket-plane vortex at (0, 129, 256 × plane ID) is removed, and confirm the other plane data and portals remain intact.
 - [ ] Portal, Gateway and Slot blocks have complete blockstates, models, textures and no missing-renderer/model log.
+
+## Automated checks (local, non-gameplay)
+
+- [x] `./gradlew.bat test --no-configuration-cache` — characterization coverage for Pocket Plane saved data: `PocketPlaneDataTest` (8 tests: radius clamp, color mask, legacy defaults, portal records, set/clear, write/read) and `PocketPlanesIndexTest` (1 test: 256-block plane slices).
+- [x] `python -I tools/check_assets.py` — static validation that `thaumichorizons` blockstate/model `model`/`parent` and model `texture`/`textures` references resolve to existing JSON models and PNG textures.
+
+These checks prove only local deterministic logic and file presence. They do not replace `runClient`/`runServer`: every original "confirm in-game" item above stays open until verified live. In particular, complete blockstates/models/textures are checked for existence, not for correct rendering. Undead horse attributes and recipe data remain manual because they require entity/registry runtime rather than pure functions.
