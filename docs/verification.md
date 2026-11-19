@@ -171,6 +171,16 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - [x] `./gradlew.bat test --no-configuration-cache` — characterization coverage for Pocket Plane saved data: `PocketPlaneDataTest` (8 tests: radius clamp, color mask, legacy defaults, portal records, set/clear, write/read) and `PocketPlanesIndexTest` (1 test: 256-block plane slices).
 - [x] `python -I tools/check_assets.py` — static validation that `model`/`parent` references from `blockstates/`, `models/` and `items/`, plus `texture`/`textures`/`particle` references from JSON, resolve to existing models and PNG textures.
 
+### Coverage map for existing items
+
+| Existing item | Covered by the checks above | Still open |
+| --- | --- | --- |
+| PocketPlanes SavedData / radius clamp / portal records | `PocketPlaneDataTest` — radius clamp 32..127, portal slot indexing, `setPortal`/`clearPortal`, write/read; `PocketPlanesIndexTest` — plane index boundaries | live restart, world save/reload, `MaxID` recovery, malformed/orphan `Positions`, cross-save leakage |
+| Portal, Gateway and Slot blockstates/models/textures | `check_assets.py` resolves their `model`/`parent`/texture links to existing files | in-game missing-renderer/model log and visual correctness |
+| Vat blockstate selectors (`vat` 10/11, `vatsolid` 4-7) | `check_assets.py` resolves the model links from those blockstates | client load without missing-state/model errors |
+
+No existing item was changed to `[x]`: every one of them still contains a live-gameplay part that local checks do not prove. The tests narrow what has to be checked live; they do not close those items.
+
 The validator checks only `thaumichorizons:` (or namespace-less) references; `minecraft:`, `thaumcraft:` and `#...` references are skipped, and an empty or invalid root is a failure. These checks prove only local deterministic logic and file presence. They do not replace `runClient`/`runServer`: every original "confirm in-game" item above stays open until verified live. In particular, complete blockstates/models/textures are checked for existence, not for correct rendering. Undead horse attributes and recipe data remain manual because they require entity/registry runtime rather than pure functions.
 
 Jar guard: after `./gradlew.bat jar`, `jar tf build/libs/thaumic-horizons-reforged-0.1.0-26.3.jar` contains no test classes and no `junit` entries; JUnit is declared only under `testImplementation`/`testRuntimeOnly`, so the shipped jar is unchanged.
