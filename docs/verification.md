@@ -87,7 +87,7 @@ python -I tools/check_seams.py
 - [ ] Curative Vat mode cures with containment foci
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
 - [ ] Corpse effigy + self-clone flow works
-- [ ] Blood infuser: syringe draw/inject cycle
+- [ ] Blood Infuser: select aspects and mode; run the syringe draw/inject cycle; save/reload with partially filled essentia and with empty/full output slots. Confirm empty slots remain usable after reload, output injections are not lost/duplicated, selection/mode controls update on the client, and an output slot frees correctly when extracted.
 - [ ] All 9 registered menus (Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers, Vis Dynamo) open; slots behave and VisDynamo aspect toggles persist
 - [ ] Inspiratron: soul → research completion fires
 
