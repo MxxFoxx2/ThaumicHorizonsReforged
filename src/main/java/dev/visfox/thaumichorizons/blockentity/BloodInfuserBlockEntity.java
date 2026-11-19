@@ -462,6 +462,7 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         Holder<MobEffect> hboost = MobEffects.HEALTH_BOOST;
         Holder<MobEffect> satur = MobEffects.SATURATION;
         Holder<MobEffect> visBoost = Compat.port().potions().isAvailable() ? Compat.port().potions().visExhaust() : null;
+        Holder<MobEffect> taint = Compat.port().potions().isAvailable() ? Compat.port().potions().taintPoison() : null;
         Holder<MobEffect> visRegen = ThEffects.VIS_REGEN;
         Holder<MobEffect> vacuum = ThEffects.VACUUM;
         Holder<MobEffect> shock = ThEffects.SHOCK;
@@ -488,6 +489,9 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         duration.put(satur, 0.4F);
         if (visBoost != null) {
             duration.put(visBoost, 1.2F);
+        }
+        if (taint != null) {
+            duration.put(taint, 0.6F);
         }
         duration.put(visRegen, 0.6F);
         duration.put(vacuum, 1.2F);
@@ -651,6 +655,9 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
             map.put(visBoost, 2);
         }
         map.put(wither, 2);
+        if (taint != null) {
+            map.put(taint, 6);
+        }
         effectWeights.put(Aspect.TAINT, map);
         map = new HashMap<>();
         map.put(slow, 4);

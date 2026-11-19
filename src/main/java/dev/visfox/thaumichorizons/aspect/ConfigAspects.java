@@ -19,6 +19,7 @@ public final class ConfigAspects {
             registrar.item(ThItems.BUCKET_CHOCOLATE, tags("fames", 2, "victus", 2));
             registrar.item(ThItems.INK_EGG, tags("limus", 2, "tenebrae", 2));
             registrar.item(ThItems.GOLD_EGG, tags("limus", 2, "lucrum", 1));
+            registrar.item(ThItems.AMULET_MIRROR, tags("mortuus", 8, "vacuos", 6, "lucrum", 6, "iter", 6));
             registrar.item(ThItems.VOID_PUTTY, tags("fabrico", 4, "alienis", 4));
         registrar.item(ThItems.CRYSTAL_WAND, tags("vitreus", 6, "praecantatio", 4));
             registrar.item(ThItems.MEAT, tags("corpus", 4));

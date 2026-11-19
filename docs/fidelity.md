@@ -94,8 +94,8 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 ## Souls / Vat / blood phase — documented deviations
 
 - Soul-jar villager profession stored as a registry id string.
-- TC4R taint-poison / blurred-vision effects omitted from blood-infuser and vat effect lists (no compat seam for them yet).
-- Vat stabilizer symmetry scan counts only vanilla skulls (needs an InfusionCompat block predicate for TC4R skull variants).
+- TC4R taint poison, blurred vision, infectious vis exhaust, thaumarhia, and vis exhaust are exposed through the potion compat seam. The blood infuser adds taint poison alongside vis exhaust; the Vat handles all five TC effects, Silver Heart four, and Taint Eater Pig three, matching 1.7.10. Live effect application remains unverified.
+- Vat stabilizer symmetry uses the infusion compat predicate, covering vanilla skulls and TC4R `InfusionStabiliser` blocks and passing the original stabiliser coordinates to the mirrored-block check as in 1.7.10; live symmetry measurement remains unverified.
 - `resetStats` skipped (the port has no `IEntityInfusedStats` equivalent).
 - Instilled-loyalty gate implemented via goalSelector priority instead of the original flag.
 - Critter recipes 20/21/22 (undead horses, nightmare) now target the registered `HorseZombie`, `HorseSkeleton` and `NightmareTH` entity types; the full Vat infusion path and resulting entities still need live-world verification.
@@ -187,7 +187,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - The inert crystal wand is a crafting ingredient in the original (`ItemCrystalWand extends Item`), not a wand; it is "recognized" in two ways, both of which were missing in the port.
 - Scan: the original registers an object tag `CRYSTAL 6 + MAGIC 4`. `ConfigAspects` now registers `vitreus 6 + praecantatio 4` for `CRYSTAL_WAND`, so the thaumometer detects it (previously the scan returned nothing because `AspectRegistry.getObjectTags` had no entry). Verified in-game with `/thaumcraft aspects item thaumichorizons:crystalwand` → `Vitreus ×6, Praecantatio ×4`; the charged wand returns `Praecantatio ×64, Instrumentum ×64` via the `Wands.isWand` rod/cap path.
 - Vortex: the original `TileVortex.handleVoidCrafting` converts a thrown inert wand into the charged crystalline wand (crystal rod/cap + 25000 vis per primal). `VortexBlockEntity.handleVoidCrafting` now does the same, producing `WAND_CASTING_DISPOSABLE` (whose defaults already carry the crystal parts and full vis). This is the survival path to the charged wand. Not yet exercised in-game (needs a stabilized vortex); covered by Gate 2.
-- The remaining original object tags are registered as of the focus-completion pass: syringes (`SYRINGE_EMPTY`, `SYRINGE_BLOOD_SAMPLE`, `SYRINGE_BLOOD`, `SYRINGE_INJECTION`), `NUTRIENTS`, `ALCHEMITE`, `VAT`, `VAT_SOLID`, `SOUL_BEACON`, `VORTEX`. `focusAnimation` and `itemEggIncubated` are registered. `amuletMirror` still has no explicit object-aspect registration even though the item, recipe, research page, mirror-link behavior, and death transport are implemented. `portal`, `spike`, `spikeWood`, and `spikeTooth` remain unregistered because their targets are not ported.
+- The remaining original object tags are registered as of the focus-completion pass: syringes (`SYRINGE_EMPTY`, `SYRINGE_BLOOD_SAMPLE`, `SYRINGE_BLOOD`, `SYRINGE_INJECTION`), `NUTRIENTS`, `ALCHEMITE`, `VAT`, `VAT_SOLID`, `SOUL_BEACON`, `VORTEX`. `focusAnimation`, `itemEggIncubated`, and `amuletMirror` (`mortuus 8 + vacuos 6 + lucrum 6 + iter 6`, matching the original DEATH/VOID/GREED/TRAVEL tag) are registered; the amulet's mirror-link behavior and death transport remain unverified in-game. `portal`, `spike`, `spikeWood`, and `spikeTooth` remain unregistered because their targets are not ported.
 
 ## SyntheticNode vis-network seam (range-0 sources)
 

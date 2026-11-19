@@ -4,12 +4,7 @@ import dev.visfox.thaumichorizons.registry.ThEntities;
 
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.entity.ai.EatTaintGoal;
-import java.util.Optional;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -34,16 +29,11 @@ public class TaintEaterPig extends Pig {
         if (this.level().isClientSide()) {
             return;
         }
-        removeEffectById("taint_poison");
-        removeEffectById("inf_vis_exhaust");
         if (Compat.port().potions().isAvailable()) {
             this.removeEffect(Compat.port().potions().visExhaust());
+            this.removeEffect(Compat.port().potions().taintPoison());
+            this.removeEffect(Compat.port().potions().infectiousVisExhaust());
         }
-    }
-
-    private void removeEffectById(String path) {
-        BuiltInRegistries.MOB_EFFECT.get(Identifier.fromNamespaceAndPath("thaumcraft", path))
-            .ifPresent(holder -> this.removeEffect(holder));
     }
 
     @Override

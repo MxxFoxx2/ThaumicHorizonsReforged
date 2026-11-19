@@ -17,6 +17,8 @@ public interface ThaumcraftPort {
     };
     PotionCompat UNAVAILABLE_POTIONS = new PotionCompat() {
     };
+    InfusionCompat UNAVAILABLE_INFUSION = new InfusionCompat() {
+    };
     ItemCompat UNAVAILABLE_ITEMS = new ItemCompat() {
     };
     MirrorCompat UNAVAILABLE_MIRRORS = new MirrorCompat() {
@@ -58,6 +60,10 @@ public interface ThaumcraftPort {
 
     default PotionCompat potions() {
         return UNAVAILABLE_POTIONS;
+    }
+
+    default InfusionCompat infusion() {
+        return UNAVAILABLE_INFUSION;
     }
 
     default ItemCompat items() {

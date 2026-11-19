@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -196,12 +195,11 @@ public final class InfusionEntityEvents {
         Set<Holder<MobEffect>> effects = new HashSet<>();
         effects.add(MobEffects.POISON);
         effects.add(MobEffects.WITHER);
-        for (String path : new String[] {"taint_poison", "inf_vis_exhaust"}) {
-            BuiltInRegistries.MOB_EFFECT.get(Identifier.fromNamespaceAndPath("thaumcraft", path)).ifPresent(effects::add);
-        }
         if (Compat.port().potions().isAvailable()) {
             effects.add(Compat.port().potions().visExhaust());
             effects.add(Compat.port().potions().thaumarhia());
+            effects.add(Compat.port().potions().taintPoison());
+            effects.add(Compat.port().potions().infectiousVisExhaust());
         }
         return effects;
     }

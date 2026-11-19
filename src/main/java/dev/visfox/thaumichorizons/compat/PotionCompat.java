@@ -15,4 +15,16 @@ public interface PotionCompat {
     default Holder<MobEffect> thaumarhia() {
         throw new UnsupportedOperationException();
     }
+
+    default Holder<MobEffect> taintPoison() {
+        throw new UnsupportedOperationException();
+    }
+
+    default Holder<MobEffect> blurredVision() {
+        throw new UnsupportedOperationException();
+    }
+
+    default Holder<MobEffect> infectiousVisExhaust() {
+        throw new UnsupportedOperationException();
+    }
 }

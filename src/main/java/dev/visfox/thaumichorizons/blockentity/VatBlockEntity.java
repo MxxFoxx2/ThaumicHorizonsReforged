@@ -402,7 +402,10 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         }
         if (Compat.port().potions().isAvailable()) {
             return ent.hasEffect(Compat.port().potions().visExhaust())
-                || ent.hasEffect(Compat.port().potions().thaumarhia());
+                || ent.hasEffect(Compat.port().potions().thaumarhia())
+                || ent.hasEffect(Compat.port().potions().taintPoison())
+                || ent.hasEffect(Compat.port().potions().blurredVision())
+                || ent.hasEffect(Compat.port().potions().infectiousVisExhaust());
         }
         return false;
     }
@@ -419,6 +422,9 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         if (Compat.port().potions().isAvailable()) {
             ent.removeEffect(Compat.port().potions().visExhaust());
             ent.removeEffect(Compat.port().potions().thaumarhia());
+            ent.removeEffect(Compat.port().potions().taintPoison());
+            ent.removeEffect(Compat.port().potions().blurredVision());
+            ent.removeEffect(Compat.port().potions().infectiousVisExhaust());
         }
     }
 
@@ -617,10 +623,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                             pedestals.add(pos);
                             skip = true;
                         } else {
-                            BlockState bi = level.getBlockState(pos);
-                            if (bi.is(Blocks.SKELETON_SKULL) || bi.is(Blocks.WITHER_SKELETON_SKULL)
-                                || bi.is(Blocks.PIGLIN_HEAD) || bi.is(Blocks.ZOMBIE_HEAD)
-                                || bi.is(Blocks.CREEPER_HEAD) || bi.is(Blocks.DRAGON_HEAD)) {
+                            if (Compat.port().infusion().isStabiliser(level, pos)) {
                                 stuff.add(pos);
                             }
                         }
@@ -649,18 +652,12 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         }
         float sym = 0.0F;
         for (BlockPos pos : stuff) {
-            BlockState bi = level.getBlockState(pos);
-            if (bi.is(Blocks.SKELETON_SKULL) || bi.is(Blocks.WITHER_SKELETON_SKULL)
-                || bi.is(Blocks.PIGLIN_HEAD) || bi.is(Blocks.ZOMBIE_HEAD)
-                || bi.is(Blocks.CREEPER_HEAD) || bi.is(Blocks.DRAGON_HEAD)) {
+            if (Compat.port().infusion().isStabiliser(level, pos)) {
                 sym += 0.1F;
             }
             BlockPos mirrored = new BlockPos(worldPosition.getX() * 2 - pos.getX(), pos.getY(),
                 worldPosition.getZ() * 2 - pos.getZ());
-            BlockState bi2 = level.getBlockState(mirrored);
-            if (bi2.is(Blocks.SKELETON_SKULL) || bi2.is(Blocks.WITHER_SKELETON_SKULL)
-                || bi2.is(Blocks.PIGLIN_HEAD) || bi2.is(Blocks.ZOMBIE_HEAD)
-                || bi2.is(Blocks.CREEPER_HEAD) || bi2.is(Blocks.DRAGON_HEAD)) {
+            if (Compat.port().infusion().isStabiliser(level, mirrored, pos)) {
                 sym -= 0.2F;
             }
         }

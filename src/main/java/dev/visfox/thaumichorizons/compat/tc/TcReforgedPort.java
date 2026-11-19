@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -19,11 +20,14 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import thaumcraft.aspect.AddonAspects;
@@ -69,6 +73,7 @@ import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.EssentiaCompat;
 import dev.visfox.thaumichorizons.compat.FxCompat;
 import dev.visfox.thaumichorizons.compat.FluxCompat;
+import dev.visfox.thaumichorizons.compat.InfusionCompat;
 import dev.visfox.thaumichorizons.compat.ItemCompat;
 import dev.visfox.thaumichorizons.compat.MirrorCompat;
 import dev.visfox.thaumichorizons.compat.NodeCompat;
@@ -86,7 +91,8 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final FxCompat fx = new TcFx();
     private final FluxCompat flux = new TcFlux();
     private final NodeCompat nodes = new TcNodes();
-    private final PotionCompat potions = new UnavailablePotions();
+    private final PotionCompat potions = new TcPotions();
+    private final InfusionCompat infusion = new TcInfusion();
     private final ItemCompat items = new TcItems();
     private final MirrorCompat mirrors = new TcMirrors();
     private final BaubleCompat baubles = new TcBaubles();
@@ -134,6 +140,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
     @Override
     public PotionCompat potions() {
         return potions;
+    }
+
+    @Override
+    public InfusionCompat infusion() {
+        return infusion;
     }
 
     @Override
@@ -649,6 +660,62 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class UnavailablePotions implements PotionCompat {
+    static final class TcPotions implements PotionCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public Holder<MobEffect> visExhaust() {
+            return effect("vis_exhaust");
+        }
+
+        @Override
+        public Holder<MobEffect> thaumarhia() {
+            return effect("thaumarhia");
+        }
+
+        @Override
+        public Holder<MobEffect> taintPoison() {
+            return effect("taint_poison");
+        }
+
+        @Override
+        public Holder<MobEffect> blurredVision() {
+            return effect("blurred_vision");
+        }
+
+        @Override
+        public Holder<MobEffect> infectiousVisExhaust() {
+            return effect("infectious_vis_exhaust");
+        }
+
+        private static Holder<MobEffect> effect(String path) {
+            return BuiltInRegistries.MOB_EFFECT
+                .get(Identifier.fromNamespaceAndPath("thaumcraft", path))
+                .<Holder<MobEffect>>map(reference -> reference)
+                .orElse(MobEffects.POISON);
+        }
+    }
+
+    static final class TcInfusion implements InfusionCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public boolean isStabiliser(Level level, BlockPos pos) {
+            return isStabiliser(level, pos, pos);
+        }
+
+        @Override
+        public boolean isStabiliser(Level level, BlockPos blockPos, BlockPos stabiliserPos) {
+            net.minecraft.world.level.block.Block block = level.getBlockState(blockPos).getBlock();
+            return block instanceof AbstractSkullBlock
+                || block instanceof thaumcraft.block.InfusionStabiliser stabiliser
+                    && stabiliser.canStabiliseInfusion(level, stabiliserPos);
+        }
     }
 }
