@@ -25,6 +25,8 @@ public interface ThaumcraftPort {
     };
     BaubleCompat UNAVAILABLE_BAUBLES = new BaubleCompat() {
     };
+    BrainJarCompat UNAVAILABLE_BRAIN_JARS = new BrainJarCompat() {
+    };
 
     default String portId() {
         return "unavailable";
@@ -76,5 +78,9 @@ public interface ThaumcraftPort {
 
     default BaubleCompat baubles() {
         return UNAVAILABLE_BAUBLES;
+    }
+
+    default BrainJarCompat brainJars() {
+        return UNAVAILABLE_BRAIN_JARS;
     }
 }

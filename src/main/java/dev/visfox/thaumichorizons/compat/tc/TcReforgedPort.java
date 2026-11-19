@@ -40,6 +40,7 @@ import thaumcraft.aspect.AspectHelper;
 import thaumcraft.item.AspectTooltips;
 import thaumcraft.aspect.AspectRegistry;
 import thaumcraft.aspect.AspectSync;
+import thaumcraft.device.BrainJarBlockEntity;
 import thaumcraft.device.HandMirrorItem;
 import thaumcraft.device.MirrorBlock;
 import thaumcraft.device.MirrorBlockEntity;
@@ -69,6 +70,7 @@ import thaumcraft.research.WarpType;
 import dev.visfox.thaumichorizons.compat.AspectCompat;
 import dev.visfox.thaumichorizons.compat.AspectCompat.AspectDataRegistrar;
 import dev.visfox.thaumichorizons.compat.BaubleCompat;
+import dev.visfox.thaumichorizons.compat.BrainJarCompat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.EssentiaCompat;
 import dev.visfox.thaumichorizons.compat.FxCompat;
@@ -96,6 +98,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
     private final ItemCompat items = new TcItems();
     private final MirrorCompat mirrors = new TcMirrors();
     private final BaubleCompat baubles = new TcBaubles();
+    private final BrainJarCompat brainJars = new TcBrainJars();
 
     @Override
     public String portId() {
@@ -160,6 +163,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
     @Override
     public BaubleCompat baubles() {
         return baubles;
+    }
+
+    @Override
+    public BrainJarCompat brainJars() {
+        return brainJars;
     }
 
     static final class TcAspects implements AspectCompat {
@@ -463,6 +471,36 @@ public final class TcReforgedPort implements ThaumcraftPort {
         @Override
         public void set(Player player, int slot, ItemStack stack) {
             Baubles.set(player, slot, stack);
+        }
+    }
+
+    static final class TcBrainJars implements BrainJarCompat {
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public boolean isBrainJar(BlockEntity entity) {
+            return entity instanceof BrainJarBlockEntity;
+        }
+
+        @Override
+        public int xp(BlockEntity entity) {
+            return entity instanceof BrainJarBlockEntity jar ? jar.getXp() : 0;
+        }
+
+        @Override
+        public int maxXp() {
+            return BrainJarBlockEntity.XP_MAX;
+        }
+
+        @Override
+        public void setXp(BlockEntity entity, int xp) {
+            if (entity instanceof BrainJarBlockEntity jar) {
+                jar.setXp(Math.max(0, Math.min(xp, BrainJarBlockEntity.XP_MAX)));
+                jar.sync();
+            }
         }
     }
 

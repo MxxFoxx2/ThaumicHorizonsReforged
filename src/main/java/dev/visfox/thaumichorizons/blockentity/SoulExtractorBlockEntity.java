@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
+import dev.visfox.thaumichorizons.compat.BrainJarCompat;
+import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -64,47 +66,56 @@ public class SoulExtractorBlockEntity extends VisNode implements net.minecraft.w
         if (above == null) {
             return;
         }
-        if (above instanceof SoulReceiver receiver && receiver.canAcceptSouls()) {
-            extracting = true;
-            if (!tickLevel.isClientSide() && ticksLeft > 0) {
-                int visBoost = VisNet.drainVis(tickLevel, worldPosition, Aspect.AIR, 10);
-                ticksLeft -= 1 + visBoost;
-                receiver.addSoulBits(1 + visBoost);
-                if (ticksLeft <= 0) {
-                    BlockEntity below = tickLevel.getBlockEntity(worldPosition.below());
-                    ItemStack sand = new ItemStack(Items.SAND);
-                    boolean placed = false;
-                    if (below instanceof Container container) {
-                        for (int slot = 0; slot < container.getContainerSize(); slot++) {
-                            ItemStack existing = container.getItem(slot);
-                            if (existing.isEmpty() || ItemStack.isSameItemSameComponents(existing, sand)) {
-                                container.setItem(slot, sand.copyWithCount(existing.getCount() + sand.getCount()));
-                                placed = true;
-                                break;
-                            }
+        BrainJarCompat brainJars = Compat.port().brainJars();
+        boolean brainJar = brainJars.isBrainJar(above) && brainJars.xp(above) < brainJars.maxXp();
+        SoulReceiver receiver = above instanceof SoulReceiver candidate && candidate.canAcceptSouls() ? candidate : null;
+        if (!brainJar && receiver == null) {
+            return;
+        }
+        extracting = true;
+        if (!tickLevel.isClientSide() && ticksLeft > 0) {
+            int visBoost = VisNet.drainVis(tickLevel, worldPosition, Aspect.AIR, 10);
+            int bits = 1 + visBoost;
+            ticksLeft -= bits;
+            if (brainJar) {
+                BrainJarFeed.feed(above, brainJars, bits, Math::random);
+            } else {
+                receiver.addSoulBits(bits);
+            }
+            if (ticksLeft <= 0) {
+                BlockEntity below = tickLevel.getBlockEntity(worldPosition.below());
+                ItemStack sand = new ItemStack(Items.SAND);
+                boolean placed = false;
+                if (below instanceof Container container) {
+                    for (int slot = 0; slot < container.getContainerSize(); slot++) {
+                        ItemStack existing = container.getItem(slot);
+                        if (existing.isEmpty() || ItemStack.isSameItemSameComponents(existing, sand)) {
+                            container.setItem(slot, sand.copyWithCount(existing.getCount() + sand.getCount()));
+                            placed = true;
+                            break;
                         }
                     }
-                    if (!placed) {
-                        ItemEntity fallenSand = new ItemEntity(tickLevel, worldPosition.getX() + 0.5,
-                            worldPosition.getY(), worldPosition.getZ() + 0.5, sand);
-                        tickLevel.addFreshEntity(fallenSand);
-                    }
                 }
-                setChanged();
-                if (tickLevel instanceof ServerLevel serverLevel) {
-                    serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+                if (!placed) {
+                    ItemEntity fallenSand = new ItemEntity(tickLevel, worldPosition.getX() + 0.5,
+                        worldPosition.getY(), worldPosition.getZ() + 0.5, sand);
+                    tickLevel.addFreshEntity(fallenSand);
                 }
-            } else if (ticksLeft > 0 && tickLevel.isClientSide()) {
-                sieveMotion++;
-                if (sieveMotion >= 360) {
-                    sieveMotion -= 360;
-                    tickLevel.playLocalSound(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
-                        worldPosition.getZ() + 0.5, SoundEvents.SAND_BREAK, SoundSource.BLOCKS, 1.0F, 0.0F, false);
-                    if (tickLevel.isClientSide()) {
-                        for (int i = 0; i < 8; i++) {
-                            tickLevel.addParticle(ParticleTypes.WHITE_ASH, worldPosition.getX() + 0.5,
-                                worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 0.0, 0.05, 0.0);
-                        }
+            }
+            setChanged();
+            if (tickLevel instanceof ServerLevel serverLevel) {
+                serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            }
+        } else if (ticksLeft > 0 && tickLevel.isClientSide()) {
+            sieveMotion++;
+            if (sieveMotion >= 360) {
+                sieveMotion -= 360;
+                tickLevel.playLocalSound(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
+                    worldPosition.getZ() + 0.5, SoundEvents.SAND_BREAK, SoundSource.BLOCKS, 1.0F, 0.0F, false);
+                if (tickLevel.isClientSide()) {
+                    for (int i = 0; i < 8; i++) {
+                        tickLevel.addParticle(ParticleTypes.WHITE_ASH, worldPosition.getX() + 0.5,
+                            worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 0.0, 0.05, 0.0);
                     }
                 }
             }

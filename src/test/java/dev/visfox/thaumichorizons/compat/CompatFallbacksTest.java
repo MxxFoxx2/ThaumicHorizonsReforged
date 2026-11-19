@@ -1,12 +1,15 @@
 package dev.visfox.thaumichorizons.compat;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.junit.jupiter.api.Test;
 
 class CompatFallbacksTest {
@@ -30,6 +33,28 @@ class CompatFallbacksTest {
 
         assertFalse(port.potions().isAvailable());
         assertFalse(port.infusion().isAvailable());
+        assertFalse(port.brainJars().isAvailable());
+    }
+
+    @Test
+    void unavailableBrainJarCompatIsInert() {
+        BrainJarCompat brainJars = new BrainJarCompat() {
+        };
+
+        assertFalse(brainJars.isAvailable());
+        assertFalse(brainJars.isBrainJar(null));
+        assertEquals(0, brainJars.xp(null));
+        assertEquals(0, brainJars.maxXp());
+        assertDoesNotThrow(() -> brainJars.setXp(null, 1));
+    }
+
+    @Test
+    void tcPortExposesBrainJarCompat() {
+        ThaumcraftPort port = new TcReforgedPort();
+
+        assertTrue(port.brainJars().isAvailable());
+        assertEquals(2000, port.brainJars().maxXp());
+        assertFalse(port.brainJars().isBrainJar(null));
     }
 
     @Test
