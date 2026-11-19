@@ -83,4 +83,28 @@ public record CreatureInfusionData(int[] infusions, boolean chameleon, boolean c
         }
         return array;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof CreatureInfusionData data)) {
+            return false;
+        }
+        return java.util.Arrays.equals(infusions, data.infusions)
+            && chameleon == data.chameleon
+            && climb == data.climb
+            && tumorWarp == data.tumorWarp
+            && tumorWarpPermanent == data.tumorWarpPermanent
+            && tumorWarpTemp == data.tumorWarpTemp;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = java.util.Arrays.hashCode(infusions);
+        result = 31 * result + (chameleon ? 1 : 0);
+        result = 31 * result + (climb ? 1 : 0);
+        result = 31 * result + tumorWarp;
+        result = 31 * result + tumorWarpPermanent;
+        result = 31 * result + tumorWarpTemp;
+        return result;
+    }
 }
