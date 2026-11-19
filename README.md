@@ -15,14 +15,14 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 ## What the mod adds
 
 - **Creature infusion.** Jar a critter with the wand, drop it into the Vat with components, and get a TH creature: Chocolate Cow, Ore Pig, Endersteed, Seawolf, slimes, the Sheeder, and more — 30 critter recipes with vanilla parents replaced 1:1. Infused creatures gain permanent effects and replaced AI.
-- **Player self-infusions.** Ten infusions from the Vat: swiftness, regeneration, resistance, morphic fingers, silver heart, synth skin, amphibious, warp tumor (siphons your warp into a reservoir), spider climb (C key), and Chameleon Skin (X key) — reimplemented without the original sync bug: attachment-driven, armor-including invisibility, verified by the checklist in [docs/verification.md](docs/verification.md).
+- **Player self-infusions.** Ten infusions from the Vat: swiftness, regeneration, resistance, morphic fingers, silver heart, synth skin, amphibious, warp tumor (siphons your warp into a reservoir), spider climb (C key), and Chameleon Skin (X key) — reimplemented without the original sync bug, using attachment-driven full invisibility that hides armor. Two-client and persistence checks are tracked in [docs/verification.md](docs/verification.md).
 - **The Vat.** A 1:1 multiblock with curative, incarnation, creature-infusion, and clone modes (corpse effigy → self-clone).
 - **Souls.** Soul jars, the Soul Sieve, the Inspiratron (souls → completed research), the Soulforge, and the Soul Beacon; containment focus captures Lost Souls.
 - **Blood.** The Blood Infuser and the syringe family: draw blood, inject potions and nutrients.
 - **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
 - **Golems.** TH golem materials from grass to void salt, placed from blocks with golem powder, paired with the TH bell.
 - **Lenses and foci.** Five arcane lenses with the lens case, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
-- **Pocket plane.** Shared, aspect-themed pocket dimensions created through the Vortex; a Planar Keystone binds a player to one pocket plane *(dimension loads on the dedicated server; terrain, portal, Keystone, and client-asset verification remain in flight)*.
+- **Pocket plane.** Shared, aspect-themed pocket dimensions created through the Vortex; a Planar Keystone binds a player to one pocket plane (`thaumichorizons:pocket_plane` is registered and loads on a dedicated server; terrain and portal gameplay still need in-game verification).
 
 ## Installation
 
@@ -38,20 +38,21 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 ## Building and development
 
-The port keeps 1.7.10 sources under `reference/1.7.10/` and enforces version seams (`platform/`, `compat/`) with a checker, mirroring the host project's discipline.
+The source port and development instructions are in the repository. From the repository root:
 
 ```sh
-./gradlew build                        # composite build; includes Thaumcraft 4: Reforged
-./gradlew runClient                    # dev client
-./gradlew runServer                    # dev server
-python3 tools/check_seams.py           # version/API boundary check (also runs locally)
+./gradlew build
+./gradlew runClient
+./gradlew runServer
+python3 -I tools/check_seams.py
+python3 -I tools/check_assets.py
 ```
 
-Agent and contribution rules live in [CLAUDE.md](CLAUDE.md) and [AGENTS.md](AGENTS.md); the manual verification gates are in [docs/verification.md](docs/verification.md).
+Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) imports those rules for Claude Code. The architecture and TC4R integration boundaries are explained in [docs/architecture.md](docs/architecture.md) and [docs/tc4r-integration.md](docs/tc4r-integration.md). Manual verification is tracked in [docs/verification.md](docs/verification.md).
 
 ## Status and roadmap
 
-Ported and building: registration, aspects, the full research tree (74 entries), five mob effects, simple content, eight essentia/vis machines, twenty creatures with AI and infusion recipes, golems, lenses and foci, the souls/blood/Vat system with nine menus, the Mirror Amulet with death-item transport, Void Putty repair and Illumination Focus dyeing. The Pocket Plane compiles and its dimension loads on the dedicated server; terrain generation, portal/Keystone behavior, remaining entities, client renderers, and FX polish remain in flight — see `docs/roadmap.md` and `docs/verification.md`.
+Ported and building: registration, aspects, the full research tree (74 entries), five mob effects, simple content, eight essentia/vis machines, twenty creatures with AI and infusion recipes, golems, lenses and foci, the souls/blood/Vat system with nine menus, the Mirror Amulet with death-item transport, Void Putty repair and Illumination Focus dyeing. The Pocket Plane compiles and loads on a dedicated server; terrain generation, portals, Keystone gameplay and client assets still require in-game verification. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
 
 ## Authors and license
 
