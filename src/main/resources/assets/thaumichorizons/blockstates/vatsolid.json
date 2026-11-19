@@ -1,6 +1,15 @@
 {
   "variants": {
-    "": {
+    "variant=4": {
+      "model": "thaumichorizons:block/vatsolid"
+    },
+    "variant=5": {
+      "model": "thaumichorizons:block/vatsolid"
+    },
+    "variant=6": {
+      "model": "thaumichorizons:block/vatsolid"
+    },
+    "variant=7": {
       "model": "thaumichorizons:block/vatsolid"
     }
   }

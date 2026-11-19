@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "variant=10": {
+      "model": "thaumichorizons:block/vat"
+    },
+    "variant=11": {
       "model": "thaumichorizons:block/vat"
     }
   }
