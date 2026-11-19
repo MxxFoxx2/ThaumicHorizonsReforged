@@ -1,6 +1,6 @@
 # Roadmap and current state
 
-Snapshot updated on 2026-11-19 at `main` commit [`df43a90`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/df43a90e9bbe4c3444a20447290cf9f3fb15fe21). CI run [#217](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44463335918) is green. Build, seam-check, and dedicated-server facts are recorded separately from code presence and manual in-game verification in `verification.md`.
+Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). Historical CI run [#217](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44463335918) was green for the earlier `df43a90` snapshot; it does not validate the unmerged `feat/remaining-visual-ports` branch. The branch contains post-baseline visual source changes, with no build, CI or live-client result claimed for those changes. Build, seam-check, and dedicated-server facts remain separate from code presence and manual in-game verification in `verification.md`.
 
 ## Current foundation
 

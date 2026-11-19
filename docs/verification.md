@@ -1,6 +1,6 @@
 # Verification
 
-Manual gates. Headless builds and the seam checker do not replace launching the client.
+Manual gates. Headless builds and the seam checker do not replace launching the client. The changes on `feat/remaining-visual-ports` are not merged and have not been built or tested in a live client; new checks remain unchecked.
 
 ## Cloud blocks — PR #2, code and CI only
 
