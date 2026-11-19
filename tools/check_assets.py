@@ -3,8 +3,9 @@ import json
 import sys
 from pathlib import Path
 
-ASSETS_DIR = Path("src") / "main" / "resources" / "assets"
+DEFAULT_ASSETS = Path("src") / "main" / "resources" / "assets"
 NAMESPACE = "thaumichorizons"
+DIRECTORIES = ("blockstates", "models", "items")
 
 
 def check_reference(assets, kind, reference, source, checked, errors):
@@ -28,7 +29,7 @@ def walk(value, source, assets, checked, errors):
         for key, child in value.items():
             if key in ("model", "parent") and isinstance(child, str):
                 check_reference(assets, "model", child, source, checked, errors)
-            elif key == "texture" and isinstance(child, str):
+            elif key in ("texture", "particle") and isinstance(child, str):
                 check_reference(assets, "texture", child, source, checked, errors)
             elif key == "textures" and isinstance(child, dict):
                 for texture in child.values():
@@ -43,22 +44,26 @@ def walk(value, source, assets, checked, errors):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", default=".")
+    parser.add_argument("--root", default=str(DEFAULT_ASSETS))
     arguments = parser.parse_args()
-    assets = Path(arguments.root) / ASSETS_DIR
+    assets = Path(arguments.root)
     checked = []
     errors = []
-    for directory in ("blockstates", "models"):
+    files = 0
+    for directory in DIRECTORIES:
         base = assets / NAMESPACE / directory
         if not base.is_dir():
             continue
         for path in sorted(base.rglob("*.json")):
+            files += 1
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError as error:
-                errors.append(f"{path}: invalid JSON ({error})")
+            except (json.JSONDecodeError, OSError, UnicodeError) as error:
+                errors.append(f"{path}: cannot read JSON ({error})")
                 continue
             walk(data, path, assets, checked, errors)
+    if not files or not checked:
+        errors.append(f"no asset references found under {assets}")
     for error in errors:
         print(error)
     if errors:
