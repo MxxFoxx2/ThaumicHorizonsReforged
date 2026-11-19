@@ -63,7 +63,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - All variants use the old six-direction mounting metadata as the `facing` block-state property (DOWN=0, UP=1, NORTH=2, SOUTH=3, WEST=4, EAST=5). This replaces `TileSpike.dir` NBT with normal block-state persistence and synchronization.
 - Placement requires the corresponding support face to be sturdy. Removing that support schedules a check; unsupported spikes drop their own block item and are removed.
 - The original 1.0 cactus damage on entity contact is retained, and the original directional inset collision bounds are represented by 1/16-block VoxelShapes.
-- The original `spike.obj` mesh and metal/wood/tooth textures are used by a dedicated block-entity renderer. Inventory/hand items currently use generated 2D texture icons; the legacy 3D inventory renderer is not yet reproduced.
+- The original `spike.obj` mesh and metal/wood/tooth textures are used by the block-entity renderer and a shared 26.3 `SpecialModelRenderer` for the three BlockItems. The item definitions use the legacy mesh and material texture in inventory and hand contexts; live-client orientation, scale and appearance checks remain open.
 - Manual checks for all mounting faces, support removal, damage, renderer orientation and save/reload remain open in `verification.md`.
 
 ## Recombinator renderer — code port, runtime checks pending

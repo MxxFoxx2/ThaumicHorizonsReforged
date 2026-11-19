@@ -27,7 +27,7 @@ def check_reference(assets, kind, reference, source, checked, errors):
 def walk(value, source, assets, checked, errors):
     if isinstance(value, dict):
         for key, child in value.items():
-            if key in ("model", "parent") and isinstance(child, str):
+            if key in ("model", "parent", "base") and isinstance(child, str):
                 check_reference(assets, "model", child, source, checked, errors)
             elif key in ("texture", "particle") and isinstance(child, str):
                 check_reference(assets, "texture", child, source, checked, errors)

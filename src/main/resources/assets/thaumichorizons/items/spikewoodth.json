@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/spikewoodth",
+    "model": {
+      "type": "thaumichorizons:spike"
+    }
+  }
+}
