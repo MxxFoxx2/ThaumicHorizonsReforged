@@ -30,6 +30,8 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Fire phial ammunition from the injector and use a phial directly. Confirm each creates one splash projectile with the same effect list and splash behavior as the source syringe item, and that survival consumption/creative preservation matches the original.
 - [ ] Test both projectiles with two clients and through save/reload while embedded/in flight. Check that projectile state and potion payload remain synchronized.
 - [ ] Inspect the custom 3D syringe projectile in flight from all angles; confirm its four OBJ parts, yaw/pitch alignment, translucent potion-coloured body, white needle/plungers, scale and visibility at range. Confirm Blast Phial still uses its intended vanilla splash-potion model and check both projectile renderers for missing-model/log errors.
+- [ ] Restore the legacy custom 3D Syringe item renderer for empty, blood, blood-sample and injection items in inventory/ground/first-person/third-person contexts. The new OBJ renderer covers the thrown dart only; the four item JSON models still use generated 2D sprites.
+- [ ] Restore the legacy 3D ModelBiped display for the Corpse Effigy item in inventory/ground/hand contexts. The Vat's normal/revived Effigy previews are separate render paths and are now source-ported.
 
 ## Vat auxiliary previews — source implementation, client acceptance pending
 
