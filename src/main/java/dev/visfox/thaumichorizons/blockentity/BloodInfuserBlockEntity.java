@@ -80,7 +80,7 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
                 theInjection.set(DataComponents.POTION_CONTENTS, contents);
                 removeItem(0, 1);
                 for (int i = 0; i < 9; i++) {
-                    if (output[i] == null) {
+                    if (output[i] == null || output[i].isEmpty()) {
                         output[i] = theInjection;
                         break;
                     }
@@ -158,11 +158,12 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
 
     public void setEssentiaSelected(AspectList as) {
         aspectsSelected = as.copy();
+        sync();
     }
 
     public boolean emptyOutputSlot() {
         for (int i = 0; i < 9; i++) {
-            if (output[i] == null) {
+            if (output[i] == null || output[i].isEmpty()) {
                 return true;
             }
         }
@@ -392,15 +393,15 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
     }
 
     public void dropContents(Level dropLevel, BlockPos pos) {
-        if (syringe != null) {
+        if (syringe != null && !syringe.isEmpty()) {
             dropLevel.addFreshEntity(new ItemEntity(dropLevel, pos.getX(), pos.getY(), pos.getZ(), syringe));
-            syringe = null;
         }
+        syringe = null;
         for (int i = 0; i < 9; i++) {
-            if (output[i] != null) {
+            if (output[i] != null && !output[i].isEmpty()) {
                 dropLevel.addFreshEntity(new ItemEntity(dropLevel, pos.getX(), pos.getY(), pos.getZ(), output[i]));
-                output[i] = null;
             }
+            output[i] = null;
         }
     }
 
@@ -415,7 +416,8 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         syringe = input.read("syringe", ItemStack.OPTIONAL_CODEC).orElse(null);
         List<ItemStack> items = input.read("items", ItemStack.OPTIONAL_CODEC.listOf()).orElseGet(ArrayList::new);
         for (int i = 0; i < 9; i++) {
-            this.output[i] = i < items.size() ? items.get(i) : null;
+            ItemStack stack = i < items.size() ? items.get(i) : ItemStack.EMPTY;
+            this.output[i] = stack.isEmpty() ? null : stack;
         }
     }
 

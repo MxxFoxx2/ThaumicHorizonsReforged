@@ -14,6 +14,7 @@ import thaumcraft.aspect.AspectList;
 import thaumcraft.research.Knowledge;
 
 public class BloodInfuserMenu extends AbstractContainerMenu {
+    private static final int MAX_SELECTED_ASPECTS = 8;
     private final BloodInfuserBlockEntity tile;
     private final AspectList aspectsKnown;
 
@@ -80,23 +81,31 @@ public class BloodInfuserMenu extends AbstractContainerMenu {
         return itemstack;
     }
 
+    private int selectedAspectCount() {
+        int count = 0;
+        for (Aspect aspect : tile.aspectsSelected.getAspects()) {
+            count += Math.max(0, tile.aspectsSelected.getAmount(aspect));
+        }
+        return count;
+    }
+
     @Override
     public boolean clickMenuButton(Player player, int button) {
         List<Aspect> sorted = aspectsKnown.getAspectsSorted();
         if (button < 0) {
             button = -1 - button;
-            if (button < sorted.size()) {
+            if (button < sorted.size() && selectedAspectCount() < MAX_SELECTED_ASPECTS) {
                 tile.aspectsSelected.add(sorted.get(button), 1);
-                tile.setChanged();
+                tile.sync();
                 return true;
             }
             return false;
         }
         if (button > 2) {
             button -= 3;
-            if (button < sorted.size()) {
+            if (button < sorted.size() && tile.aspectsSelected.getAmount(sorted.get(button)) > 0) {
                 tile.aspectsSelected.remove(sorted.get(button), 1);
-                tile.setChanged();
+                tile.sync();
                 return true;
             }
             return false;
@@ -104,17 +113,17 @@ public class BloodInfuserMenu extends AbstractContainerMenu {
         switch (button) {
             case 0 -> {
                 tile.mode = 0;
-                tile.setChanged();
+                tile.sync();
                 return true;
             }
             case 1 -> {
                 tile.mode = 1;
-                tile.setChanged();
+                tile.sync();
                 return true;
             }
             case 2 -> {
                 tile.mode = 2;
-                tile.setChanged();
+                tile.sync();
                 return true;
             }
             default -> {
