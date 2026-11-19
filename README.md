@@ -8,7 +8,7 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
-| 26.3 | 26.3.0.57-beta | 1.1.3 | \`main\` — core systems playable, client pass in flight |
+| 26.3 | 26.3.0.57-beta | 1.1.3 | `main` — core systems playable, client pass in flight |
 | 26.1.2 | 26.1.2.122 | 1.1.3 | planned |
 | 1.21.1 | 21.1.256 | 1.1.3 | planned |
 
@@ -28,25 +28,25 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 1. Create a **Minecraft 26.3** profile with **NeoForge 26.3.0.57-beta**.
 2. Install **Thaumcraft 4: Reforged 1.1.3** (required) and **TerraBlender 26.3-26.3.0.0.9**.
-3. Drop \`thaumic-horizons-reforged-<version>-26.3.jar\` into \`mods\`.
+3. Drop `thaumic-horizons-reforged-<version>-26.3.jar` into `mods`.
 
 [Download Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3)
 
 ## Configuration
 
-\`config/thaumichorizons-startup.toml\` (created on first launch): \`warpedTumorValue\` (warp points held by the tumor), \`enablePocketPlane\`, \`alternateGolemBell\`.
+`config/thaumichorizons-startup.toml` (created on first launch): `warpedTumorValue` (warp points held by the tumor), `enablePocketPlane`, `alternateGolemBell`.
 
 ## Building and development
 
-The port keeps 1.7.10 sources under \`reference/1.7.10/\` and enforces version seams (\`platform/\`, \`compat/\`) with a checker, mirroring the host project's discipline.
+The port keeps 1.7.10 sources under `reference/1.7.10/` and enforces version seams (`platform/`, `compat/`) with a checker, mirroring the host project's discipline.
 
-\`\`\`sh
+```sh
 ./gradlew build
 ./gradlew runClient
 ./gradlew runServer
 python3 -I tools/check_seams.py
 python3 -I tools/check_assets.py
-\`\`\`
+```
 
 Agent instructions are shared through [AGENTS.md](AGENTS.md); Claude Code imports them from [CLAUDE.md](CLAUDE.md). Detailed architecture, TC4R integration and build guidance live in [docs/development/](docs/development/README.md). Manual verification gates are in [docs/verification.md](docs/verification.md).
 
@@ -56,7 +56,7 @@ Ported and building: registration, aspects, the full research tree (74 entries),
 
 ## Authors and license
 
-This port derives from the GTNH fork of Thaumic Horizons, so the distributed port is licensed **LGPL-3.0-or-later** (full text in [LICENSE.txt](LICENSE.txt)); Kentington's original 1.7.10 code remains MIT, and the port's own modern-API code is contributed under the same LGPL terms. Attribution: **Kentington** (original Thaumic Horizons, MIT), **GTNewHorizons** (the maintained 1.7.10 fork), **Azanor** (original Thaumcraft), **overseas / notlikethiss** ([Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged)), **MxxFoxx2** (this port, developed with AI agents under human direction). Kentington's explicit-modification permission for the GTNH fork is archived at \`reference/1.7.10/license-support/\`.
+This port derives from the GTNH fork of Thaumic Horizons, so the distributed port is licensed **LGPL-3.0-or-later** (full text in [LICENSE.txt](LICENSE.txt)); Kentington's original 1.7.10 code remains MIT, and the port's own modern-API code is contributed under the same LGPL terms. Attribution: **Kentington** (original Thaumic Horizons, MIT), **GTNewHorizons** (the maintained 1.7.10 fork), **Azanor** (original Thaumcraft), **overseas / notlikethiss** ([Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged)), **MxxFoxx2** (this port, developed with AI agents under human direction). Kentington's explicit-modification permission for the GTNH fork is archived at `reference/1.7.10/license-support/`.
 
 ## Links
 
