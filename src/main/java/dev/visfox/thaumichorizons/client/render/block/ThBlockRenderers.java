@@ -23,6 +23,7 @@ public final class ThBlockRenderers {
         event.registerBlockEntityRenderer(ThBlockEntities.RECOMBINATOR.get(), RecombinatorRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.VAT.get(), VatStructureRenderer::new);
         event.registerBlockEntityRenderer(ThBlockEntities.VAT_MATRIX.get(), VatMatrixRenderer::new);
+        event.registerBlockEntityRenderer(ThBlockEntities.SOUL_JAR.get(), SoulJarPreviewRenderer::new);
         event.registerBlockEntityRenderer(PocketRegistry.SLOT_BE.get(), SlotBlockRenderer::new);
     }
 }
