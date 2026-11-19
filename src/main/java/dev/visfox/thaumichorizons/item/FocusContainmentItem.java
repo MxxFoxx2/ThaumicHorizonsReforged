@@ -125,21 +125,15 @@ public class FocusContainmentItem extends FocusItem {
                 contain.put(pp, contain.get(pp) + 2.0F + Wands.getFocusPotency(wand) / 3.0F);
             }
             if (!world.isClientSide() && contain.get(pp) > mob.getHealth() * 20.0F) {
-                if (!(ent instanceof LostSoul)) {
-                    jarEntity(world, p, ent);
-                } else {
-                    consumeEmptyJar(p);
-                    ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
-                    SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(new CompoundTag(), true, "", ""));
-                    if (!p.getInventory().add(jar)) {
-                        p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
-                    }
-                    Compat.port().fx().containmentCapture(world, ent.position(), 29631);
+                boolean captured = ent instanceof LostSoul
+                    ? jarSoul(world, p, ent)
+                    : jarEntity(world, p, ent);
+                if (captured) {
+                    THSounds.play(world, ent.blockPosition(), "craftfail", SoundSource.PLAYERS, 1.0F, 1.0F);
+                    ent.discard();
                 }
-                THSounds.play(world, ent.blockPosition(), "craftfail", SoundSource.PLAYERS, 1.0F, 1.0F);
                 contain.remove(pp);
                 hitCritters.remove(pp);
-                ent.discard();
             }
         }
     }
@@ -150,39 +144,79 @@ public class FocusContainmentItem extends FocusItem {
             || ent instanceof net.minecraft.world.entity.monster.warden.Warden;
     }
 
-    private void jarEntity(Level world, Player p, Entity ent) {
-        consumeEmptyJar(p);
-        ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
+    private boolean jarEntity(Level world, Player p, Entity ent) {
         CompoundTag entityData = EntityNbt.save(ent);
+        if (!consumeEmptyJar(p)) {
+            return false;
+        }
+        ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
         SoulJarKeys.SoulJarData data = new SoulJarKeys.SoulJarData(entityData, false, ent.getName().getString(), "");
         SoulJarKeys.DATA.set(jar, data);
         if (!p.getInventory().add(jar)) {
             p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
         }
         Compat.port().fx().containmentCapture(world, ent.position(), 29631);
+        return true;
     }
 
-    private static void consumeEmptyJar(Player p) {
+    private boolean jarSoul(Level world, Player p, Entity ent) {
+        if (!consumeEmptyJar(p)) {
+            return false;
+        }
+        ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
+        SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(new CompoundTag(), true, "", ""));
+        if (!p.getInventory().add(jar)) {
+            p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
+        }
+        Compat.port().fx().containmentCapture(world, ent.position(), 29631);
+        return true;
+    }
+
+    private static boolean consumeEmptyJar(Player p) {
         ItemStack jarItem = TcBlocks.emptyJar();
         if (jarItem.isEmpty()) {
-            return;
+            return false;
         }
         Inventory inventory = p.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.getItem() == jarItem.getItem()) {
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, jarItem)) {
                 stack.shrink(1);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     boolean canJarEntity(Player p) {
         ItemStack jarItem = TcBlocks.emptyJar();
-        boolean hasJar = !jarItem.isEmpty()
-            && p.getInventory().hasAnyMatching(stack -> stack.getItem() == jarItem.getItem());
-        boolean hasRoom = p.getInventory().getFreeSlot() != -1;
-        return hasJar && hasRoom;
+        if (jarItem.isEmpty()) {
+            return false;
+        }
+        Inventory inventory = p.getInventory();
+        boolean hasJar = inventory.hasAnyMatching(stack -> !stack.isEmpty()
+            && ItemStack.isSameItemSameComponents(stack, jarItem));
+        if (!hasJar) {
+            return false;
+        }
+
+        // Consuming the final empty jar frees its slot for the filled Soul Jar.
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            if (stack.isEmpty()
+                || ItemStack.isSameItemSameComponents(stack, jarItem) && stack.getCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onPlayerStoppedUsingFocus(ItemStack wand, Level level, Player player, int count) {
+        String key = "R" + player.getName().getString();
+        hitCritters.remove(key);
+        contain.remove(key);
+        soundDelay.remove(key);
     }
 
     @Override

@@ -1,12 +1,9 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.item.SoulJarKeys;
-import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.item.SoulJarKeys.SoulJarData;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -45,8 +42,7 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
             return InteractionResult.PASS;
         }
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
-            drop = false;
-            level.removeBlock(pos, false);
+            // Rebuild and successfully add the entity before consuming the jar.
             Entity ent = EntityNbt.load(data.entity(), serverLevel);
             if (ent == null) {
                 return InteractionResult.PASS;
@@ -55,8 +51,16 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
                 tameable.setOwner(player);
             }
             ent.snapTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, 0.0F, 0.0F);
-            serverLevel.addFreshEntity(ent);
-            setChanged();
+            if (!serverLevel.addFreshEntity(ent)) {
+                return InteractionResult.PASS;
+            }
+
+            drop = false;
+            if (!level.removeBlock(pos, false)) {
+                drop = true;
+                ent.discard();
+                return InteractionResult.PASS;
+            }
         }
         level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         player.swing(player.getUsedItemHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
