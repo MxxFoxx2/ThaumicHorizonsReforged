@@ -1,0 +1,45 @@
+# TC4R integration
+
+## Dependency and source of truth
+
+The local development setup uses a composite build of the sibling repository through `includeBuild('../thaumcraft-4-reforged')` in `settings.gradle`. CI checks out a pinned TC4R commit; when changing or debugging an API, compare the local source with the revision pinned in `.github/workflows/ci.yml`.
+
+For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` rather than semantic guesses.
+
+## Choosing the integration point
+
+1. Search for an existing compat capability and its TC4R implementation.
+2. If functionality is optional or may differ between host implementations, expose the smallest useful contract through `compat/`.
+3. Keep TC4R-specific lookups, effects, blocks, internal objects and mixins in `compat/tc/`.
+4. A direct import in gameplay code is allowed only if the type is intentionally exposed in `THAUMCRAFT_API` in `tools/check_seams.py`. Before adding an exception, explain why it is public add-on API and why an adapter is unsuitable.
+5. Keep unavailable implementations safe. Callers must check `isAvailable()` before optional operations; do not disguise a missing registry entry as an unrelated item or effect.
+
+## Host API details worth preserving
+
+- **Focus upgrade IDs:** TC4R's `FocusUpgradeType` stores upgrades in an ID-indexed static table. Registering a second upgrade at an occupied ID logs an error and ignores the new registration. Check the host's existing IDs before assigning any TH/custom ID; otherwise an upgrade can silently be unavailable to gameplay despite the log entry.
+- **Focus upgrade localization:** the host API constructs keys as `focus.upgrade.<name>.name` and `focus.upgrade.<name>.text`. Match these exact keys when defining translations; do not infer a different suffix convention from unrelated language entries.
+
+These details are tied to the host API implementation. Recheck the pinned TC4R source if that implementation changes.
+
+## Mixins and hooks
+
+Until the host provides a required native hook, TH may implement it through a mixin in `compat/tc/` and the existing TC4R compatibility implementation.
+
+- Pin and verify the supported TC4R version range.
+- Validate target class, method descriptor, injection point, side and lifecycle against the pinned source.
+- Keep mixin configuration and access transformers synchronized with the implementation.
+- Avoid changing host behavior when TH is absent.
+- When TC4R gains the equivalent native hook, replace the mixin with the native API while keeping TH gameplay interfaces stable where possible.
+
+## Working with the TC4R fork
+
+- Prefer additive-only API changes; preserve behavior when TH is absent.
+- Document new add-on-facing API in the fork's `docs/ADDON_API.md`.
+- Build against the intended local composite checkout and confirm CI pins the tested revision.
+- Changes to `notlikethiss/thaumcraft-4-reforged` upstream require explicit user direction.
+
+## Validation
+
+Run `python3 -I tools/check_seams.py` and the relevant Gradle tests/build. Add JUnit coverage for fallback contracts or deterministic adapters where practical. Exercise the actual client/server path when registries, effects, menus, rendering or networking are involved.
+
+When reporting the change, include the TC4R revision, public API allowlist changes, mixin/API changes, fallback behavior and unverified runtime scenarios.
