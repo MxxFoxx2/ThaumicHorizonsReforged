@@ -29,4 +29,10 @@ class SoulJarFramesTest {
     void negativeTimeStaysWithinSheet() {
         assertEquals(15, SoulJarFrames.frame(-40_000_000L));
     }
+
+    @Test
+    void largeNanoTimeWrapsExactly() {
+        // 1e18 ns is exactly 25,000,000,000 legacy frames.
+        assertEquals(0, SoulJarFrames.frame(1_000_000_000_000_000_000L));
+    }
 }

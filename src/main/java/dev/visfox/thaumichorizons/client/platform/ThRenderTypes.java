@@ -24,6 +24,10 @@ public final class ThRenderTypes {
         return RenderTypes.entityCutout(texture, false);
     }
 
+    public static RenderType textSeeThrough(Identifier texture) {
+        return RenderTypes.textSeeThrough(texture);
+    }
+
     public static RenderType lightning() {
         return RenderTypes.lightning();
     }

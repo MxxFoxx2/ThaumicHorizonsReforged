@@ -17,11 +17,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -96,7 +94,8 @@ public final class SoulJarPreviewRenderer implements BlockEntityRenderer<SoulJar
             poseStack.translate(0.5F, 0.4F, 0.5F);
             poseStack.rotate(camera.orientation);
             int frame = state.frame;
-            collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(SOUL_TEXTURE),
+            // Legacy disables depth testing for this quad so the soul stays visible through the jar.
+            collector.submitCustomGeometry(poseStack, ThRenderTypes.textSeeThrough(SOUL_TEXTURE),
                 (pose, buffer) -> renderSoul(pose, buffer, frame));
             poseStack.popPose();
             return;
@@ -124,10 +123,7 @@ public final class SoulJarPreviewRenderer implements BlockEntityRenderer<SoulJar
     private static void vertex(PoseStack.Pose pose, VertexConsumer buffer, float x, float y, float u, float v) {
         buffer.addVertex(pose, x, y, 0.0F)
             .setColor(0xFFFFFFFF)
-            .setUv(u, v)
-            .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(LightCoordsUtil.FULL_BRIGHT)
-            .setNormal(pose, 0.0F, 0.0F, 1.0F);
+            .setUv(u, v);
     }
 
     @Override
