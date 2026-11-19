@@ -393,10 +393,10 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
     }
 
     public void dropContents(Level dropLevel, BlockPos pos) {
-        if (syringe != null) {
+        if (syringe != null && !syringe.isEmpty()) {
             dropLevel.addFreshEntity(new ItemEntity(dropLevel, pos.getX(), pos.getY(), pos.getZ(), syringe));
-            syringe = null;
         }
+        syringe = null;
         for (int i = 0; i < 9; i++) {
             if (output[i] != null && !output[i].isEmpty()) {
                 dropLevel.addFreshEntity(new ItemEntity(dropLevel, pos.getX(), pos.getY(), pos.getZ(), output[i]));
