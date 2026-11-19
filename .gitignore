@@ -21,6 +21,7 @@ nbproject/
 .recommenders/
 Workspace/
 *.log
+logs/
 reference/mc1710/
 reference/mc/
 reference/neo/
