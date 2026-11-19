@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "thaumichorizons:item/syringebloodsample"
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/syringebloodsample",
+    "model": {
+      "type": "thaumichorizons:syringe"
+    }
   }
 }

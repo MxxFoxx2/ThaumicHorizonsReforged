@@ -438,5 +438,8 @@
   "item.thaumichorizons.boatgreatwood": "Лодка из великого дерева",
   "item.thaumichorizons.boatthaumium": "Таумиевая лодка",
   "entity.thaumichorizons.boat_greatwood": "Лодка из великого дерева",
-  "entity.thaumichorizons.boat_thaumium": "Таумиевая лодка"
+  "entity.thaumichorizons.boat_thaumium": "Таумиевая лодка",
+  "thaumichorizons.research.pocketPlane.gateway.caption": "Планарные врата",
+  "thaumichorizons.research.pocketPlane.gateway.aperture": "Проём портала 3 × 3",
+  "thaumichorizons.research.pocketPlane.gateway.legend": "A: угол • E: древний камень • S: слот"
 }

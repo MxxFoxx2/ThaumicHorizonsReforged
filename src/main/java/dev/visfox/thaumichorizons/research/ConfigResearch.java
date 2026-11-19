@@ -565,6 +565,8 @@ public final class ConfigResearch {
             PageSpec.text("pocketPlane1"),
             PageSpec.text("pocketPlane2"),
             PageSpec.text("pocketPlane3"),
+            PageSpec.image(th("textures/misc/planar_gateway_page.png"),
+                "thaumichorizons.research.pocketPlane.gateway.caption"),
             PageSpec.recipes(PageKind.INFUSION, "pocketPlane"));
     }
 

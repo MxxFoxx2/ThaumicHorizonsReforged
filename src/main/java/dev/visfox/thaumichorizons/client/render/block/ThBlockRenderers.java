@@ -2,6 +2,8 @@ package dev.visfox.thaumichorizons.client.render.block;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.render.item.SpikeItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.SyringeItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.CorpseEffigyItemSpecialModelRenderer;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
@@ -20,6 +22,8 @@ public final class ThBlockRenderers {
     @SubscribeEvent
     static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
         event.register(ThaumicHorizons.id("spike"), SpikeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("syringe"), SyringeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("corpse_effigy"), CorpseEffigyItemSpecialModelRenderer.Unbaked.MAP_CODEC);
     }
 
     @SubscribeEvent

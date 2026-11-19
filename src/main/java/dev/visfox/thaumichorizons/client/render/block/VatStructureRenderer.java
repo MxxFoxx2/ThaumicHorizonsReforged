@@ -10,6 +10,7 @@ import java.util.WeakHashMap;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
+import dev.visfox.thaumichorizons.client.render.VatRenderAlphaContext;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -76,6 +77,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     public static final class State extends BlockEntityRenderState {
         public EntityRenderState containedEntity;
         public float containedEntityBob;
+        public float containedEntityAlpha = 1.0F;
         public EntityRenderState sampleItem;
         public float sampleItemBob;
         public boolean corpseEffigy;
@@ -103,6 +105,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
         BlockEntityRenderState.extractBase(entity, state, overlay);
         state.containedEntity = null;
         state.containedEntityBob = 0.0F;
+        state.containedEntityAlpha = 1.0F;
         state.sampleItem = null;
         state.sampleItemBob = 0.0F;
         state.corpseEffigy = false;
@@ -130,6 +133,10 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                 if (cached != null) {
                     state.containedEntity = entityRenderer.extractEntity(cached.entity(), partialTicks);
                     state.containedEntityBob = bob;
+                    // Legacy TileVatSlaveRender uses (800 - progress) / 800 in clone mode.
+                    state.containedEntityAlpha = entity.mode == 1
+                        ? Math.max(0.0F, Math.min(1.0F, 1.0F - entity.progress / 800.0F))
+                        : 1.0F;
                 }
                 return;
             }
@@ -176,8 +183,13 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
 
         if (state.containedEntity != null) {
             poseStack.pushPose();
-            entityRenderer.submit(state.containedEntity, camera, 0.5, -1.75 + state.containedEntityBob,
-                0.5, poseStack, collector);
+            Runnable submitContained = () -> entityRenderer.submit(state.containedEntity, camera, 0.5,
+                -1.75 + state.containedEntityBob, 0.5, poseStack, collector);
+            if (state.containedEntityAlpha < 1.0F) {
+                VatRenderAlphaContext.run(state.containedEntityAlpha, submitContained);
+            } else {
+                submitContained.run();
+            }
             poseStack.popPose();
         } else if (state.corpseEffigy || state.revivedEffigy) {
             Identifier effigyTexture = state.revivedEffigy ? REVIVED_EFFIGY_TEXTURE : EFFIGY_TEXTURE;
