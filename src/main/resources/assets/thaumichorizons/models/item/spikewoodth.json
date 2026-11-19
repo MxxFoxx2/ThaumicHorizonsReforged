@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "particle": "thaumichorizons:models/woodenspike"
+    "layer0": "thaumichorizons:models/woodenspike"
   }
 }

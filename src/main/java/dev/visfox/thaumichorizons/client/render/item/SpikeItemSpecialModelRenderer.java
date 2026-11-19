@@ -30,12 +30,12 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         ThaumicHorizons.id("textures/models/toothspike.png")
     };
 
-    private static final float MIN_X = -0.37F;
-    private static final float MAX_X = 0.47F;
-    private static final float MIN_Y = -0.52F;
-    private static final float MAX_Y = 0.55F;
-    private static final float MIN_Z = -0.44F;
-    private static final float MAX_Z = 0.41F;
+    private static final float MIN_X = -0.45304F;
+    private static final float MAX_X = 0.456295F;
+    private static final float MIN_Y = -0.5075F;
+    private static final float MAX_Y = 0.5425F;
+    private static final float MIN_Z = -0.539455F;
+    private static final float MAX_Z = 0.510545F;
 
     private final ObjModel model = ObjModel.get(MODEL_ID);
 
