@@ -1,6 +1,6 @@
 # Development documentation
 
-This directory contains detailed technical references. The repository-wide rules remain in the root \`AGENTS.md\`; do not duplicate those rules here.
+This directory contains detailed technical references. The repository-wide rules remain in the root `AGENTS.md`; do not duplicate those rules here.
 
 - [Architecture](architecture.md) — package boundaries, compat seams, registration and client/server separation.
 - [TC4R integration](tc4r-integration.md) — public API policy, ServiceLoader adapter, mixins and fork workflow.
