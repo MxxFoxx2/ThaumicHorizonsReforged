@@ -216,10 +216,12 @@ public class PocketPlanes extends SavedData {
         // A usable endpoint needs coordinates, an orientation flag and a valid
         // dimension key. Incomplete/corrupt records must not consume one of the
         // four portal slots permanently.
+        String dimension = data.portalDimension(which);
         return portal == null || portal.length < 4
             || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0)
             || (portal[3] != 0 && portal[3] != 1)
-            || net.minecraft.resources.Identifier.tryParse(data.portalDimension(which)) == null;
+            || dimension.isEmpty()
+            || net.minecraft.resources.Identifier.tryParse(dimension) == null;
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
