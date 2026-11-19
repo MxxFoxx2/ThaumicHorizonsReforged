@@ -19,7 +19,7 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Place metal, wood and tooth spikes on all six sturdy support faces; confirm they orient away from the support and survive save/reload.
 - [ ] Remove each support block; confirm the spike drops exactly one matching block item and disappears.
 - [ ] Walk through/stand against each spike orientation; confirm the collision bounds match the old 1/16 inset and entity contact applies 1 cactus damage per collision tick.
-- [ ] Check the OBJ block render and all three material textures from every direction. Confirm the metal, wood and tooth BlockItems render the same 3D mesh with the matching texture in GUI/inventory, on the ground, in first-person and third-person hands; check scale, orientation, clipping, UVs and missing-model/render logs.
+- [ ] Check the OBJ block render and all three material textures from every direction. Confirm the metal, wood and tooth BlockItems render the same 3D mesh with the matching texture in GUI/inventory, on the ground, in first-person and third-person hands; check scale, orientation, clipping, UVs and missing-model/render logs. This branch contains the special-model renderer; this checklist is still unchecked.
 
 ## Injector projectiles — source and CI coverage only
 
@@ -29,7 +29,14 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Enchant the injector with Power, Punch and Flame. Confirm Power increases dart damage, Punch applies knockback, and Flame ignites a hit target for five seconds. Confirm a full charge produces the critical-arrow effect.
 - [ ] Fire phial ammunition from the injector and use a phial directly. Confirm each creates one splash projectile with the same effect list and splash behavior as the source syringe item, and that survival consumption/creative preservation matches the original.
 - [ ] Test both projectiles with two clients and through save/reload while embedded/in flight. Check that projectile state and potion payload remain synchronized.
-- [ ] Inspect projectile appearance in hand, flight and impact. The syringe currently uses a 2D syringe item sprite via ThrownItemRenderer; replace/verify against the legacy 3D model and check Blast Phial tint/scale/orientation.
+- [ ] Inspect the custom 3D syringe projectile in flight from all angles; confirm its four OBJ parts, yaw/pitch alignment, translucent potion-coloured body, white needle/plungers, scale and visibility at range. Confirm Blast Phial still uses its intended vanilla splash-potion model and check both projectile renderers for missing-model/log errors.
+
+## Vat auxiliary previews — source implementation, client acceptance pending
+
+- [ ] In Vat mode 3, verify the normal Corpse Effigy preview uses the original texture and a correctly aligned ModelBiped silhouette. In mode 4 and mode 2 with clone recipe type 1, verify the revived texture/model is selected.
+- [ ] Put each supported sample item in the Vat sample slot and verify the item entity floats at the legacy position with the same gentle bob; confirm item changes update without stale previews and removing the sample clears the render.
+- [ ] Verify the contained-creature preview still takes precedence over the effigy/sample previews and does not create a second world entity. The mode-1 dissolve opacity remains unimplemented; do not mark it as verified.
+- [ ] Verify all preview paths after save/reload, chunk unload/reload and on a second client; inspect model UVs, scale, pose and missing-resource logs.
 
 ## Undead horses and NightmareTH — source and CI coverage only
 
