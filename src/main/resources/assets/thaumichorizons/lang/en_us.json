@@ -438,5 +438,8 @@
   "item.thaumichorizons.boatgreatwood": "Greatwood Boat",
   "item.thaumichorizons.boatthaumium": "Thaumium Boat",
   "entity.thaumichorizons.boat_greatwood": "Greatwood Boat",
-  "entity.thaumichorizons.boat_thaumium": "Thaumium Boat"
+  "entity.thaumichorizons.boat_thaumium": "Thaumium Boat",
+  "thaumichorizons.research.pocketPlane.gateway.caption": "Planar Gateway",
+  "thaumichorizons.research.pocketPlane.gateway.aperture": "3 × 3 portal aperture",
+  "thaumichorizons.research.pocketPlane.gateway.legend": "A: corner • E: ancient stone • S: Slot"
 }

@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.client.render.entity;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
+import dev.visfox.thaumichorizons.client.render.entity.SyringeProjectileRenderer;
 import net.minecraft.client.renderer.entity.SheepRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.object.boat.BoatModel;
@@ -38,7 +39,7 @@ public final class ThEntityRenderers {
                 ThaumicHorizons.id("textures/entity/boatthaumium.png")));
         event.registerEntityRenderer(ThEntities.ALCHEMITE_PRIMED.get(), AlchemitePrimedRenderer::new);
         event.registerEntityRenderer(ThEntities.EGG_INCUBATED.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ThEntities.SYRINGE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ThEntities.SYRINGE.get(), SyringeProjectileRenderer::new);
         event.registerEntityRenderer(ThEntities.BLAST_PHIAL.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ThEntities.CHROMATIC_SHEEP.get(), SheepRenderer::new);
         event.registerEntityRenderer(ThEntities.SELF_SHEARING_SHEEP.get(), SheepRenderer::new);

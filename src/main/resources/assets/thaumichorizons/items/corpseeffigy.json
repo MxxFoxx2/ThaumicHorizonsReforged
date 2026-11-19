@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "thaumichorizons:item/corpseeffigy"
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/corpseeffigy",
+    "model": {
+      "type": "thaumichorizons:corpse_effigy"
+    }
   }
 }

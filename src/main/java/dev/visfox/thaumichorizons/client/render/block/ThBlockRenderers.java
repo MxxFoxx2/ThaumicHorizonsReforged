@@ -1,6 +1,9 @@
 package dev.visfox.thaumichorizons.client.render.block;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.client.render.item.SpikeItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.SyringeItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.CorpseEffigyItemSpecialModelRenderer;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
@@ -9,10 +12,18 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 
 @EventBusSubscriber(modid = ThaumicHorizons.MODID, value = Dist.CLIENT)
 public final class ThBlockRenderers {
     private ThBlockRenderers() {
+    }
+
+    @SubscribeEvent
+    static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+        event.register(ThaumicHorizons.id("spike"), SpikeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("syringe"), SyringeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("corpse_effigy"), CorpseEffigyItemSpecialModelRenderer.Unbaked.MAP_CODEC);
     }
 
     @SubscribeEvent

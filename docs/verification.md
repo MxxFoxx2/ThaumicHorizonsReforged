@@ -1,6 +1,6 @@
 # Verification
 
-Manual gates. Headless builds and the seam checker do not replace launching the client.
+Manual gates. Headless builds and the seam checker do not replace launching the client. The changes on `feat/remaining-visual-ports` are not merged and have not been built or tested in a live client; new checks remain unchecked.
 
 ## Cloud blocks — PR #2, code and CI only
 
@@ -19,7 +19,7 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Place metal, wood and tooth spikes on all six sturdy support faces; confirm they orient away from the support and survive save/reload.
 - [ ] Remove each support block; confirm the spike drops exactly one matching block item and disappears.
 - [ ] Walk through/stand against each spike orientation; confirm the collision bounds match the old 1/16 inset and entity contact applies 1 cactus damage per collision tick.
-- [ ] Check the OBJ render and all three textures from every direction; check block/item icons in inventory and hand. The current inventory/hand model is a generated 2D texture icon, not the old 3D inventory model.
+- [ ] Check the OBJ block render and all three material textures from every direction. Confirm the metal, wood and tooth BlockItems render the same 3D mesh with the matching texture in GUI/inventory, on the ground, in first-person and third-person hands; check scale, orientation, clipping, UVs and missing-model/render logs. This branch contains the special-model renderer; this checklist is still unchecked.
 
 ## Injector projectiles — source and CI coverage only
 
@@ -29,7 +29,16 @@ Manual gates. Headless builds and the seam checker do not replace launching the 
 - [ ] Enchant the injector with Power, Punch and Flame. Confirm Power increases dart damage, Punch applies knockback, and Flame ignites a hit target for five seconds. Confirm a full charge produces the critical-arrow effect.
 - [ ] Fire phial ammunition from the injector and use a phial directly. Confirm each creates one splash projectile with the same effect list and splash behavior as the source syringe item, and that survival consumption/creative preservation matches the original.
 - [ ] Test both projectiles with two clients and through save/reload while embedded/in flight. Check that projectile state and potion payload remain synchronized.
-- [ ] Inspect projectile appearance in hand, flight and impact. The syringe currently uses a 2D syringe item sprite via ThrownItemRenderer; replace/verify against the legacy 3D model and check Blast Phial tint/scale/orientation.
+- [ ] Inspect the custom 3D syringe projectile in flight from all angles; confirm its four OBJ parts, yaw/pitch alignment, translucent potion-coloured body, white needle/plungers, scale and visibility at range. Confirm Blast Phial still uses its intended vanilla splash-potion model and check both projectile renderers for missing-model/log errors.
+- [ ] Validate the custom 3D Syringe item renderer for empty, blood, blood-sample and injection variants in inventory/ground/first-person/third-person contexts. The item JSONs now use the shared four-part OBJ renderer; check the white empty body (50% alpha), red blood/sample body, PotionContents tint and 75% alpha for filled/injection variants, scale, hand transforms, clipping and missing-renderer logs.
+- [ ] Validate the ModelBiped-derived 3D Corpse Effigy item renderer in inventory/ground/first-person/third-person contexts. The item now uses the Effigy OBJ mesh and texture; check its lying orientation, scale, hand transforms, UVs, clipping and missing-renderer logs. The Vat's normal/revived previews are separate render paths.
+
+## Vat auxiliary previews — source implementation, client acceptance pending
+
+- [ ] In Vat mode 3, verify the normal Corpse Effigy preview uses the original texture and a correctly aligned ModelBiped silhouette. In mode 4 and mode 2 with clone recipe type 1, verify the revived texture/model is selected.
+- [ ] Put each supported sample item in the Vat sample slot and verify the item entity floats at the legacy position with the same gentle bob; confirm item changes update without stale previews and removing the sample clears the render.
+- [ ] Verify the contained-creature preview still takes precedence over the effigy/sample previews and does not create a second world entity. In mode 1, confirm the legacy alpha curve: progress 800 starts fully transparent and progress 0 reaches fully opaque, with no flicker or alpha leakage to other entities.
+- [ ] Verify all preview paths after save/reload, chunk unload/reload and on a second client; inspect model UVs, scale, pose and missing-resource logs.
 
 ## Undead horses and NightmareTH — source and CI coverage only
 
@@ -91,7 +100,7 @@ python -I tools/check_seams.py
 - [ ] Creature infusion: jarred critter + components in vat → infusion runs → TH creature spawns
 - [ ] Vat infusion matrix renderer: during active infusion, confirm eight cubes rotate around the center, wobble according to instability and show a pulsing emissive overlay. While `Vat.mode == 2`, confirm the additive halo appears, grows with `craftCount`, fades toward transparent ray tips and disappears outside infusion mode. Check texture orientation, brightness, halo bounds and visual parity in a live client.
 - [ ] Vat structure renderer: confirm the single upper-centre master BE draws the complete 3×3 base/water/glass/top/hatch model from `textures/models/vat.png`; inspect every side and top, correct vertical alignment, UV mapping, transparency, light/shading, render bounds and chunk-edge visibility. Confirm the internal VAT/VAT_SOLID/VAT_INTERIOR blocks do not draw duplicate cubes.
-- [ ] Vat contained-creature preview: capture/store a non-player critter, reload the Vat and confirm its saved NBT produces a visible preview inside the glass at the legacy offset. Confirm it is not added to the client world, does not duplicate the server entity, and disappears when the subject is removed. The mode-1 dissolve fade, Corpse Effigy/revived-effigy models and floating sample-item preview are known unported visuals.
+- [ ] Vat contained-creature preview: capture/store a non-player critter, reload the Vat and confirm its saved NBT produces a visible preview inside the glass at the legacy offset. Confirm it is not added to the client world, does not duplicate the server entity, and disappears when the subject is removed. The mode-1 alpha curve, Corpse Effigy/revived-effigy and floating sample previews now have source render paths and need in-game visual checks.
 - [ ] Vat blockstate selectors: confirm `vat` variants 10 and 11 and `vatsolid` variants 4–7 load without missing-state/model errors; the assembled shell is drawn by the master block-entity renderer rather than these block models.
 - [ ] Corpse effigy + self-clone flow works
 - [ ] Blood Infuser: select aspects and mode; run the syringe draw/inject cycle; save/reload with partially filled essentia and with empty/full output slots. Confirm empty slots remain usable after reload, output injections are not lost/duplicated, selection/mode controls update on the client, and an output slot frees correctly when extracted.
@@ -141,7 +150,7 @@ Two clients on the same server:
 - [ ] Right-click a valid generated Pocket Plane vortex with a blank Keystone. Confirm it binds to the correct plane, persists through inventory/world save and displays the bound tooltip; confirm invalid vortices and non-Pocket-Plane dimensions do not bind it.
 - [ ] Insert a bound Keystone into an empty Slot; remove it with an empty hand; confirm the same plane ID is preserved. Test inventory-full drops, invalid plane IDs and multiplayer synchronization.
 - [ ] Build both gateway orientations around the Slot using the original frame: four `thaumcraft:advanced_alchemical_construct` corners and eleven `thaumcraft:ancient_stone` border blocks. Confirm substituted/arbitrary blocks are rejected; activate with a wand, verify aspect cost, portal opening/closing, the four-portal limit, and frame restoration after teardown/reload. After closure, confirm the 3×3 opening is still air and the portal can be opened again without rebuilding the frame.
-- [ ] The custom 5×5 PlanarGateway research-page visualization remains unported because the current ResearchPage API has no matching page type. Validate the dynamic inlaid Keystone renderer in a live client for alignment, receptacle-atlas UVs, aspect tint and disappearance after extraction.
+- [ ] Open the `pocketPlane` research page and verify the custom 5×5 PlanarGateway diagram appears on its own page. Confirm the four advanced-alchemical corner blocks, eleven ancient-stone edge blocks, Slot at the top centre and 3×3 portal aperture match `SlotBlockEntity` in both layout and item icons. Confirm localization, book-page alignment and no missing resources; then validate the dynamic inlaid Keystone renderer for alignment, receptacle-atlas UVs, aspect tint and disappearance after extraction.
 
 ## Pocket Plane verification (source commit `e38d16a`, data fix `7eb9b8c`)
 

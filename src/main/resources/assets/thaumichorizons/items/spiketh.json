@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/spiketh",
+    "model": {
+      "type": "thaumichorizons:spike"
+    }
+  }
+}

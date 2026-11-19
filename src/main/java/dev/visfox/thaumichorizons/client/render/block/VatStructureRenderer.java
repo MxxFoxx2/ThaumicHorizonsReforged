@@ -2,12 +2,15 @@ package dev.visfox.thaumichorizons.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
+import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import java.util.Map;
 import java.util.WeakHashMap;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
+import dev.visfox.thaumichorizons.client.render.VatRenderAlphaContext;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -21,6 +24,8 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -34,6 +39,9 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockEntity, VatStructureRenderer.State> {
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/vat.png");
+    private static final Identifier EFFIGY_TEXTURE = ThaumicHorizons.id("textures/block/corpseeffigy.png");
+    private static final Identifier REVIVED_EFFIGY_TEXTURE =
+        ThaumicHorizons.id("textures/models/corpseeffigyrevived.png");
     private static final int TEXTURE_SIZE = 512;
     private static final int[][] QUAD_VERTICES = {
         {5, 1, 2, 6},
@@ -58,7 +66,9 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     };
 
     private final EntityRenderDispatcher entityRenderer;
+    private final ObjModel effigyModel = ObjModel.get(ThaumicHorizons.id("textures/models/corpseeffigy.obj"));
     private final Map<VatBlockEntity, CachedPreview> previewEntities = new WeakHashMap<>();
+    private final Map<VatBlockEntity, CachedSample> sampleEntities = new WeakHashMap<>();
 
     public VatStructureRenderer(BlockEntityRendererProvider.Context context) {
         this.entityRenderer = context.entityRenderer();
@@ -67,12 +77,21 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     public static final class State extends BlockEntityRenderState {
         public EntityRenderState containedEntity;
         public float containedEntityBob;
+        public float containedEntityAlpha = 1.0F;
+        public EntityRenderState sampleItem;
+        public float sampleItemBob;
+        public boolean corpseEffigy;
+        public boolean revivedEffigy;
+        public float effigyBob;
     }
 
     private record Box(int u, int v, float x, float y, float z, float width, float height, float depth) {
     }
 
     private record CachedPreview(CompoundTag data, LivingEntity entity) {
+    }
+
+    private record CachedSample(ItemEntity entity) {
     }
 
     @Override
@@ -86,9 +105,17 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
         BlockEntityRenderState.extractBase(entity, state, overlay);
         state.containedEntity = null;
         state.containedEntityBob = 0.0F;
+        state.containedEntityAlpha = 1.0F;
+        state.sampleItem = null;
+        state.sampleItemBob = 0.0F;
+        state.corpseEffigy = false;
+        state.revivedEffigy = false;
+        state.effigyBob = 0.0F;
         if (entity.getLevel() instanceof ClientLevel clientLevel) {
+            float bob = (float) Math.cos(Math.toRadians(clientLevel.getGameTime() + partialTicks)) * 0.1F;
             CompoundTag previewData = entity.getEntityPreviewData();
             if (previewData != null) {
+                sampleEntities.remove(entity);
                 CachedPreview cached = previewEntities.get(entity);
                 if (cached == null || !cached.data().equals(previewData)) {
                     Entity created = EntityNbt.load(previewData, clientLevel);
@@ -105,10 +132,40 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                 }
                 if (cached != null) {
                     state.containedEntity = entityRenderer.extractEntity(cached.entity(), partialTicks);
-                    state.containedEntityBob = (float) Math.cos(Math.toRadians(clientLevel.getGameTime() + partialTicks)) * 0.1F;
+                    state.containedEntityBob = bob;
+                    // Legacy TileVatSlaveRender uses (800 - progress) / 800 in clone mode.
+                    state.containedEntityAlpha = entity.mode == 1
+                        ? Math.max(0.0F, Math.min(1.0F, 1.0F - entity.progress / 800.0F))
+                        : 1.0F;
                 }
+                return;
+            }
+
+            previewEntities.remove(entity);
+            state.effigyBob = bob;
+            if (entity.mode == 3) {
+                state.corpseEffigy = true;
+                sampleEntities.remove(entity);
+            } else if (entity.mode == 4 || (entity.mode == 2 && entity.recipeType == 1)) {
+                state.revivedEffigy = true;
+                sampleEntities.remove(entity);
+            } else if (entity.sample != null && !entity.sample.isEmpty()) {
+                CachedSample cached = sampleEntities.get(entity);
+                if (cached == null) {
+                    ItemEntity item = new ItemEntity(clientLevel,
+                        entity.getBlockPos().getX() + 0.5,
+                        entity.getBlockPos().getY() - 1.0,
+                        entity.getBlockPos().getZ() + 0.5,
+                        entity.sample.copy());
+                    cached = new CachedSample(item);
+                    sampleEntities.put(entity, cached);
+                } else {
+                    cached.entity().setItem(entity.sample.copy());
+                }
+                state.sampleItem = entityRenderer.extractEntity(cached.entity(), partialTicks);
+                state.sampleItemBob = bob;
             } else {
-                previewEntities.remove(entity);
+                sampleEntities.remove(entity);
             }
         }
     }
@@ -126,7 +183,26 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
 
         if (state.containedEntity != null) {
             poseStack.pushPose();
-            entityRenderer.submit(state.containedEntity, camera, 0.5, -1.75 + state.containedEntityBob,
+            Runnable submitContained = () -> entityRenderer.submit(state.containedEntity, camera, 0.5,
+                -1.75 + state.containedEntityBob, 0.5, poseStack, collector);
+            if (state.containedEntityAlpha < 1.0F) {
+                VatRenderAlphaContext.run(state.containedEntityAlpha, submitContained);
+            } else {
+                submitContained.run();
+            }
+            poseStack.popPose();
+        } else if (state.corpseEffigy || state.revivedEffigy) {
+            Identifier effigyTexture = state.revivedEffigy ? REVIVED_EFFIGY_TEXTURE : EFFIGY_TEXTURE;
+            poseStack.pushPose();
+            poseStack.translate(0.5F, -1.5F + state.effigyBob, 0.5F);
+            poseStack.rotateDegrees(Axis.ZP, 180.0F);
+            poseStack.scale(0.1F, 0.1F, 0.1F);
+            collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutout(effigyTexture),
+                (pose, buffer) -> effigyModel.renderPart("effigy", pose, buffer, 0xFFFFFFFF, state.lightCoords));
+            poseStack.popPose();
+        } else if (state.sampleItem != null) {
+            poseStack.pushPose();
+            entityRenderer.submit(state.sampleItem, camera, 0.5, -1.0 + state.sampleItemBob,
                 0.5, poseStack, collector);
             poseStack.popPose();
         }
