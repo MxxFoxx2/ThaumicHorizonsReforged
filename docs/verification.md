@@ -81,7 +81,7 @@ python -I tools/check_seams.py
 ## Gate 2 — after souls/Vat/GUI phase
 
 - [ ] Soul jar: wand-right-click an infused critter → jars it (name label), item survives inventory/drop/save/reload, placement preserves NBT, wand release restores the original entity. Capture/data transfer/release are implemented; release now reconstructs the entity before consuming the jar, so invalid serialized entity data must leave the jar intact. The full cycle has not yet been reproduced in-game.
-- [ ] Containment focus captures LostSoul. Also carry a filled/essentia-loaded TC4R Warded Jar before an empty Warded Jar: only the empty, component-matching jar may authorize capture and be consumed; verify both LostSoul and ordinary mob capture.
+- [ ] Containment focus captures LostSoul. Also carry a filled/essentia-loaded TC4R Warded Jar before an empty Warded Jar: only the empty, component-matching jar may authorize capture and be consumed. Fill all main inventory slots with exactly one empty jar present and confirm its slot is reused for the filled jar. Verify both LostSoul and ordinary mob capture, and release a malformed jar / simulate a rejected entity spawn to confirm the jar remains intact.
 - [ ] Familiar: confirm occasional Thaumcraft sparkles appear around it with normal particle settings and do not appear when particles are disabled/minimal.
 - [x] Vat multiblock forms *(reproduced in-world 2026-11-16: blueprint converts to VAT blocks and vis is consumed server-side after trigger-registration fix)*
 - [ ] Curative Vat mode cures with containment foci
