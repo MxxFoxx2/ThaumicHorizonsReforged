@@ -21,13 +21,21 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid = ThaumicHorizons.MODID, value = Dist.CLIENT)
 public final class EarthLensHandler {
     private static final Map<BlockPos, BlockState> REPLACED = new HashMap<>();
+    private static ClientLevel replacedLevel;
 
     private EarthLensHandler() {
     }
 
     @SubscribeEvent
     static void beforeClientTick(ClientTickEvent.Pre event) {
-        restore(Minecraft.getInstance().level);
+        ClientLevel level = Minecraft.getInstance().level;
+        if (replacedLevel != null && replacedLevel != level) {
+            // Coordinates from an unloaded world must never be replayed into a new ClientLevel.
+            REPLACED.clear();
+            replacedLevel = null;
+            return;
+        }
+        restore(level);
     }
 
     @SubscribeEvent
@@ -48,6 +56,12 @@ public final class EarthLensHandler {
                     || original.getCollisionShape(level, pos).isEmpty() || original.is(ThBlocks.EVANESCENT.get())) {
                     continue;
                 }
+                if (replacedLevel == null) {
+                    replacedLevel = level;
+                } else if (replacedLevel != level) {
+                    REPLACED.clear();
+                    replacedLevel = level;
+                }
                 REPLACED.put(pos.immutable(), original);
                 level.setBlock(pos, ThBlocks.EVANESCENT.get().defaultBlockState(), Block.UPDATE_CLIENTS);
             }
@@ -63,7 +77,18 @@ public final class EarthLensHandler {
     }
 
     private static void restore(ClientLevel level) {
-        if (level == null || REPLACED.isEmpty()) {
+        if (level == null) {
+            REPLACED.clear();
+            replacedLevel = null;
+            return;
+        }
+        if (replacedLevel != null && replacedLevel != level) {
+            REPLACED.clear();
+            replacedLevel = null;
+            return;
+        }
+        if (REPLACED.isEmpty()) {
+            replacedLevel = null;
             return;
         }
         for (Map.Entry<BlockPos, BlockState> entry : REPLACED.entrySet()) {
@@ -72,5 +97,6 @@ public final class EarthLensHandler {
             }
         }
         REPLACED.clear();
+        replacedLevel = null;
     }
 }
