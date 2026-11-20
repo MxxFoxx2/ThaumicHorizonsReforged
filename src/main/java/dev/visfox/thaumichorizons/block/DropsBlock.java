@@ -6,6 +6,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 public class DropsBlock extends Block {
 
@@ -20,7 +22,15 @@ public class DropsBlock extends Block {
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        int count = minCount + builder.getLevel().getRandom().nextInt(3);
+        int fortune = 0;
+        var tool = builder.getOptionalParameter(LootContextParams.TOOL);
+        if (tool != null) {
+            var enchantment = builder.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .getOrThrow(Enchantments.FORTUNE);
+            fortune = tool.getEnchantmentLevel(enchantment);
+        }
+        int count = minCount + builder.getLevel().getRandom().nextInt(3)
+            + (fortune > 0 ? builder.getLevel().getRandom().nextInt(fortune + 1) : 0);
         return List.of(new ItemStack(drop, count));
     }
 }

@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
+import dev.visfox.thaumichorizons.entity.GuardianPanther;
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusions;
@@ -981,6 +982,9 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         }
         CompoundTag oldData = EntityNbt.save(contained);
         living.load(TagValueInput.create(ProblemReporter.DISCARDING, serverLevel.registryAccess(), oldData));
+        if (living instanceof GuardianPanther panther) {
+            panther.resetStats();
+        }
         return living;
     }
 

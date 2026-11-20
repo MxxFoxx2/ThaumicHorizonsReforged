@@ -193,3 +193,14 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - [ ] Craft chocolate ice cream and apply `AdvancedGolemTH` to a TH golem placer; verify the extra upgrade slot and persistence.
 - [ ] Use all 23 spawn eggs and every creature/self-infusion and node debug item once; verify models, colors, names and no duplicate entity/infusion application.
 - [ ] Let a source portal reach 250 ticks: both endpoints close, the frame is restored, the portal index is reusable, the saved endpoint is cleared and no reentrant teardown occurs. Repeat for all four directions and after restart.
+
+## Third parity pass — confirmed-gap closure
+
+- [x] `gradlew.bat build` passes after Baubles, exact potion components, Fortune and Vortex cheat restoration.
+- [x] `python -I tools/check_seams.py` passes for 308 files.
+- [x] `python -I tools/check_assets.py` passes for 526 references, including `vortexth_cheat`.
+- [ ] Equip a Lens Case in each of the four bauble slots and verify radial discovery, selection and removal on two clients; compare with main-inventory behavior.
+- [ ] Verify exact `PotionContents` matching for Regeneration II and Water Breathing in creature/self-infusion recipes, including a rejected default splash potion.
+- [ ] Break Bone, Eyes and Flesh with Fortune I/II/III and without Fortune; verify the extra 0..level bonus while preserving the original 3–5 base range.
+- [ ] Place `vortexth_cheat` and inspect `cheat` in the block entity; verify normal Vortex items do not set it, and confirm creative Vortex persists after restart.
+- [ ] Complete a Guardian Panther conversion in the Vat and confirm `resetStats` restores 24 max health and 0.5 movement speed after entity NBT is copied.

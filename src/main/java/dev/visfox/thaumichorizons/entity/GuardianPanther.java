@@ -75,6 +75,17 @@ public class GuardianPanther extends TamableAnimal {
         return super.mobInteract(player, hand);
     }
 
+    public void resetStats() {
+        var health = this.getAttribute(Attributes.MAX_HEALTH);
+        var speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (health != null) {
+            health.setBaseValue(24.0);
+        }
+        if (speed != null) {
+            speed.setBaseValue(0.5);
+        }
+    }
+
     @Override
     public @Nullable GuardianPanther getBreedOffspring(ServerLevel level, AgeableMob partner) {
         return ThEntities.GUARDIAN_PANTHER.get().create(level, EntitySpawnReason.MOB_SUMMONED);

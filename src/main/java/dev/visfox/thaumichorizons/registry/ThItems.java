@@ -18,6 +18,7 @@ import dev.visfox.thaumichorizons.item.SyringeBloodSampleItem;
 import dev.visfox.thaumichorizons.item.SyringeEmptyItem;
 import dev.visfox.thaumichorizons.item.SyringeInjectionItem;
 import dev.visfox.thaumichorizons.item.SoulJarBlockItem;
+import dev.visfox.thaumichorizons.item.VortexBlockItem;
 import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
 import dev.visfox.thaumichorizons.item.focus.FocusDisintegrationItem;
 import dev.visfox.thaumichorizons.item.focus.FocusIlluminationItem;
@@ -172,6 +173,8 @@ public final class ThItems {
         CrystalWandItem::new, properties -> properties.stacksTo(1));
     public static final DeferredItem<DisposableWandItem> WAND_CASTING_DISPOSABLE = ITEMS.registerItem("wandcastingdisposable",
         DisposableWandItem::new, DisposableWandItem::properties);
+    public static final DeferredItem<VortexBlockItem> VORTEX_CHEAT = ITEMS.registerItem("vortexth_cheat",
+        properties -> new VortexBlockItem(ThBlocks.VORTEX.get(), properties.stacksTo(1), true));
     public static final DeferredItem<ItemLensFire> LENS_FIRE = ITEMS.registerItem("lensfire", ItemLensFire::new);
     public static final DeferredItem<ItemLensWater> LENS_WATER = ITEMS.registerItem("lenswater", ItemLensWater::new);
     public static final DeferredItem<ItemLensEarth> LENS_EARTH = ITEMS.registerItem("lensearth", ItemLensEarth::new);

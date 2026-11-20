@@ -5,10 +5,14 @@ import dev.visfox.thaumichorizons.entity.Endersteed;
 import dev.visfox.thaumichorizons.entity.NightmareTH;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.animal.feline.Ocelot;
@@ -339,7 +343,7 @@ public final class ThInfusionRecipes {
         critterRecipes.add(new CreatureInfusionRecipe("catInfusion", 4, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.BEAST, 8).add(thaumcraft.aspect.Aspect.WEAPON, 8),
             Ocelot.class,
-            new ItemStack[] { new ItemStack(Items.SPLASH_POTION), new ItemStack(Items.SADDLE) },
+            new ItemStack[] { regenerationPotion(), new ItemStack(Items.SADDLE) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("catInfusion", 5, 6,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.ORDER, 16).add(thaumcraft.aspect.Aspect.DEATH, 8)
@@ -360,7 +364,7 @@ public final class ThInfusionRecipes {
                 .add(thaumcraft.aspect.Aspect.EXCHANGE, 4).add(thaumcraft.aspect.Aspect.MOTION, 8),
             Wolf.class,
             new ItemStack[] { new ItemStack(Items.COD), tc("earth_shard"), new ItemStack(Items.COD),
-                new ItemStack(Items.SPLASH_POTION) },
+                waterBreathingPotion() },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("dogInfusion", 16, 4,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.LIGHT, 8).add(thaumcraft.aspect.Aspect.VOID, 8)
@@ -405,7 +409,7 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.MOTION, 16).add(thaumcraft.aspect.Aspect.MECHANISM, 8)
                 .add(thaumcraft.aspect.Aspect.FLIGHT, 4),
             null,
-            new ItemStack[] { new ItemStack(Items.SPLASH_POTION), tc("quicksilver"), tc("quicksilver") },
+            new ItemStack[] { regenerationPotion(), tc("quicksilver"), tc("quicksilver") },
             1));
         critterRecipes.add(new CreatureInfusionRecipe("infusionVat", tag("generic.attackDamage", 2, "thaumClaws", 2), 3,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.WEAPON, 12).add(thaumcraft.aspect.Aspect.METAL, 8)
@@ -417,8 +421,8 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.HEAL, 8).add(thaumcraft.aspect.Aspect.LIFE, 16)
                 .add(thaumcraft.aspect.Aspect.MIND, 4),
             null,
-            new ItemStack[] { new ItemStack(Items.GLISTERING_MELON_SLICE), new ItemStack(Items.SPLASH_POTION),
-                new ItemStack(Items.GOLDEN_APPLE), new ItemStack(Items.SPLASH_POTION) },
+            new ItemStack[] { new ItemStack(Items.GLISTERING_MELON_SLICE), waterBreathingPotion(),
+                new ItemStack(Items.GOLDEN_APPLE), waterBreathingPotion() },
             3));
         critterRecipes.add(new CreatureInfusionRecipe("infusionVat", tag("diamondSkin", 4), 4,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.ARMOR, 16).add(thaumcraft.aspect.Aspect.CRYSTAL, 16)
@@ -467,8 +471,8 @@ public final class ThInfusionRecipes {
         selfRecipes.add(new SelfInfusionRecipe("selfInfusion", 4,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.MOTION, 64).add(thaumcraft.aspect.Aspect.MECHANISM, 32)
                 .add(thaumcraft.aspect.Aspect.FLIGHT, 32),
-            new ItemStack[] { new ItemStack(Items.SPLASH_POTION), tc("quicksilver"), tc("void_seed"),
-                new ItemStack(Items.SPLASH_POTION), tc("quicksilver"), tc("void_seed") },
+            new ItemStack[] { regenerationPotion(), tc("quicksilver"), tc("void_seed"),
+                regenerationPotion(), tc("quicksilver"), tc("void_seed") },
             1));
         selfRecipes.add(new SelfInfusionRecipe("selfInfusion", 5,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.HEAL, 32).add(thaumcraft.aspect.Aspect.LIFE, 64)
@@ -505,8 +509,8 @@ public final class ThInfusionRecipes {
         selfRecipes.add(new SelfInfusionRecipe("amphibious", 7,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.WATER, 64).add(thaumcraft.aspect.Aspect.AIR, 64)
                 .add(thaumcraft.aspect.Aspect.LIFE, 32).add(thaumcraft.aspect.Aspect.EXCHANGE, 16),
-            new ItemStack[] { new ItemStack(Items.COD), new ItemStack(Items.SPLASH_POTION),
-                new ItemStack(Items.COD), new ItemStack(Items.SPLASH_POTION) },
+            new ItemStack[] { new ItemStack(Items.COD), waterBreathingPotion(),
+                new ItemStack(Items.COD), waterBreathingPotion() },
             7));
         selfRecipes.add(new SelfInfusionRecipe("warpedTumor", 12,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.TAINT, 64).add(thaumcraft.aspect.Aspect.ELDRITCH, 48)
@@ -528,6 +532,20 @@ public final class ThInfusionRecipes {
                 new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.DYE.yellow()),
                 new ItemStack(Items.DYE.black()), new ItemStack(Items.BONE_MEAL) },
             10));
+    }
+
+    private static ItemStack regenerationPotion() {
+        ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(), java.util.Optional.empty(),
+            java.util.List.of(new MobEffectInstance(MobEffects.REGENERATION, 1200, 1)), java.util.Optional.empty()));
+        return stack;
+    }
+
+    private static ItemStack waterBreathingPotion() {
+        ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(), java.util.Optional.empty(),
+            java.util.List.of(new MobEffectInstance(MobEffects.WATER_BREATHING, 9600, 0)), java.util.Optional.empty()));
+        return stack;
     }
 
     private static Object tag(Object... pairs) {

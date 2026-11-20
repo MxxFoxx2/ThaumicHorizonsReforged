@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.client;
 import java.util.Map;
 import java.util.TreeMap;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.item.lenses.ILens;
 import dev.visfox.thaumichorizons.item.lenses.ItemLensCase;
 import dev.visfox.thaumichorizons.item.lenses.LensManager;
@@ -39,19 +40,27 @@ public final class ArcaneLensHud {
         LENSES.clear();
         hoveredLens = null;
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack stack = player.getInventory().getItem(slot);
-            if (stack.getItem() instanceof ILens lens) {
-                LENSES.put(lens.lensName(), stack.copy());
-            } else if (stack.getItem() instanceof ItemLensCase) {
-                for (ItemStack contained : ItemLensCase.getContents(stack)) {
-                    if (contained.getItem() instanceof ILens lens) {
-                        LENSES.put(lens.lensName(), contained.copy());
-                    }
-                }
+            collectLens(player.getInventory().getItem(slot));
+        }
+        if (Compat.port().baubles().isAvailable()) {
+            for (int slot = 0; slot < Compat.port().baubles().slotCount(); slot++) {
+                collectLens(Compat.port().baubles().get(player, slot));
             }
         }
         open = !LENSES.isEmpty() && isWearingGoggles(player);
         return open;
+    }
+
+    private static void collectLens(ItemStack stack) {
+        if (stack.getItem() instanceof ILens lens) {
+            LENSES.put(lens.lensName(), stack.copy());
+        } else if (stack.getItem() instanceof ItemLensCase) {
+            for (ItemStack contained : ItemLensCase.getContents(stack)) {
+                if (contained.getItem() instanceof ILens lens) {
+                    LENSES.put(lens.lensName(), contained.copy());
+                }
+            }
+        }
     }
 
     public static boolean isOpen() {

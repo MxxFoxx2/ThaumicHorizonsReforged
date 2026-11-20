@@ -14,6 +14,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import org.jspecify.annotations.Nullable;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.lib.THSounds;
 
 public final class LensManager {
@@ -27,6 +28,21 @@ public final class LensManager {
         HashMap<Integer, Integer> pouchSlots = new HashMap<>();
         int pouchcount = 0;
         ItemStack item = null;
+        if (Compat.port().baubles().isAvailable()) {
+            for (int slot = 0; slot < Compat.port().baubles().slotCount(); slot++) {
+                ItemStack bauble = Compat.port().baubles().get(player, slot);
+                if (bauble.getItem() instanceof ItemLensCase) {
+                    pouchcount++;
+                    pouchSlots.put(pouchcount, slot - 4);
+                    ItemStack[] contents = ItemLensCase.getContents(bauble);
+                    for (int index = 0; index < contents.length; index++) {
+                        if (contents[index].getItem() instanceof ILens lensItem) {
+                            lenses.put(lensItem.lensName(), index + pouchcount * 1000);
+                        }
+                    }
+                }
+            }
+        }
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             item = player.getInventory().getItem(slot);
             if (item.getItem() instanceof ILens lensItem) {
@@ -61,7 +77,9 @@ public final class LensManager {
                 int lensSlot = reference - pouchIndex * 1000;
                 if (pouchSlots.containsKey(pouchIndex)) {
                     int pouchSlot = pouchSlots.get(pouchIndex);
-                    ItemStack pouch = player.getInventory().getItem(pouchSlot);
+                    ItemStack pouch = pouchSlot >= 0
+                        ? player.getInventory().getItem(pouchSlot)
+                        : Compat.port().baubles().get(player, pouchSlot + 4);
                     if (pouch.getItem() instanceof ItemLensCase) {
                         ItemStack[] inv = ItemLensCase.getContents(pouch);
                         if (inv[lensSlot].getItem() instanceof ILens) {
@@ -105,7 +123,9 @@ public final class LensManager {
             return false;
         }
         for (int pouchSlot : pouchSlots.values()) {
-            ItemStack pouch = player.getInventory().getItem(pouchSlot);
+            ItemStack pouch = pouchSlot >= 0
+                ? player.getInventory().getItem(pouchSlot)
+                : Compat.port().baubles().get(player, pouchSlot + 4);
             if (!(pouch.getItem() instanceof ItemLensCase)) {
                 continue;
             }
