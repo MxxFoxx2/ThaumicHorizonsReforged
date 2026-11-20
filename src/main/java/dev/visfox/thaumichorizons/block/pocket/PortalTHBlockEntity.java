@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.block.pocket;
 
 import dev.visfox.thaumichorizons.blockentity.ThBlockEntity;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
@@ -73,8 +73,8 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
 
         if (!entity.cleanupStarted) {
             THSounds.play(server, pos, "craftfail", SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (Compat.port().fx().isAvailable()) {
-                Compat.port().fx().burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
+            if (TcReforgedPort.fx.isAvailable()) {
+                TcReforgedPort.fx.burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
             }
             entity.cleanupStarted = true;
             entity.setChanged();

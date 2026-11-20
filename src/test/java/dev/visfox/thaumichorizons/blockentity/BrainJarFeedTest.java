@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dev.visfox.thaumichorizons.compat.BrainJarCompat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.function.DoubleSupplier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.junit.jupiter.api.Test;
@@ -111,7 +111,7 @@ class BrainJarFeedTest {
         assertEquals(0, calls[0]);
     }
 
-    private static final class FakeBrainJars implements BrainJarCompat {
+    private static final class FakeBrainJars extends TcReforgedPort.TcBrainJars {
         private boolean isJar;
         private int xp;
         private int setCalls;
@@ -120,11 +120,6 @@ class BrainJarFeedTest {
         private FakeBrainJars(int xp, int max) {
             this.xp = xp;
             this.max = max;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return true;
         }
 
         @Override

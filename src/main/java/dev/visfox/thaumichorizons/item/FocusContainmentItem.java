@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.LostSoul;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
 import dev.visfox.thaumichorizons.lib.EntityRay;
@@ -155,7 +155,7 @@ public class FocusContainmentItem extends FocusItem {
         if (!p.getInventory().add(jar)) {
             p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
         }
-        Compat.port().fx().containmentCapture(world, ent.position(), 29631);
+        TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;
     }
 
@@ -168,7 +168,7 @@ public class FocusContainmentItem extends FocusItem {
         if (!p.getInventory().add(jar)) {
             p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
         }
-        Compat.port().fx().containmentCapture(world, ent.position(), 29631);
+        TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;
     }
 

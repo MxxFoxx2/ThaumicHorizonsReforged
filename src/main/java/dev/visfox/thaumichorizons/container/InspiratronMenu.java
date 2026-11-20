@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.container;
 
 import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,7 +20,7 @@ public class InspiratronMenu extends AbstractContainerMenu {
         this.tile = tile;
         addSlot(new RestrictedSlot(tile, 0, 15, 42, stack -> stack.is(Items.PAPER)));
         addSlot(new RestrictedSlot(tile, 1, 146, 42, stack -> {
-            net.minecraft.world.item.Item knowledge = Compat.port().items().lookup(KNOWLEDGE_FRAGMENT);
+            net.minecraft.world.item.Item knowledge = TcReforgedPort.items.lookup(KNOWLEDGE_FRAGMENT);
             return knowledge != null && stack.is(knowledge);
         }));
         for (int row = 0; row < 3; row++) {

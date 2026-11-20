@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.blockentity.ThBlockEntity;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
@@ -121,7 +121,7 @@ public class InspiratronBlockEntity extends ThBlockEntity implements SoulReceive
     }
 
     private static ItemStack knowledgeFragment() {
-        net.minecraft.world.item.Item item = Compat.port().items().lookup(KNOWLEDGE_FRAGMENT);
+        net.minecraft.world.item.Item item = TcReforgedPort.items.lookup(KNOWLEDGE_FRAGMENT);
         return item == null ? ItemStack.EMPTY : new ItemStack(item);
     }
 

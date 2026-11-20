@@ -2,7 +2,7 @@ package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
 import dev.visfox.thaumichorizons.entity.GuardianPanther;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusions;
 import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
@@ -144,8 +144,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 }
             }
             if (mode == 1) {
-                Compat.port().fx().blockSparkle(tickLevel, worldPosition.below(), 14184241, 1);
-                Compat.port().fx().blockSparkle(tickLevel, worldPosition.below(2), 14184241, 1);
+                TcReforgedPort.fx.blockSparkle(tickLevel, worldPosition.below(), 14184241, 1);
+                TcReforgedPort.fx.blockSparkle(tickLevel, worldPosition.below(2), 14184241, 1);
             }
             return;
         }
@@ -299,8 +299,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             }
             if (progress <= 0 && myEssentia.getAmount(Aspect.LIFE) >= 8 && myEssentia.getAmount(Aspect.HEAL) >= 8) {
                 THSounds.play(tickLevel, worldPosition, "wand", SoundSource.BLOCKS, 1.0F, random.nextFloat());
-                Compat.port().fx().blockSparkle(tickLevel, worldPosition.below(2), 16720418, 20);
-                Compat.port().fx().blockSparkle(tickLevel, worldPosition.below(), 16720418, 20);
+                TcReforgedPort.fx.blockSparkle(tickLevel, worldPosition.below(2), 16720418, 20);
+                TcReforgedPort.fx.blockSparkle(tickLevel, worldPosition.below(), 16720418, 20);
                 mode = 4;
                 selfInfusionHealth = SELF_INFUSION_INITIAL_HEALTH;
                 sample = null;
@@ -401,12 +401,12 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 return true;
             }
         }
-        if (Compat.port().potions().isAvailable()) {
-            return ent.hasEffect(Compat.port().potions().visExhaust())
-                || ent.hasEffect(Compat.port().potions().thaumarhia())
-                || ent.hasEffect(Compat.port().potions().taintPoison())
-                || ent.hasEffect(Compat.port().potions().blurredVision())
-                || ent.hasEffect(Compat.port().potions().infectiousVisExhaust());
+        if (TcReforgedPort.potions.isAvailable()) {
+            return ent.hasEffect(TcReforgedPort.potions.visExhaust())
+                || ent.hasEffect(TcReforgedPort.potions.thaumarhia())
+                || ent.hasEffect(TcReforgedPort.potions.taintPoison())
+                || ent.hasEffect(TcReforgedPort.potions.blurredVision())
+                || ent.hasEffect(TcReforgedPort.potions.infectiousVisExhaust());
         }
         return false;
     }
@@ -420,12 +420,12 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         ent.removeEffect(MobEffects.POISON);
         ent.removeEffect(MobEffects.WEAKNESS);
         ent.removeEffect(MobEffects.WITHER);
-        if (Compat.port().potions().isAvailable()) {
-            ent.removeEffect(Compat.port().potions().visExhaust());
-            ent.removeEffect(Compat.port().potions().thaumarhia());
-            ent.removeEffect(Compat.port().potions().taintPoison());
-            ent.removeEffect(Compat.port().potions().blurredVision());
-            ent.removeEffect(Compat.port().potions().infectiousVisExhaust());
+        if (TcReforgedPort.potions.isAvailable()) {
+            ent.removeEffect(TcReforgedPort.potions.visExhaust());
+            ent.removeEffect(TcReforgedPort.potions.thaumarhia());
+            ent.removeEffect(TcReforgedPort.potions.taintPoison());
+            ent.removeEffect(TcReforgedPort.potions.blurredVision());
+            ent.removeEffect(TcReforgedPort.potions.infectiousVisExhaust());
         }
     }
 
@@ -468,7 +468,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                     return true;
                 }
             }
-        } else if (!possibleJar.isEmpty() && Compat.port().items().isEssentiaJar(possibleJar)
+        } else if (!possibleJar.isEmpty() && TcReforgedPort.items.isEssentiaJar(possibleJar)
             && getEntityContained() != null && !(getEntityContained() instanceof Player)) {
             if (mode == 0) {
                 return jarCritter(possibleJar, player);
@@ -477,8 +477,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             if (selfInfusions[1] == 0 && giveEmptyJar(player)) {
                 THSounds.play(level, worldPosition, "whispers", SoundSource.BLOCKS, 1.0F,
                     level.getRandom().nextFloat());
-                Compat.port().fx().blockSparkle(level, worldPosition.below(), 16777215, 20);
-                Compat.port().fx().blockSparkle(level, worldPosition.below(2), 16777215, 20);
+                TcReforgedPort.fx.blockSparkle(level, worldPosition.below(), 16777215, 20);
+                TcReforgedPort.fx.blockSparkle(level, worldPosition.below(2), 16777215, 20);
                 Villager villager = new Villager((EntityType<Villager>) vanillaEntityType("villager"), level);
                 VillagerProfession profession = BuiltInRegistries.VILLAGER_PROFESSION
                     .getValue(Identifier.tryParse(jarData.villagerType()));
@@ -624,7 +624,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                             pedestals.add(pos);
                             skip = true;
                         } else {
-                            if (Compat.port().infusion().isStabiliser(level, pos)) {
+                            if (TcReforgedPort.infusion.isStabiliser(level, pos)) {
                                 stuff.add(pos);
                             }
                         }
@@ -653,12 +653,12 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         }
         float sym = 0.0F;
         for (BlockPos pos : stuff) {
-            if (Compat.port().infusion().isStabiliser(level, pos)) {
+            if (TcReforgedPort.infusion.isStabiliser(level, pos)) {
                 sym += 0.1F;
             }
             BlockPos mirrored = new BlockPos(worldPosition.getX() * 2 - pos.getX(), pos.getY(),
                 worldPosition.getZ() * 2 - pos.getZ());
-            if (Compat.port().infusion().isStabiliser(level, mirrored, pos)) {
+            if (TcReforgedPort.infusion.isStabiliser(level, mirrored, pos)) {
                 sym -= 0.2F;
             }
         }
@@ -697,7 +697,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             double tx = worldPosition.getX() + 0.5 + (random.nextFloat() - random.nextFloat()) * 2.0;
             double ty = worldPosition.getY() + 0.5 + (random.nextFloat() - random.nextFloat()) * 2.0;
             double tz = worldPosition.getZ() + 0.5 + (random.nextFloat() - random.nextFloat()) * 2.0;
-            Compat.port().fx().arcLightning(fxLevel,
+            TcReforgedPort.fx.arcLightning(fxLevel,
                 new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5),
                 new Vec3(tx, ty, tz), 0xFFFFFF);
         }
@@ -800,7 +800,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                         && ItemStack.isSameItemSameComponents(pedestal.getItem(0), recipeIngredients.get(a))) {
                         if (itemCount == 0) {
                             itemCount = 5;
-                            Compat.port().fx().essentiaTrail(cycleLevel, pedestalPos,
+                            TcReforgedPort.fx.essentiaTrail(cycleLevel, pedestalPos,
                                 new Vec3(worldPosition.getX(), worldPosition.getY() - 2, worldPosition.getZ()),
                                 0xFFFFFF);
                         } else if (itemCount-- <= 1) {
@@ -828,7 +828,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1).inflate(10.0));
         for (Entity target : targets) {
-            Compat.port().fx().arcLightning(zapLevel,
+            TcReforgedPort.fx.arcLightning(zapLevel,
                 new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5),
                 target.position().add(0.0, target.getBbHeight() / 2.0, 0.0), 0xFFFFFF);
             target.hurt(zapLevel.damageSources().magic(), 4 + zapLevel.getRandom().nextInt(4));
@@ -843,8 +843,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1).inflate(10.0));
         for (LivingEntity target : targets) {
-            if (Compat.port().potions().isAvailable() && harmLevel.getRandom().nextBoolean()) {
-                target.addEffect(new MobEffectInstance(Compat.port().potions().visExhaust(), 2400, 0, false, true, false));
+            if (TcReforgedPort.potions.isAvailable() && harmLevel.getRandom().nextBoolean()) {
+                target.addEffect(new MobEffectInstance(TcReforgedPort.potions.visExhaust(), 2400, 0, false, true, false));
             } else {
                 target.addEffect(new MobEffectInstance(MobEffects.POISON, 120, 0, false, true));
             }
@@ -861,9 +861,9 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         if (!targets.isEmpty()) {
             Player target = targets.get(warpLevel.getRandom().nextInt(targets.size()));
             if (warpLevel.getRandom().nextFloat() < 0.25F) {
-                Compat.port().warp().add(target, 1, WarpKind.STICKY);
+                TcReforgedPort.warp.add(target, 1, WarpKind.STICKY);
             } else {
-                Compat.port().warp().add(target, 1 + warpLevel.getRandom().nextInt(5), WarpKind.PERMANENT);
+                TcReforgedPort.warp.add(target, 1 + warpLevel.getRandom().nextInt(5), WarpKind.PERMANENT);
             }
         }
     }
@@ -904,7 +904,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                     ejectLevel.explode(null, pedestalPos.getX() + 0.5, pedestalPos.getY() + 0.5,
                         pedestalPos.getZ() + 0.5, 1.0F, false, Level.ExplosionInteraction.NONE);
                 }
-                Compat.port().fx().arcLightning(ejectLevel,
+                TcReforgedPort.fx.arcLightning(ejectLevel,
                     new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5),
                     new Vec3(pedestalPos.getX() + 0.5, pedestalPos.getY() + 1.5, pedestalPos.getZ() + 0.5),
                     0xFFFFFF);
@@ -967,7 +967,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             }
             mode = 4;
         }
-        Compat.port().fx().burst(finishLevel,
+        TcReforgedPort.fx.burst(finishLevel,
             new Vec3(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ()), 0xFFFFFF, 16);
         essentiaDemanded = new AspectList();
         myEssentia = new AspectList();
@@ -1191,7 +1191,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             essentiaDemanded.reduce(tag, amount);
         }
         if (level != null && !level.isClientSide()) {
-            Compat.port().fx().essentiaBubble(level,
+            TcReforgedPort.fx.essentiaBubble(level,
                 new BlockPos(worldPosition.getX(), worldPosition.getY() - 2, worldPosition.getZ()), tag.getColor());
         }
         markAndSync();

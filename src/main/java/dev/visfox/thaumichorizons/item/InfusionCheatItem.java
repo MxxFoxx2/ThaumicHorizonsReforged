@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusions;
 import dev.visfox.thaumichorizons.infusion.InfusionEntityEvents;
 import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
@@ -66,8 +66,8 @@ public final class InfusionCheatItem extends Item {
                 mob.setPersistenceRequired();
             }
             InfusionEntityEvents.applyInfusions(entity);
-            if (Compat.port().fx().isAvailable()) {
-                Compat.port().fx().burst(level,
+            if (TcReforgedPort.fx.isAvailable()) {
+                TcReforgedPort.fx.burst(level,
                     new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ()), 0xFFFFFF, 16);
             }
             return InteractionResult.CONSUME;

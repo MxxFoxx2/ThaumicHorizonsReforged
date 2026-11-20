@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.container;
 
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,7 +22,7 @@ public class VatMenu extends AbstractContainerMenu {
         super(ThMenus.VAT.get(), containerId);
         this.tile = tile;
         this.player = inventory.player;
-        if (Compat.port().research().isComplete(inventory.player, "incarnationVat")) {
+        if (TcReforgedPort.research.isComplete(inventory.player, "incarnationVat")) {
             addSlot(this.slotSample = new SampleSlot(tile, 0, 63, 32));
             addSlot(new RestrictedSlot(tile, 1, 96, 32,
                 stack -> stack.is(ThItems.NUTRIENTS.get())));

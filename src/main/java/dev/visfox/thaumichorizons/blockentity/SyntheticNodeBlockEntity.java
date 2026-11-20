@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -85,12 +85,12 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
     }
 
     public boolean addEssence(ItemStack heldItem) {
-        Item wispEssence = Compat.port().items().lookup(
+        Item wispEssence = TcReforgedPort.items.lookup(
             Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
         if (wispEssence == null || !heldItem.is(wispEssence) || heldItem.isEmpty()) {
             return false;
         }
-        List<Aspect> essenceAspects = Compat.port().items().getAspects(heldItem).getAspects();
+        List<Aspect> essenceAspects = TcReforgedPort.items.getAspects(heldItem).getAspects();
         if (essenceAspects.isEmpty() || level == null) {
             return false;
         }
@@ -112,7 +112,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
             return drops;
         }
         essenceDropsGenerated = true;
-        Item wispEssence = Compat.port().items().lookup(
+        Item wispEssence = TcReforgedPort.items.lookup(
             Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
         if (wispEssence == null) {
             return drops;
@@ -123,7 +123,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
                 continue;
             }
             ItemStack essence = new ItemStack(wispEssence, count);
-            Compat.port().items().setSingleAspect(essence, aspect, 2);
+            TcReforgedPort.items.setSingleAspect(essence, aspect, 2);
             drops.add(essence);
         }
         return drops;

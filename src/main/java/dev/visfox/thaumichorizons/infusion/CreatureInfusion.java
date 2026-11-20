@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.infusion;
 
 import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 import dev.visfox.thaumichorizons.platform.DataKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,9 +87,9 @@ public final class CreatureInfusion {
         if (capacity <= 0) {
             return;
         }
-        int permanent = Compat.port().warp().get(player, WarpKind.PERMANENT);
-        int sticky = Compat.port().warp().get(player, WarpKind.STICKY);
-        int temporary = Compat.port().warp().get(player, WarpKind.TEMPORARY);
+        int permanent = TcReforgedPort.warp.get(player, WarpKind.PERMANENT);
+        int sticky = TcReforgedPort.warp.get(player, WarpKind.STICKY);
+        int temporary = TcReforgedPort.warp.get(player, WarpKind.TEMPORARY);
         int drainedPermanent = Math.min(permanent, capacity);
         int drainedSticky = Math.min(sticky, capacity - drainedPermanent);
         int drainedTemp = Math.min(temporary, capacity - drainedPermanent - drainedSticky);
@@ -97,13 +97,13 @@ public final class CreatureInfusion {
             return;
         }
         if (drainedPermanent > 0) {
-            Compat.port().warp().removePermanent(player, drainedPermanent);
+            TcReforgedPort.warp.removePermanent(player, drainedPermanent);
         }
         if (drainedSticky > 0) {
-            Compat.port().warp().add(player, -drainedSticky, WarpKind.STICKY);
+            TcReforgedPort.warp.add(player, -drainedSticky, WarpKind.STICKY);
         }
         if (drainedTemp > 0) {
-            Compat.port().warp().add(player, -drainedTemp, WarpKind.TEMPORARY);
+            TcReforgedPort.warp.add(player, -drainedTemp, WarpKind.TEMPORARY);
         }
         DATA.set(player, new CreatureInfusionData(
             data.infusions(), data.chameleon(), data.climb(),

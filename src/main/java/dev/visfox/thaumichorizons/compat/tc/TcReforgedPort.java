@@ -67,151 +67,62 @@ import thaumcraft.research.ResearchPage;
 import thaumcraft.research.PlayerKnowledge;
 import thaumcraft.research.Warp;
 import thaumcraft.research.WarpType;
-import dev.visfox.thaumichorizons.compat.AspectCompat;
-import dev.visfox.thaumichorizons.compat.AspectCompat.AspectDataRegistrar;
-import dev.visfox.thaumichorizons.compat.BaubleCompat;
-import dev.visfox.thaumichorizons.compat.BrainJarCompat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
-import dev.visfox.thaumichorizons.compat.EssentiaCompat;
-import dev.visfox.thaumichorizons.compat.FxCompat;
-import dev.visfox.thaumichorizons.compat.FluxCompat;
-import dev.visfox.thaumichorizons.compat.InfusionCompat;
-import dev.visfox.thaumichorizons.compat.ItemCompat;
-import dev.visfox.thaumichorizons.compat.MirrorCompat;
-import dev.visfox.thaumichorizons.compat.NodeCompat;
-import dev.visfox.thaumichorizons.compat.PotionCompat;
 import dev.visfox.thaumichorizons.compat.ResearchCompat;
-import dev.visfox.thaumichorizons.compat.ThaumcraftPort;
-import dev.visfox.thaumichorizons.compat.WarpCompat;
+import dev.visfox.thaumichorizons.compat.ResearchCompat.Flag;
+import dev.visfox.thaumichorizons.compat.ResearchCompat.PageKind;
+import dev.visfox.thaumichorizons.compat.ResearchCompat.PageSpec;
+import dev.visfox.thaumichorizons.compat.ResearchCompat.ResearchSpec;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 
-public final class TcReforgedPort implements ThaumcraftPort {
-    private final AspectCompat aspects = new TcAspects();
-    private final ResearchCompat research = new TcResearch();
-    private final WarpCompat warp = new TcWarp();
-    private final EssentiaCompat essentia = new TcEssentia();
-    private final FxCompat fx = new TcFx();
-    private final FluxCompat flux = new TcFlux();
-    private final NodeCompat nodes = new TcNodes();
-    private final PotionCompat potions = new TcPotions();
-    private final InfusionCompat infusion = new TcInfusion();
-    private final ItemCompat items = new TcItems();
-    private final MirrorCompat mirrors = new TcMirrors();
-    private final BaubleCompat baubles = new TcBaubles();
-    private final BrainJarCompat brainJars = new TcBrainJars();
+public final class TcReforgedPort {
+    public static final TcAspects aspects = new TcAspects();
+    public static final TcResearch research = new TcResearch();
+    public static final TcWarp warp = new TcWarp();
+    public static final TcFx fx = new TcFx();
+    public static final TcFlux flux = new TcFlux();
+    public static final TcNodes nodes = new TcNodes();
+    public static final TcPotions potions = new TcPotions();
+    public static final TcInfusion infusion = new TcInfusion();
+    public static final TcItems items = new TcItems();
+    public static final TcMirrors mirrors = new TcMirrors();
+    public static final TcBaubles baubles = new TcBaubles();
+    public static final TcBrainJars brainJars = new TcBrainJars();
 
-    @Override
-    public String portId() {
-        return "thaumcraft-4-reforged";
-    }
-
-    @Override
-    public AspectCompat aspects() {
-        return aspects;
-    }
-
-    @Override
-    public ResearchCompat research() {
-        return research;
-    }
-
-    @Override
-    public WarpCompat warp() {
-        return warp;
-    }
-
-    @Override
-    public EssentiaCompat essentia() {
-        return essentia;
-    }
-
-    @Override
-    public FxCompat fx() {
-        return fx;
-    }
-
-    @Override
-    public FluxCompat flux() {
-        return flux;
-    }
-
-    @Override
-    public NodeCompat nodes() {
-        return nodes;
-    }
-
-    @Override
-    public PotionCompat potions() {
-        return potions;
-    }
-
-    @Override
-    public InfusionCompat infusion() {
-        return infusion;
-    }
-
-    @Override
-    public ItemCompat items() {
-        return items;
-    }
-
-    @Override
-    public MirrorCompat mirrors() {
-        return mirrors;
-    }
-
-    @Override
-    public BaubleCompat baubles() {
-        return baubles;
-    }
-
-    @Override
-    public BrainJarCompat brainJars() {
-        return brainJars;
-    }
-
-    static final class TcAspects implements AspectCompat {
-        @Override
+    public static final class TcAspects {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public void registerAspect(String tag, int color, List<String> componentTags, int blend, Identifier texture) {
             Aspect[] components = TcConversions.resolveAspects(componentTags).toArray(new Aspect[0]);
             AddonAspects.addRegistrar(api -> api.register(tag, color, components, blend, texture));
         }
 
-        @Override
-        public void registerAspectData(Consumer<AspectDataRegistrar> registrar) {
+        public void registerAspectData(Consumer<DataRegistrar> registrar) {
             AspectSync.addRegistrar(registry -> registrar.accept(new DataRegistrar(registry)));
         }
     }
 
-    private record DataRegistrar(AspectRegistry registry) implements AspectDataRegistrar {
-        @Override
+    public record DataRegistrar(AspectRegistry registry) {
         public void item(ItemLike item, CompatAspectList aspects) {
             registry.register(item.asItem(), TcConversions.toAspectList(aspects));
         }
 
-        @Override
         public void entity(EntityType<?> type, CompatAspectList aspects, Object... nbtConditions) {
             registry.mergeEntity(type, TcConversions.toAspectList(aspects), nbtConditions);
         }
     }
 
-    static final class TcResearch implements ResearchCompat {
-        @Override
+    public static final class TcResearch {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public void registerCategory(String key, Identifier icon, Identifier background) {
             ResearchCategories.registerCategory(key, icon, background);
         }
 
-        @Override
         public void registerResearch(ResearchSpec spec) {
             ResearchItem item = new ResearchItem(spec.key(), spec.category(), TcConversions.toAspectList(spec.tags()), spec.column(), spec.row(), spec.complexity(), spec.icon());
             for (ResearchCompat.Flag flag : spec.flags()) {
@@ -278,12 +189,10 @@ public final class TcReforgedPort implements ThaumcraftPort {
             };
         }
 
-        @Override
         public boolean isComplete(Player player, String researchKey) {
             return ResearchGate.isComplete(player, researchKey);
         }
 
-        @Override
         public void complete(Player player, String researchKey) {
             if (player instanceof ServerPlayer serverPlayer) {
                 ResearchManager.complete(serverPlayer, researchKey);
@@ -291,30 +200,25 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcWarp implements WarpCompat {
-        @Override
+    public static final class TcWarp {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public int get(Player player, WarpKind kind) {
             return Warp.get(player, WarpType.valueOf(kind.name()));
         }
 
-        @Override
         public int total(Player player) {
             return Warp.total(player);
         }
 
-        @Override
         public void add(Player player, int amount, WarpKind kind) {
             if (player instanceof ServerPlayer serverPlayer) {
                 Warp.add(serverPlayer, amount, WarpType.valueOf(kind.name()));
             }
         }
 
-        @Override
         public void removePermanent(Player player, int amount) {
             if (!(player instanceof ServerPlayer)) {
                 return;
@@ -324,52 +228,43 @@ public final class TcReforgedPort implements ThaumcraftPort {
             Knowledge.sync(player);
         }
 
-        @Override
         public void registerItemWarp(Identifier item, int warp) {
             Warp.registerItem(item, warp);
         }
     }
 
-    static final class TcItems implements ItemCompat {
-        @Override
+    public static final class TcItems {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public @Nullable Item getSmeltingBonus(ItemStack input) {
             return SmeltingBonuses.get(input);
         }
 
-        @Override
         public @Nullable Item lookup(Identifier id) {
             Item item = BuiltInRegistries.ITEM.getValue(id);
             return item == Items.AIR ? null : item;
         }
 
-        @Override
         public boolean isWand(ItemStack stack) {
             return thaumcraft.wand.Wands.isWand(stack);
         }
 
-        @Override
         public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
             return stack.getItem() instanceof thaumcraft.wand.WandItem wand
                 && wand.consumeVis(stack, player, aspect, amount, crafting);
         }
 
-        @Override
         public void hurtWithDissolve(ServerLevel level, Entity entity, float amount) {
             entity.hurt(level.damageSources().source(ModDamageTypes.DISSOLVE), amount);
         }
 
-        @Override
         public boolean spawnAspectOrb(ServerLevel level, double x, double y, double z, Aspect aspect, int amount) {
             AspectOrb orb = AspectOrb.create(level, x, y, z, aspect, amount);
             return orb != null && level.addFreshEntity(orb);
         }
 
-        @Override
         public void spawnWisps(ServerLevel level, BlockPos pos, AspectList aspects, int salisMundusCount) {
             List<Aspect> storedAspects = aspects.getAspects();
             for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
@@ -389,45 +284,37 @@ public final class TcReforgedPort implements ThaumcraftPort {
             }
         }
 
-        @Override
         public boolean isEssentiaJar(ItemStack stack) {
             return false;
         }
 
-        @Override
         public AspectList getAspects(ItemStack stack) {
             return AspectTooltips.getAspects(stack);
         }
 
-        @Override
         public @Nullable AspectList getObjectAspects(ItemStack stack) {
             AspectList objectAspects = AspectHelper.getObjectTags(stack);
             return AspectHelper.getBonusTags(stack, objectAspects);
         }
 
-        @Override
         public void setSingleAspect(ItemStack stack, Aspect aspect, int amount) {
             AspectTooltips.setSingle(stack, aspect, amount);
         }
     }
 
-    static final class TcMirrors implements MirrorCompat {
-        @Override
+    public static final class TcMirrors {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public boolean isMirror(Level level, BlockPos pos) {
             return level.getBlockState(pos).getBlock() instanceof MirrorBlock mirror && !mirror.isEssentia();
         }
 
-        @Override
         public boolean isLinked(ItemStack stack) {
             return MirrorKeys.LINK.has(stack);
         }
 
-        @Override
         public void link(ItemStack stack, Player player, Level level, BlockPos pos) {
             if (!(level.getBlockEntity(pos) instanceof MirrorBlockEntity)) {
                 return;
@@ -439,7 +326,6 @@ public final class TcReforgedPort implements ThaumcraftPort {
             player.inventoryMenu.broadcastChanges();
         }
 
-        @Override
         public void appendLink(ItemStack stack, Consumer<Component> builder) {
             GlobalPos link = MirrorKeys.LINK.get(stack);
             if (link != null) {
@@ -447,56 +333,46 @@ public final class TcReforgedPort implements ThaumcraftPort {
             }
         }
 
-        @Override
         public boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
             return HandMirrorItem.transport(mirror, items, player, level);
         }
     }
 
-    static final class TcBaubles implements BaubleCompat {
-        @Override
+    public static final class TcBaubles {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public int slotCount() {
             return Baubles.slotCount();
         }
 
-        @Override
         public ItemStack get(Player player, int slot) {
             return Baubles.get(player, slot);
         }
 
-        @Override
         public void set(Player player, int slot, ItemStack stack) {
             Baubles.set(player, slot, stack);
         }
     }
 
-    static final class TcBrainJars implements BrainJarCompat {
-        @Override
+    public static class TcBrainJars {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public boolean isBrainJar(BlockEntity entity) {
             return entity instanceof BrainJarBlockEntity;
         }
 
-        @Override
         public int xp(BlockEntity entity) {
             return entity instanceof BrainJarBlockEntity jar ? jar.getXp() : 0;
         }
 
-        @Override
         public int maxXp() {
             return BrainJarBlockEntity.XP_MAX;
         }
 
-        @Override
         public void setXp(BlockEntity entity, int xp) {
             if (entity instanceof BrainJarBlockEntity jar) {
                 jar.setXp(Math.max(0, Math.min(xp, BrainJarBlockEntity.XP_MAX)));
@@ -505,37 +381,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcEssentia implements EssentiaCompat {
-        @Override
+    public static final class TcFlux {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
-        public int drainEssentia(Level level, BlockPos from, String aspectTag, int amount, Direction side, int range) {
-            Aspect aspect = Aspect.getAspect(aspectTag);
-            if (aspect == null || amount <= 0) {
-                return 0;
-            }
-            if (!(level.getBlockEntity(from) instanceof BlockEntity tile)) {
-                return 0;
-            }
-            return EssentiaHandler.drainEssentia(tile, aspect, side, range) ? amount : 0;
-        }
-
-        @Override
-        public boolean isTaintedMob(LivingEntity entity) {
-            return entity instanceof TaintedMob;
-        }
-    }
-
-    static final class TcFlux implements FluxCompat {
-        @Override
-        public boolean isAvailable() {
-            return true;
-        }
-
-        @Override
         public boolean spill(ServerLevel level, BlockPos pos, boolean gas) {
             if (!level.hasChunkAt(pos) || !level.isEmptyBlock(pos)) {
                 return false;
@@ -545,13 +395,11 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcNodes implements NodeCompat {
-        @Override
+    public static final class TcNodes {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public boolean tryRecombine(ServerLevel level, BlockPos machinePos, BlockPos targetPos) {
             if (!(level.getBlockEntity(machinePos.below()) instanceof NodeBlockEntity source)
                     || !(level.getBlockEntity(targetPos) instanceof NodeBlockEntity target)
@@ -624,7 +472,6 @@ public final class TcReforgedPort implements ThaumcraftPort {
             return List.copyOf(combinations);
         }
 
-        @Override
         public void stopTransducerForVortexConversion(ServerLevel level, BlockPos transducerPos) {
             if (level.getBlockEntity(transducerPos) instanceof NodeTransducerBlockEntity transducer) {
                 transducer.stopForVortexConversion();
@@ -632,100 +479,82 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcFx implements FxCompat {
-        private static thaumcraft.fx.FxProxy fx() {
-            return thaumcraft.fx.Fx.get();
-        }
-
-        @Override
+    public static final class TcFx {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
+        private static thaumcraft.fx.FxProxy fx() {
+            return thaumcraft.fx.Fx.get();
+        }
+
         public void sparkle(Level level, float x, float y, float z, float size, int color, float gravity) {
             fx().sparkle(level, x, y, z, size, color, gravity);
         }
 
-        @Override
         public void wisp(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color, boolean longer) {
             fx().essentiaTrail(level, BlockPos.containing(from), BlockPos.containing(to), longer ? 16 : 8, color, 1.0F);
         }
 
-        @Override
         public void burst(Level level, net.minecraft.world.phys.Vec3 pos, int color, int count) {
             fx().shockBurst(level, pos.x, pos.y, pos.z, 1.0F + count * 0.1F);
         }
 
-        @Override
         public void arcLightning(Level level, net.minecraft.world.phys.Vec3 from, net.minecraft.world.phys.Vec3 to, int color) {
             fx().nodeBolt(level, (float) from.x, (float) from.y, (float) from.z, (float) to.x, (float) to.y, (float) to.z);
         }
 
-        @Override
         public void beam(Level level, BlockPos key, net.minecraft.world.phys.Vec3 from,
             net.minecraft.world.phys.Vec3 to, int color, float width, int type) {
             fx().machineBeam(level, key, from, to, color, width, type);
         }
 
-        @Override
         public void blockSparkle(Level level, BlockPos pos, int color, int count) {
             fx().blockSparkle(level, pos, color, count);
         }
 
-        @Override
         public void essentiaTrail(Level level, BlockPos from, net.minecraft.world.phys.Vec3 to, int color) {
             fx().essentiaTrail(level, from, BlockPos.containing(to), 8, color, 1.0F);
         }
 
-        @Override
         public void blocksplosion(Level level, BlockPos center, int color) {
             fx().blocksplosion(level, center, color);
         }
 
-        @Override
         public void containmentCapture(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
             fx().containmentCapture(level, pos.x, pos.y, pos.z, color);
         }
 
-        @Override
         public void essentiaBubble(Level level, BlockPos pos, int color) {
             fx().blockBubble(level, pos, color);
         }
 
-        @Override
         public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
             fx().deadCreature(level, pos.x, pos.y, pos.z, color);
         }
     }
 
-    static final class TcPotions implements PotionCompat {
-        @Override
+    public static final class TcPotions {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public Holder<MobEffect> visExhaust() {
             return effect("vis_exhaust");
         }
 
-        @Override
         public Holder<MobEffect> thaumarhia() {
             return effect("thaumarhia");
         }
 
-        @Override
         public Holder<MobEffect> taintPoison() {
             return effect("taint_poison");
         }
 
-        @Override
         public Holder<MobEffect> blurredVision() {
             return effect("blurred_vision");
         }
 
-        @Override
         public Holder<MobEffect> infectiousVisExhaust() {
             return effect("infectious_vis_exhaust");
         }
@@ -738,18 +567,15 @@ public final class TcReforgedPort implements ThaumcraftPort {
         }
     }
 
-    static final class TcInfusion implements InfusionCompat {
-        @Override
+    public static final class TcInfusion {
         public boolean isAvailable() {
             return true;
         }
 
-        @Override
         public boolean isStabiliser(Level level, BlockPos pos) {
             return isStabiliser(level, pos, pos);
         }
 
-        @Override
         public boolean isStabiliser(Level level, BlockPos blockPos, BlockPos stabiliserPos) {
             net.minecraft.world.level.block.Block block = level.getBlockState(blockPos).getBlock();
             return block instanceof AbstractSkullBlock

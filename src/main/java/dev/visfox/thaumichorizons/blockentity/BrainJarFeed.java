@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.BrainJarCompat;
 import java.util.function.DoubleSupplier;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public final class BrainJarFeed {
@@ -10,7 +10,7 @@ public final class BrainJarFeed {
     private BrainJarFeed() {
     }
 
-    public static boolean feed(BlockEntity entity, BrainJarCompat jars, int bits, DoubleSupplier random) {
+    public static boolean feed(BlockEntity entity, TcReforgedPort.TcBrainJars jars, int bits, DoubleSupplier random) {
         if (!jars.isBrainJar(entity)) {
             return false;
         }

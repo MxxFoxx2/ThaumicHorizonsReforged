@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.block;
 
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
@@ -75,8 +75,8 @@ public class CloudBlock extends Block implements EntityBlock, WandInteractable {
 
     @Override
     public InteractionResult onWandUseOn(Level level, BlockPos pos, Player player, ItemStack wand, Direction side) {
-        var items = Compat.port().items();
-        var research = Compat.port().research();
+        var items = TcReforgedPort.items;
+        var research = TcReforgedPort.research;
         if (!items.isAvailable() || !research.isAvailable()
                 || !items.isWand(wand) || !research.isComplete(player, "planarClouds")) {
             return InteractionResult.PASS;
@@ -84,7 +84,7 @@ public class CloudBlock extends Block implements EntityBlock, WandInteractable {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (!Compat.port().items().consumeVis(wand, player, Aspect.AIR, 100, false)) {
+        if (!TcReforgedPort.items.consumeVis(wand, player, Aspect.AIR, 100, false)) {
             return InteractionResult.PASS;
         }
 

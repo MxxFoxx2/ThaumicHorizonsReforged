@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -20,7 +20,7 @@ public class AmuletMirrorItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return Compat.port().mirrors().isAvailable() && Compat.port().mirrors().isLinked(stack);
+        return TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.isLinked(stack);
     }
 
     @Override
@@ -28,24 +28,24 @@ public class AmuletMirrorItem extends Item {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
-        if (player == null || !Compat.port().mirrors().isAvailable() || !Compat.port().mirrors().isMirror(level, pos)) {
+        if (player == null || !TcReforgedPort.mirrors.isAvailable() || !TcReforgedPort.mirrors.isMirror(level, pos)) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            Compat.port().mirrors().link(stack, player, level, pos);
+            TcReforgedPort.mirrors.link(stack, player, level, pos);
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
-        if (Compat.port().mirrors().isAvailable() && Compat.port().mirrors().isLinked(stack)) {
-            Compat.port().mirrors().appendLink(stack, builder);
+        if (TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.isLinked(stack)) {
+            TcReforgedPort.mirrors.appendLink(stack, builder);
         }
         super.appendHoverText(stack, context, display, builder, flag);
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
-        return Compat.port().mirrors().isAvailable() && Compat.port().mirrors().transport(mirror, items, player, level);
+        return TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.transport(mirror, items, player, level);
     }
 }

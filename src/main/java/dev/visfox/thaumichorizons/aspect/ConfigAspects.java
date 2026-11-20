@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.aspect;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThItems;
@@ -11,10 +11,7 @@ public final class ConfigAspects {
     }
 
     public static void init() {
-        if (!Compat.port().aspects().isAvailable()) {
-            return;
-        }
-        Compat.port().aspects().registerAspectData(registrar -> {
+        TcReforgedPort.aspects.registerAspectData(registrar -> {
             registrar.item(ThItems.BAR_CHOCOLATE, tags("fames", 2, "victus", 1));
             registrar.item(ThItems.ICE_CREAM, tags("fames", 3, "victus", 1, "gelum", 1));
             registrar.item(ThItems.BUCKET_CHOCOLATE, tags("fames", 2, "victus", 2));

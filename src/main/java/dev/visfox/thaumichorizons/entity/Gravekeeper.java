@@ -2,7 +2,7 @@ package dev.visfox.thaumichorizons.entity;
 
 import dev.visfox.thaumichorizons.registry.ThEntities;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.FollowOwnerGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.HurtByTargetGoalTH;
@@ -72,10 +72,10 @@ public class Gravekeeper extends TamableAnimal {
             for (LivingEntity critter : level.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (critter.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD) && critter.isAlive()) {
                     critter.igniteForSeconds(1.0F);
-                    if (Compat.port().fx().isAvailable()) {
+                    if (TcReforgedPort.fx.isAvailable()) {
                         Vec3 from = new Vec3(this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ());
                         Vec3 to = new Vec3(critter.getX(), critter.getY() + critter.getBbHeight() / 2.0F, critter.getZ());
-                        Compat.port().fx().wisp(level, from, to, 16773444, false);
+                        TcReforgedPort.fx.wisp(level, from, to, 16773444, false);
                     }
                 }
             }

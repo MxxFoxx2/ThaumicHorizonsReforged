@@ -19,9 +19,8 @@ Keep gameplay code independent of version-specific APIs and TC4R internals where
 
 ## Thaumcraft compatibility
 
-- `compat/` defines narrow capability interfaces for Thaumcraft functionality.
-- `TcReforgedPort` supplies the TC4R-backed implementation through Java ServiceLoader.
-- Unavailable fallbacks must expose availability explicitly; callers must not invoke unsupported methods.
+- TC4R (the fork at `../thaumcraft-4-reforged`, composite build) is the only integration target and a hard dependency: there is no ServiceLoader, no fallback backend and no availability gating.
+- `compat/tc/TcReforgedPort` exposes the TC4R-backed capability implementations as public static fields; gameplay code calls them directly (`TcReforgedPort.fx.sparkle(...)`), or uses the TC4R public API straight away when the allowlist in `tools/check_seams.py` permits it.
 - TC4R implementation details and mixins belong in `compat/tc/`.
 - Gameplay code may directly import only the explicit public API allowlist in `tools/check_seams.py`. This is a reviewed exception, not general permission to import TC4R classes.
 
@@ -30,7 +29,6 @@ See [TC4R integration](tc4r-integration.md) before changing the host integration
 ## Registration and state
 
 - Content registration uses the existing DeferredRegister classes under `dev.visfox.thaumichorizons.registry/`.
-- Compat-dependent content must respect capability availability.
 - Player state uses NeoForge attachments; item state uses data components. Follow the existing copy, synchronization and serialization contracts.
 - Critter/self-infusion recipes use the TH recipe system, not TC4R's `TcRecipes`.
 - Do not create data-component-bearing ItemStacks during static initialization or registration constructors before `DefaultDataComponentsBoundEvent`; use lazy creation as established in the code.

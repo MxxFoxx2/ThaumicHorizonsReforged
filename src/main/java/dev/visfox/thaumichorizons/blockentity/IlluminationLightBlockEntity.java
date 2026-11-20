@@ -1,8 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
 import dev.visfox.thaumichorizons.block.IlluminationLightBlock;
-import dev.visfox.thaumichorizons.compat.Compat;
-import dev.visfox.thaumichorizons.compat.FxCompat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.item.focus.FocusIlluminationItem;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -20,7 +19,7 @@ public final class IlluminationLightBlockEntity extends BlockEntity {
         if (level.getRandom().nextInt(9) != 0 || !state.hasProperty(IlluminationLightBlock.COLOR)) {
             return;
         }
-        FxCompat fx = Compat.port().fx();
+        var fx = TcReforgedPort.fx;
         if (!fx.isAvailable()) {
             return;
         }

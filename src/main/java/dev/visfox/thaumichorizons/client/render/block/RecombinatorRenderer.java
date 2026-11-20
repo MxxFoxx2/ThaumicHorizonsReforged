@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.RecombinatorBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -65,8 +65,8 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
         state.gameTime = level.getGameTime();
         state.partialTicks = partialTicks;
 
-        if (state.active && state.hasNode && level.isClientSide() && Compat.port().fx().isAvailable()) {
-            Compat.port().fx().beam(level, pos,
+        if (state.active && state.hasNode && level.isClientSide() && TcReforgedPort.fx.isAvailable()) {
+            TcReforgedPort.fx.beam(level, pos,
                 new Vec3(pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5),
                 new Vec3(pos.getX() + 0.5, pos.getY() - 0.5, pos.getZ() + 0.5),
                 0xFFFFFFFF, 0.1F, 3);

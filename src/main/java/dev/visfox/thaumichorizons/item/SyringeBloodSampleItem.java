@@ -1,6 +1,5 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

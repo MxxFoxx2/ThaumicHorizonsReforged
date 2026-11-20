@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
@@ -48,7 +48,7 @@ public final class VatTrigger {
     }
 
     private static boolean constructVat(Level world, ItemStack itemstack, Player player, BlockPos pos) {
-        if (!Compat.port().research().isComplete(player, "healingVat")) {
+        if (!TcReforgedPort.research.isComplete(player, "healingVat")) {
             return false;
         }
         if (!(itemstack.getItem() instanceof WandItem wand)) {

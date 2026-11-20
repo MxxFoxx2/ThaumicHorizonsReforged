@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.blockentity.ThBlockEntity;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
@@ -29,7 +29,7 @@ public class SoulBeaconBlockEntity extends BlockEntity {
         SoulBeaconKeys.DATA.set(player, data);
         player.sendSystemMessage(Component.translatable("thaumichorizons.setBeacon")
             .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-        Compat.port().fx().arcLightning(level, player.position().add(0.0, player.getEyeHeight(), 0.0),
+        TcReforgedPort.fx.arcLightning(level, player.position().add(0.0, player.getEyeHeight(), 0.0),
             new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() + 0.75, worldPosition.getZ() + 0.5),
             0x05FF05);
         THSounds.play(level, worldPosition, "zap", SoundSource.BLOCKS, 1.0F, 1.0F);

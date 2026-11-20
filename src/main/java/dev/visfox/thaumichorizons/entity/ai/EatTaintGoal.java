@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.entity.ai;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.TaintEaterPig;
 import net.minecraft.world.entity.ai.goal.Goal;
 import java.util.EnumSet;
@@ -127,8 +127,8 @@ public class EatTaintGoal extends Goal {
         }
         BlockPos pos = this.targetCoordinates;
         if (isTaintBlock(level, pos)) {
-            if (Compat.port().fx().isAvailable()) {
-                Compat.port().fx().blocksplosion(level, pos, 0);
+            if (TcReforgedPort.fx.isAvailable()) {
+                TcReforgedPort.fx.blocksplosion(level, pos, 0);
             }
             level.removeBlock(pos, false);
             TaintBiomes.set(level, pos, Biomes.PLAINS);

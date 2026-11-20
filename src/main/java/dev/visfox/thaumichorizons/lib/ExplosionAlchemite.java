@@ -1,7 +1,6 @@
 package dev.visfox.thaumichorizons.lib;
 
-import dev.visfox.thaumichorizons.compat.Compat;
-import dev.visfox.thaumichorizons.compat.ItemCompat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -181,7 +180,7 @@ public class ExplosionAlchemite {
             }
         }
         if (this.level instanceof ServerLevel serverLevel) {
-            ItemCompat itemCompat = Compat.port().items();
+            var itemCompat = TcReforgedPort.items;
             boolean itemsAvailable = itemCompat.isAvailable();
             Item essenceItem = itemsAvailable
                 ? itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"))
@@ -193,8 +192,8 @@ public class ExplosionAlchemite {
                     if (d < 0.25) {
                         if (essenceItem != null
                             && dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem)
-                            && Compat.port().fx().isAvailable()) {
-                            Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
+                            && TcReforgedPort.fx.isAvailable()) {
+                            TcReforgedPort.fx.blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         }
                         serverLevel.destroyBlock(blockpos, false);
                     } else if (d < 0.5) {
@@ -212,8 +211,8 @@ public class ExplosionAlchemite {
                         : itemCompat.getObjectAspects(new ItemStack(blockItem));
                     if (essenceItem != null && aspects != null && !aspects.isEmpty()
                         && dropCrystallizedEssence(serverLevel, blockpos, aspects, essenceItem)) {
-                        if (Compat.port().fx().isAvailable()) {
-                            Compat.port().fx().blocksplosion(serverLevel, blockpos, 0xFFFFFF);
+                        if (TcReforgedPort.fx.isAvailable()) {
+                            TcReforgedPort.fx.blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         }
                         serverLevel.destroyBlock(blockpos, false, this.exploder);
                     } else {
@@ -232,7 +231,7 @@ public class ExplosionAlchemite {
                 continue;
             }
             ItemStack essence = new ItemStack(item, amount);
-            Compat.port().items().setSingleAspect(essence, aspect, 1);
+            TcReforgedPort.items.setSingleAspect(essence, aspect, 1);
             level.addFreshEntity(new InvulnerableItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5,
                 pos.getZ() + 0.5, essence));
             dropped = true;

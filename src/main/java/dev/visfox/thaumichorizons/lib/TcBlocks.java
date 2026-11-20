@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.lib;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -17,7 +17,7 @@ public final class TcBlocks {
     }
 
     public static @Nullable Item item(String name) {
-        return Compat.port().items().lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        return TcReforgedPort.items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
     }
 
     public static ItemStack emptyJar() {

@@ -1,8 +1,7 @@
 package dev.visfox.thaumichorizons.infusion;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.compat.BaubleCompat;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconKeys;
@@ -118,8 +117,8 @@ public final class InfusionEntityEvents {
                 : entity.getLastHurtByMob();
             if (target != null && target.isAlive()) {
                 target.hurtServer(level, entity.damageSources().magic(), 1.0F);
-                if (Compat.port().fx().isAvailable()) {
-                    Compat.port().fx().arcLightning(level,
+                if (TcReforgedPort.fx.isAvailable()) {
+                    TcReforgedPort.fx.arcLightning(level,
                         new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2.0F, entity.getZ()),
                         new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0F, target.getZ()),
                         0xFFFFFF);
@@ -205,11 +204,11 @@ public final class InfusionEntityEvents {
         Set<Holder<MobEffect>> effects = new HashSet<>();
         effects.add(MobEffects.POISON);
         effects.add(MobEffects.WITHER);
-        if (Compat.port().potions().isAvailable()) {
-            effects.add(Compat.port().potions().visExhaust());
-            effects.add(Compat.port().potions().thaumarhia());
-            effects.add(Compat.port().potions().taintPoison());
-            effects.add(Compat.port().potions().infectiousVisExhaust());
+        if (TcReforgedPort.potions.isAvailable()) {
+            effects.add(TcReforgedPort.potions.visExhaust());
+            effects.add(TcReforgedPort.potions.thaumarhia());
+            effects.add(TcReforgedPort.potions.taintPoison());
+            effects.add(TcReforgedPort.potions.infectiousVisExhaust());
         }
         return effects;
     }
@@ -304,9 +303,9 @@ public final class InfusionEntityEvents {
         if (entity instanceof Player player) {
             CreatureInfusionData data = CreatureInfusion.get(player);
             if (data.tumorWarpPermanent() > 0 || data.tumorWarp() > 0 || data.tumorWarpTemp() > 0) {
-                Compat.port().warp().add(player, data.tumorWarpPermanent(), WarpKind.PERMANENT);
-                Compat.port().warp().add(player, data.tumorWarp(), WarpKind.STICKY);
-                Compat.port().warp().add(player, data.tumorWarpTemp(), WarpKind.TEMPORARY);
+                TcReforgedPort.warp.add(player, data.tumorWarpPermanent(), WarpKind.PERMANENT);
+                TcReforgedPort.warp.add(player, data.tumorWarp(), WarpKind.STICKY);
+                TcReforgedPort.warp.add(player, data.tumorWarpTemp(), WarpKind.TEMPORARY);
             }
             if (player instanceof ServerPlayer serverPlayer) {
                 CreatureInfusion.setInfusion(serverPlayer, 0, 0);
@@ -317,10 +316,10 @@ public final class InfusionEntityEvents {
     }
 
     private static void returnDeathItems(Player player, ServerLevel level) {
-        if (!Compat.port().baubles().isAvailable() || !Compat.port().mirrors().isAvailable()) {
+        if (!TcReforgedPort.baubles.isAvailable() || !TcReforgedPort.mirrors.isAvailable()) {
             return;
         }
-        BaubleCompat baubles = Compat.port().baubles();
+        var baubles = TcReforgedPort.baubles;
         int amuletSlot = -1;
         for (int slot = 0; slot < baubles.slotCount(); slot++) {
             if (baubles.get(player, slot).getItem() instanceof AmuletMirrorItem) {
@@ -356,9 +355,9 @@ public final class InfusionEntityEvents {
         baubles.set(player, amuletSlot, ItemStack.EMPTY);
         player.getInventory().setChanged();
         Vec3 eye = player.position().add(0.0, player.getEyeHeight(), 0.0);
-        Compat.port().fx().containmentCapture(level, eye, 29631);
+        TcReforgedPort.fx.containmentCapture(level, eye, 29631);
         THSounds.play(level, eye, "craftfail", SoundSource.PLAYERS, 1.0F, 1.0F);
-        Item pearl = Compat.port().items().lookup(Identifier.parse("thaumcraft:primordial_pearl"));
+        Item pearl = TcReforgedPort.items.lookup(Identifier.parse("thaumcraft:primordial_pearl"));
         if (pearl != null) {
             ItemEntity drop = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), new ItemStack(pearl));
             drop.setUnlimitedLifetime();
@@ -431,20 +430,20 @@ public final class InfusionEntityEvents {
         event.setAmount(0.0F);
         current.explode(null, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(),
             0.0F, false, Level.ExplosionInteraction.NONE);
-        if (Compat.port().flux().isAvailable()) {
+        if (TcReforgedPort.flux.isAvailable()) {
             for (int index = 0; index < 25; index++) {
                 int x = (int) player.getX() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
                 int y = (int) player.getY() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
                 int z = (int) player.getZ() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
                 BlockPos pos = new BlockPos(x, y, z);
                 if (current.getBlockState(pos).isAir()) {
-                    Compat.port().flux().spill(current, pos, y > (int) player.getY() + 1);
+                    TcReforgedPort.flux.spill(current, pos, y > (int) player.getY() + 1);
                 }
             }
         }
         player.getInventory().dropAll();
-        if (Compat.port().baubles().isAvailable()) {
-            BaubleCompat baubles = Compat.port().baubles();
+        if (TcReforgedPort.baubles.isAvailable()) {
+            var baubles = TcReforgedPort.baubles;
             for (int slot = 0; slot < baubles.slotCount(); slot++) {
                 ItemStack stack = baubles.get(player, slot);
                 if (!stack.isEmpty()) {
@@ -461,8 +460,8 @@ public final class InfusionEntityEvents {
         } else {
             thaumcraft.platform.Teleport.to(player, beaconLevel, destination, player.getYRot(), player.getXRot());
         }
-        Compat.port().fx().blockSparkle(beaconLevel, beaconPos.below(), 0xFFFFFF, 20);
-        Compat.port().fx().blockSparkle(beaconLevel, beaconPos.below(2), 0xFFFFFF, 20);
+        TcReforgedPort.fx.blockSparkle(beaconLevel, beaconPos.below(), 0xFFFFFF, 20);
+        TcReforgedPort.fx.blockSparkle(beaconLevel, beaconPos.below(2), 0xFFFFFF, 20);
         THSounds.play(beaconLevel, beaconPos, "whispers", SoundSource.BLOCKS, 1.0F,
             beaconLevel.getRandom().nextFloat());
         for (int slot = 0; slot < vat.selfInfusions.length; slot++) {
@@ -509,8 +508,8 @@ public final class InfusionEntityEvents {
             entity.snapTo(oldX, oldY, oldZ, entity.getYRot(), entity.getXRot());
             return;
         }
-        if (Compat.port().fx().isAvailable()) {
-            Compat.port().fx().arcLightning(level,
+        if (TcReforgedPort.fx.isAvailable()) {
+            TcReforgedPort.fx.arcLightning(level,
                 new Vec3(oldX, oldY, oldZ), new Vec3(entity.getX(), entity.getY(), entity.getZ()), 0xFFFFFF);
         }
         level.playSound(null, oldX, oldY, oldZ, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1.0F, 1.0F);
@@ -523,7 +522,7 @@ public final class InfusionEntityEvents {
         if (!(target instanceof LivingEntity living) || event.getLevel().isClientSide()) {
             return;
         }
-        if (CreatureInfusions.hasInfusion(living, PORTABILITY) && Compat.port().items().isWand(event.getItemStack())) {
+        if (CreatureInfusions.hasInfusion(living, PORTABILITY) && TcReforgedPort.items.isWand(event.getItemStack())) {
             jarIntoSoulJar(living, event.getItemStack());
         } else if (CreatureInfusions.hasInfusion(living, INSTILLED_LOYALTY)
             && event.getEntity().getName().getString().equals(CreatureInfusions.owner(living))) {
@@ -540,15 +539,15 @@ public final class InfusionEntityEvents {
         SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(
             EntityNbt.save(living), false, living.getName().getString(), ""));
         living.spawnAtLocation((ServerLevel) level, jar);
-        if (Compat.port().fx().isAvailable()) {
-            Compat.port().fx().containmentCapture(level,
+        if (TcReforgedPort.fx.isAvailable()) {
+            TcReforgedPort.fx.containmentCapture(level,
                 new Vec3(living.getX(), living.getY() + living.getBbHeight() / 2.0F, living.getZ()), 0xCC66FF);
         }
         living.discard();
     }
 
     private static ItemStack tcStack(String name) {
-        dev.visfox.thaumichorizons.compat.ItemCompat items = Compat.port().items();
+        var items = TcReforgedPort.items;
         net.minecraft.world.item.Item item = items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
         return item == null ? ItemStack.EMPTY : new ItemStack(item);
     }

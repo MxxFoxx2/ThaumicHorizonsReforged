@@ -3,7 +3,7 @@ package dev.visfox.thaumichorizons.client.render.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.EssentiaDynamoBlockEntity;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -51,10 +51,10 @@ public final class EssentiaDynamoRenderer implements BlockEntityRenderer<Essenti
         state.color = 0xFF000000 | state.aspectColor;
         state.frame = level == null ? 0 : Math.floorMod((int) (level.getGameTime() * 1.25F + entity.getBlockPos().getX()), 16);
         if (level != null && entity.essentia != null && entity.ticksProvided > 0 && level.isClientSide()
-            && Compat.port().fx().isAvailable()) {
+            && TcReforgedPort.fx.isAvailable()) {
             long gameTime = level.getGameTime();
             if (gameTime % 4 == 0 && trailTicks.put(entity.getBlockPos(), gameTime) == null) {
-                Compat.port().fx().essentiaTrail(level, entity.getBlockPos(),
+                TcReforgedPort.fx.essentiaTrail(level, entity.getBlockPos(),
                     new Vec3(entity.getBlockPos().getX() + 0.5, entity.getBlockPos().getY() + 0.5,
                         entity.getBlockPos().getZ() + 0.5), state.aspectColor);
             }

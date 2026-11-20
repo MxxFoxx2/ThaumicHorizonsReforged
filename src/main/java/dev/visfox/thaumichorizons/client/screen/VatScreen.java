@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.client.screen;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.container.VatMenu;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusions;
 import dev.visfox.thaumichorizons.registry.ThItems;
@@ -27,7 +27,7 @@ public class VatScreen extends AbstractContainerScreen<VatMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         ThGui.sheet(graphics, TEXTURE, leftPos, topPos, imageWidth, imageHeight, 0, 0);
-        if (!Compat.port().research().isComplete(menu.player(), "incarnationVat")) {
+        if (!TcReforgedPort.research.isComplete(menu.player(), "incarnationVat")) {
             ThGui.sheet(graphics, TEXTURE, leftPos + 58, topPos + 30, 57, 20, 176, 163);
         }
         LivingEntity critter = menu.tile().getEntity();

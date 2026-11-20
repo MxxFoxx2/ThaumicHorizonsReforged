@@ -6,7 +6,7 @@ import dev.visfox.thaumichorizons.block.VortexStabilizerBlock;
 import dev.visfox.thaumichorizons.blockentity.VortexStabilizerBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -52,9 +52,9 @@ public final class VortexStabilizerRenderer
         state.gameTime = level == null ? 0 : level.getGameTime();
         state.partialTicks = partialTicks;
         state.lightCoords = 220;
-        if (level != null && state.redstoned && state.target != null && Compat.port().fx().isAvailable()) {
+        if (level != null && state.redstoned && state.target != null && TcReforgedPort.fx.isAvailable()) {
             Direction direction = state.direction;
-            Compat.port().fx().beam(level, state.source,
+            TcReforgedPort.fx.beam(level, state.source,
                 Vec3.atCenterOf(state.source),
                 new Vec3(state.target.getX() + 0.5 - direction.getStepX(),
                     state.target.getY() + 0.5 - direction.getStepY(),

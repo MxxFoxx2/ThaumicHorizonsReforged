@@ -2,7 +2,7 @@ package dev.visfox.thaumichorizons.research;
 
 import java.util.List;
 import net.minecraft.resources.Identifier;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.ResearchCompat.Flag;
 import dev.visfox.thaumichorizons.compat.ResearchCompat.PageKind;
@@ -16,10 +16,7 @@ public final class ConfigResearch {
     }
 
     public static void init() {
-        if (!Compat.port().research().isAvailable()) {
-            return;
-        }
-        Compat.port().research().registerCategory(
+        TcReforgedPort.research.registerCategory(
             CATEGORY,
             th("textures/misc/vat.png"),
             Identifier.parse("thaumcraft:textures/gui/gui_researchback.png"));
@@ -122,7 +119,7 @@ public final class ConfigResearch {
     private static void register(String key, CompatAspectList tags, int column, int row, int complexity,
         Identifier icon, List<Flag> flags, List<String> parents, List<String> parentsHidden,
         List<String> siblings, List<String> itemTriggers, int warp, PageSpec... pages) {
-        Compat.port().research().registerResearch(new ResearchSpec(
+        TcReforgedPort.research.registerResearch(new ResearchSpec(
             key, CATEGORY, tags, column, row, complexity, icon, flags, parents, parentsHidden,
             siblings, itemTriggers, List.of(), List.of(), warp, List.of(pages)));
     }

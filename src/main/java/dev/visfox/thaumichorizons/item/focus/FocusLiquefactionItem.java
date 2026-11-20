@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item.focus;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -286,8 +286,8 @@ public class FocusLiquefactionItem extends FocusItem {
             }
 
             int nuggetLevel = Wands.getFocusUpgrade(stack, NUGGETS);
-            if (nuggetLevel > 0 && Compat.port().items().isAvailable()) {
-                Item bonusItem = Compat.port().items().getSmeltingBonus(new ItemStack(blockState.getBlock()));
+            if (nuggetLevel > 0 && TcReforgedPort.items.isAvailable()) {
+                Item bonusItem = TcReforgedPort.items.getSmeltingBonus(new ItemStack(blockState.getBlock()));
                 if (bonusItem != null) {
                     int bonusCount = 0;
                     for (int i = 0; i < nuggetLevel; i++) {

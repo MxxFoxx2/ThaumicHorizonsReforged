@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
@@ -82,7 +82,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                     }
                 }
                 if (level.isClientSide()) {
-                    Compat.port().fx().burst(level, Vec3.atCenterOf(worldPosition), 16777215, 16);
+                    TcReforgedPort.fx.burst(level, Vec3.atCenterOf(worldPosition), 16777215, 16);
                 }
                 level.removeBlock(worldPosition, false);
             }
@@ -100,7 +100,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                                     BlockPos target = worldPosition.offset(dx, dy, dz);
                                     level.removeBlock(target, false);
                                     if (level.isClientSide()) {
-                                        Compat.port().fx().burst(level, Vec3.atCenterOf(target), 16777215, 16);
+                                        TcReforgedPort.fx.burst(level, Vec3.atCenterOf(target), 16777215, 16);
                                     }
                                 }
                             }
@@ -133,7 +133,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         if (!(level instanceof ServerLevel source) || level.isClientSide() || createdDimension) {
             return;
         }
-        Item primordialPearl = Compat.port().items().lookup(
+        Item primordialPearl = TcReforgedPort.items.lookup(
             Identifier.fromNamespaceAndPath("thaumcraft", "primordial_pearl"));
         List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class,
             new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
@@ -231,8 +231,8 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         if (!(level instanceof ServerLevel server) || level.isClientSide()) {
             return;
         }
-        Item voidMetal = Compat.port().items().lookup(voidMetalIngotId());
-        Item salisMundus = Compat.port().items().lookup(salisMundusId());
+        Item voidMetal = TcReforgedPort.items.lookup(voidMetalIngotId());
+        Item salisMundus = TcReforgedPort.items.lookup(salisMundusId());
         List<ItemEntity> ents = level.getEntitiesOfClass(ItemEntity.class,
             new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         for (ItemEntity item : ents) {
@@ -243,7 +243,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                 item.discard();
             } else if (salisMundus != null && stack.is(salisMundus)) {
                 // Legacy itemResource metadata 14: each Salis Mundus releases 1–4 Wisps.
-                Compat.port().items().spawnWisps(server, worldPosition, aspects, stack.getCount());
+                TcReforgedPort.items.spawnWisps(server, worldPosition, aspects, stack.getCount());
                 item.discard();
             } else if (stack.is(ThItems.CRYSTAL_WAND.get())) {
                 items.add(new ItemStack(ThItems.WAND_CASTING_DISPOSABLE.get()));

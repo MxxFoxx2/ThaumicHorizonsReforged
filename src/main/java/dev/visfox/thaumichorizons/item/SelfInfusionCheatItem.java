@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.item;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusion;
 import dev.visfox.thaumichorizons.infusion.InfusionEntityEvents;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,8 +34,8 @@ public final class SelfInfusionCheatItem extends Item {
             if (infusions[slot] == 0) {
                 CreatureInfusion.setInfusion(serverPlayer, slot, infusionId);
                 InfusionEntityEvents.applyInfusions(serverPlayer);
-                if (Compat.port().fx().isAvailable()) {
-                    Compat.port().fx().burst(level,
+                if (TcReforgedPort.fx.isAvailable()) {
+                    TcReforgedPort.fx.burst(level,
                         new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ()), 0xFFFFFF, 16);
                 }
                 return InteractionResult.CONSUME;

@@ -1,7 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.BrainJarCompat;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -66,7 +65,7 @@ public class SoulExtractorBlockEntity extends VisNode implements net.minecraft.w
         if (above == null) {
             return;
         }
-        BrainJarCompat brainJars = Compat.port().brainJars();
+        var brainJars = TcReforgedPort.brainJars;
         boolean brainJar = brainJars.isBrainJar(above) && brainJars.xp(above) < brainJars.maxXp();
         SoulReceiver receiver = above instanceof SoulReceiver candidate && candidate.canAcceptSouls() ? candidate : null;
         if (!brainJar && receiver == null) {

@@ -14,7 +14,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import org.jspecify.annotations.Nullable;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.lib.THSounds;
 
 public final class LensManager {
@@ -28,9 +28,9 @@ public final class LensManager {
         HashMap<Integer, Integer> pouchSlots = new HashMap<>();
         int pouchcount = 0;
         ItemStack item = null;
-        if (Compat.port().baubles().isAvailable()) {
-            for (int slot = 0; slot < Compat.port().baubles().slotCount(); slot++) {
-                ItemStack bauble = Compat.port().baubles().get(player, slot);
+        if (TcReforgedPort.baubles.isAvailable()) {
+            for (int slot = 0; slot < TcReforgedPort.baubles.slotCount(); slot++) {
+                ItemStack bauble = TcReforgedPort.baubles.get(player, slot);
                 if (bauble.getItem() instanceof ItemLensCase) {
                     pouchcount++;
                     pouchSlots.put(pouchcount, slot - 4);
@@ -79,7 +79,7 @@ public final class LensManager {
                     int pouchSlot = pouchSlots.get(pouchIndex);
                     ItemStack pouch = pouchSlot >= 0
                         ? player.getInventory().getItem(pouchSlot)
-                        : Compat.port().baubles().get(player, pouchSlot + 4);
+                        : TcReforgedPort.baubles.get(player, pouchSlot + 4);
                     if (pouch.getItem() instanceof ItemLensCase) {
                         ItemStack[] inv = ItemLensCase.getContents(pouch);
                         if (inv[lensSlot].getItem() instanceof ILens) {
@@ -125,7 +125,7 @@ public final class LensManager {
         for (int pouchSlot : pouchSlots.values()) {
             ItemStack pouch = pouchSlot >= 0
                 ? player.getInventory().getItem(pouchSlot)
-                : Compat.port().baubles().get(player, pouchSlot + 4);
+                : TcReforgedPort.baubles.get(player, pouchSlot + 4);
             if (!(pouch.getItem() instanceof ItemLensCase)) {
                 continue;
             }

@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.infusion;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.Endersteed;
 import dev.visfox.thaumichorizons.entity.NightmareTH;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public final class ThInfusionRecipes {
         }
 
         public boolean matches(ArrayList<ItemStack> input, @Nullable Class<? extends LivingEntity> central, Level level, Player player) {
-            if (!this.research.isEmpty() && !Compat.port().research().isComplete(player, this.research)) {
+            if (!this.research.isEmpty() && !TcReforgedPort.research.isComplete(player, this.research)) {
                 return false;
             }
             if (this.recipeInput != null && (central == null || !central.isAssignableFrom(this.recipeInput))) {
@@ -129,7 +129,7 @@ public final class ThInfusionRecipes {
         }
 
         public boolean matches(ArrayList<ItemStack> input, Level level, Player player) {
-            if (!this.research.isEmpty() && !Compat.port().research().isComplete(player, this.research)) {
+            if (!this.research.isEmpty() && !TcReforgedPort.research.isComplete(player, this.research)) {
                 return false;
             }
             ArrayList<ItemStack> remaining = new ArrayList<>();
@@ -254,7 +254,7 @@ public final class ThInfusionRecipes {
     }
 
     private static @Nullable Item tcItem(String name) {
-        return Compat.port().items().lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        return TcReforgedPort.items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
     }
 
     private static ItemStack tc(String name) {

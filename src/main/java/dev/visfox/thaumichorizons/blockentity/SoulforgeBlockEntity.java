@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.item.SoulJarKeys;
 import dev.visfox.thaumichorizons.item.SoulJarKeys.SoulJarData;
 import dev.visfox.thaumichorizons.blockentity.ThBlockEntity;
@@ -67,7 +67,7 @@ public class SoulforgeBlockEntity extends ThBlockEntity implements SoulReceiver,
     }
 
     public boolean activate(Level level, Player player, ItemStack held) {
-        if (!Compat.port().items().isEssentiaJar(held)) {
+        if (!TcReforgedPort.items.isEssentiaJar(held)) {
             return false;
         }
         if (souls > 0) {

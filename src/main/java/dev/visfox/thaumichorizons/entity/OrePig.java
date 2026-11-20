@@ -2,7 +2,7 @@ package dev.visfox.thaumichorizons.entity;
 
 import dev.visfox.thaumichorizons.registry.ThEntities;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.ai.EatStoneGoal;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -89,7 +89,7 @@ public class OrePig extends Pig {
     }
 
     private static @Nullable Item tcItem(String name) {
-        return Compat.port().items().lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        return TcReforgedPort.items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
     }
 
     private void dropNugget(ServerLevel level, ItemStack stack) {

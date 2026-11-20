@@ -2,27 +2,9 @@ package dev.visfox.thaumichorizons.compat;
 
 import java.util.List;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.player.Player;
 
-public interface ResearchCompat {
-    default boolean isAvailable() {
-        return false;
-    }
-
-    default void registerCategory(String key, Identifier icon, Identifier background) {
-        throw new UnsupportedOperationException();
-    }
-
-    default void registerResearch(ResearchSpec spec) {
-        throw new UnsupportedOperationException();
-    }
-
-    default boolean isComplete(Player player, String researchKey) {
-        throw new UnsupportedOperationException();
-    }
-
-    default void complete(Player player, String researchKey) {
-        throw new UnsupportedOperationException();
+public final class ResearchCompat {
+    private ResearchCompat() {
     }
 
     public enum Flag {

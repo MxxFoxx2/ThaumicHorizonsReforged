@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -51,7 +51,7 @@ public final class RecombinatorBlockEntity extends ThBlockEntity {
         }
         if (!(level instanceof ServerLevel serverLevel) || !activated || count <= 50
             || !(level.getBlockEntity(worldPosition.below()) instanceof Node)
-            || !Compat.port().nodes().isAvailable()) {
+            || !TcReforgedPort.nodes.isAvailable()) {
             return;
         }
         int offsetX = serverLevel.getRandom().nextInt(5) - serverLevel.getRandom().nextInt(5);
@@ -60,7 +60,7 @@ public final class RecombinatorBlockEntity extends ThBlockEntity {
         if (offsetX == 0 && offsetY == -1 && offsetZ == 0) {
             return;
         }
-        Compat.port().nodes().tryRecombine(serverLevel, worldPosition, worldPosition.offset(offsetX, offsetY, offsetZ));
+        TcReforgedPort.nodes.tryRecombine(serverLevel, worldPosition, worldPosition.offset(offsetX, offsetY, offsetZ));
     }
 
     public void updatePower(boolean powered) {

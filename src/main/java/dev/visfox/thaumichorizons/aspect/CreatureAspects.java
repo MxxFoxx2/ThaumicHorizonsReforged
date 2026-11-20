@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.aspect;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,10 +16,7 @@ public final class CreatureAspects {
 
     @SubscribeEvent
     static void commonSetup(FMLCommonSetupEvent event) {
-        if (!Compat.port().aspects().isAvailable()) {
-            return;
-        }
-        Compat.port().aspects().registerAspectData(registrar -> {
+        TcReforgedPort.aspects.registerAspectData(registrar -> {
             registrar.entity(ThEntities.CHROMATIC_SHEEP.get(), tags("bestia", 2, "terra", 2, "sensus", 2, "permutatio", 2));
             registrar.entity(ThEntities.SELF_SHEARING_SHEEP.get(), tags("bestia", 2, "terra", 2, "instrumentum", 2, "pannus", 2));
             registrar.entity(ThEntities.GUARDIAN_PANTHER.get(), tags("bestia", 4, "telum", 4, "perditio", 4));

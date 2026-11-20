@@ -1,6 +1,6 @@
 package dev.visfox.thaumichorizons.blockentity;
 
-import dev.visfox.thaumichorizons.compat.Compat;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.InvulnerableItemEntity;
 import dev.visfox.thaumichorizons.item.focus.FocusAnimationItem;
@@ -121,7 +121,7 @@ public final class CloudBlockEntity extends BlockEntity {
      * block on every client tick while its vanilla lightning entity is alive.
      */
     private void renderFiniteLightning(Level level, BlockPos pos, int type) {
-        if ((type != 2 && type != 9) || !Compat.port().fx().isAvailable()) {
+        if ((type != 2 && type != 9) || !TcReforgedPort.fx.isAvailable()) {
             return;
         }
 
@@ -143,7 +143,7 @@ public final class CloudBlockEntity extends BlockEntity {
                 strike.getY() + 1.0,
                 pos.getZ() + random.nextDouble()
             );
-            Compat.port().fx().arcLightning(level, from, to, 0xFFFFFF);
+            TcReforgedPort.fx.arcLightning(level, from, to, 0xFFFFFF);
         }
     }
 
@@ -226,7 +226,7 @@ public final class CloudBlockEntity extends BlockEntity {
             : roll < 50 ? "quicksilver_drop"
             : null;
 
-        var itemCompat = Compat.port().items();
+        var itemCompat = TcReforgedPort.items;
         var item = id == null || !itemCompat.isAvailable()
             ? null
             : itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", id));
@@ -254,7 +254,7 @@ public final class CloudBlockEntity extends BlockEntity {
             Aspect.WATER, Aspect.FIRE, Aspect.ORDER, Aspect.ENTROPY, Aspect.AIR, Aspect.EARTH
         };
         Aspect aspect = aspects[level.getRandom().nextInt(aspects.length)];
-        var items = Compat.port().items();
+        var items = TcReforgedPort.items;
         if (items.isAvailable()) {
             items.spawnAspectOrb(level,
                 worldPosition.getX() + level.getRandom().nextDouble(),
@@ -299,7 +299,7 @@ public final class CloudBlockEntity extends BlockEntity {
                 continue;
             }
             if (type == 3) {
-                var items = Compat.port().items();
+                var items = TcReforgedPort.items;
                 if (items.isAvailable()) {
                     items.hurtWithDissolve(level, entity, 1.0F);
                 } else {

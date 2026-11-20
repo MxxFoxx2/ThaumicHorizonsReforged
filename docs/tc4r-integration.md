@@ -8,11 +8,11 @@ For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` 
 
 ## Choosing the integration point
 
-1. Search for an existing compat capability and its TC4R implementation.
-2. If functionality is optional or may differ between host implementations, expose the smallest useful contract through `compat/`.
+1. Search for an existing compat capability and its TC4R implementation in `compat/tc/TcReforgedPort`.
+2. If the call is a plain public TC4R API (allowlisted in `tools/check_seams.py`), call TC4R directly from gameplay code.
 3. Keep TC4R-specific lookups, effects, blocks, internal objects and mixins in `compat/tc/`.
 4. A direct import in gameplay code is allowed only if the type is intentionally exposed in `THAUMCRAFT_API` in `tools/check_seams.py`. Before adding an exception, explain why it is public add-on API and why an adapter is unsuitable.
-5. Keep unavailable implementations safe. Callers must check `isAvailable()` before optional operations; do not disguise a missing registry entry as an unrelated item or effect.
+5. TC4R is a hard dependency: there are no fallback backends and no availability gates to honor.
 
 ## Host API details worth preserving
 
