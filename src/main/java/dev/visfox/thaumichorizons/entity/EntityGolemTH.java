@@ -46,6 +46,7 @@ import thaumcraft.Thaumcraft;
 import thaumcraft.entity.golem.GolemBase;
 import thaumcraft.entity.golem.GolemKeys;
 import thaumcraft.entity.golem.GolemSnapshot;
+import thaumcraft.entity.golem.GolemStats;
 import thaumcraft.entity.golem.GolemType;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
@@ -63,6 +64,8 @@ public class EntityGolemTH extends GolemBase {
         SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> TH_KABOOM =
         SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<String> TH_MATERIAL =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.STRING);
 
     public int ticksAlive;
     public int voidCount;
@@ -92,8 +95,8 @@ public class EntityGolemTH extends GolemBase {
         entityData.set(TH_STATE, java.util.Optional.ofNullable(state));
         entityData.set(TH_BERSERK, berserk);
         entityData.set(TH_KABOOM, kaboom);
-        GolemType resolved = materialType(block);
-        configure(resolved, new GolemSnapshot(-1, adv, List.of(), "", List.of(), ItemContainerContents.EMPTY, List.of(), 0));
+        setMaterial(GolemMaterialTH.fromBlock(block));
+        configure(GolemType.WOOD, new GolemSnapshot(-1, adv, List.of(), "", List.of(), ItemContainerContents.EMPTY, List.of(), 0));
         setHealth(getMaxHealth());
         if (level().isClientSide()) {
             loadTexture();
@@ -118,93 +121,8 @@ public class EntityGolemTH extends GolemBase {
         return false;
     }
 
-    public static GolemType materialType(@Nullable Block block) {
-        if (block == null) {
-            return GolemType.VOID;
-        }
-        BlockState state = block.defaultBlockState();
-        if (isCopperFamily(block)) {
-            return GolemType.METAL;
-        }
-        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.PODZOL)
-            || state.is(Blocks.MOSS_BLOCK)) {
-            return GolemType.GRASS;
-        }
-        if (state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND) || state.is(Blocks.DIRT_PATH)
-            || state.is(Blocks.MUD) || state.is(Blocks.MUDDY_MANGROVE_ROOTS) || state.is(Blocks.GRAVEL)
-            || state.is(Blocks.SUSPICIOUS_GRAVEL) || state.is(Blocks.CRIMSON_NYLIUM)
-            || state.is(Blocks.WARPED_NYLIUM)) {
-            return GolemType.DIRT;
-        }
-        if (state.is(BlockTags.LOGS) || state.is(BlockTags.PLANKS) || state.is(BlockTags.WOODEN_SLABS)
-            || state.is(BlockTags.WOODEN_STAIRS) || state.is(BlockTags.WOODEN_FENCES)
-            || state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS)
-            || state.is(Blocks.BOOKSHELF) || state.is(Blocks.CHISELED_BOOKSHELF) || state.is(Blocks.CRAFTING_TABLE)
-            || state.is(Blocks.CHEST) || state.is(Blocks.TRAPPED_CHEST) || state.is(Blocks.BARREL)
-            || state.is(Blocks.PUMPKIN) || state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN)
-            || state.is(Blocks.MELON) || state.is(Blocks.NOTE_BLOCK) || state.is(Blocks.JUKEBOX)
-            || state.is(Blocks.BAMBOO_BLOCK) || state.is(Blocks.BEEHIVE) || state.is(Blocks.BEE_NEST)) {
-            return GolemType.WOOD;
-        }
-        if (state.is(BlockTags.LEAVES) || state.is(BlockTags.SAPLINGS) || state.is(BlockTags.FLOWERS)
-            || state.is(BlockTags.CROPS) || state.is(Blocks.VINE) || state.is(Blocks.SUGAR_CANE)
-            || state.is(Blocks.KELP) || state.is(Blocks.KELP_PLANT) || state.is(Blocks.SEAGRASS)
-            || state.is(Blocks.TALL_SEAGRASS) || state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN)
-            || state.is(Blocks.LARGE_FERN) || state.is(Blocks.DEAD_BUSH) || state.is(Blocks.BAMBOO)
-            || state.is(Blocks.LILY_PAD) || state.is(Blocks.MOSS_CARPET) || state.is(Blocks.AZALEA)
-            || state.is(Blocks.FLOWERING_AZALEA) || state.is(Blocks.BIG_DRIPLEAF) || state.is(Blocks.SMALL_DRIPLEAF)
-            || state.is(Blocks.SPORE_BLOSSOM) || state.is(Blocks.GLOW_LICHEN) || state.is(Blocks.HANGING_ROOTS)
-            || state.is(Blocks.WEEPING_VINES) || state.is(Blocks.TWISTING_VINES)
-            || state.is(Blocks.MANGROVE_PROPAGULE)) {
-            return GolemType.PLANT;
-        }
-        if (state.is(Blocks.IRON_BLOCK) || state.is(Blocks.GOLD_BLOCK) || isCopperFamily(block)
-            || state.is(Blocks.RAW_IRON_BLOCK) || state.is(Blocks.RAW_GOLD_BLOCK) || state.is(Blocks.ANVIL)
-            || state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL) || state.is(Blocks.IRON_BARS)
-            || state.is(Blocks.IRON_CHAIN) || state.is(Blocks.CAULDRON)
-            || state.is(Blocks.WATER_CAULDRON)
-            || state.is(Blocks.LAVA_CAULDRON) || state.is(Blocks.HOPPER) || state.is(Blocks.RAIL)
-            || state.is(Blocks.POWERED_RAIL) || state.is(Blocks.DETECTOR_RAIL) || state.is(Blocks.ACTIVATOR_RAIL)
-            || state.is(Blocks.IRON_DOOR) || state.is(Blocks.IRON_TRAPDOOR)
-            || state.is(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
-            return GolemType.METAL;
-        }
-        if (state.is(BlockTags.WOOL) || state.is(BlockTags.WOOL_CARPETS) || state.is(BlockTags.BEDS)
-            || state.is(Blocks.SPONGE) || state.is(Blocks.WET_SPONGE) || state.is(Blocks.SHULKER_BOX)) {
-            return GolemType.CLOTH;
-        }
-        if (state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.SOUL_SAND)
-            || state.is(Blocks.SOUL_SOIL) || state.is(Blocks.SUSPICIOUS_SAND) || state.is(Blocks.SANDSTONE)
-            || state.is(Blocks.RED_SANDSTONE)) {
-            return GolemType.SAND;
-        }
-        if (state.is(Blocks.REDSTONE_LAMP) || state.is(Blocks.REDSTONE_BLOCK) || state.is(Blocks.REDSTONE_WIRE)
-            || state.is(Blocks.REPEATER) || state.is(Blocks.COMPARATOR) || state.is(Blocks.DAYLIGHT_DETECTOR)
-            || state.is(Blocks.OBSERVER) || state.is(Blocks.PISTON) || state.is(Blocks.STICKY_PISTON)
-            || state.is(Blocks.DISPENSER) || state.is(Blocks.DROPPER) || state.is(Blocks.TARGET)
-            || state.is(Blocks.LEVER) || state.is(Blocks.REDSTONE_TORCH) || state.is(Blocks.TRIPWIRE)
-            || state.is(Blocks.TRIPWIRE_HOOK) || state.is(Blocks.COMMAND_BLOCK)
-            || state.is(Blocks.CHAIN_COMMAND_BLOCK) || state.is(Blocks.REPEATING_COMMAND_BLOCK)) {
-            return GolemType.REDSTONE;
-        }
-        if (state.is(Blocks.TNT)) {
-            return GolemType.TNT;
-        }
-        if (state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE) || state.is(Blocks.BLUE_ICE)
-            || state.is(Blocks.FROSTED_ICE) || state.is(Blocks.SNOW_BLOCK) || state.is(Blocks.SNOW)
-            || state.is(Blocks.POWDER_SNOW)) {
-            return GolemType.ICE;
-        }
-        if (state.is(Blocks.CACTUS)) {
-            return GolemType.CACTUS;
-        }
-        if (state.is(Blocks.CAKE)) {
-            return GolemType.CAKE;
-        }
-        if (state.is(Blocks.COBWEB)) {
-            return GolemType.WEB;
-        }
-        return GolemType.ROCK;
+    public static GolemMaterialTH materialType(@Nullable Block block) {
+        return GolemMaterialTH.fromBlock(block);
     }
 
     public @Nullable Block getBlocky() {
@@ -217,6 +135,29 @@ public class EntityGolemTH extends GolemBase {
 
     public int getMd() {
         return entityData.get(TH_META);
+    }
+
+    public GolemMaterialTH material() {
+        return GolemMaterialTH.byId(entityData.get(TH_MATERIAL));
+    }
+
+    public void setMaterial(GolemMaterialTH material) {
+        entityData.set(TH_MATERIAL, material.id());
+    }
+
+    @Override
+    public GolemStats golemStats() {
+        return material().stats();
+    }
+
+    @Override
+    public GolemType getGolemType() {
+        return GolemType.WOOD;
+    }
+
+    @Override
+    public Identifier getGolemTexture() {
+        return ThaumicHorizons.id("textures/model/golem_" + material().id() + ".png");
     }
 
     public @Nullable BlockState getGolemBlockState() {
@@ -243,6 +184,7 @@ public class EntityGolemTH extends GolemBase {
         builder.define(TH_STATE, java.util.Optional.empty());
         builder.define(TH_BERSERK, false);
         builder.define(TH_KABOOM, false);
+        builder.define(TH_MATERIAL, GolemMaterialTH.VOID.id());
     }
 
     @Override
@@ -409,6 +351,7 @@ public class EntityGolemTH extends GolemBase {
     protected void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putInt("GolemBlockTH", entityData.get(TH_BLOCK));
+        output.putString("GolemMaterialTH", material().id());
         output.putInt("GolemMetaTH", entityData.get(TH_META));
         BlockState state = getGolemBlockState();
         if (state != null) {
@@ -422,6 +365,7 @@ public class EntityGolemTH extends GolemBase {
 
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
+        int legacyType = input.getIntOr("GolemType", 1);
         super.readAdditionalSaveData(input);
         entityData.set(TH_BLOCK, input.getIntOr("GolemBlockTH", 0));
         entityData.set(TH_META, input.getIntOr("GolemMetaTH", 0));
@@ -430,6 +374,22 @@ public class EntityGolemTH extends GolemBase {
         voidCount = input.getIntOr("VoidCountTH", 0);
         entityData.set(TH_BERSERK, input.getBooleanOr("BerserkTH", false));
         entityData.set(TH_KABOOM, input.getBooleanOr("KaboomTH", false));
+        GolemMaterialTH restored;
+        String savedMaterial = input.getStringOr("GolemMaterialTH", "");
+        if (!savedMaterial.isBlank()) {
+            restored = GolemMaterialTH.byId(savedMaterial);
+        } else {
+            int blockId = entityData.get(TH_BLOCK);
+            restored = GolemMaterialTH.legacy(legacyType);
+            if (restored == null && blockId != 0) {
+                restored = GolemMaterialTH.fromBlock(BuiltInRegistries.BLOCK.byId(blockId));
+            }
+            if (restored == null) {
+                restored = GolemMaterialTH.DEFAULT;
+            }
+        }
+        setMaterial(restored);
+        configure(getGolemType(), snapshot());
     }
 
     @Override
@@ -441,7 +401,7 @@ public class EntityGolemTH extends GolemBase {
         ItemStack stack = new ItemStack(item);
         GolemKeys.STATE.set(stack, dismantle ? GolemSnapshot.EMPTY : snapshot());
         if (!dismantle) {
-            GolemBlockData.set(stack, getGolemBlockState(), getMd(), isBerserk(), isKaboom());
+            GolemBlockData.set(stack, getGolemBlockState(), getMd(), isBerserk(), isKaboom(), material());
             if (hasCustomName()) {
                 stack.set(DataComponents.CUSTOM_NAME, getCustomName());
             }
@@ -453,8 +413,10 @@ public class EntityGolemTH extends GolemBase {
         private GolemBlockData() {
         }
 
-        public static void set(ItemStack stack, @Nullable BlockState state, int md, boolean berserk, boolean kaboom) {
+        public static void set(ItemStack stack, @Nullable BlockState state, int md, boolean berserk, boolean kaboom,
+            GolemMaterialTH material) {
             CompoundTag tag = new CompoundTag();
+            tag.putString("GolemMaterial", material.id());
             if (state != null) {
                 tag.putInt("GolemBlockId", BuiltInRegistries.BLOCK.getId(state.getBlock()));
                 tag.store("GolemState", BlockState.CODEC, state);
@@ -474,7 +436,11 @@ public class EntityGolemTH extends GolemBase {
             return id == 0 ? null : BuiltInRegistries.BLOCK.get(id).map(ref -> ref.value()).orElse(null);
         }
 
-        public static @Nullable BlockState stateOf(CompoundTag tag) {
+        public static GolemMaterialTH materialOf(CompoundTag tag) {
+        return GolemMaterialTH.byId(tag.getStringOr("GolemMaterial", GolemMaterialTH.DEFAULT.id()));
+    }
+
+    public static @Nullable BlockState stateOf(CompoundTag tag) {
             Block block = blockOf(tag);
             if (block == null) {
                 return null;

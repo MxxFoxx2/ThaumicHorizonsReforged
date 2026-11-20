@@ -166,7 +166,7 @@ public final class ThItems {
     public static final DeferredItem<GolemPowderItem> GOLEM_POWDER = ITEMS.registerItem("golempowder",
         GolemPowderItem::new, properties -> properties.stacksTo(64));
     public static final DeferredItem<GolemPlacerTHItem> GOLEM_PLACER = ITEMS.registerItem("golemplacer",
-        properties -> new GolemPlacerTHItem(properties, GolemType.VOID), properties -> properties.stacksTo(1));
+        properties -> new GolemPlacerTHItem(properties, GolemType.WOOD), properties -> properties.stacksTo(1));
     public static final DeferredItem<GolemBellTHItem> GOLEM_BELL_TH = ITEMS.registerItem("golembellth",
         GolemBellTHItem::new, properties -> properties.stacksTo(1));
     public static final DeferredItem<CrystalWandItem> CRYSTAL_WAND = ITEMS.registerItem("crystalwand",

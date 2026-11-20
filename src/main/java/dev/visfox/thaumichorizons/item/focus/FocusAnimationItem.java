@@ -92,7 +92,7 @@ public class FocusAnimationItem extends FocusItem {
             isUpgradedWith(focusStack, BERSERK), isUpgradedWith(focusStack, DETONATION));
         AspectList cost = new AspectList();
         for (Aspect aspect : Aspect.getPrimalAspects()) {
-            cost.add(aspect, golem.getGolemType().visCost);
+            cost.add(aspect, golem.golemStats().visCost());
         }
         if (!(stack.getItem() instanceof WandItem wand)
             || !wand.consumeAllVis(stack, player, cost, false, false)) {

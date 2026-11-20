@@ -26,6 +26,11 @@ Keep gameplay code independent of version-specific APIs and TC4R internals where
 
 See [TC4R integration](tc4r-integration.md) before changing the host integration.
 
+## Golem materials
+
+- TH golems use `entity/GolemMaterialTH` — TH-owned materials, characteristics and `fromBlock` mapping, independent from TC4R's `GolemType` (which is stock Thaumcraft again).
+- The material is a synced string (`TH_MATERIAL`) and is persisted as a stable string id (`GolemMaterialTH`) with a legacy ordinal mapping for old saves; the stats reach the TC4R base golem through the overridable `GolemBase.golemStats()`.
+
 ## Registration and state
 
 - Content registration uses the existing DeferredRegister classes under `dev.visfox.thaumichorizons.registry/`.

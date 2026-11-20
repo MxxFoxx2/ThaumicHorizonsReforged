@@ -70,6 +70,7 @@ THAUMCRAFT_API = [
     "thaumcraft.wand.focus.FocusItem",
     "thaumcraft.wand.focus.FocusUpgradeType",
     "thaumcraft.entity.golem.GolemBase",
+    "thaumcraft.entity.golem.GolemStats",
     "thaumcraft.entity.golem.GolemType",
     "thaumcraft.client.render.entity.golem.GolemRenderer",
     "thaumcraft.client.geom.CubeGeometry",

@@ -14,6 +14,10 @@ For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` 
 4. A direct import in gameplay code is allowed only if the type is intentionally exposed in `THAUMCRAFT_API` in `tools/check_seams.py`. Before adding an exception, explain why it is public add-on API and why an adapter is unsuitable.
 5. TC4R is a hard dependency: there are no fallback backends and no availability gates to honor.
 
+## Golem stats
+
+- `GolemBase.golemStats()` (overridable) is the TC4R extension point for golem characteristics; `EntityGolemTH` feeds it from its own `GolemMaterialTH`. `GolemBase.getGolemTexture()` is overridable for the model texture. `GolemType` stays stock Thaumcraft: no TH materials there.
+
 ## Host API details worth preserving
 
 - **Focus upgrade IDs:** TC4R's `FocusUpgradeType` stores upgrades in an ID-indexed static table. Registering a second upgrade at an occupied ID logs an error and ignores the new registration. Check the host's existing IDs before assigning any TH/custom ID; otherwise an upgrade can silently be unavailable to gameplay despite the log entry.
