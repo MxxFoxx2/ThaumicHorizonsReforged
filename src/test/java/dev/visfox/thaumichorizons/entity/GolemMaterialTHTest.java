@@ -1,10 +1,8 @@
 package dev.visfox.thaumichorizons.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -97,9 +95,12 @@ class GolemMaterialTHTest {
     }
 
     @Test
-    void allMaterialsKeepCurrentWaterBehavior() {
+    void onlyRockMetalAndRedstoneUseHeavyWaterBehavior() {
         for (GolemMaterialTH material : GolemMaterialTH.values()) {
-            assertTrue(material.stats().heavy(), material.id() + " should keep the current water behavior");
+            boolean expectedHeavy = material == GolemMaterialTH.ROCK
+                || material == GolemMaterialTH.METAL
+                || material == GolemMaterialTH.REDSTONE;
+            assertEquals(expectedHeavy, material.stats().heavy(), material.id() + " heavy water behavior");
         }
     }
 }
