@@ -46,8 +46,8 @@ jobs:
         run: |
           checked=$(git -C thaumcraft-4-reforged rev-parse HEAD)
           echo "Checked out TC4R revision: $checked"
-          if [ "$checked" != "388aebb634e2f33a8a75e8d974e08addf8dbc6f1" ]; then
-            echo "::error::TC4R revision mismatch: expected 388aebb634e2f33a8a75e8d974e08addf8dbc6f1, got $checked" >&2
+          if [ "$checked" != "388aebb2ed9f7af45c580792f8f59976ea9a822b" ]; then
+            echo "::error::TC4R revision mismatch: expected 388aebb2ed9f7af45c580792f8f59976ea9a822b, got $checked" >&2
             exit 1
           fi
 

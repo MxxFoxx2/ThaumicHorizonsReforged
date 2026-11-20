@@ -46,8 +46,8 @@ jobs:
         run: |
           checked=$(git -C thaumcraft-4-reforged rev-parse HEAD)
           echo "Checked out TC4R revision: $checked"
-          if [ "$checked" != "388aebb634e2f33a8a75e8d974e08addf8dbc6f1" ]; then
-            echo "::error::TC4R revision mismatch: expected 388aebb634e2f33a8a75e8d974e08addf8dbc6f1, got $checked" >&2
+          if [ "$checked" != "388aebb2ed9f7af45c580792f8f59976ea9a822b" ]; then
+            echo "::error::TC4R revision mismatch: expected 388aebb2ed9f7af45c580792f8f59976ea9a822b, got $checked" >&2
             exit 1
           fi
 
@@ -56,7 +56,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected="388aebb634e2f33a8a75e8d974e08addf8dbc6f1"
+          expected="388aebb2ed9f7af45c580792f8f59976ea9a822b"
           actual="$(git rev-parse HEAD)"
           if [[ "$actual" != "$expected" ]]; then
             echo "::error::Release host dependency is not the CI-tested custom TC4R revision."
@@ -172,7 +172,7 @@ jobs:
 
           ## Temporary TC4 Reforged dependency warning
 
-          **This release requires the custom TC4R add-on API build from [MxxFoxx2/thaumcraft-4-reforged](https://github.com/MxxFoxx2/thaumcraft-4-reforged), branch feat/addon-api, using CI-tested commit 388aebb634e2f33a8a75e8d974e08addf8dbc6f1 ([view exact commit](https://github.com/MxxFoxx2/thaumcraft-4-reforged/commit/388aebb634e2f33a8a75e8d974e08addf8dbc6f1)).**
+          **This release requires the custom TC4R add-on API build from [MxxFoxx2/thaumcraft-4-reforged](https://github.com/MxxFoxx2/thaumcraft-4-reforged), branch feat/addon-api, using CI-tested commit 388aebb2ed9f7af45c580792f8f59976ea9a822b ([view exact commit](https://github.com/MxxFoxx2/thaumcraft-4-reforged/commit/388aebb2ed9f7af45c580792f8f59976ea9a822b)).**
 
           The ordinary published notlikethiss/thaumcraft-4-reforged 1.1.3 release does not yet include every add-on hook consumed by this build and is not a compatible substitute. Build and install the matching custom TC4R JAR using the instructions in the repository README.
 
