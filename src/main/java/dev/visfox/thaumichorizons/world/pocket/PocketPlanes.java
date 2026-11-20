@@ -274,7 +274,7 @@ public class PocketPlanes extends SavedData {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id + data.radius, 0,
-                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension, xAligned);
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius + 1, ThBlocks.VOID.get());
                 }
             }
@@ -283,7 +283,7 @@ public class PocketPlanes extends SavedData {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id - data.radius, 2,
-                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension, xAligned);
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius - 1, ThBlocks.VOID.get());
                 }
             }
@@ -292,7 +292,7 @@ public class PocketPlanes extends SavedData {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setPortalBlock(world, data.radius, y, 256 * id + z, 1,
-                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension, xAligned);
                     PocketPlaneGenerator.setBlockPublic(world, data.radius + 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
@@ -301,7 +301,7 @@ public class PocketPlanes extends SavedData {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
                     PocketPlaneGenerator.setPortalBlock(world, -data.radius, y, 256 * id + z, 3,
-                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension, xAligned);
                     PocketPlaneGenerator.setBlockPublic(world, -data.radius - 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
