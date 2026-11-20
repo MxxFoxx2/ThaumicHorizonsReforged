@@ -175,12 +175,12 @@ public final class PocketPlaneGenerator {
     }
 
     public static void setPortalBlock(ServerLevel world, int x, int y, int z, int which,
-        BlockPos sourceSlot, int plane, int portal, String dimension) {
+        BlockPos sourceSlot, int plane, int portal, String dimension, boolean xAligned) {
         world.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
         BlockPos pos = new BlockPos(x, y, z);
         world.setBlock(pos, PocketRegistry.PORTAL_TH.get().defaultBlockState().setValue(PortalTHBlock.MD, which), 2);
         if (world.getBlockEntity(pos) instanceof PortalTHBlockEntity entity) {
-            entity.configure(sourceSlot, plane, portal, dimension);
+            entity.configure(sourceSlot, plane, portal, dimension, xAligned);
         }
     }
 
