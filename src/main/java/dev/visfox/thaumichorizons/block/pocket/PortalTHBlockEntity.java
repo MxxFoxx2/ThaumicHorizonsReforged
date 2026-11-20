@@ -29,7 +29,6 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
     private boolean xAligned;
     private boolean alignmentKnown;
     private boolean cleanupStarted;
-    private boolean endpointReleased;
 
     public PortalTHBlockEntity(BlockPos pos, BlockState state) {
         super(PocketRegistry.PORTAL_BE.get(), pos, state);
@@ -83,33 +82,16 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
 
         entity.resolveAlignment(level, pos);
         ServerLevel sourceLevel = entity.sourceLevel(server);
-        if (sourceLevel != null && entity.slotPos != null) {
-            if (SlotBlockEntity.destroyPortalFromEndpoint(sourceLevel, entity.slotPos, entity.xAligned,
-                entity.pocketID, entity.which)) {
-                entity.endpointReleased = true;
-                return;
-            }
-
-            // The source frame crosses an unloaded chunk boundary. Release the
-            // Pocket Plane endpoint now, but keep this source-side block entity
-            // alive so it can restore the frame once the complete footprint is loaded.
-            if (!entity.endpointReleased) {
-                PocketPlanes.destroyPortal(entity.pocketID, entity.which, server.getServer());
-                entity.endpointReleased = true;
-                entity.setChanged();
-            }
+        if (sourceLevel == null || entity.slotPos == null) {
+            // Keep the portal index reserved if its source identity cannot be
+            // resolved. Releasing it could let a stale endpoint affect a new portal.
             return;
         }
-
-        if (!entity.endpointReleased) {
-            PocketPlanes.destroyPortal(entity.pocketID, entity.which, server.getServer());
-            entity.endpointReleased = true;
-            entity.setChanged();
-        }
-        // If the source dimension or its Slot is no longer available, do not
-        // leave a live orphan portal block behind in the currently ticking level.
-        if (level.getBlockState(pos).getBlock() instanceof PortalTHBlock) {
-            server.removeBlock(pos, false);
+        if (!SlotBlockEntity.destroyPortalFromEndpoint(sourceLevel, entity.slotPos, entity.xAligned,
+            entity.pocketID, entity.which)) {
+            // Do not clear either endpoint or the saved index while part of the
+            // source frame is unloaded. Retry after the complete footprint loads.
+            return;
         }
     }
 
@@ -154,7 +136,6 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         xAligned = input.getBooleanOr("aligned", false);
         alignmentKnown = input.getBooleanOr("alignment_known", false);
         cleanupStarted = input.getBooleanOr("cleanup_started", false);
-        endpointReleased = input.getBooleanOr("endpoint_released", false);
     }
 
     @Override
@@ -171,6 +152,5 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         output.putBoolean("aligned", xAligned);
         output.putBoolean("alignment_known", alignmentKnown);
         output.putBoolean("cleanup_started", cleanupStarted);
-        output.putBoolean("endpoint_released", endpointReleased);
     }
 }
