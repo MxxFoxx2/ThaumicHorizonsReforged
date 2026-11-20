@@ -38,9 +38,18 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: MxxFoxx2/thaumcraft-4-reforged
-          ref: 388aebb634e2f33a8a75e8d974e08addf8dbc6f1
+          ref: feat/addon-api
           path: thaumcraft-4-reforged
           persist-credentials: false
+
+      - name: Verify pinned TC4R revision
+        run: |
+          checked=$(git -C thaumcraft-4-reforged rev-parse HEAD)
+          echo "Checked out TC4R revision: $checked"
+          if [ "$checked" != "388aebb634e2f33a8a75e8d974e08addf8dbc6f1" ]; then
+            echo "::error::TC4R revision mismatch: expected 388aebb634e2f33a8a75e8d974e08addf8dbc6f1, got $checked" >&2
+            exit 1
+          fi
 
       - name: Set up Java 25
         uses: actions/setup-java@v6
