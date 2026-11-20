@@ -52,82 +52,82 @@ public final class ThRecipes {
     }
 
     private static void normal0() {
-        TcRecipes.register(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
+        TcRecipes.registerUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
     }
 
     private static void crucible0() {
-        TcRecipes.register(new CrucibleRecipe("alcheponics", "alcheponics", TcStack.of("minecraft:wheat", 2), TcIngredient.item("minecraft:wheat_seeds"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alcheponics", "alcheponics", TcStack.of("minecraft:wheat", 2), TcIngredient.item("minecraft:wheat_seeds"),
             new AspectList().add(Aspect.LIGHT, 2).add(Aspect.EARTH, 2).add(Aspect.WATER, 2)));
-        TcRecipes.register(new CrucibleRecipe("alcheponics1", "alcheponics", TcStack.of("minecraft:carrot", 2), TcIngredient.item("minecraft:carrot"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alcheponics1", "alcheponics", TcStack.of("minecraft:carrot", 2), TcIngredient.item("minecraft:carrot"),
             new AspectList().add(Aspect.LIGHT, 2).add(Aspect.EARTH, 2).add(Aspect.WATER, 2)));
-        TcRecipes.register(new CrucibleRecipe("alcheponics2", "alcheponics", TcStack.of("minecraft:potato", 2), TcIngredient.item("minecraft:potato"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alcheponics2", "alcheponics", TcStack.of("minecraft:potato", 2), TcIngredient.item("minecraft:potato"),
             new AspectList().add(Aspect.LIGHT, 2).add(Aspect.EARTH, 2).add(Aspect.WATER, 2)));
-        TcRecipes.register(new CrucibleRecipe("alcheponics3", "alcheponics", TcStack.of("minecraft:melon"), TcIngredient.item("minecraft:melon_seeds"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alcheponics3", "alcheponics", TcStack.of("minecraft:melon"), TcIngredient.item("minecraft:melon_seeds"),
             new AspectList().add(Aspect.LIGHT, 3).add(Aspect.EARTH, 3).add(Aspect.WATER, 3)));
-        TcRecipes.register(new CrucibleRecipe("alcheponics4", "alcheponics", TcStack.of("minecraft:pumpkin"), TcIngredient.item("minecraft:pumpkin_seeds"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alcheponics4", "alcheponics", TcStack.of("minecraft:pumpkin"), TcIngredient.item("minecraft:pumpkin_seeds"),
             new AspectList().add(Aspect.LIGHT, 3).add(Aspect.EARTH, 3).add(Aspect.WATER, 3)));
     }
 
     private static void crucible1() {
-        TcRecipes.register(new CrucibleRecipe("meatGrowth", "meatGrowth", TcStack.of("minecraft:porkchop", 2), TcIngredient.item("minecraft:porkchop"),
+        TcRecipes.registerUnique(new CrucibleRecipe("meatGrowth", "meatGrowth", TcStack.of("minecraft:porkchop", 2), TcIngredient.item("minecraft:porkchop"),
             new AspectList().add(Aspect.LIFE, 3)));
-        TcRecipes.register(new CrucibleRecipe("meatGrowth1", "meatGrowth", TcStack.of("minecraft:beef", 2), TcIngredient.item("minecraft:beef"),
+        TcRecipes.registerUnique(new CrucibleRecipe("meatGrowth1", "meatGrowth", TcStack.of("minecraft:beef", 2), TcIngredient.item("minecraft:beef"),
             new AspectList().add(Aspect.LIFE, 3)));
-        TcRecipes.register(new CrucibleRecipe("meatGrowth2", "meatGrowth", TcStack.of("minecraft:chicken", 2), TcIngredient.item("minecraft:chicken"),
+        TcRecipes.registerUnique(new CrucibleRecipe("meatGrowth2", "meatGrowth", TcStack.of("minecraft:chicken", 2), TcIngredient.item("minecraft:chicken"),
             new AspectList().add(Aspect.LIFE, 3)));
-        TcRecipes.register(new CrucibleRecipe("fleshLeather", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:beef"),
+        TcRecipes.registerUnique(new CrucibleRecipe("fleshLeather", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:beef"),
             new AspectList().add(Aspect.CRAFT, 1).add(Aspect.CLOTH, 1)));
-        TcRecipes.register(new CrucibleRecipe("fleshLeather1", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:porkchop"),
+        TcRecipes.registerUnique(new CrucibleRecipe("fleshLeather1", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:porkchop"),
             new AspectList().add(Aspect.CRAFT, 1).add(Aspect.CLOTH, 1)));
-        TcRecipes.register(new CrucibleRecipe("fleshLeather2", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:rotten_flesh"),
+        TcRecipes.registerUnique(new CrucibleRecipe("fleshLeather2", "fleshLeather", TcStack.of("minecraft:leather"), TcIngredient.item("minecraft:rotten_flesh"),
             new AspectList().add(Aspect.CRAFT, 1).add(Aspect.CLOTH, 1).add(Aspect.ORDER, 1)));
     }
 
     private static void crucible2() {
-        TcRecipes.register(new CrucibleRecipe("shardTrans", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:fire_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:fire_shard"),
             new AspectList().add(Aspect.FIRE, 2).add(Aspect.EXCHANGE, 1)));
-        TcRecipes.register(new CrucibleRecipe("shardTrans1", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:water_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans1", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:water_shard"),
             new AspectList().add(Aspect.WATER, 2).add(Aspect.EXCHANGE, 1)));
-        TcRecipes.register(new CrucibleRecipe("shardTrans2", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:air_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans2", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:air_shard"),
             new AspectList().add(Aspect.AIR, 2).add(Aspect.EXCHANGE, 1)));
-        TcRecipes.register(new CrucibleRecipe("shardTrans3", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:earth_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans3", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:earth_shard"),
             new AspectList().add(Aspect.EARTH, 2).add(Aspect.EXCHANGE, 1)));
-        TcRecipes.register(new CrucibleRecipe("shardTrans4", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:order_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans4", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:order_shard"),
             new AspectList().add(Aspect.ORDER, 2).add(Aspect.EXCHANGE, 1)));
-        TcRecipes.register(new CrucibleRecipe("shardTrans5", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:entropy_shard"),
+        TcRecipes.registerUnique(new CrucibleRecipe("shardTrans5", "shardTrans", TcStack.of("thaumcraft:balanced_shard"), TcIngredient.item("thaumcraft:entropy_shard"),
             new AspectList().add(Aspect.ENTROPY, 2).add(Aspect.EXCHANGE, 1)));
     }
 
     private static void crucible3() {
-        TcRecipes.register(new CrucibleRecipe("alchemite", "alchemite", TcStack.of("thaumichorizons:alchemite"), TcIngredient.item("minecraft:tnt"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alchemite", "alchemite", TcStack.of("thaumichorizons:alchemite"), TcIngredient.item("minecraft:tnt"),
             new AspectList().add(Aspect.ENERGY, 4).add(Aspect.CRYSTAL, 4).add(Aspect.EXCHANGE, 4)));
-        TcRecipes.register(new CrucibleRecipe("golemPowder", "golemPowder", TcStack.of("thaumichorizons:golempowder"), TcIngredient.item("thaumcraft:salis_mundus"),
+        TcRecipes.registerUnique(new CrucibleRecipe("golemPowder", "golemPowder", TcStack.of("thaumichorizons:golempowder"), TcIngredient.item("thaumcraft:salis_mundus"),
             new AspectList().add(Aspect.MAN, 4).add(Aspect.SOUL, 4).add(Aspect.MOTION, 4)));
     }
 
     private static void arcane0() {
-        TcRecipes.register(new ShapelessArcaneRecipe("cowInfusionIceCream", "cowInfusion", TcStack.of("thaumichorizons:icecream"),
+        TcRecipes.registerUnique(new ShapelessArcaneRecipe("cowInfusionIceCream", "cowInfusion", TcStack.of("thaumichorizons:icecream"),
             new AspectList().add(Aspect.WATER, 1), List.of(
                 TcIngredient.item("thaumichorizons:bucketchocolate"), TcIngredient.item("minecraft:wheat"))));
-        TcRecipes.register(new ShapedArcaneRecipe("GOLEMBELL", "GOLEMBELL", TcStack.of("thaumichorizons:golembellth"),
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("GOLEMBELL", "GOLEMBELL", TcStack.of("thaumichorizons:golembellth"),
             new AspectList().add(Aspect.ORDER, 5), 3, 3, List.of(
                 TcIngredient.item("minecraft:quartz"), TcIngredient.item("minecraft:quartz"), TcIngredient.EMPTY,
                 TcIngredient.item("minecraft:quartz"), TcIngredient.item("minecraft:quartz"), TcIngredient.EMPTY,
                 TcIngredient.EMPTY, TcIngredient.EMPTY, TcIngredient.item("minecraft:stick"))));
-        TcRecipes.register(new ShapedArcaneRecipe("essentiaInjectionSyringe", "essentiaInjection", TcStack.of("thaumichorizons:syringeinjection"),
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("essentiaInjectionSyringe", "essentiaInjection", TcStack.of("thaumichorizons:syringeinjection"),
             new AspectList().add(Aspect.WATER, 1).add(Aspect.ORDER, 1), 1, 2, List.of(
                 TcIngredient.item("thaumcraft:glass_phial"), TcIngredient.item("minecraft:iron_nugget"))));
-        TcRecipes.register(new ShapelessArcaneRecipe("blastPhial", "blastPhial", TcStack.withData("thaumichorizons:syringeblood", 4, Map.of("phial", "true")),
+        TcRecipes.registerUnique(new ShapelessArcaneRecipe("blastPhial", "blastPhial", TcStack.withData("thaumichorizons:syringeblood", 4, Map.of("phial", "true")),
             new AspectList().add(Aspect.FIRE, 1).add(Aspect.WATER, 1).add(Aspect.ENTROPY, 1), List.of(
                 TcIngredient.item("thaumcraft:glass_phial"), TcIngredient.item("thaumcraft:glass_phial"),
                 TcIngredient.item("minecraft:gunpowder"), TcIngredient.item("thaumcraft:glass_phial"),
                 TcIngredient.item("thaumcraft:glass_phial"), TcIngredient.item("thaumichorizons:syringeblood"))));
-        TcRecipes.register(new ShapedArcaneRecipe("lensCase", "lensCase", TcStack.of("thaumichorizons:lenscase"),
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("lensCase", "lensCase", TcStack.of("thaumichorizons:lenscase"),
             new AspectList().add(Aspect.EARTH, 10).add(Aspect.ORDER, 10).add(Aspect.ENTROPY, 10), 3, 3, List.of(
                 TcIngredient.item("minecraft:leather"), TcIngredient.item("minecraft:iron_ingot"), TcIngredient.item("minecraft:leather"),
                 TcIngredient.item("minecraft:leather"), TcIngredient.item("thaumcraft:mundane_belt"), TcIngredient.item("minecraft:leather"),
                 TcIngredient.item("minecraft:leather"), TcIngredient.item("minecraft:iron_ingot"), TcIngredient.item("minecraft:leather"))));
-        TcRecipes.register(new ShapedArcaneRecipe("crystalWand", "crystalWand", TcStack.of("thaumichorizons:crystalwand"),
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("crystalWand", "crystalWand", TcStack.of("thaumichorizons:crystalwand"),
             new AspectList().add(Aspect.AIR, 25).add(Aspect.EARTH, 25).add(Aspect.FIRE, 25).add(Aspect.WATER, 25).add(Aspect.ORDER, 25).add(Aspect.ENTROPY, 25), 3, 3, List.of(
                 TcIngredient.EMPTY, TcIngredient.EMPTY, TcIngredient.item("thaumcraft:balanced_shard"),
                 TcIngredient.EMPTY, TcIngredient.item("thaumcraft:mixed_crystal_cluster"), TcIngredient.EMPTY,
@@ -135,28 +135,28 @@ public final class ThRecipes {
     }
 
     private static void infusion0() {
-        TcRecipes.register(new InfusionRecipe("etherealShard", "etherealShard", TcStack.of("thaumichorizons:synthnode"), 7,
+        TcRecipes.registerUnique(new InfusionRecipe("etherealShard", "etherealShard", TcStack.of("thaumichorizons:synthnode"), 7,
             new AspectList().add(Aspect.AURA, 8).add(Aspect.ENERGY, 32).add(Aspect.VOID, 32),
             TcIngredient.item("thaumcraft:balanced_shard"), List.of(
                 TcIngredient.item("thaumcraft:thaumium_ingot"), TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:thaumium_ingot"), TcIngredient.item("thaumcraft:thaumium_ingot"))));
-        TcRecipes.register(new InfusionRecipe("visDynamo", "visDynamo", TcStack.of("thaumichorizons:visdynamo"), 5,
+        TcRecipes.registerUnique(new InfusionRecipe("visDynamo", "visDynamo", TcStack.of("thaumichorizons:visdynamo"), 5,
             new AspectList().add(Aspect.AURA, 4).add(Aspect.ENERGY, 16).add(Aspect.EXCHANGE, 16).add(Aspect.MECHANISM, 16),
             TcIngredient.item("minecraft:piston"), List.of(
                 TcIngredient.item("thaumcraft:primal_charm"), TcIngredient.item("minecraft:gold_ingot"),
                 TcIngredient.item("thaumcraft:greatwood_planks"), TcIngredient.item("minecraft:gold_ingot"))));
-        TcRecipes.register(new InfusionRecipe("essentiaDynamo", "essentiaDynamo", TcStack.of("thaumichorizons:essentiadynamo"), 5,
+        TcRecipes.registerUnique(new InfusionRecipe("essentiaDynamo", "essentiaDynamo", TcStack.of("thaumichorizons:essentiadynamo"), 5,
             new AspectList().add(Aspect.AURA, 4).add(Aspect.ENERGY, 16).add(Aspect.EXCHANGE, 16).add(Aspect.MECHANISM, 16).add(Aspect.WATER, 32),
             TcIngredient.item("minecraft:piston"), List.of(
                 TcIngredient.item("thaumcraft:thaumium_ingot"), TcIngredient.item("thaumcraft:alchemical_construct"),
                 TcIngredient.item("thaumcraft:greatwood_planks"), TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("thaumcraft:alchemical_centrifuge"))));
-        TcRecipes.register(new InfusionRecipe("nodeMonitor", "nodeMonitor", TcStack.of("thaumichorizons:nodemonitor"), 2,
+        TcRecipes.registerUnique(new InfusionRecipe("nodeMonitor", "nodeMonitor", TcStack.of("thaumichorizons:nodemonitor"), 2,
             new AspectList().add(Aspect.AURA, 2).add(Aspect.SENSES, 8).add(Aspect.MECHANISM, 8),
             TcIngredient.item("thaumcraft:thaumometer"), List.of(
                 TcIngredient.item("thaumcraft:zombie_brain"), TcIngredient.item("minecraft:comparator"),
                 TcIngredient.item("thaumcraft:air_shard"))));
-        TcRecipes.register(new InfusionRecipe("soulExtractor", "soulExtractor", TcStack.of("thaumichorizons:soulsieve"), 4,
+        TcRecipes.registerUnique(new InfusionRecipe("soulExtractor", "soulExtractor", TcStack.of("thaumichorizons:soulsieve"), 4,
             new AspectList().add(Aspect.SOUL, 16).add(Aspect.MECHANISM, 8).add(Aspect.EXCHANGE, 8),
             TcIngredient.item("minecraft:hopper"), List.of(
                 TcIngredient.item("thaumcraft:amber"), TcIngredient.item("thaumcraft:enchanted_fabric"),
@@ -165,30 +165,30 @@ public final class ThRecipes {
     }
 
     private static void infusion1() {
-        TcRecipes.register(new InfusionRecipe("soulKnowledge", "soulKnowledge", TcStack.of("thaumichorizons:inspiratron"), 5,
+        TcRecipes.registerUnique(new InfusionRecipe("soulKnowledge", "soulKnowledge", TcStack.of("thaumichorizons:inspiratron"), 5,
             new AspectList().add(Aspect.HEAL, 8).add(Aspect.MIND, 16).add(Aspect.ORDER, 8).add(Aspect.SOUL, 8),
             TcIngredient.item("thaumcraft:brain_jar"), List.of(
                 TcIngredient.item("thaumcraft:scribing_tools"), TcIngredient.item("thaumcraft:thaumium_ingot"),
                 TcIngredient.item("minecraft:golden_apple"), TcIngredient.item("thaumcraft:thaumium_ingot"))));
-        TcRecipes.register(new InfusionRecipe("soulAssembler", "soulAssembler", TcStack.of("thaumichorizons:soulforge"), 6,
+        TcRecipes.registerUnique(new InfusionRecipe("soulAssembler", "soulAssembler", TcStack.of("thaumichorizons:soulforge"), 6,
             new AspectList().add(Aspect.SOUL, 16).add(Aspect.CRAFT, 16).add(Aspect.EXCHANGE, 16).add(Aspect.MIND, 32).add(Aspect.HEAL, 16),
             TcIngredient.item("thaumcraft:warded_jar"), List.of(
                 TcIngredient.item("thaumcraft:brain_jar"), TcIngredient.item("minecraft:golden_apple"),
                 TcIngredient.item("thaumcraft:vis_filter"), TcIngredient.item("thaumcraft:brain_jar"),
                 TcIngredient.item("minecraft:golden_apple"), TcIngredient.item("thaumcraft:vis_filter"))));
-        TcRecipes.register(new InfusionRecipe("focusContainment", "focusContainment", TcStack.of("thaumichorizons:focuscontainment"), 6,
+        TcRecipes.registerUnique(new InfusionRecipe("focusContainment", "focusContainment", TcStack.of("thaumichorizons:focuscontainment"), 6,
             new AspectList().add(Aspect.VOID, 32).add(Aspect.TRAP, 32).add(Aspect.TRAVEL, 8),
             TcIngredient.item("thaumcraft:focus_portable_hole"), List.of(
                 TcIngredient.item("thaumcraft:amber"), TcIngredient.item("minecraft:cobweb"),
                 TcIngredient.item("thaumcraft:amber"), TcIngredient.item("minecraft:iron_bars"),
                 TcIngredient.item("thaumcraft:amber"), TcIngredient.item("minecraft:cobweb"),
                 TcIngredient.item("thaumcraft:amber"), TcIngredient.item("minecraft:iron_bars"))));
-        TcRecipes.register(new InfusionRecipe("essentiaInjection", "essentiaInjection", TcStack.of("thaumichorizons:bloodinfuser"), 4,
+        TcRecipes.registerUnique(new InfusionRecipe("essentiaInjection", "essentiaInjection", TcStack.of("thaumichorizons:bloodinfuser"), 4,
             new AspectList().add(Aspect.MAN, 8).add(Aspect.EXCHANGE, 8).add(Aspect.LIFE, 16).add(Aspect.MAGIC, 16),
             TcIngredient.item("thaumcraft:crucible"), List.of(
                 TcIngredient.item("minecraft:comparator"), TcIngredient.item("thaumcraft:alchemical_construct"),
                 TcIngredient.item("thaumcraft:essentia_buffer"), TcIngredient.item("thaumcraft:alchemical_construct"))));
-        TcRecipes.register(new InfusionRecipe("injector", "injector", TcStack.of("thaumichorizons:injector"), 2,
+        TcRecipes.registerUnique(new InfusionRecipe("injector", "injector", TcStack.of("thaumichorizons:injector"), 2,
             new AspectList().add(Aspect.WEAPON, 8).add(Aspect.MECHANISM, 8).add(Aspect.FLIGHT, 8),
             TcIngredient.item("thaumcraft:bone_bow"), List.of(
                 TcIngredient.item("thaumcraft:greatwood_planks"), TcIngredient.item("minecraft:feather"),
@@ -196,20 +196,20 @@ public final class ThRecipes {
     }
 
     private static void infusion2() {
-        TcRecipes.register(new InfusionRecipe("focusLiquefaction", "focusLiquefaction", TcStack.of("thaumichorizons:focusliquefaction"), 3,
+        TcRecipes.registerUnique(new InfusionRecipe("focusLiquefaction", "focusLiquefaction", TcStack.of("thaumichorizons:focusliquefaction"), 3,
             new AspectList().add(Aspect.FIRE, 12).add(Aspect.METAL, 8).add(Aspect.EXCHANGE, 4),
             TcIngredient.item("minecraft:diamond"), List.of(
                 TcIngredient.item("thaumcraft:focus_fire"),
                 TcIngredient.item("thaumcraft:salis_mundus"),
                 TcIngredient.item("thaumcraft:focus_excavation"))));
-        TcRecipes.register(new InfusionRecipe("focusDisintegration", "focusDisintegration", TcStack.of("thaumichorizons:focusdisintegration"), 7,
+        TcRecipes.registerUnique(new InfusionRecipe("focusDisintegration", "focusDisintegration", TcStack.of("thaumichorizons:focusdisintegration"), 7,
             new AspectList().add(Aspect.ENTROPY, 32).add(Aspect.MAGIC, 24).add(Aspect.CRYSTAL, 32).add(Aspect.EXCHANGE, 16),
             TcIngredient.item("thaumcraft:focus_excavation"), List.of(
                 TcIngredient.item("thaumcraft:liquid_death_bucket"),
                 TcIngredient.item("thaumcraft:primal_charm"),
                 TcIngredient.item("thaumcraft:liquid_death_bucket"),
                 TcIngredient.item("thaumcraft:alumentum"))));
-        TcRecipes.register(new InfusionRecipe("focusAnimation", "focusAnimation", TcStack.of("thaumichorizons:focusanimation"), 10,
+        TcRecipes.registerUnique(new InfusionRecipe("focusAnimation", "focusAnimation", TcStack.of("thaumichorizons:focusanimation"), 10,
             new AspectList().add(Aspect.MAN, 64).add(Aspect.MOTION, 64).add(Aspect.SOUL, 64).add(Aspect.CRAFT, 64),
             TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
                 TcIngredient.item("thaumcraft:golem_core_blank"),
@@ -225,7 +225,7 @@ public final class ThRecipes {
     }
 
     private static void arcane1() {
-        TcRecipes.register(new ShapedArcaneRecipe("planarTheory", "planarTheory", TcStack.of("thaumichorizons:planarconduit"),
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("planarTheory", "planarTheory", TcStack.of("thaumichorizons:planarconduit"),
             new AspectList().add(Aspect.FIRE, 50).add(Aspect.WATER, 50).add(Aspect.ORDER, 50)
                 .add(Aspect.ENTROPY, 50).add(Aspect.EARTH, 50).add(Aspect.AIR, 50), 3, 3, List.of(
                 TcIngredient.item("thaumcraft:void_metal_ingot"), TcIngredient.item("thaumcraft:wisp_essence"),
@@ -234,7 +234,7 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:wisp_essence"),
                 TcIngredient.item("thaumcraft:void_metal_ingot"), TcIngredient.item("thaumcraft:wisp_essence"),
                 TcIngredient.item("thaumcraft:void_metal_ingot"))));
-        TcRecipes.register(new ShapedArcaneRecipe("transductionAmplifier", "transductionAmplifier",
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("transductionAmplifier", "transductionAmplifier",
             TcStack.of("thaumichorizons:transductionamplifier"),
             new AspectList().add(Aspect.AIR, 10).add(Aspect.FIRE, 10).add(Aspect.ORDER, 10), 3, 3, List.of(
                 TcIngredient.EMPTY, TcIngredient.item("thaumichorizons:planarconduit"), TcIngredient.EMPTY,
@@ -245,7 +245,7 @@ public final class ThRecipes {
     }
 
     private static void arcaneBoats() {
-        TcRecipes.register(new ShapedArcaneRecipe("greatwoodBoat", "greatwoodBoat",
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("greatwoodBoat", "greatwoodBoat",
             TcStack.of("thaumichorizons:boatgreatwood"),
             new AspectList().add(Aspect.ORDER, 5).add(Aspect.EARTH, 5).add(Aspect.WATER, 5),
             3, 2, List.of(
@@ -253,7 +253,7 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:greatwood_log"),
                 TcIngredient.item("thaumcraft:greatwood_log"), TcIngredient.item("thaumcraft:greatwood_log"),
                 TcIngredient.item("thaumcraft:greatwood_log"))));
-        TcRecipes.register(new ShapedArcaneRecipe("thaumiumBoat", "thaumiumBoat",
+        TcRecipes.registerUnique(new ShapedArcaneRecipe("thaumiumBoat", "thaumiumBoat",
             TcStack.of("thaumichorizons:boatthaumium"),
             new AspectList().add(Aspect.FIRE, 10).add(Aspect.WATER, 10)
                 .add(Aspect.ORDER, 10).add(Aspect.EARTH, 10),
@@ -268,7 +268,7 @@ public final class ThRecipes {
 
     private static void infusionPocketPlane() {
         // Blank keystone: imprint it by right-clicking a generated Pocket Plane vortex.
-        TcRecipes.register(new InfusionRecipe("pocketPlane", "pocketPlane",
+        TcRecipes.registerUnique(new InfusionRecipe("pocketPlane", "pocketPlane",
             TcStack.of("thaumichorizons:keystoneth"), 6,
             new AspectList().add(Aspect.TRAVEL, 32).add(Aspect.VOID, 32).add(Aspect.EXCHANGE, 16),
             TcIngredient.item("thaumichorizons:planarconduit"), List.of(
@@ -278,7 +278,7 @@ public final class ThRecipes {
                 TcIngredient.item("minecraft:quartz"), TcIngredient.item("thaumcraft:balanced_shard"))));
 
         // Secondary Keystone recipe unlocked by Planar Gateways research.
-        TcRecipes.register(new InfusionRecipe("planarKeystone", "planarKeystone",
+        TcRecipes.registerUnique(new InfusionRecipe("planarKeystone", "planarKeystone",
             TcStack.of("thaumichorizons:keystoneth"), 6,
             new AspectList().add(Aspect.TRAVEL, 24).add(Aspect.VOID, 24).add(Aspect.ELDRITCH, 12),
             TcIngredient.item("minecraft:diamond"), List.of(
@@ -286,7 +286,7 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:quicksilver"), TcIngredient.item("thaumcraft:balanced_shard"))));
 
         // The receptacle that anchors a gateway frame around the inserted Keystone.
-        TcRecipes.register(new InfusionRecipe("planarKeystoneSlot", "planarKeystone",
+        TcRecipes.registerUnique(new InfusionRecipe("planarKeystoneSlot", "planarKeystone",
             TcStack.of("thaumichorizons:slotth"), 8,
             new AspectList().add(Aspect.VOID, 32).add(Aspect.TRAVEL, 24)
                 .add(Aspect.MECHANISM, 24).add(Aspect.ELDRITCH, 24),
@@ -298,7 +298,7 @@ public final class ThRecipes {
     }
 
     private static void infusion4() {
-        TcRecipes.register(new InfusionRecipe("vortexStabilizer", "vortexStabilizer",
+        TcRecipes.registerUnique(new InfusionRecipe("vortexStabilizer", "vortexStabilizer",
             TcStack.of("thaumichorizons:vortexstabilizer"), 6,
             new AspectList().add(Aspect.AURA, 8).add(Aspect.TRAP, 32).add(Aspect.HUNGER, 32).add(Aspect.ENERGY, 16),
             TcIngredient.item("thaumcraft:node_stabilizer"), List.of(
@@ -309,7 +309,7 @@ public final class ThRecipes {
     }
 
     private static void infusionRecombinator() {
-        TcRecipes.register(new InfusionRecipe("recombinator", "recombinator",
+        TcRecipes.registerUnique(new InfusionRecipe("recombinator", "recombinator",
             TcStack.of("thaumichorizons:recombinator"), 9,
             new AspectList().add(Aspect.EXCHANGE, 32).add(Aspect.AURA, 20).add(Aspect.CRAFT, 32)
                 .add(Aspect.ENERGY, 32),
@@ -325,60 +325,60 @@ public final class ThRecipes {
     }
 
     private static void crucible5() {
-        TcRecipes.register(new CrucibleRecipe("alchIncubation", "alchIncubation", TcStack.of("thaumichorizons:eggincubated"),
+        TcRecipes.registerUnique(new CrucibleRecipe("alchIncubation", "alchIncubation", TcStack.of("thaumichorizons:eggincubated"),
             TcIngredient.item("minecraft:egg"),
             new AspectList().add(Aspect.FIRE, 2).add(Aspect.LIFE, 2)));
     }
 
     private static void crucible4() {
-        TcRecipes.register(new CrucibleRecipe("focusIllumination", "focusIllumination", TcStack.of("thaumichorizons:focusillumination"),
+        TcRecipes.registerUnique(new CrucibleRecipe("focusIllumination", "focusIllumination", TcStack.of("thaumichorizons:focusillumination"),
             TcIngredient.item("minecraft:glowstone"),
             new AspectList().add(Aspect.LIGHT, 12).add(Aspect.ENERGY, 8).add(Aspect.FIRE, 8)));
-        TcRecipes.register(new CrucibleRecipe("incarnationVat", "incarnationVat", TcStack.of("thaumichorizons:nutrients"),
+        TcRecipes.registerUnique(new CrucibleRecipe("incarnationVat", "incarnationVat", TcStack.of("thaumichorizons:nutrients"),
             TcIngredient.item("minecraft:sugar"),
             new AspectList().add(Aspect.HUNGER, 2)));
     }
 
     private static void infusion3() {
-        TcRecipes.register(new InfusionRecipe("infusionVat", "infusionVat", TcStack.of("thaumichorizons:modmatrix"), 10,
+        TcRecipes.registerUnique(new InfusionRecipe("infusionVat", "infusionVat", TcStack.of("thaumichorizons:modmatrix"), 10,
             new AspectList().add(Aspect.LIFE, 32).add(Aspect.CRAFT, 32).add(Aspect.MAGIC, 32).add(Aspect.BEAST, 32),
             TcIngredient.item("thaumcraft:runic_matrix"), List.of(
                 TcIngredient.item("thaumcraft:salis_mundus"), TcIngredient.item("thaumichorizons:syringeblood"),
                 TcIngredient.item("thaumcraft:salis_mundus"), TcIngredient.item("thaumichorizons:syringeblood"))));
-        TcRecipes.register(new InfusionRecipe("cloneVillager", "cloneVillager", TcStack.of("thaumichorizons:corpseeffigy"), 3,
+        TcRecipes.registerUnique(new InfusionRecipe("cloneVillager", "cloneVillager", TcStack.of("thaumichorizons:corpseeffigy"), 3,
             new AspectList().add(Aspect.CRAFT, 8).add(Aspect.MAN, 8),
             TcIngredient.item("thaumcraft:zombie_brain"), List.of(
                 TcIngredient.item("minecraft:rotten_flesh"), TcIngredient.item("minecraft:bone"),
                 TcIngredient.item("minecraft:rotten_flesh"), TcIngredient.item("minecraft:bone"),
                 TcIngredient.item("minecraft:rotten_flesh"), TcIngredient.item("minecraft:bone"),
                 TcIngredient.item("minecraft:rotten_flesh"), TcIngredient.item("minecraft:bone"))));
-        TcRecipes.register(new InfusionRecipe("cloneSelf", "cloneSelf", TcStack.of("thaumichorizons:soulbeacon"), 8,
+        TcRecipes.registerUnique(new InfusionRecipe("cloneSelf", "cloneSelf", TcStack.of("thaumichorizons:soulbeacon"), 8,
             new AspectList().add(Aspect.SOUL, 16).add(Aspect.TRAP, 32).add(Aspect.TRAVEL, 32).add(Aspect.DEATH, 32),
             TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
                 TcIngredient.item("thaumcraft:warded_jar"), TcIngredient.item("thaumcraft:void_metal_ingot"),
                 TcIngredient.item("minecraft:ender_eye"), TcIngredient.item("minecraft:beacon"),
                 TcIngredient.item("minecraft:ender_eye"), TcIngredient.item("thaumcraft:void_metal_ingot"))));
-        TcRecipes.register(new InfusionRecipe("lensFire", "lensFire", TcStack.of("thaumichorizons:lensfire"), 1,
+        TcRecipes.registerUnique(new InfusionRecipe("lensFire", "lensFire", TcStack.of("thaumichorizons:lensfire"), 1,
             new AspectList().add(Aspect.LIGHT, 20).add(Aspect.ENERGY, 12).add(Aspect.SENSES, 20),
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("minecraft:golden_carrot"), TcIngredient.item("thaumcraft:fire_shard"),
                 TcIngredient.item("minecraft:golden_carrot"), TcIngredient.item("thaumcraft:fire_shard"))));
-        TcRecipes.register(new InfusionRecipe("lensWater", "lensWater", TcStack.of("thaumichorizons:lenswater"), 1,
+        TcRecipes.registerUnique(new InfusionRecipe("lensWater", "lensWater", TcStack.of("thaumichorizons:lenswater"), 1,
             new AspectList().add(Aspect.SENSES, 24).add(Aspect.EXCHANGE, 12).add(Aspect.WATER, 12),
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("thaumcraft:arcane_ear"), TcIngredient.item("thaumcraft:water_shard"),
                 TcIngredient.item("minecraft:note_block"), TcIngredient.item("thaumcraft:water_shard"))));
-        TcRecipes.register(new InfusionRecipe("lensEarth", "lensEarth", TcStack.of("thaumichorizons:lensearth"), 1,
+        TcRecipes.registerUnique(new InfusionRecipe("lensEarth", "lensEarth", TcStack.of("thaumichorizons:lensearth"), 1,
             new AspectList().add(Aspect.SENSES, 20).add(Aspect.VOID, 12).add(Aspect.LIGHT, 12),
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("minecraft:glowstone_dust"), TcIngredient.item("thaumcraft:earth_shard"),
                 TcIngredient.item("minecraft:ender_eye"), TcIngredient.item("thaumcraft:earth_shard"))));
-        TcRecipes.register(new InfusionRecipe("lensAir", "lensAir", TcStack.of("thaumichorizons:lensair"), 1,
+        TcRecipes.registerUnique(new InfusionRecipe("lensAir", "lensAir", TcStack.of("thaumichorizons:lensair"), 1,
             new AspectList().add(Aspect.SENSES, 18).add(Aspect.AURA, 4).add(Aspect.LIFE, 12).add(Aspect.UNDEAD, 12),
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("minecraft:bone"), TcIngredient.item("thaumcraft:air_shard"),
                 TcIngredient.item("minecraft:egg"), TcIngredient.item("thaumcraft:air_shard"))));
-        TcRecipes.register(new InfusionRecipe("lensOrderEntropy", "lensOrderEntropy", TcStack.of("thaumichorizons:lensorderentropy"), 1,
+        TcRecipes.registerUnique(new InfusionRecipe("lensOrderEntropy", "lensOrderEntropy", TcStack.of("thaumichorizons:lensorderentropy"), 1,
             new AspectList().add(Aspect.SENSES, 24).add(Aspect.MIND, 12).add(Aspect.MAGIC, 12),
             TcIngredient.item("minecraft:glass_pane"), List.of(
                 TcIngredient.item("thaumcraft:scribing_tools"), TcIngredient.item("thaumcraft:entropy_shard"),
@@ -386,7 +386,7 @@ public final class ThRecipes {
     }
 
     private static void mirrorAmulet() {
-        TcRecipes.register(new InfusionRecipe("mirrorAmulet", "mirrorAmulet", TcStack.of("thaumichorizons:amuletmirror"), 6,
+        TcRecipes.registerUnique(new InfusionRecipe("mirrorAmulet", "mirrorAmulet", TcStack.of("thaumichorizons:amuletmirror"), 6,
             new AspectList().add(Aspect.DEATH, 16).add(Aspect.ENTROPY, 32).add(Aspect.VOID, 32),
             TcIngredient.item("thaumcraft:primordial_pearl"), List.of(
                 TcIngredient.item("thaumcraft:mundane_amulet"),
@@ -395,7 +395,7 @@ public final class ThRecipes {
     }
 
     private static void advancedGolem() {
-        TcRecipes.register(new InfusionRecipe("AdvancedGolemTH", "focusAnimation",
+        TcRecipes.registerUnique(new InfusionRecipe("AdvancedGolemTH", "focusAnimation",
             TcStack.withData("thaumichorizons:golemplacer", 1, Map.of("advanced", "1")), 3,
             new AspectList().add(Aspect.MIND, 8).add(Aspect.SENSES, 8).add(Aspect.LIFE, 8),
             TcIngredient.item("thaumichorizons:golemplacer"), List.of(
