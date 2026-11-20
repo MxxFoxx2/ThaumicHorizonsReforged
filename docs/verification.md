@@ -179,12 +179,14 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 
 ## Second original-parity pass — 2026-11-20
 
+> Verification boundary: the build, seam, asset, client-startup and dedicated-server checkmarks below describe the run recorded for the original-parity pass before the subsequent review fixes (portal synchronization/teardown and Earth Lens world scoping). Those later source changes have not yet been rebuilt or exercised in-game; rerun the checks before treating this revision as verified.
+
 - [x] `gradlew.bat build` passes, including the existing JUnit suite.
 - [x] `python -I tools/check_seams.py` passes for 307 files; the previous five client/common violations are resolved.
 - [x] `python -I tools/check_assets.py` passes for 525 references; all 126 registered item IDs have item definitions.
 - [x] The live client starts and completes a resource reload with no TH missing-texture, missing-model or mixin errors. Recombinator UVs were normalized after a real `FaceBakery` failure and the following reload is clean. Remaining model warnings are for TC4R blocks, not TH.
 - [x] The dedicated server reaches `Done` and loads `thaumichorizons:pocket_plane`.
-- [ ] Exercise Air, Earth, Scholar and Water lenses in a live world: entity markers, 3×3 x-ray including mining, auto-scan packet acceptance/rejection and underwater overlay/night vision. Check lens removal and two-client state.
+- [ ] Exercise Air, Earth, Scholar and Water lenses in a live world: entity markers, 3×3 x-ray including mining, auto-scan packet acceptance/rejection and underwater overlay/night vision. Check lens removal, two-client state, and a world/dimension transition while Earth Lens replacements are active.
 - [ ] Compare all restored machine, Synthetic Node, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Soul Beacon, Vortex, Portal and stabilizer visuals against 1.7.10; check UVs, geometry, animation timing and render bounds.
 - [ ] Trigger a lethal hit after binding a Soul Beacon above a mode-4 Vat: death is cancelled, inventory/baubles drop with flux, the player returns to the saved dimension, self-infusions return and the Vat resets. Repeat after restart and cross-dimension travel.
 - [ ] Confirm Silver Heart cancels `thaumcraft:taint` damage without suppressing other damage types.
@@ -204,3 +206,4 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - [ ] Break Bone, Eyes and Flesh with Fortune I/II/III and without Fortune; verify the extra 0..level bonus while preserving the original 3–5 base range.
 - [ ] Place `vortexth_cheat` and inspect `cheat` in the block entity; verify normal Vortex items do not set it, and confirm creative Vortex persists after restart.
 - [ ] Complete a Guardian Panther conversion in the Vat and confirm `resetStats` restores 24 max health and 0.5 movement speed after entity NBT is copied.
+- [ ] Exercise orphan cleanup: remove/replace the source Slot while a portal is open, and repeat with part of the 5×5 source-frame footprint initially unloaded. Confirm cleanup does not overwrite unrelated blocks, waits for the complete footprint when necessary, restores the frame once loaded, closes the opposite endpoint and frees the portal index.
