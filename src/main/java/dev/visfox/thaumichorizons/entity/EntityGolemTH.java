@@ -146,7 +146,7 @@ public class EntityGolemTH extends GolemBase {
     }
 
     @Override
-    public GolemStats golemStats() {
+    public GolemStats golemStats(GolemType type) {
         return material().stats();
     }
 
