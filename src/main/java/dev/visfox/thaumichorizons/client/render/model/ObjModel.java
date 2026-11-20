@@ -20,7 +20,7 @@ import net.minecraft.resources.Identifier;
  * samples textures with the origin at the top-left.</p>
  */
 public final class ObjModel {
-    private static final Map<Identifier, ObjModel> CACHE = new HashMap<>();
+    private static final Map<Identifier, ObjModel> CACHE = new java.util.concurrent.ConcurrentHashMap<>();
 
     private final Map<String, List<float[][]>> groups;
 
