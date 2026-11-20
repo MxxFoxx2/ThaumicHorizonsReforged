@@ -5,7 +5,7 @@ Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; mainta
 The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
 
 > [!WARNING]
-> **Temporary TC4R dependency for current releases.** The `0.1.0-beta.1` build requires our custom [Thaumcraft 4: Reforged `feat/addon-api` fork](https://github.com/MxxFoxx2/thaumcraft-4-reforged/tree/feat/addon-api), using the CI-tested snapshot [`e490df0`](https://github.com/MxxFoxx2/thaumcraft-4-reforged/commit/e490df099c2c23f097591c1343b8f6d3d3d8febb). The ordinary published TC4R `1.1.3` JAR does not contain all add-on hooks required by this build. Follow the custom-host installation steps below; do not substitute the stock upstream JAR. This notice is temporary and will be removed when the required APIs are included in the published TC4R artifact.
+> **Temporary TC4R dependency for current releases.** The `0.1.0-beta.1` build requires our custom [Thaumcraft 4: Reforged `feat/addon-api` fork](https://github.com/MxxFoxx2/thaumcraft-4-reforged/tree/feat/addon-api), using the CI-tested snapshot [`388aebb`](https://github.com/MxxFoxx2/thaumcraft-4-reforged/commit/388aebb99c2c23f097591c1343b8f6d3d3d8febb). The ordinary published TC4R `1.1.3` JAR does not contain all add-on hooks required by this build. Follow the custom-host installation steps below; do not substitute the stock upstream JAR. This notice is temporary and will be removed when the required APIs are included in the published TC4R artifact.
 >
 > **Experimental pre-release:** the major content systems are implemented in the source, but broad gameplay, multiplayer, save/reload and visual acceptance coverage does not exist. Releases use the six-scenario smoke gate in [docs/verification.md](docs/verification.md); the larger unverified behavior inventory is not a mandatory checklist. Pocket Plane is especially not yet validated as a playable dimension. Back up worlds before testing.
 
@@ -37,7 +37,7 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
    ```sh
    git clone --branch feat/addon-api https://github.com/MxxFoxx2/thaumcraft-4-reforged.git
    cd thaumcraft-4-reforged
-   git checkout e490df099c2c23f097591c1343b8f6d3d3d8febb
+   git checkout 388aebb99c2c23f097591c1343b8f6d3d3d8febb
    ./gradlew build
    ```
    Put `build/libs/thaumcraft-4-reforged-1.1.3-26.3.jar` into `mods`.
