@@ -5,6 +5,7 @@ import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
+import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -25,17 +26,23 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
     private int pocketID;
     private int which;
     private String sourceDimension = "minecraft:overworld";
+    private boolean xAligned;
+    private boolean alignmentKnown;
+    private boolean cleanupStarted;
+    private boolean endpointReleased;
 
     public PortalTHBlockEntity(BlockPos pos, BlockState state) {
         super(PocketRegistry.PORTAL_BE.get(), pos, state);
     }
 
-    public void configure(BlockPos sourceSlot, int plane, int portal, String dimension) {
+    public void configure(BlockPos sourceSlot, int plane, int portal, String dimension, boolean xAligned) {
         slotPos = sourceSlot.immutable();
         pocketID = plane;
         which = portal;
         sourceDimension = dimension;
-        setChanged();
+        this.xAligned = xAligned;
+        alignmentKnown = true;
+        sync();
     }
 
     public int openCount() {
@@ -64,23 +71,73 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         if (entity.count <= 250 || !(level instanceof ServerLevel server)) {
             return;
         }
-        THSounds.play(server, pos, "craftfail", SoundSource.BLOCKS, 1.0F, 1.0F);
-        if (Compat.port().fx().isAvailable()) {
-            Compat.port().fx().burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
+
+        if (!entity.cleanupStarted) {
+            THSounds.play(server, pos, "craftfail", SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (Compat.port().fx().isAvailable()) {
+                Compat.port().fx().burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
+            }
+            entity.cleanupStarted = true;
+            entity.setChanged();
         }
-        ServerLevel slotLevel = server;
-        Identifier dimension = Identifier.tryParse(entity.sourceDimension);
-        if (dimension != null) {
-            ServerLevel source = server.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
-            if (source != null) {
-                slotLevel = source;
+
+        entity.resolveAlignment(level, pos);
+        ServerLevel sourceLevel = entity.sourceLevel(server);
+        if (sourceLevel != null && entity.slotPos != null) {
+            if (SlotBlockEntity.destroyPortalFromEndpoint(sourceLevel, entity.slotPos, entity.xAligned,
+                entity.pocketID, entity.which)) {
+                entity.endpointReleased = true;
+                return;
+            }
+
+            // The source frame crosses an unloaded chunk boundary. Release the
+            // Pocket Plane endpoint now, but keep this source-side block entity
+            // alive so it can restore the frame once the complete footprint is loaded.
+            if (!entity.endpointReleased) {
+                PocketPlanes.destroyPortal(entity.pocketID, entity.which, server.getServer());
+                entity.endpointReleased = true;
+                entity.setChanged();
+            }
+            return;
+        }
+
+        if (!entity.endpointReleased) {
+            PocketPlanes.destroyPortal(entity.pocketID, entity.which, server.getServer());
+            entity.endpointReleased = true;
+            entity.setChanged();
+        }
+        // If the source dimension or its Slot is no longer available, do not
+        // leave a live orphan portal block behind in the currently ticking level.
+        if (level.getBlockState(pos).getBlock() instanceof PortalTHBlock) {
+            server.removeBlock(pos, false);
+        }
+    }
+
+    private ServerLevel sourceLevel(ServerLevel current) {
+        Identifier dimension = Identifier.tryParse(sourceDimension);
+        if (dimension == null) {
+            return null;
+        }
+        return current.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
+    }
+
+    private void resolveAlignment(Level level, BlockPos pos) {
+        if (alignmentKnown) {
+            return;
+        }
+        if (PocketPlanes.validPlane(pocketID)) {
+            int[] endpoint = PocketPlanes.planes.get(pocketID).portal(which);
+            if (endpoint != null && endpoint.length >= 4 && (endpoint[3] == 0 || endpoint[3] == 1)) {
+                xAligned = endpoint[3] == 1;
+                alignmentKnown = true;
+                setChanged();
+                return;
             }
         }
-        if (entity.slotPos != null
-            && slotLevel.getBlockEntity(entity.slotPos) instanceof SlotBlockEntity slot && slot.portalOpen()) {
-            SlotBlockEntity.destroyPortal(slotLevel, entity.slotPos);
-        } else {
-            server.removeBlock(pos, false);
+        if (level.dimension().identifier().toString().equals(sourceDimension)) {
+            xAligned = GatewayPortalBlock.isXAligned(level, pos);
+            alignmentKnown = true;
+            setChanged();
         }
     }
 
@@ -94,6 +151,10 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         sourceDimension = input.getStringOr("dimension", "minecraft:overworld");
         long slot = input.getLongOr("slot", Long.MIN_VALUE);
         slotPos = slot == Long.MIN_VALUE ? null : BlockPos.of(slot);
+        xAligned = input.getBooleanOr("aligned", false);
+        alignmentKnown = input.getBooleanOr("alignment_known", false);
+        cleanupStarted = input.getBooleanOr("cleanup_started", false);
+        endpointReleased = input.getBooleanOr("endpoint_released", false);
     }
 
     @Override
@@ -107,5 +168,9 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         if (slotPos != null) {
             output.putLong("slot", slotPos.asLong());
         }
+        output.putBoolean("aligned", xAligned);
+        output.putBoolean("alignment_known", alignmentKnown);
+        output.putBoolean("cleanup_started", cleanupStarted);
+        output.putBoolean("endpoint_released", endpointReleased);
     }
 }
