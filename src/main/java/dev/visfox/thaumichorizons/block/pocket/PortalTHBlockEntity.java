@@ -4,8 +4,8 @@ import dev.visfox.thaumichorizons.blockentity.ThBlockEntity;
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
-import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
+import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -113,7 +113,7 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
         }
     }
 
-    private ServerLevel sourceLevel(ServerLevel current) {
+    private @Nullable ServerLevel sourceLevel(ServerLevel current) {
         Identifier dimension = Identifier.tryParse(sourceDimension);
         if (dimension == null) {
             return null;
