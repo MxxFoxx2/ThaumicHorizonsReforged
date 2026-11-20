@@ -220,7 +220,7 @@ public final class ConfigResearch {
     private static void registerNodeMonitor() {
         register("nodeMonitor", tags("auram", 3, "machina", 3, "sensus", 3),
             1, 6, 1, th("textures/misc/vat.png"),
-            List.of(), List.of("INFUSION"), List.of(), List.of(), List.of(), 0,
+            List.of(), List.of(), List.of(), List.of(), List.of(), 0,
             PageSpec.text("nodeMonitor1"),
             PageSpec.recipes(PageKind.INFUSION, "nodeMonitor"));
     }
@@ -326,7 +326,7 @@ public final class ConfigResearch {
     private static void registerInfusionVat() {
         register("infusionVat", tags("praecantatio", 5, "victus", 5, "fabrico", 5, "bestia", 5),
             10, -1, 3, th("textures/misc/vat.png"),
-            List.of(Flag.CONCEALED), List.of("healingVat", "INFUSION", "focusContainment"), List.of(),
+            List.of(Flag.CONCEALED), List.of("healingVat", "focusContainment"), List.of(),
             List.of("generalInfusion"), List.of(), 0,
             PageSpec.text("infusionVat1"),
             PageSpec.recipes(PageKind.INFUSION, "infusionVat"),
@@ -367,7 +367,7 @@ public final class ConfigResearch {
     private static void registerLensFire() {
         register("lensFire", tags("sensus", 3, "lux", 3, "potentia", 2),
             2, -2, 2, th("textures/item/lensfire.png"),
-            List.of(), List.of("GOGGLES", "INFUSION"), List.of(), List.of(), List.of(), 0,
+            List.of(), List.of("GOGGLES"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("lensFire1"),
             PageSpec.recipes(PageKind.INFUSION, "lensFire"));
     }

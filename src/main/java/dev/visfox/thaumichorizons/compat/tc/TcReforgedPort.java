@@ -246,6 +246,7 @@ public final class TcReforgedPort implements ThaumcraftPort {
                 }
             }
             item.setPages(pages.toArray(new ResearchPage[0]));
+            item.requireInfusionResearch();
             item.registerResearchItem();
         }
 
