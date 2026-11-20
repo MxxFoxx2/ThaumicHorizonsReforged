@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ public class GolemPlacerTHItem extends GolemPlacerItem {
             ItemStack stack = context.getItemInHand();
             BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
             CompoundTag data = EntityGolemTH.GolemBlockData.get(stack);
-            @Nullable Block blocky = EntityGolemTH.GolemBlockData.blockOf(data);
+            @Nullable BlockState blocky = EntityGolemTH.GolemBlockData.stateOf(data);
             int md = data.getIntOr("GolemMd", 0);
             boolean berserk = data.getBooleanOr("Berserk", false);
             boolean kaboom = data.getBooleanOr("Kaboom", false);

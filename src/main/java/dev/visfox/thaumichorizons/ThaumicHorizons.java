@@ -59,6 +59,7 @@ public class ThaumicHorizons {
         ToggleInfusionPayload.register();
         dev.visfox.thaumichorizons.network.OpenFingersPayload.register();
         dev.visfox.thaumichorizons.item.lenses.LensChangePayload.register();
+        dev.visfox.thaumichorizons.network.LensScanPayload.register();
     }
 
     private void serverStarted(ServerStartedEvent event) {

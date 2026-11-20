@@ -31,7 +31,6 @@ public class GolemPowderItem extends Item {
             return InteractionResult.PASS;
         }
         BlockState state = level.getBlockState(pos);
-        Block blocky = state.getBlock();
         if (state.hasBlockEntity() || state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) {
             return InteractionResult.FAIL;
         }
@@ -44,7 +43,7 @@ public class GolemPowderItem extends Item {
         ServerLevel serverLevel = (ServerLevel) level;
         ServerPlayer serverPlayer = (ServerPlayer) player;
         EntityGolemTH golem = new EntityGolemTH(EntityGolemTH.thType(), level);
-        golem.loadGolem(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, blocky, 0, 1200, false, false, false);
+        golem.loadGolem(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, state, 0, 1200, false, false, false);
         if (CommonHooks.fireBlockBreak(serverLevel, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos,
             state).isCanceled()) {
             golem.discard();

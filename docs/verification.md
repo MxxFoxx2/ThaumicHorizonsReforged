@@ -176,3 +176,20 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - [ ] PocketPlanes SavedData survives server restart and world save/reload. After joining the reloaded save, use a portal whose source-vortex chunk is not loaded and verify its endpoint and plane ID resolve correctly. In the same client process, switch from a save containing several Pocket Planes to a fresh save and confirm no prior plane IDs, coordinates or portal links leak into it. Also test a deliberately inconsistent `MaxID`, malformed/orphan `Positions` entries, and saved radii below 32 or above 127: load must recover the next dense plane ID, clamp the radius to 32..127 without a crash or silently mapping a malformed return point to `(0,0,0)`, and the source Vortex plus generated Pocket Vortex must both reference that recovered ID.
 - [ ] Remove or disable the source vortex's stabilizer beams until it collapses; after the 25-tick collapse delay, confirm only the matching pocket-plane vortex at (0, 129, 256 × plane ID) is removed, and confirm the other plane data and portals remain intact.
 - [ ] Portal, Gateway and Slot blocks have complete blockstates, models, textures and no missing-renderer/model log.
+
+## Second original-parity pass — 2026-11-20
+
+- [x] `gradlew.bat build` passes, including the existing JUnit suite.
+- [x] `python -I tools/check_seams.py` passes for 307 files; the previous five client/common violations are resolved.
+- [x] `python -I tools/check_assets.py` passes for 525 references; all 126 registered item IDs have item definitions.
+- [x] The live client starts and completes a resource reload with no TH missing-texture, missing-model or mixin errors. Recombinator UVs were normalized after a real `FaceBakery` failure and the following reload is clean. Remaining model warnings are for TC4R blocks, not TH.
+- [x] The dedicated server reaches `Done` and loads `thaumichorizons:pocket_plane`.
+- [ ] Exercise Air, Earth, Scholar and Water lenses in a live world: entity markers, 3×3 x-ray including mining, auto-scan packet acceptance/rejection and underwater overlay/night vision. Check lens removal and two-client state.
+- [ ] Compare all restored machine, Synthetic Node, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Soul Beacon, Vortex, Portal and stabilizer visuals against 1.7.10; check UVs, geometry, animation timing and render bounds.
+- [ ] Trigger a lethal hit after binding a Soul Beacon above a mode-4 Vat: death is cancelled, inventory/baubles drop with flux, the player returns to the saved dimension, self-infusions return and the Vat resets. Repeat after restart and cross-dimension travel.
+- [ ] Confirm Silver Heart cancels `thaumcraft:taint` damage without suppressing other damage types.
+- [ ] Verify a disposable wand cannot recharge through aura taps, relays, pedestals, orbs, rods or direct calls, while its initial vis can still be spent and saved/reloaded.
+- [ ] Animate/remove/re-place a directional block with a TH golem and confirm facing and all other state properties survive entity save/load and golem itemization.
+- [ ] Craft chocolate ice cream and apply `AdvancedGolemTH` to a TH golem placer; verify the extra upgrade slot and persistence.
+- [ ] Use all 23 spawn eggs and every creature/self-infusion and node debug item once; verify models, colors, names and no duplicate entity/infusion application.
+- [ ] Let a source portal reach 250 ticks: both endpoints close, the frame is restored, the portal index is reusable, the saved endpoint is cleared and no reentrant teardown occurs. Repeat for all four directions and after restart.

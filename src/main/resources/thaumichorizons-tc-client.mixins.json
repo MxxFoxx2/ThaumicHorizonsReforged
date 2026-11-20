@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "dev.visfox.thaumichorizons.client.compat.tc.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "refmap": "thaumichorizons.refmap.json",
+  "mixins": [],
+  "client": [
+    "DisplayPageAccessor",
+    "PlanarGatewayResearchPageMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

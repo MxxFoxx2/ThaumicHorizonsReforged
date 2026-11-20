@@ -4,6 +4,9 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.BaubleCompat;
 import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.compat.WarpKind;
+import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
+import dev.visfox.thaumichorizons.blockentity.SoulBeaconKeys;
+import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.FollowOwnerGoalTH;
 import dev.visfox.thaumichorizons.entity.ai.HurtByTargetGoalTH;
@@ -20,8 +23,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -29,6 +35,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -62,6 +69,9 @@ import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = ThaumicHorizons.MODID)
 public final class InfusionEntityEvents {
+    private static final ResourceKey<DamageType> TAINT_DAMAGE =
+        ResourceKey.create(Registries.DAMAGE_TYPE, thaumcraft.Thaumcraft.id("taint"));
+
     public static final int QUICK_LIMBS = 1;
     public static final int AWAKE_BLOOD = 3;
     public static final int DIAMOND_SKIN = 4;
@@ -360,6 +370,16 @@ public final class InfusionEntityEvents {
     static void onIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity entity = event.getEntity();
         DamageSource source = event.getSource();
+        if (entity instanceof ServerPlayer player) {
+            if (CreatureInfusion.get(player).infusion(CreatureInfusion.SILVER_HEART) != 0
+                && source.is(TAINT_DAMAGE)) {
+                event.setCanceled(true);
+                return;
+            }
+            if (event.getAmount() >= player.getHealth() && trySoulBeaconReturn(player, event)) {
+                return;
+            }
+        }
         if (!entity.level().isClientSide()
             && source.getEntity() instanceof LivingEntity attacker
             && CreatureInfusions.hasInfusion(entity, ELDRITCH_FANGS)) {
@@ -385,6 +405,80 @@ public final class InfusionEntityEvents {
                 entity.getPersistentData().putInt("runicCharge", 0);
             }
         }
+    }
+
+    private static boolean trySoulBeaconReturn(ServerPlayer player, LivingIncomingDamageEvent event) {
+        SoulBeaconKeys.SoulBeaconData data = SoulBeaconKeys.DATA.get(player);
+        if (!data.set()) {
+            return false;
+        }
+        Identifier dimension = Identifier.tryParse(data.dimension());
+        if (dimension == null) {
+            return false;
+        }
+        ServerLevel current = player.level();
+        ServerLevel beaconLevel = current.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
+        if (beaconLevel == null) {
+            return false;
+        }
+        BlockPos beaconPos = data.pos();
+        if (!(beaconLevel.getBlockEntity(beaconPos) instanceof SoulBeaconBlockEntity)
+            || !(beaconLevel.getBlockEntity(beaconPos.below()) instanceof VatBlockEntity vat) || vat.mode != 4) {
+            return false;
+        }
+
+        event.setCanceled(true);
+        event.setAmount(0.0F);
+        current.explode(null, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(),
+            0.0F, false, Level.ExplosionInteraction.NONE);
+        if (Compat.port().flux().isAvailable()) {
+            for (int index = 0; index < 25; index++) {
+                int x = (int) player.getX() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+                int y = (int) player.getY() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+                int z = (int) player.getZ() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+                BlockPos pos = new BlockPos(x, y, z);
+                if (current.getBlockState(pos).isAir()) {
+                    Compat.port().flux().spill(current, pos, y > (int) player.getY() + 1);
+                }
+            }
+        }
+        player.getInventory().dropAll();
+        if (Compat.port().baubles().isAvailable()) {
+            BaubleCompat baubles = Compat.port().baubles();
+            for (int slot = 0; slot < baubles.slotCount(); slot++) {
+                ItemStack stack = baubles.get(player, slot);
+                if (!stack.isEmpty()) {
+                    player.spawnAtLocation(current, stack);
+                    baubles.set(player, slot, ItemStack.EMPTY);
+                }
+            }
+        }
+        player.removeAllEffects();
+        player.setHealth(player.getMaxHealth());
+        Vec3 destination = new Vec3(beaconPos.getX() + 0.5, beaconPos.getY() - 2.5, beaconPos.getZ() + 0.5);
+        if (beaconLevel == current) {
+            player.teleportTo(destination.x, destination.y, destination.z);
+        } else {
+            thaumcraft.platform.Teleport.to(player, beaconLevel, destination, player.getYRot(), player.getXRot());
+        }
+        Compat.port().fx().blockSparkle(beaconLevel, beaconPos.below(), 0xFFFFFF, 20);
+        Compat.port().fx().blockSparkle(beaconLevel, beaconPos.below(2), 0xFFFFFF, 20);
+        THSounds.play(beaconLevel, beaconPos, "whispers", SoundSource.BLOCKS, 1.0F,
+            beaconLevel.getRandom().nextFloat());
+        for (int slot = 0; slot < vat.selfInfusions.length; slot++) {
+            if (vat.selfInfusions[slot] != 0) {
+                CreatureInfusion.setInfusion(player, slot, vat.selfInfusions[slot]);
+            }
+        }
+        applyInfusions(player);
+        vat.selfInfusions = new int[VatBlockEntity.SELF_INFUSION_SLOTS];
+        vat.mode = 0;
+        vat.setEntityContained(player);
+        vat.sync();
+        player.getInventory().setChanged();
+        player.inventoryMenu.broadcastChanges();
+        player.containerMenu.broadcastChanges();
+        return true;
     }
 
     public static void teleport(LivingEntity entity) {

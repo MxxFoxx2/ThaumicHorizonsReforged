@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
+import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
 import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
@@ -173,10 +174,14 @@ public final class PocketPlaneGenerator {
         setBlock(world, x, y, z, block, 0);
     }
 
-    public static void setPortalBlock(ServerLevel world, int x, int y, int z, int which) {
+    public static void setPortalBlock(ServerLevel world, int x, int y, int z, int which,
+        BlockPos sourceSlot, int plane, int portal, String dimension) {
         world.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
-        world.setBlock(new BlockPos(x, y, z),
-            PocketRegistry.PORTAL_TH.get().defaultBlockState().setValue(PortalTHBlock.MD, which), 2);
+        BlockPos pos = new BlockPos(x, y, z);
+        world.setBlock(pos, PocketRegistry.PORTAL_TH.get().defaultBlockState().setValue(PortalTHBlock.MD, which), 2);
+        if (world.getBlockEntity(pos) instanceof PortalTHBlockEntity entity) {
+            entity.configure(sourceSlot, plane, portal, dimension);
+        }
     }
 
     public static void drawPlatform(ServerLevel world, int x, int y, int z, Block block) {

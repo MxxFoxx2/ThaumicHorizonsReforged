@@ -7,20 +7,22 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jspecify.annotations.Nullable;
 
 public class GatewayPortalBlock extends Block {
     public static final IntegerProperty MD = IntegerProperty.create("gateway_md", 0, 14);
+    public static final BooleanProperty X_ALIGNED = BooleanProperty.create("x_aligned");
 
     public GatewayPortalBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(MD, 0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(MD, 0).setValue(X_ALIGNED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(MD);
+        builder.add(MD, X_ALIGNED);
     }
 
     @Override

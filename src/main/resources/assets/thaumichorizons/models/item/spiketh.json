@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "thaumichorizons:models/metalspike"
+    "layer0": "thaumichorizons:block/metalspike"
   }
 }

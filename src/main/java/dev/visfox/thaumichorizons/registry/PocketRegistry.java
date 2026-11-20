@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.registry;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.pocket.GatewayPortalBlock;
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
+import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
 import dev.visfox.thaumichorizons.block.pocket.SlotBlock;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
 import dev.visfox.thaumichorizons.item.pocket.PlanarConduitItem;
@@ -28,6 +29,8 @@ public final class PocketRegistry {
         GatewayPortalBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 7));
     public static final net.neoforged.neoforge.registries.DeferredBlock<PortalTHBlock> PORTAL_TH = BLOCKS.registerBlock("portalth",
         PortalTHBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 11));
+    public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> PORTAL_ITEM = ITEMS.registerItem("portalth",
+        properties -> new BlockItem(PORTAL_TH.get(), properties.stacksTo(1)));
     public static final net.neoforged.neoforge.registries.DeferredBlock<SlotBlock> SLOT = BLOCKS.registerBlock("slotth",
         SlotBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0F, 15.0F).noOcclusion());
     public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> SLOT_ITEM = ITEMS.registerItem("slotth",
@@ -36,6 +39,8 @@ public final class PocketRegistry {
         KeystoneItem::new, properties -> properties.stacksTo(1));
     public static final net.neoforged.neoforge.registries.DeferredItem<PlanarConduitItem> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
         PlanarConduitItem::new, properties -> properties.stacksTo(1));
+    public static final Supplier<BlockEntityType<PortalTHBlockEntity>> PORTAL_BE = BLOCK_ENTITIES.register("portalth",
+        () -> new BlockEntityType<>(PortalTHBlockEntity::new, PORTAL_TH.get()));
     public static final Supplier<BlockEntityType<SlotBlockEntity>> SLOT_BE = BLOCK_ENTITIES.register("slotth",
         () -> new BlockEntityType<>(SlotBlockEntity::new, SLOT.get()));
     public static final Supplier<com.mojang.serialization.MapCodec<? extends ChunkGenerator>> POCKET_GENERATOR = CHUNK_GENERATORS.register(

@@ -5,9 +5,7 @@
   "minVersion": "0.8",
   "refmap": "thaumichorizons.refmap.json",
   "mixins": [],
-  "client": [
-    "VatEntityAlphaMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }

@@ -205,7 +205,7 @@ public final class CloudBlockEntity extends BlockEntity {
 
         EntityGolemTH golem = new EntityGolemTH(ThEntities.GOLEM_TH.get(), level);
         golem.loadGolem(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
-            state.getBlock(), 0, 1200, false, true, false);
+            state, 0, 1200, false, true, false);
         golem.setHome(golem.blockPosition(), Direction.UP);
         golem.setRemainingFireTicks(0);
         golem.setHealth(golem.getMaxHealth());

@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "dev.visfox.thaumichorizons.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "refmap": "thaumichorizons.refmap.json",
+  "mixins": [],
+  "client": [
+    "VatEntityAlphaMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

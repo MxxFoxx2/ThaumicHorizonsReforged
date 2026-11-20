@@ -6,7 +6,13 @@ license="${mod_license}"
     config="thaumichorizons.mixins.json"
 
 [[mixins]]
+    config="thaumichorizons-client.mixins.json"
+
+[[mixins]]
     config="thaumichorizons-tc.mixins.json"
+
+[[mixins]]
+    config="thaumichorizons-tc-client.mixins.json"
 
 [[mods]]
 modId="${mod_id}"

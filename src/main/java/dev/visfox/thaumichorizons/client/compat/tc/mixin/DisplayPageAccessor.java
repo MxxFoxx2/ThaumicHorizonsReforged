@@ -1,4 +1,4 @@
-package dev.visfox.thaumichorizons.compat.tc.mixin;
+package dev.visfox.thaumichorizons.client.compat.tc.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

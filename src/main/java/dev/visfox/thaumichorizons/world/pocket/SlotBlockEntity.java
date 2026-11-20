@@ -1,6 +1,8 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
+import dev.visfox.thaumichorizons.block.pocket.GatewayPortalBlock;
+import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
 import dev.visfox.thaumichorizons.item.pocket.KeystoneItem;
 import dev.visfox.thaumichorizons.lib.TcBlocks;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
@@ -101,10 +103,11 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                     BlockPos target = worldPosition.offset(x, y, 0);
                     if (!level.getBlockState(target).isAir() && (x != 0 || y != 0)) {
                         level.setBlock(target, PocketRegistry.GATEWAY_TH.get().defaultBlockState()
-                            .setValue(PortalTHBlock.MD, md), 3);
+                            .setValue(PortalTHBlock.MD, md).setValue(GatewayPortalBlock.X_ALIGNED, true), 3);
                         md++;
                     } else if (x != 0 || y != 0) {
                         level.setBlock(target, PocketRegistry.PORTAL_TH.get().defaultBlockState(), 3);
+                        configurePortal(target, pocketID, portalNum, level.dimension().identifier().toString());
                     }
                 }
             }
@@ -116,10 +119,11 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                     BlockPos target = worldPosition.offset(0, y, z);
                     if (!level.getBlockState(target).isAir() && (z != 0 || y != 0)) {
                         level.setBlock(target, PocketRegistry.GATEWAY_TH.get().defaultBlockState()
-                            .setValue(PortalTHBlock.MD, md), 3);
+                            .setValue(PortalTHBlock.MD, md).setValue(GatewayPortalBlock.X_ALIGNED, false), 3);
                         md++;
                     } else if (z != 0 || y != 0) {
                         level.setBlock(target, PocketRegistry.PORTAL_TH.get().defaultBlockState(), 3);
+                        configurePortal(target, pocketID, portalNum, level.dimension().identifier().toString());
                     }
                 }
             }
@@ -134,6 +138,12 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         return true;
+    }
+
+    private void configurePortal(BlockPos target, int plane, int portal, String dimension) {
+        if (level != null && level.getBlockEntity(target) instanceof PortalTHBlockEntity portalEntity) {
+            portalEntity.configure(worldPosition, plane, portal, dimension);
+        }
     }
 
     @Override

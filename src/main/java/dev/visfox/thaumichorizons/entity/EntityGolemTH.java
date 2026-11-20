@@ -57,6 +57,8 @@ public class EntityGolemTH extends GolemBase {
         SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> TH_META =
         SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<java.util.Optional<BlockState>> TH_STATE =
+        SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE);
     private static final EntityDataAccessor<Boolean> TH_BERSERK =
         SynchedEntityData.defineId(EntityGolemTH.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> TH_KABOOM =
@@ -80,12 +82,14 @@ public class EntityGolemTH extends GolemBase {
         this.voidCount = 0;
     }
 
-    public void loadGolem(double x, double y, double z, @Nullable Block block, int md, int ticksAlive, boolean adv,
+    public void loadGolem(double x, double y, double z, @Nullable BlockState state, int md, int ticksAlive, boolean adv,
             boolean berserk, boolean kaboom) {
         setPos(x, y, z);
         this.ticksAlive = ticksAlive;
+        Block block = state == null ? null : state.getBlock();
         entityData.set(TH_BLOCK, block == null ? 0 : BuiltInRegistries.BLOCK.getId(block));
         entityData.set(TH_META, md);
+        entityData.set(TH_STATE, java.util.Optional.ofNullable(state));
         entityData.set(TH_BERSERK, berserk);
         entityData.set(TH_KABOOM, kaboom);
         GolemType resolved = materialType(block);
@@ -215,6 +219,14 @@ public class EntityGolemTH extends GolemBase {
         return entityData.get(TH_META);
     }
 
+    public @Nullable BlockState getGolemBlockState() {
+        Block block = getBlocky();
+        if (block == null) {
+            return null;
+        }
+        return entityData.get(TH_STATE).orElse(block.defaultBlockState());
+    }
+
     public boolean isBerserk() {
         return entityData.get(TH_BERSERK);
     }
@@ -228,6 +240,7 @@ public class EntityGolemTH extends GolemBase {
         super.defineSynchedData(builder);
         builder.define(TH_BLOCK, 0);
         builder.define(TH_META, 0);
+        builder.define(TH_STATE, java.util.Optional.empty());
         builder.define(TH_BERSERK, false);
         builder.define(TH_KABOOM, false);
     }
@@ -371,8 +384,9 @@ public class EntityGolemTH extends GolemBase {
     }
 
     private boolean tryRestoreBlock(BlockPos pos) {
-        if (level().getBlockState(pos).isAir() && getBlocky() != null) {
-            level().setBlock(pos, getBlocky().defaultBlockState(), 3);
+        BlockState state = getGolemBlockState();
+        if (level().getBlockState(pos).isAir() && state != null) {
+            level().setBlock(pos, state, 3);
             return true;
         }
         return false;
@@ -396,6 +410,10 @@ public class EntityGolemTH extends GolemBase {
         super.addAdditionalSaveData(output);
         output.putInt("GolemBlockTH", entityData.get(TH_BLOCK));
         output.putInt("GolemMetaTH", entityData.get(TH_META));
+        BlockState state = getGolemBlockState();
+        if (state != null) {
+            output.store("GolemStateTH", BlockState.CODEC, state);
+        }
         output.putInt("TicksAliveTH", ticksAlive);
         output.putInt("VoidCountTH", voidCount);
         output.putBoolean("BerserkTH", isBerserk());
@@ -407,6 +425,7 @@ public class EntityGolemTH extends GolemBase {
         super.readAdditionalSaveData(input);
         entityData.set(TH_BLOCK, input.getIntOr("GolemBlockTH", 0));
         entityData.set(TH_META, input.getIntOr("GolemMetaTH", 0));
+        entityData.set(TH_STATE, input.read("GolemStateTH", BlockState.CODEC));
         ticksAlive = input.getIntOr("TicksAliveTH", 0);
         voidCount = input.getIntOr("VoidCountTH", 0);
         entityData.set(TH_BERSERK, input.getBooleanOr("BerserkTH", false));
@@ -422,7 +441,7 @@ public class EntityGolemTH extends GolemBase {
         ItemStack stack = new ItemStack(item);
         GolemKeys.STATE.set(stack, dismantle ? GolemSnapshot.EMPTY : snapshot());
         if (!dismantle) {
-            GolemBlockData.set(stack, getBlocky(), getMd(), isBerserk(), isKaboom());
+            GolemBlockData.set(stack, getGolemBlockState(), getMd(), isBerserk(), isKaboom());
             if (hasCustomName()) {
                 stack.set(DataComponents.CUSTOM_NAME, getCustomName());
             }
@@ -434,10 +453,11 @@ public class EntityGolemTH extends GolemBase {
         private GolemBlockData() {
         }
 
-        public static void set(ItemStack stack, @Nullable Block block, int md, boolean berserk, boolean kaboom) {
+        public static void set(ItemStack stack, @Nullable BlockState state, int md, boolean berserk, boolean kaboom) {
             CompoundTag tag = new CompoundTag();
-            if (block != null) {
-                tag.putInt("GolemBlockId", BuiltInRegistries.BLOCK.getId(block));
+            if (state != null) {
+                tag.putInt("GolemBlockId", BuiltInRegistries.BLOCK.getId(state.getBlock()));
+                tag.store("GolemState", BlockState.CODEC, state);
             }
             tag.putInt("GolemMd", md);
             tag.putBoolean("Berserk", berserk);
@@ -452,6 +472,14 @@ public class EntityGolemTH extends GolemBase {
         public static @Nullable Block blockOf(CompoundTag tag) {
             int id = tag.getIntOr("GolemBlockId", 0);
             return id == 0 ? null : BuiltInRegistries.BLOCK.get(id).map(ref -> ref.value()).orElse(null);
+        }
+
+        public static @Nullable BlockState stateOf(CompoundTag tag) {
+            Block block = blockOf(tag);
+            if (block == null) {
+                return null;
+            }
+            return tag.read("GolemState", BlockState.CODEC).orElse(block.defaultBlockState());
         }
     }
 

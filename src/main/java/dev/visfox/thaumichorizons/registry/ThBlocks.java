@@ -64,6 +64,9 @@ public final class ThBlocks {
     public static final DeferredBlock<Block> VOID = withItem(BLOCKS.registerBlock("voidth",
         Block::new, properties -> properties.mapColor(MapColor.NONE).strength(-1.0F, 6000000.0F).noCollision()
             .lightLevel(state -> 15).sound(SoundType.WOOL)));
+    public static final DeferredBlock<Block> EVANESCENT = BLOCKS.registerBlock("evanescent",
+        Block::new, properties -> properties.mapColor(MapColor.NONE).strength(Float.MAX_VALUE, Float.MAX_VALUE)
+            .noOcclusion().sound(SoundType.GLASS));
     public static final DeferredBlock<CloudBlock> CLOUD = BLOCKS.registerBlock("cloudth",
         properties -> new CloudBlock(properties, 0), properties -> properties.mapColor(MapColor.SNOW)
             .strength(-1.0F, 3600000.0F).noOcclusion().noCollision().sound(SoundType.WOOL));

@@ -31,4 +31,8 @@ public final class ThRenderTypes {
     public static RenderType lightning() {
         return RenderTypes.lightning();
     }
+
+    public static RenderType beaconBeam(Identifier texture, boolean translucent) {
+        return RenderTypes.beaconBeam(texture, translucent);
+    }
 }

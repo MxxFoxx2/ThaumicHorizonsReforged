@@ -4,6 +4,7 @@ import dev.visfox.thaumichorizons.compat.Compat;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import dev.visfox.thaumichorizons.registry.PocketRegistry;
 
 public final class ConfigAspects {
     private ConfigAspects() {
@@ -50,6 +51,10 @@ public final class ConfigAspects {
             registrar.item(ThBlocks.CRYSTAL, tags("vitreus", 2));
             registrar.item(ThBlocks.CRYSTAL_DEEP, tags("vitreus", 2, "lux", 2, "permutatio", 1));
             registrar.item(ThBlocks.LEVIATHAN, tags("alienis", 8, "mortuus", 4));
+            registrar.item(PocketRegistry.PORTAL_ITEM, tags("iter", 4, "vacuos", 4));
+            registrar.item(ThBlocks.SPIKE, tags("telum", 3, "metallum", 3));
+            registrar.item(ThBlocks.SPIKE_WOOD, tags("telum", 3, "arbor", 3));
+            registrar.item(ThBlocks.SPIKE_TOOTH, tags("telum", 3, "bestia", 3));
         });
     }
 

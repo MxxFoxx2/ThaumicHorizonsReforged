@@ -74,7 +74,6 @@ public class FocusAnimationItem extends FocusItem {
         }
         BlockPos pos = blockHit.getBlockPos();
         BlockState state = level.getBlockState(pos);
-        Block blocky = state.getBlock();
         if (state.hasBlockEntity() || state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) {
             return InteractionResult.PASS;
         }
@@ -88,7 +87,7 @@ public class FocusAnimationItem extends FocusItem {
         }
         ItemStack focusStack = Wands.getFocusItem(stack);
         EntityGolemTH golem = new EntityGolemTH(EntityGolemTH.thType(), level);
-        golem.loadGolem(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, blocky, 0,
+        golem.loadGolem(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, state, 0,
             600 + Wands.getFocusExtend(stack) * 200, false,
             isUpgradedWith(focusStack, BERSERK), isUpgradedWith(focusStack, DETONATION));
         AspectList cost = new AspectList();

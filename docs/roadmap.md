@@ -1,6 +1,6 @@
 # Roadmap and current state
 
-Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). Historical CI run [#217](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44463335918) was green for the earlier `df43a90` snapshot; it does not validate the unmerged `feat/remaining-visual-ports` branch. The branch contains post-baseline visual source changes, with no build, CI or live-client result claimed for those changes. Build, seam-check, and dedicated-server facts remain separate from code presence and manual in-game verification in `verification.md`.
+Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). The remaining-visual-ports branch has since been merged, followed by a second original-parity pass. Current local verification includes full build and JUnit, clean seam/asset checks, client startup with a clean TH resource reload, and a dedicated server reaching `Done` with `pocket_plane` loaded. These facts remain separate from the unexecuted gameplay scenarios in `verification.md`.
 
 ## Current foundation
 
@@ -10,7 +10,7 @@ Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://gi
 - The main content pass includes 20 creature types, their AI and infusion recipes; golems, lenses, foci; machines; souls, blood and Vat systems.
 - Nine menu types are registered: Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers and Vis Dynamo.
 - Entity renderers are registered for the 20 creature types plus AlchemitePrimed and the TH golem. Node Monitor has a dedicated block-entity renderer. Familiar has a dedicated cutout hat layer built from the original `ModelFamiliar` geometry. The Vat now has a block-entity renderer for the original five-part 3×3 shell (base, water, glass, top and hatch) using the shipped 512×512 atlas, plus a client-only NBT-backed preview for a contained non-player creature. Its blocks use invisible vanilla render shapes to avoid duplicate cubes. The infusion matrix renderer also draws eight rotating/wobbling cubes, an emissive pulse and the additive mode-2 halo. Explicit blockstate selectors cover Vat variants 10–11 and VatSolid variants 4–7. Normal/revived Effigy previews and the floating sample-item preview now have source render paths; the mode-1 dissolve fade and all live-client appearance checks remain open.
-- The TC4R FX adapter `TcFx` delegates to the fork's `FxProxy`, but individual legacy effects still need parity and runtime checks.
+- The TC4R FX adapter `TcFx` delegates to the fork's `FxProxy`. Legacy machine, Vortex, Portal and stabilizer renderers now have modern implementations; exact visual parity and runtime scenarios still need checks.
 
 ## Recent content additions
 

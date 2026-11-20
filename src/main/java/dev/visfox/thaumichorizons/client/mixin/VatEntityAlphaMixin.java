@@ -1,4 +1,4 @@
-package dev.visfox.thaumichorizons.mixin;
+package dev.visfox.thaumichorizons.client.mixin;
 
 import dev.visfox.thaumichorizons.client.render.VatRenderAlphaContext;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;

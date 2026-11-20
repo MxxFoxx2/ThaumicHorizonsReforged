@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "thaumichorizons:models/metalspike"
+    "particle": "thaumichorizons:block/metalspike"
   }
 }

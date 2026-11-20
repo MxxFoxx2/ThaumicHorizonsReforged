@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "thaumichorizons:block/soulsieve"
+      "model": "thaumichorizons:block/soulsieve_rendered"
     }
   }
 }

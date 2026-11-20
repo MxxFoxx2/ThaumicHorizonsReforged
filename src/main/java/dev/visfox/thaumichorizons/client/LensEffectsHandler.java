@@ -19,6 +19,19 @@ public final class LensEffectsHandler {
     private LensEffectsHandler() {
     }
 
+    public static boolean hasLens(Player player, String lens) {
+        return ArcaneLensHud.isWearingGoggles(player)
+            && LensManager.getLensId(player.getItemBySlot(EquipmentSlot.HEAD)).equals(lens);
+    }
+
+    @SubscribeEvent
+    static void overlay(net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent event) {
+        if (event.getOverlayType() == net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent.OverlayType.WATER
+            && hasLens(event.getPlayer(), "LensWater")) {
+            event.setCustomRenderer(net.neoforged.neoforge.client.CustomBlockScreenEffectRenderer.NO_OP);
+        }
+    }
+
     @SubscribeEvent
     static void render(RenderGuiEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -42,5 +55,6 @@ public final class LensEffectsHandler {
         if (lensStack.getItem() instanceof ILens lens) {
             lens.handleRender(player, event.getPartialTick().getGameTimeDeltaPartialTick(false));
         }
+        dev.visfox.thaumichorizons.client.lens.AirLensHandler.render(event);
     }
 }

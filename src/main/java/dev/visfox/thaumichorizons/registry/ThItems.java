@@ -9,6 +9,9 @@ import dev.visfox.thaumichorizons.item.CorpseEffigyItem;
 import dev.visfox.thaumichorizons.item.EggIncubatedItem;
 import dev.visfox.thaumichorizons.item.FocusContainmentItem;
 import dev.visfox.thaumichorizons.item.InjectorItem;
+import dev.visfox.thaumichorizons.item.InfusionCheatItem;
+import dev.visfox.thaumichorizons.item.SelfInfusionCheatItem;
+import dev.visfox.thaumichorizons.item.NodeCheatItem;
 import dev.visfox.thaumichorizons.item.NutrientsItem;
 import dev.visfox.thaumichorizons.item.SyringeBloodItem;
 import dev.visfox.thaumichorizons.item.SyringeBloodSampleItem;
@@ -34,6 +37,8 @@ import thaumcraft.entity.golem.GolemType;
 import thaumcraft.wand.focus.FocusItem;
 import dev.visfox.thaumichorizons.item.SuicidePillItem;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -68,6 +73,27 @@ public final class ThItems {
     public static final DeferredItem<SuicidePillItem> SUICIDE_PILL = ITEMS.registerItem("suicidepill", SuicidePillItem::new);
     public static final DeferredItem<Item> DUMMY = ITEMS.registerItem("dummy", Item::new);
     public static final DeferredItem<Item> DUMMY_VAT = ITEMS.registerItem("dummyvat", Item::new);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_1 = infusionCheat(1);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_2 = infusionCheat(2);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_3 = infusionCheat(3);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_4 = infusionCheat(4);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_5 = infusionCheat(5);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_6 = infusionCheat(6);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_7 = infusionCheat(7);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_8 = infusionCheat(8);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_9 = infusionCheat(9);
+    public static final DeferredItem<InfusionCheatItem> INFUSION_CHEAT_10 = infusionCheat(10);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_1 = selfInfusionCheat(1);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_2 = selfInfusionCheat(2);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_3 = selfInfusionCheat(3);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_4 = selfInfusionCheat(4);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_5 = selfInfusionCheat(5);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_6 = selfInfusionCheat(6);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_7 = selfInfusionCheat(7);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_8 = selfInfusionCheat(8);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_9 = selfInfusionCheat(9);
+    public static final DeferredItem<SelfInfusionCheatItem> SELF_INFUSION_CHEAT_10 = selfInfusionCheat(10);
+    public static final DeferredItem<NodeCheatItem> NODE_CHEAT = ITEMS.registerItem("nodecheat", NodeCheatItem::new);
     public static final DeferredItem<Item> MEAT = ITEMS.registerItem("meatth",
         properties -> new Item(properties.food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredItem<Item> MEAT_COOKED = ITEMS.registerItem("meatcookedth",
@@ -99,12 +125,29 @@ public final class ThItems {
         SyringeBloodSampleItem::new);
     public static final DeferredItem<InjectorItem> INJECTOR = ITEMS.registerItem("injector", InjectorItem::new,
         properties -> properties.stacksTo(1).enchantable(3));
-    public static final DeferredItem<SpawnEggItem> HORSE_ZOMBIE_SPAWN_EGG = ITEMS.registerItem(
-        "horse_zombie_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_ZOMBIE.get())));
-    public static final DeferredItem<SpawnEggItem> HORSE_SKELETON_SPAWN_EGG = ITEMS.registerItem(
-        "horse_skeleton_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.HORSE_SKELETON.get())));
-    public static final DeferredItem<SpawnEggItem> NIGHTMARE_SPAWN_EGG = ITEMS.registerItem(
-        "nightmare_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(ThEntities.NIGHTMARE.get())));
+    public static final DeferredItem<SpawnEggItem> CHROMATIC_SHEEP_SPAWN_EGG = spawnEgg("chromatic_sheep", ThEntities.CHROMATIC_SHEEP);
+    public static final DeferredItem<SpawnEggItem> SELF_SHEARING_SHEEP_SPAWN_EGG = spawnEgg("self_shearing_sheep", ThEntities.SELF_SHEARING_SHEEP);
+    public static final DeferredItem<SpawnEggItem> GUARDIAN_PANTHER_SPAWN_EGG = spawnEgg("guardian_panther", ThEntities.GUARDIAN_PANTHER);
+    public static final DeferredItem<SpawnEggItem> GRAVEKEEPER_SPAWN_EGG = spawnEgg("gravekeeper", ThEntities.GRAVEKEEPER);
+    public static final DeferredItem<SpawnEggItem> FAMILIAR_SPAWN_EGG = spawnEgg("familiar", ThEntities.FAMILIAR);
+    public static final DeferredItem<SpawnEggItem> CHOCOLATE_COW_SPAWN_EGG = spawnEgg("chocolate_cow", ThEntities.CHOCOLATE_COW);
+    public static final DeferredItem<SpawnEggItem> SCHOLAR_CHICKEN_SPAWN_EGG = spawnEgg("scholar_chicken", ThEntities.SCHOLAR_CHICKEN);
+    public static final DeferredItem<SpawnEggItem> GOLD_CHICKEN_SPAWN_EGG = spawnEgg("gold_chicken", ThEntities.GOLD_CHICKEN);
+    public static final DeferredItem<SpawnEggItem> ORE_PIG_SPAWN_EGG = spawnEgg("ore_pig", ThEntities.ORE_PIG);
+    public static final DeferredItem<SpawnEggItem> TAINT_EATER_PIG_SPAWN_EGG = spawnEgg("taint_eater_pig", ThEntities.TAINT_EATER_PIG);
+    public static final DeferredItem<SpawnEggItem> ENDERSTEED_SPAWN_EGG = spawnEgg("endersteed", ThEntities.ENDERSTEED);
+    public static final DeferredItem<SpawnEggItem> SEAWOLF_SPAWN_EGG = spawnEgg("seawolf", ThEntities.SEAWOLF);
+    public static final DeferredItem<SpawnEggItem> NETHER_HOUND_SPAWN_EGG = spawnEgg("nether_hound", ThEntities.NETHER_HOUND);
+    public static final DeferredItem<SpawnEggItem> LUNAR_WOLF_SPAWN_EGG = spawnEgg("lunar_wolf", ThEntities.LUNAR_WOLF);
+    public static final DeferredItem<SpawnEggItem> MEAT_SLIME_SPAWN_EGG = spawnEgg("meat_slime", ThEntities.MEAT_SLIME);
+    public static final DeferredItem<SpawnEggItem> MERCURIAL_SLIME_SPAWN_EGG = spawnEgg("mercurial_slime", ThEntities.MERCURIAL_SLIME);
+    public static final DeferredItem<SpawnEggItem> VOLT_SLIME_SPAWN_EGG = spawnEgg("volt_slime", ThEntities.VOLT_SLIME);
+    public static final DeferredItem<SpawnEggItem> MED_SLIME_SPAWN_EGG = spawnEgg("med_slime", ThEntities.MED_SLIME);
+    public static final DeferredItem<SpawnEggItem> SHEEDER_SPAWN_EGG = spawnEgg("sheeder", ThEntities.SHEEDER);
+    public static final DeferredItem<SpawnEggItem> LOST_SOUL_SPAWN_EGG = spawnEgg("lost_soul", ThEntities.LOST_SOUL);
+    public static final DeferredItem<SpawnEggItem> HORSE_ZOMBIE_SPAWN_EGG = spawnEgg("horse_zombie", ThEntities.HORSE_ZOMBIE);
+    public static final DeferredItem<SpawnEggItem> HORSE_SKELETON_SPAWN_EGG = spawnEgg("horse_skeleton", ThEntities.HORSE_SKELETON);
+    public static final DeferredItem<SpawnEggItem> NIGHTMARE_SPAWN_EGG = spawnEgg("nightmare", ThEntities.NIGHTMARE);
     public static final DeferredItem<CorpseEffigyItem> CORPSE_EFFIGY = ITEMS.registerItem("corpseeffigy",
         CorpseEffigyItem::new);
     public static final DeferredItem<NutrientsItem> NUTRIENTS = ITEMS.registerItem("nutrients", NutrientsItem::new);
@@ -139,6 +182,21 @@ public final class ThItems {
         ItemLensCase::new, ItemLensCase::properties);
     public static final DeferredItem<EggIncubatedItem> EGG_INCUBATED = ITEMS.registerItem("eggincubated",
         EggIncubatedItem::new, properties -> properties.stacksTo(16));
+
+    private static DeferredItem<InfusionCheatItem> infusionCheat(int id) {
+        return ITEMS.registerItem("infusioncheat" + (id == 1 ? "" : id),
+            properties -> new InfusionCheatItem(properties, id));
+    }
+
+    private static DeferredItem<SelfInfusionCheatItem> selfInfusionCheat(int id) {
+        return ITEMS.registerItem("infusionselfcheat" + (id == 1 ? "" : id),
+            properties -> new SelfInfusionCheatItem(properties, id));
+    }
+
+    private static DeferredItem<SpawnEggItem> spawnEgg(String name,
+        Supplier<? extends EntityType<? extends Mob>> type) {
+        return ITEMS.registerItem(name + "_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(type.get())));
+    }
 
     private static DeferredItem<CloudBlockItem> cloudItem(String name, Supplier<CloudBlock> block, int type) {
         return ITEMS.registerItem(name, properties -> new CloudBlockItem(block.get(), type, properties));

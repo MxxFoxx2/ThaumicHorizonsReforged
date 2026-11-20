@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "thaumichorizons:block/synthnode"
+      "model": "thaumichorizons:block/synthnode_rendered"
     }
   }
 }

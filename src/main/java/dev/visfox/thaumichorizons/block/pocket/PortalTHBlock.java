@@ -1,5 +1,6 @@
 package dev.visfox.thaumichorizons.block.pocket;
 
+import dev.visfox.thaumichorizons.registry.PocketRegistry;
 import dev.visfox.thaumichorizons.world.pocket.PocketDimension;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
@@ -24,7 +25,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import thaumcraft.platform.Teleport;
 
-public class PortalTHBlock extends Block {
+public class PortalTHBlock extends Block implements net.minecraft.world.level.block.EntityBlock {
     public static final IntegerProperty MD = IntegerProperty.create("gateway_md", 0, 14);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     private static final int PORTAL_COOLDOWN = 10;
@@ -32,6 +33,21 @@ public class PortalTHBlock extends Block {
     public PortalTHBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(MD, 0));
+    }
+
+    @Override
+    public @org.jspecify.annotations.Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new PortalTHBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
+        Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        if (type != PocketRegistry.PORTAL_BE.get()) {
+            return null;
+        }
+        return (tickLevel, pos, tickState, entity) -> PortalTHBlockEntity.tick(tickLevel, pos, tickState,
+            (PortalTHBlockEntity) entity);
     }
 
     @Override

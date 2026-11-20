@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "thaumichorizons:item/spawn_egg",
+    "tints": [
+      { "type": "minecraft:constant", "value": -12976037 },
+      { "type": "minecraft:constant", "value": -5963521 }
+    ]
+  }
+}

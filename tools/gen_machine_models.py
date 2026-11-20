@@ -77,6 +77,8 @@ SPECS = {
     "bloodinfuser": ("ModelBloodInfuser", "bloodinfuser", 64, 64, True, []),
     "soulbeacon": ("ModelSoulBeacon", "soulbeacon", 64, 64, True, []),
     "soulsieve": ("ModelSoulSieve", "soulsieve", 128, 64, True, []),
+    "recombinator": ("ModelRecombinator", "recombinator", 64, 64, True, ["Pearl"]),
+    "recombinator_item": ("ModelRecombinator", "recombinator", 64, 64, True, []),
     "vortexstabilizer": ("ModelVortexAttenuator", "attenuator", 64, 64, True, []),
 }
 

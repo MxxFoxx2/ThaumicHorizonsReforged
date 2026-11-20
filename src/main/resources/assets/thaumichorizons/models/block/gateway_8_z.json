@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "minecraft:block/lapis_block",
+    "up": "thaumcraft:block/es_1",
+    "north": "thaumcraft:block/es_1",
+    "south": "thaumcraft:block/es_1",
+    "west": "thaumichorizons:block/gateway_top2",
+    "east": "thaumichorizons:block/gateway_top",
+    "particle": "thaumichorizons:block/gateway_top"
+  }
+}

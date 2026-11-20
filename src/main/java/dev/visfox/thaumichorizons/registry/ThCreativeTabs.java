@@ -21,7 +21,9 @@ public final class ThCreativeTabs {
                 output.accept(holder.get());
             }
             for (DeferredHolder<Item, ? extends Item> holder : PocketRegistry.ITEMS.getEntries()) {
-                output.accept(holder.get());
+                if (holder != PocketRegistry.PORTAL_ITEM) {
+                    output.accept(holder.get());
+                }
             }
         })
         .build());

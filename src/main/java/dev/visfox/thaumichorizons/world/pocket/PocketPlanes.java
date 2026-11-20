@@ -273,7 +273,8 @@ public class PocketPlanes extends SavedData {
         if (which == 1) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id + data.radius, 0);
+                    PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id + data.radius, 0,
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id + data.radius + 1, ThBlocks.VOID.get());
                 }
             }
@@ -281,7 +282,8 @@ public class PocketPlanes extends SavedData {
         } else if (which == 2) {
             for (int x = -1; x <= 1; ++x) {
                 for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id - data.radius, 2);
+                    PocketPlaneGenerator.setPortalBlock(world, x, y, 256 * id - data.radius, 2,
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
                     PocketPlaneGenerator.setBlockPublic(world, x, y, 256 * id - data.radius - 1, ThBlocks.VOID.get());
                 }
             }
@@ -289,7 +291,8 @@ public class PocketPlanes extends SavedData {
         } else if (which == 3) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setPortalBlock(world, data.radius, y, 256 * id + z, 1);
+                    PocketPlaneGenerator.setPortalBlock(world, data.radius, y, 256 * id + z, 1,
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
                     PocketPlaneGenerator.setBlockPublic(world, data.radius + 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }
@@ -297,7 +300,8 @@ public class PocketPlanes extends SavedData {
         } else if (which == 4) {
             for (int z = -1; z <= 1; ++z) {
                 for (int y = 126; y <= 128; ++y) {
-                    PocketPlaneGenerator.setPortalBlock(world, -data.radius, y, 256 * id + z, 3);
+                    PocketPlaneGenerator.setPortalBlock(world, -data.radius, y, 256 * id + z, 3,
+                        new BlockPos(xCoord, yCoord, zCoord), id, which, dimension);
                     PocketPlaneGenerator.setBlockPublic(world, -data.radius - 1, y, 256 * id + z, ThBlocks.VOID.get());
                 }
             }

@@ -39,6 +39,7 @@ public final class ThRecipes {
         infusionPocketPlane();
         infusionRecombinator();
         mirrorAmulet();
+        advancedGolem();
     }
 
     private static void registerPhialData() {
@@ -105,6 +106,9 @@ public final class ThRecipes {
     }
 
     private static void arcane0() {
+        TcRecipes.register(new ShapelessArcaneRecipe("cowInfusionIceCream", "cowInfusion", TcStack.of("thaumichorizons:icecream"),
+            new AspectList().add(Aspect.WATER, 1), List.of(
+                TcIngredient.item("thaumichorizons:bucketchocolate"), TcIngredient.item("minecraft:wheat"))));
         TcRecipes.register(new ShapedArcaneRecipe("GOLEMBELL", "GOLEMBELL", TcStack.of("thaumichorizons:golembellth"),
             new AspectList().add(Aspect.ORDER, 5), 3, 3, List.of(
                 TcIngredient.item("minecraft:quartz"), TcIngredient.item("minecraft:quartz"), TcIngredient.EMPTY,
@@ -388,5 +392,15 @@ public final class ThRecipes {
                 TcIngredient.item("thaumcraft:mundane_amulet"),
                 TcIngredient.item("minecraft:map"),
                 TcIngredient.item("thaumcraft:magic_mirror"))));
+    }
+
+    private static void advancedGolem() {
+        TcRecipes.register(new InfusionRecipe("AdvancedGolemTH", "focusAnimation",
+            TcStack.withData("thaumichorizons:golemplacer", 1, Map.of("advanced", "1")), 3,
+            new AspectList().add(Aspect.MIND, 8).add(Aspect.SENSES, 8).add(Aspect.LIFE, 8),
+            TcIngredient.item("thaumichorizons:golemplacer"), List.of(
+                TcIngredient.item("minecraft:redstone"), TcIngredient.item("minecraft:glowstone_dust"),
+                TcIngredient.item("minecraft:gunpowder"), TcIngredient.item("thaumcraft:warded_jar"),
+                TcIngredient.item("thaumcraft:zombie_brain"))));
     }
 }

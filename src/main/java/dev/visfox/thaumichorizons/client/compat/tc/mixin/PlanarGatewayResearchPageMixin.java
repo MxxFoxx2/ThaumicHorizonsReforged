@@ -1,4 +1,4 @@
-package dev.visfox.thaumichorizons.compat.tc.mixin;
+package dev.visfox.thaumichorizons.client.compat.tc.mixin;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.lib.TcBlocks;

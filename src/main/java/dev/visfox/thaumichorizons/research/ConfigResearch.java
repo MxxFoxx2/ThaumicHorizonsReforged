@@ -666,6 +666,7 @@ public final class ConfigResearch {
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("cowInfusion1"),
             PageSpec.recipes(PageKind.CRAFTING, "cowInfusion"),
+            PageSpec.recipes(PageKind.ARCANE, "cowInfusionIceCream"),
             PageSpec.text("cowInfusion2"));
     }
 
