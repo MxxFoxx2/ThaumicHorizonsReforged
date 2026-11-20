@@ -4,11 +4,16 @@ Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; mainta
 
 The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
 
+> [!WARNING]
+> **Temporary TC4R dependency for current releases.** The `0.1.0-beta.1` build requires our custom [Thaumcraft 4: Reforged `feat/addon-api` fork](https://github.com/MxxFoxx2/thaumcraft-4-reforged/tree/feat/addon-api), using the CI-tested snapshot [`c5b7a0d`](https://github.com/MxxFoxx2/thaumcraft-4-reforged/commit/c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb). The ordinary published TC4R `1.1.3` JAR does not contain all add-on hooks required by this build. Follow the custom-host installation steps below; do not substitute the stock upstream JAR. This notice is temporary and will be removed when the required APIs are included in the published TC4R artifact.
+>
+> **Pre-release status:** the major content systems are implemented in the source, but live gameplay, multiplayer, save/reload and visual acceptance checks remain open. Pocket Plane is especially not yet validated as a playable dimension. Back up worlds before testing.
+
 > **License scope.** Thaumic Horizons itself is open source — Kentington's original code is MIT and the GTNH fork's changes are LGPL-3.0-or-later — so this port's TH logic and assets are redistributable under those licenses (see Authors and license below). What stays restricted: **Thaumcraft** assets and logic belong to Azanor and reach this mod only through [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged), whose own personal-use policy applies to them.
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
-| 26.3 | 26.3.0.57-beta | 1.1.3 | `main` — core systems playable, client pass in flight |
+| 26.3 | 26.3.0.57-beta | 1.1.3 + custom add-on API | `0.1.0-beta.1` — pre-release; gameplay/client acceptance in progress |
 | 26.1.2 | 26.1.2.122 | 1.1.3 | planned |
 | 1.21.1 | 21.1.256 | 1.1.3 | planned |
 
@@ -27,10 +32,18 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 ## Installation
 
 1. Create a **Minecraft 26.3** profile with **NeoForge 26.3.0.57-beta**.
-2. Install **Thaumcraft 4: Reforged 1.1.3** (required) and **TerraBlender 26.3-26.3.0.0.9**.
-3. Drop `thaumic-horizons-reforged-<version>-26.3.jar` into `mods`.
+2. Install **TerraBlender 26.3-26.3.0.0.9**.
+3. Build the required custom TC4R host from the exact revision used by this release:
+   ```sh
+   git clone --branch feat/addon-api https://github.com/MxxFoxx2/thaumcraft-4-reforged.git
+   cd thaumcraft-4-reforged
+   git checkout c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb
+   ./gradlew build
+   ```
+   Put `build/libs/thaumcraft-4-reforged-1.1.3-26.3.jar` into `mods`.
+4. Drop `thaumic-horizons-reforged-0.1.0-beta.1-26.3.jar` into the same `mods` folder.
 
-[Download Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3)
+The [published upstream TC4R 1.1.3 release](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3) is **not sufficient for this pre-release** until the required add-on APIs are published there.
 
 ## Configuration
 
@@ -52,7 +65,7 @@ Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) impor
 
 ## Status and roadmap
 
-Ported and building: registration, aspects, the full research tree (74 entries), five mob effects, simple content, eight essentia/vis machines, twenty creatures with AI and infusion recipes, golems, lenses and foci, the souls/blood/Vat system with nine menus, the Mirror Amulet with death-item transport, Void Putty repair and Illumination Focus dyeing. The Pocket Plane compiles and loads on a dedicated server; terrain generation, portals, Keystone gameplay and client assets still require in-game verification. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
+The `0.1.0-beta.1` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, vehicles, projectiles, cloud/spike content and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain under test. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
 
 ## Authors and license
 

@@ -61,10 +61,10 @@ Still pending: live verification of generated terrain layers/caves/pockets, slot
 
 ## Verification / CI status
 
-`docs/verification.md` is the manual test record. At this snapshot it contains 14 completed checks, 108 pending checks, and 122 checklist items in total; these counters measure manual verification items, not implementation completeness, because one item may cover several scenarios.
+`docs/verification.md` is the manual test record. At the 2026-11-20 `main` snapshot it contains 23 completed checks, 122 pending checks, and 145 checklist items in total; these counters measure manual verification items, not implementation completeness, because one item may cover several scenarios.
 
-GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, Java 25 Gradle build with configuration/build caches, and distributable-JAR validation. The latest `main` run, [#217](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44463335918), is green. The client audio checklist remains a manual test. The remaining Pocket Plane and Gate 2 gameplay checks are manual and open.
+GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, Java 25 Gradle build with configuration/build caches, and distributable-JAR validation. The latest code-bearing `main` run before the documentation-only client-session update, [#44763568265](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44763568265), is green. The client audio checklist remains a manual test. The remaining Pocket Plane and Gate 2 gameplay checks are manual and open.
 
 ## Upstream
 
-The `feat/addon-api` branch contains additive TC4R hooks used by this port (including creature-infusion research pages, FX extensions and golem type support). The add-on currently uses a local composite `includeBuild` for development; verify against the intended published TC4R artifact before release.
+The `feat/addon-api` branch contains additive TC4R hooks used by this port (including creature-infusion research pages, FX extensions and golem type support). The initial `0.1.0-beta.1` release line deliberately builds against the CI-tested snapshot in `MxxFoxx2/thaumcraft-4-reforged` (`c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb`). The ordinary published TC4R 1.1.3 artifact is not yet the dependency for this prerelease; remove this temporary split only after the required APIs are published upstream and verified.
