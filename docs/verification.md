@@ -179,6 +179,8 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 
 ## Second original-parity pass — 2026-11-20
 
+> Verification boundary: the build, seam, asset, client-startup and dedicated-server checkmarks below describe the run recorded for the original-parity pass before the subsequent review fixes (portal synchronization/teardown and Earth Lens world scoping). Those later source changes have not yet been rebuilt or exercised in-game; rerun the checks before treating this revision as verified.
+
 - [x] `gradlew.bat build` passes, including the existing JUnit suite.
 - [x] `python -I tools/check_seams.py` passes for 307 files; the previous five client/common violations are resolved.
 - [x] `python -I tools/check_assets.py` passes for 525 references; all 126 registered item IDs have item definitions.
