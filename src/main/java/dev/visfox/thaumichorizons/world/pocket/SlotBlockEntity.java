@@ -142,7 +142,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
 
     private void configurePortal(BlockPos target, int plane, int portal, String dimension) {
         if (level != null && level.getBlockEntity(target) instanceof PortalTHBlockEntity portalEntity) {
-            portalEntity.configure(worldPosition, plane, portal, dimension);
+            portalEntity.configure(worldPosition, plane, portal, dimension, xAligned);
         }
     }
 
@@ -176,6 +176,56 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         PocketPlanes.destroyPortal(slot.pocketID, slot.which, level.getServer());
         level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.sendBlockUpdated(pos, slot.getBlockState(), slot.getBlockState(), 3);
+    }
+
+    /**
+     * Cleans a portal when its source endpoint outlives or loses its Slot block entity.
+     *
+     * @return false when part of the frame is in an unloaded chunk; the caller
+     *         should retry later instead of deleting the last recovery point.
+     */
+    public static boolean destroyPortalFromEndpoint(ServerLevel level, BlockPos pos, boolean xAligned,
+            int pocketID, int which) {
+        if (level.isClientSide() || !portalFootprintLoaded(level, pos, xAligned)) {
+            return false;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof SlotBlockEntity slot && slot.portalOpen) {
+            destroyPortal(level, pos);
+            return true;
+        }
+
+        if (hasPortalStructure(level, pos, xAligned)) {
+            fillFrame(level, pos, xAligned);
+        }
+        PocketPlanes.destroyPortal(pocketID, which, level.getServer());
+        return true;
+    }
+
+    private static boolean portalFootprintLoaded(Level level, BlockPos pos, boolean xAligned) {
+        for (int offset = -2; offset <= 2; offset++) {
+            for (int y = 0; y >= -4; y--) {
+                BlockPos framePos = xAligned ? pos.offset(offset, y, 0) : pos.offset(0, y, offset);
+                if (!level.hasChunkAt(framePos)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean hasPortalStructure(Level level, BlockPos pos, boolean xAligned) {
+        for (int offset = -2; offset <= 2; offset++) {
+            for (int y = 0; y >= -4; y--) {
+                BlockPos framePos = xAligned ? pos.offset(offset, y, 0) : pos.offset(0, y, offset);
+                Block block = level.getBlockState(framePos).getBlock();
+                if (block instanceof GatewayPortalBlock || block instanceof PortalTHBlock) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void fillFrame(Level level, BlockPos pos, boolean xAligned) {
