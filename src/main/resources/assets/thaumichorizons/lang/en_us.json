@@ -497,5 +497,6 @@
   "thaumichorizons.research.critter.instability": "Instability: %s",
   "block.thaumichorizons.spiketh": "Metal Spike",
   "block.thaumichorizons.spikewoodth": "Wooden Spike",
-  "block.thaumichorizons.spiketoothth": "Tooth"
+  "block.thaumichorizons.spiketoothth": "Tooth",
+  "item.thaumichorizons.slotth": "Planar Keystone Receptacle"
 }

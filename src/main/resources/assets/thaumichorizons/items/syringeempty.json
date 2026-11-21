@@ -8,7 +8,7 @@
           "gui"
         ],
         "model": {
-          "type": "minecraft:special",
+          "type": "thaumcraft:special_owner",
           "base": "thaumichorizons:item/syringeempty",
           "model": {
             "type": "thaumichorizons:syringe",
@@ -22,7 +22,7 @@
           "thirdperson_righthand"
         ],
         "model": {
-          "type": "minecraft:special",
+          "type": "thaumcraft:special_owner",
           "base": "thaumichorizons:item/syringeempty",
           "model": {
             "type": "thaumichorizons:syringe",
@@ -36,7 +36,7 @@
           "firstperson_righthand"
         ],
         "model": {
-          "type": "minecraft:special",
+          "type": "thaumcraft:special_owner",
           "base": "thaumichorizons:item/syringeempty",
           "model": {
             "type": "thaumichorizons:syringe",
@@ -46,7 +46,7 @@
       }
     ],
     "fallback": {
-      "type": "minecraft:special",
+      "type": "thaumcraft:special_owner",
       "base": "thaumichorizons:item/syringeempty",
       "model": {
         "type": "thaumichorizons:syringe",

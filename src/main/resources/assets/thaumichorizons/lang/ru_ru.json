@@ -497,5 +497,6 @@
   "thaumichorizons.research.critter.instability": "Нестабильность: %s",
   "block.thaumichorizons.spiketh": "Металлический шип",
   "block.thaumichorizons.spikewoodth": "Деревянный шип",
-  "block.thaumichorizons.spiketoothth": "Зуб"
+  "block.thaumichorizons.spiketoothth": "Зуб",
+  "item.thaumichorizons.slotth": "Приёмник планарного ключ-камня"
 }
