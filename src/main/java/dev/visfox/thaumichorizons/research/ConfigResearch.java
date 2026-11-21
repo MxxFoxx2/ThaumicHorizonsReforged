@@ -754,7 +754,10 @@ public final class ConfigResearch {
             List.of("humanInfusion"), List.of(), 0,
             PageSpec.text("selfInfusion1"),
             PageSpec.text("selfInfusion2"),
-            PageSpec.text("selfInfusion3"));
+            PageSpec.text("selfInfusion3"),
+            PageSpec.image(th("textures/misc/self_page/selfinfusion/0.png"), null),
+            PageSpec.image(th("textures/misc/self_page/selfinfusion/1.png"), null),
+            PageSpec.image(th("textures/misc/self_page/selfinfusion/2.png"), null));
     }
 
     private static void registerHumanInfusion() {
@@ -770,7 +773,8 @@ public final class ConfigResearch {
         register("morphicFingers", tags("humanus", 3, "fabrico", 3, "instrumentum", 3, "permutatio", 2),
             19, 2, 2, th("textures/item/morphicfingers.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("morphicFingers1"));
+            PageSpec.text("morphicFingers1"),
+            PageSpec.image(th("textures/misc/self_page/morphicfingers/0.png"), null));
     }
 
     private static void registerSilverHeart() {
@@ -778,41 +782,47 @@ public final class ConfigResearch {
             19, -1, 2, th("textures/item/silverwoodheart.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("silverHeart1"),
-            PageSpec.text("silverHeart2"));
+            PageSpec.text("silverHeart2"),
+            PageSpec.image(th("textures/misc/self_page/silverheart/0.png"), null));
     }
 
     private static void registerSynthSkin() {
         register("synthSkin", tags("humanus", 3, "herba", 3, "fames", 3),
             19, 0, 2, th("textures/item/synthskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("synthSkin1"));
+            PageSpec.text("synthSkin1"),
+            PageSpec.image(th("textures/misc/self_page/synthskin/0.png"), null));
     }
 
     private static void registerAmphibious() {
         register("amphibious", tags("humanus", 3, "aer", 3, "aqua", 3),
             19, 1, 2, mc("textures/item/cod.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("amphibious1"));
+            PageSpec.text("amphibious1"),
+            PageSpec.image(th("textures/misc/self_page/amphibious/0.png"), null));
     }
 
     private static void registerWarpedTumor() {
         register("warpedTumor", tags("humanus", 15, "vitium", 12, "alienis", 9, "corpus", 6, "permutatio", 3),
             19, 4, 3, th("textures/item/warpedtumor.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("warpedTumor1"));
+            PageSpec.text("warpedTumor1"),
+            PageSpec.image(th("textures/misc/self_page/warpedtumor/0.png"), null));
     }
 
     private static void registerSpiderClimb() {
         register("spiderClimb", tags("humanus", 3, "bestia", 3, "motus", 3, "limus", 3),
             19, 3, 2, th("textures/item/spiderclimb.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("spiderClimb1"));
+            PageSpec.text("spiderClimb1"),
+            PageSpec.image(th("textures/misc/self_page/spiderclimb/0.png"), null));
     }
 
     private static void registerChameleonSkin() {
         register("chameleonSkin", tags("sensus", 4, "permutatio", 4, "vacuos", 4),
             19, -2, 2, th("textures/item/chameleonskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("chameleonSkin1"));
+            PageSpec.text("chameleonSkin1"),
+            PageSpec.image(th("textures/misc/self_page/chameleonskin/0.png"), null));
     }
 }
