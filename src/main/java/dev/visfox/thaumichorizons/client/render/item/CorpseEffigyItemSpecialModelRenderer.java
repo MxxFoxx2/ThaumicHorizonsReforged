@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.client.platform.ItemGeometry;
+import thaumcraft.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -61,7 +61,7 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
             poseStack.scale(1.0F, -1.0F, 1.0F);
             poseStack.translate(0.0F, 24.0F, 0.0F);
             poseStack.scale(SCALE, SCALE, SCALE);
-            output.accept(corner.transform(poseStack.last().pose()));
+            output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
     }
 

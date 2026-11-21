@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.SpikeBlock;
-import dev.visfox.thaumichorizons.client.platform.ItemGeometry;
+import thaumcraft.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
@@ -69,7 +69,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
             transform(poseStack);
             poseStack.scale(SCALE, SCALE, SCALE);
             poseStack.rotateDegrees(Axis.YP, 90.0F);
-            output.accept(corner.transform(poseStack.last().pose()));
+            output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
     }
 
