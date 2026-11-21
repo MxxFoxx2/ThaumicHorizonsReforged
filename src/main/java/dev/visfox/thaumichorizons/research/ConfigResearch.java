@@ -569,10 +569,10 @@ public final class ConfigResearch {
             List.of(), 4,
             PageSpec.text("pocketPlane1"),
             PageSpec.text("pocketPlane2"),
-            PageSpec.text("pocketPlane3"),
             PageSpec.image(th("textures/misc/planar_gateway_page.png"),
                 "thaumichorizons.research.pocketPlane.gateway.caption"),
-            PageSpec.recipes(PageKind.INFUSION, "pocketPlane"));
+            PageSpec.recipes(PageKind.INFUSION, "pocketPlane"),
+            PageSpec.text("pocketPlane3"));
     }
 
     private static void registerPlanarClouds() {
