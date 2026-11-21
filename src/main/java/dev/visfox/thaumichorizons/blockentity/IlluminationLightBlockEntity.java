@@ -20,9 +20,6 @@ public final class IlluminationLightBlockEntity extends BlockEntity {
             return;
         }
         var fx = TcReforgedPort.fx;
-        if (!fx.isAvailable()) {
-            return;
-        }
         int color = FocusIlluminationItem.COLORS[state.getValue(IlluminationLightBlock.COLOR)];
         fx.sparkle(level, pos.getX() + 0.55F, pos.getY() + 0.5F, pos.getZ() + 0.55F, 0.5F, color, 0.0F);
     }

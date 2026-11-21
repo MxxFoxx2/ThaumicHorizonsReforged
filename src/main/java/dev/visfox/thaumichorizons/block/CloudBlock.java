@@ -77,8 +77,7 @@ public class CloudBlock extends Block implements EntityBlock, WandInteractable {
     public InteractionResult onWandUseOn(Level level, BlockPos pos, Player player, ItemStack wand, Direction side) {
         var items = TcReforgedPort.items;
         var research = TcReforgedPort.research;
-        if (!items.isAvailable() || !research.isAvailable()
-                || !items.isWand(wand) || !research.isComplete(player, "planarClouds")) {
+        if (!items.isWand(wand) || !research.isComplete(player, "planarClouds")) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {

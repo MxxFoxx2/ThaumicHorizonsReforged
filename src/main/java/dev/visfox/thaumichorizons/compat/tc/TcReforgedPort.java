@@ -2,7 +2,6 @@ package dev.visfox.thaumichorizons.compat.tc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -48,16 +47,12 @@ import thaumcraft.device.MirrorKeys;
 import thaumcraft.device.MirrorLinks;
 import thaumcraft.device.SmeltingBonuses;
 import thaumcraft.entity.TaintedMob;
-import thaumcraft.network.NodeZapPayload;
-import thaumcraft.node.NodeBlockEntity;
 import thaumcraft.node.NodeHooks;
 import thaumcraft.node.NodeTransducerBlockEntity;
 import thaumcraft.essentia.EssentiaHandler;
 import thaumcraft.platform.Baubles;
-import thaumcraft.platform.ModNetwork;
 import thaumcraft.registry.ModSounds;
 import thaumcraft.registry.ModEntities;
-import thaumcraft.registry.ModBlocks;
 import thaumcraft.research.Knowledge;
 import thaumcraft.research.ResearchCategories;
 import thaumcraft.research.ResearchGate;
@@ -90,10 +85,6 @@ public final class TcReforgedPort {
     public static final TcBrainJars brainJars = new TcBrainJars();
 
     public static final class TcAspects {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public void registerAspect(String tag, int color, List<String> componentTags, int blend, Identifier texture) {
             Aspect[] components = TcConversions.resolveAspects(componentTags).toArray(new Aspect[0]);
             AddonAspects.addRegistrar(api -> api.register(tag, color, components, blend, texture));
@@ -115,10 +106,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcResearch {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public void registerCategory(String key, Identifier icon, Identifier background) {
             ResearchCategories.registerCategory(key, icon, background);
         }
@@ -131,8 +118,13 @@ public final class TcReforgedPort {
             if (!spec.parents().isEmpty()) {
                 item.setParents(spec.parents().toArray(String[]::new));
             }
-            if (!spec.parentsHidden().isEmpty()) {
-                item.setParentsHidden(spec.parentsHidden().toArray(String[]::new));
+            List<String> parentsHidden = new ArrayList<>(spec.parentsHidden());
+            if (!parentsHidden.contains("INFUSION")
+                    && spec.pages().stream().anyMatch(page -> page.kind() == PageKind.INFUSION)) {
+                parentsHidden.add("INFUSION");
+            }
+            if (!parentsHidden.isEmpty()) {
+                item.setParentsHidden(parentsHidden.toArray(String[]::new));
             }
             if (!spec.siblings().isEmpty()) {
                 item.setSiblings(spec.siblings().toArray(String[]::new));
@@ -157,7 +149,6 @@ public final class TcReforgedPort {
                 }
             }
             item.setPages(pages.toArray(new ResearchPage[0]));
-            item.requireInfusionResearch();
             item.registerResearchItem();
         }
 
@@ -185,7 +176,6 @@ public final class TcReforgedPort {
                 case ARCANE -> ResearchPage.arcane(page.recipeKeys().toArray(String[]::new));
                 case CRUCIBLE -> ResearchPage.crucible(page.recipeKeys().toArray(String[]::new));
                 case INFUSION -> ResearchPage.infusion(page.recipeKeys().toArray(String[]::new));
-                case CREATURE_INFUSION -> ResearchPage.creatureInfusion(page.payload());
             };
         }
 
@@ -201,10 +191,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcWarp {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public int get(Player player, WarpKind kind) {
             return Warp.get(player, WarpType.valueOf(kind.name()));
         }
@@ -234,10 +220,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcItems {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public @Nullable Item getSmeltingBonus(ItemStack input) {
             return SmeltingBonuses.get(input);
         }
@@ -303,10 +285,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcMirrors {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public boolean isMirror(Level level, BlockPos pos) {
             return level.getBlockState(pos).getBlock() instanceof MirrorBlock mirror && !mirror.isEssentia();
         }
@@ -339,10 +317,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcBaubles {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public int slotCount() {
             return Baubles.slotCount();
         }
@@ -357,10 +331,6 @@ public final class TcReforgedPort {
     }
 
     public static class TcBrainJars {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public boolean isBrainJar(BlockEntity entity) {
             return entity instanceof BrainJarBlockEntity;
         }
@@ -382,10 +352,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcFlux {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public boolean spill(ServerLevel level, BlockPos pos, boolean gas) {
             if (!level.hasChunkAt(pos) || !level.isEmptyBlock(pos)) {
                 return false;
@@ -396,82 +362,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcNodes {
-        public boolean isAvailable() {
-            return true;
-        }
-
-        public boolean tryRecombine(ServerLevel level, BlockPos machinePos, BlockPos targetPos) {
-            if (!(level.getBlockEntity(machinePos.below()) instanceof NodeBlockEntity source)
-                    || !(level.getBlockEntity(targetPos) instanceof NodeBlockEntity target)
-                    || !level.getBlockState(targetPos).is(ModBlocks.AURA_NODE.get())
-                    || target.getLock() > 0
-                    || target.getAspects().isEmpty()
-                    || source.getId().equals(target.getId())) {
-                return false;
-            }
-
-            List<Aspect> combinations = List.of();
-            for (int priority = 0; priority < 4 && combinations.isEmpty(); priority++) {
-                combinations = findCombinations(source, target, priority);
-            }
-            if (combinations.isEmpty()) {
-                return false;
-            }
-
-            Aspect result = combinations.get(level.getRandom().nextInt(combinations.size()));
-            Aspect[] components = result.getComponents();
-            if (components == null || components.length != 2) {
-                return false;
-            }
-            Aspect sourceAspect = source.getAspectsBase().getAmount(components[0]) > 0
-                ? components[0]
-                : components[1];
-            Aspect targetAspect = sourceAspect.equals(components[0]) ? components[1] : components[0];
-
-            source.getAspectsBase().add(result, 1);
-            source.getAspects().add(result, 1);
-            source.getAspectsBase().remove(sourceAspect, 1);
-            source.getAspects().remove(sourceAspect, 1);
-            target.getAspects().remove(targetAspect, 1);
-            if (level.getRandom().nextInt(3) == 0) {
-                target.setNodeVisBase(targetAspect, target.getNodeVisBase(targetAspect) - 1);
-            }
-
-            source.sync();
-            target.sync();
-            ModNetwork.sendToNear(level, null, machinePos.getX(), machinePos.getY(), machinePos.getZ(), 32.0,
-                new NodeZapPayload(
-                    targetPos.getX() + 0.5F,
-                    targetPos.getY() + 0.5F,
-                    targetPos.getZ() + 0.5F,
-                    machinePos.getX() + 0.5F,
-                    machinePos.getY() + 0.5F,
-                    machinePos.getZ() + 0.5F));
-            return true;
-        }
-
-        private List<Aspect> findCombinations(NodeBlockEntity source, NodeBlockEntity target, int priority) {
-            LinkedHashSet<Aspect> combinations = new LinkedHashSet<>();
-            for (Aspect sourceAspect : source.getAspectsBase().getAspects()) {
-                for (Aspect targetAspect : target.getAspectsBase().getAspects()) {
-                    if (priority == 0 && (!sourceAspect.isPrimal() || !targetAspect.isPrimal())) {
-                        continue;
-                    }
-                    if (priority == 1 && !sourceAspect.isPrimal()) {
-                        continue;
-                    }
-                    if (priority == 2 && !targetAspect.isPrimal()) {
-                        continue;
-                    }
-                    Aspect combined = Aspect.combine(sourceAspect, targetAspect);
-                    if (combined != null) {
-                        combinations.add(combined);
-                    }
-                }
-            }
-            return List.copyOf(combinations);
-        }
-
         public void stopTransducerForVortexConversion(ServerLevel level, BlockPos transducerPos) {
             if (level.getBlockEntity(transducerPos) instanceof NodeTransducerBlockEntity transducer) {
                 transducer.stopForVortexConversion();
@@ -480,10 +370,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcFx {
-        public boolean isAvailable() {
-            return true;
-        }
-
         private static thaumcraft.fx.FxProxy fx() {
             return thaumcraft.fx.Fx.get();
         }
@@ -518,11 +404,12 @@ public final class TcReforgedPort {
         }
 
         public void blocksplosion(Level level, BlockPos center, int color) {
-            fx().blocksplosion(level, center, color);
+            fx().shockBurst(level, center.getX() + 0.5D, center.getY() + 0.5D, center.getZ() + 0.5D, 1.6F);
+            fx().blockSparkle(level, center, color, 12);
         }
 
         public void containmentCapture(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().containmentCapture(level, pos.x, pos.y, pos.z, color);
+            fx().sparkle(level, (float) pos.x, (float) pos.y, (float) pos.z, 1.0F, color, -0.03F);
         }
 
         public void essentiaBubble(Level level, BlockPos pos, int color) {
@@ -530,15 +417,11 @@ public final class TcReforgedPort {
         }
 
         public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().deadCreature(level, pos.x, pos.y, pos.z, color);
+            fx().sparkle(level, (float) pos.x, (float) pos.y, (float) pos.z, 0.8F, color, -0.05F);
         }
     }
 
     public static final class TcPotions {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public Holder<MobEffect> visExhaust() {
             return effect("vis_exhaust");
         }
@@ -568,10 +451,6 @@ public final class TcReforgedPort {
     }
 
     public static final class TcInfusion {
-        public boolean isAvailable() {
-            return true;
-        }
-
         public boolean isStabiliser(Level level, BlockPos pos) {
             return isStabiliser(level, pos, pos);
         }

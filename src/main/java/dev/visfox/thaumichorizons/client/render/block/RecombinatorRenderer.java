@@ -65,7 +65,7 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
         state.gameTime = level.getGameTime();
         state.partialTicks = partialTicks;
 
-        if (state.active && state.hasNode && level.isClientSide() && TcReforgedPort.fx.isAvailable()) {
+        if (state.active && state.hasNode && level.isClientSide()) {
             TcReforgedPort.fx.beam(level, pos,
                 new Vec3(pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5),
                 new Vec3(pos.getX() + 0.5, pos.getY() - 0.5, pos.getZ() + 0.5),

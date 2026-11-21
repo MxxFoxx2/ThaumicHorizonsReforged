@@ -401,14 +401,11 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 return true;
             }
         }
-        if (TcReforgedPort.potions.isAvailable()) {
-            return ent.hasEffect(TcReforgedPort.potions.visExhaust())
-                || ent.hasEffect(TcReforgedPort.potions.thaumarhia())
-                || ent.hasEffect(TcReforgedPort.potions.taintPoison())
-                || ent.hasEffect(TcReforgedPort.potions.blurredVision())
-                || ent.hasEffect(TcReforgedPort.potions.infectiousVisExhaust());
-        }
-        return false;
+        return ent.hasEffect(TcReforgedPort.potions.visExhaust())
+            || ent.hasEffect(TcReforgedPort.potions.thaumarhia())
+            || ent.hasEffect(TcReforgedPort.potions.taintPoison())
+            || ent.hasEffect(TcReforgedPort.potions.blurredVision())
+            || ent.hasEffect(TcReforgedPort.potions.infectiousVisExhaust());
     }
 
     private static void removeNegativeEffects(LivingEntity ent) {
@@ -420,13 +417,11 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         ent.removeEffect(MobEffects.POISON);
         ent.removeEffect(MobEffects.WEAKNESS);
         ent.removeEffect(MobEffects.WITHER);
-        if (TcReforgedPort.potions.isAvailable()) {
-            ent.removeEffect(TcReforgedPort.potions.visExhaust());
-            ent.removeEffect(TcReforgedPort.potions.thaumarhia());
-            ent.removeEffect(TcReforgedPort.potions.taintPoison());
-            ent.removeEffect(TcReforgedPort.potions.blurredVision());
-            ent.removeEffect(TcReforgedPort.potions.infectiousVisExhaust());
-        }
+        ent.removeEffect(TcReforgedPort.potions.visExhaust());
+        ent.removeEffect(TcReforgedPort.potions.thaumarhia());
+        ent.removeEffect(TcReforgedPort.potions.taintPoison());
+        ent.removeEffect(TcReforgedPort.potions.blurredVision());
+        ent.removeEffect(TcReforgedPort.potions.infectiousVisExhaust());
     }
 
     public boolean jarCritter(ItemStack possibleJar, Player player) {
@@ -843,7 +838,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1).inflate(10.0));
         for (LivingEntity target : targets) {
-            if (TcReforgedPort.potions.isAvailable() && harmLevel.getRandom().nextBoolean()) {
+            if (harmLevel.getRandom().nextBoolean()) {
                 target.addEffect(new MobEffectInstance(TcReforgedPort.potions.visExhaust(), 2400, 0, false, true, false));
             } else {
                 target.addEffect(new MobEffectInstance(MobEffects.POISON, 120, 0, false, true));

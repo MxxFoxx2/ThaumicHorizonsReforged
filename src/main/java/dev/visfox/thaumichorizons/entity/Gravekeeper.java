@@ -72,11 +72,9 @@ public class Gravekeeper extends TamableAnimal {
             for (LivingEntity critter : level.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (critter.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD) && critter.isAlive()) {
                     critter.igniteForSeconds(1.0F);
-                    if (TcReforgedPort.fx.isAvailable()) {
-                        Vec3 from = new Vec3(this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ());
-                        Vec3 to = new Vec3(critter.getX(), critter.getY() + critter.getBbHeight() / 2.0F, critter.getZ());
-                        TcReforgedPort.fx.wisp(level, from, to, 16773444, false);
-                    }
+                    Vec3 from = new Vec3(this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ());
+                    Vec3 to = new Vec3(critter.getX(), critter.getY() + critter.getBbHeight() / 2.0F, critter.getZ());
+                    TcReforgedPort.fx.wisp(level, from, to, 16773444, false);
                 }
             }
         }

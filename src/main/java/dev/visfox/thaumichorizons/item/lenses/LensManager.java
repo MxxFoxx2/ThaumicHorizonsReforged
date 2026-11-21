@@ -28,17 +28,15 @@ public final class LensManager {
         HashMap<Integer, Integer> pouchSlots = new HashMap<>();
         int pouchcount = 0;
         ItemStack item = null;
-        if (TcReforgedPort.baubles.isAvailable()) {
-            for (int slot = 0; slot < TcReforgedPort.baubles.slotCount(); slot++) {
-                ItemStack bauble = TcReforgedPort.baubles.get(player, slot);
-                if (bauble.getItem() instanceof ItemLensCase) {
-                    pouchcount++;
-                    pouchSlots.put(pouchcount, slot - 4);
-                    ItemStack[] contents = ItemLensCase.getContents(bauble);
-                    for (int index = 0; index < contents.length; index++) {
-                        if (contents[index].getItem() instanceof ILens lensItem) {
-                            lenses.put(lensItem.lensName(), index + pouchcount * 1000);
-                        }
+        for (int slot = 0; slot < TcReforgedPort.baubles.slotCount(); slot++) {
+            ItemStack bauble = TcReforgedPort.baubles.get(player, slot);
+            if (bauble.getItem() instanceof ItemLensCase) {
+                pouchcount++;
+                pouchSlots.put(pouchcount, slot - 4);
+                ItemStack[] contents = ItemLensCase.getContents(bauble);
+                for (int index = 0; index < contents.length; index++) {
+                    if (contents[index].getItem() instanceof ILens lensItem) {
+                        lenses.put(lensItem.lensName(), index + pouchcount * 1000);
                     }
                 }
             }

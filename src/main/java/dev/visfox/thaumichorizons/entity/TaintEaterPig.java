@@ -29,11 +29,9 @@ public class TaintEaterPig extends Pig {
         if (this.level().isClientSide()) {
             return;
         }
-        if (TcReforgedPort.potions.isAvailable()) {
-            this.removeEffect(TcReforgedPort.potions.visExhaust());
-            this.removeEffect(TcReforgedPort.potions.taintPoison());
-            this.removeEffect(TcReforgedPort.potions.infectiousVisExhaust());
-        }
+        this.removeEffect(TcReforgedPort.potions.visExhaust());
+        this.removeEffect(TcReforgedPort.potions.taintPoison());
+        this.removeEffect(TcReforgedPort.potions.infectiousVisExhaust());
     }
 
     @Override

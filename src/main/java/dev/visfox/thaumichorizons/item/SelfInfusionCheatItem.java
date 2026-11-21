@@ -34,10 +34,8 @@ public final class SelfInfusionCheatItem extends Item {
             if (infusions[slot] == 0) {
                 CreatureInfusion.setInfusion(serverPlayer, slot, infusionId);
                 InfusionEntityEvents.applyInfusions(serverPlayer);
-                if (TcReforgedPort.fx.isAvailable()) {
-                    TcReforgedPort.fx.burst(level,
-                        new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ()), 0xFFFFFF, 16);
-                }
+                TcReforgedPort.fx.burst(level,
+                    new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ()), 0xFFFFFF, 16);
                 return InteractionResult.CONSUME;
             }
         }

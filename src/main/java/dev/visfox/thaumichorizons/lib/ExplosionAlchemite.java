@@ -181,18 +181,14 @@ public class ExplosionAlchemite {
         }
         if (this.level instanceof ServerLevel serverLevel) {
             var itemCompat = TcReforgedPort.items;
-            boolean itemsAvailable = itemCompat.isAvailable();
-            Item essenceItem = itemsAvailable
-                ? itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"))
-                : null;
+            Item essenceItem = itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"));
             for (BlockPos blockpos : this.affectedBlockPositions) {
                 BlockState block = serverLevel.getBlockState(blockpos);
                 if (serverLevel.getBlockEntity(blockpos) instanceof Node node) {
                     double d = serverLevel.getRandom().nextDouble();
                     if (d < 0.25) {
                         if (essenceItem != null
-                            && dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem)
-                            && TcReforgedPort.fx.isAvailable()) {
+                            && dropCrystallizedEssence(serverLevel, blockpos, node.getAspects(), essenceItem)) {
                             TcReforgedPort.fx.blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         }
                         serverLevel.destroyBlock(blockpos, false);
@@ -206,14 +202,12 @@ public class ExplosionAlchemite {
                     }
                 } else if (!block.isAir()) {
                     Item blockItem = block.getBlock().asItem();
-                    AspectList aspects = !itemsAvailable || blockItem == Items.AIR
+                    AspectList aspects = blockItem == Items.AIR
                         ? null
                         : itemCompat.getObjectAspects(new ItemStack(blockItem));
                     if (essenceItem != null && aspects != null && !aspects.isEmpty()
                         && dropCrystallizedEssence(serverLevel, blockpos, aspects, essenceItem)) {
-                        if (TcReforgedPort.fx.isAvailable()) {
-                            TcReforgedPort.fx.blocksplosion(serverLevel, blockpos, 0xFFFFFF);
-                        }
+                        TcReforgedPort.fx.blocksplosion(serverLevel, blockpos, 0xFFFFFF);
                         serverLevel.destroyBlock(blockpos, false, this.exploder);
                     } else {
                         serverLevel.destroyBlock(blockpos, true, this.exploder);

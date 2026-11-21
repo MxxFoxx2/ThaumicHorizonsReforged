@@ -105,9 +105,7 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
                     && level.getBlockEntity(targetNodePos) instanceof EnergizedNodeBlockEntity node) {
                 unboostNode(node);
                 AspectList aspects = node.getAuraBase().copy();
-                if (TcReforgedPort.nodes.isAvailable()) {
-                    TcReforgedPort.nodes.stopTransducerForVortexConversion(serverLevel, targetNodePos.above());
-                }
+                TcReforgedPort.nodes.stopTransducerForVortexConversion(serverLevel, targetNodePos.above());
                 serverLevel.setBlock(targetNodePos, ThBlocks.VORTEX.get().defaultBlockState(), 3);
                 if (serverLevel.getBlockEntity(targetNodePos) instanceof VortexBlockEntity vortex) {
                     vortex.aspects = aspects;
@@ -115,14 +113,13 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
                 }
             }
             if (transducers > 2 && count % 50 == 0 && level instanceof ServerLevel serverLevel
-                    && serverLevel.getRandom().nextInt(4) == 2 && TcReforgedPort.flux.isAvailable()) {
+                    && serverLevel.getRandom().nextInt(4) == 2) {
                 int dx = serverLevel.getRandom().nextInt(16) - 8;
                 int dy = serverLevel.getRandom().nextInt(16) - 8;
                 int dz = serverLevel.getRandom().nextInt(16) - 8;
                 BlockPos fluxPos = worldPosition.offset(dx, dy, dz);
                 if (serverLevel.isEmptyBlock(fluxPos)
-                        && TcReforgedPort.flux.spill(serverLevel, fluxPos, dy > 0)
-                        && TcReforgedPort.fx.isAvailable()) {
+                        && TcReforgedPort.flux.spill(serverLevel, fluxPos, dy > 0)) {
                     TcReforgedPort.fx.arcLightning(serverLevel,
                         Vec3.atCenterOf(worldPosition), Vec3.atCenterOf(fluxPos), 0xFFFFFF);
                 }
@@ -133,12 +130,10 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
                 if (!targets.isEmpty()) {
                     DamageSource magic = serverLevel.damageSources().magic();
                     for (LivingEntity target : targets) {
-                        if (TcReforgedPort.fx.isAvailable()) {
-                            TcReforgedPort.fx.arcLightning(serverLevel,
-                                Vec3.atCenterOf(worldPosition),
-                                new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ()),
-                                0xFFFFFF);
-                        }
+                        TcReforgedPort.fx.arcLightning(serverLevel,
+                            Vec3.atCenterOf(worldPosition),
+                            new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ()),
+                            0xFFFFFF);
                         target.hurtServer(serverLevel, magic, 4.0F);
                     }
                 }

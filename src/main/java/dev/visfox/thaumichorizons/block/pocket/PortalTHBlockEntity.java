@@ -73,9 +73,7 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
 
         if (!entity.cleanupStarted) {
             THSounds.play(server, pos, "craftfail", SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (TcReforgedPort.fx.isAvailable()) {
-                TcReforgedPort.fx.burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
-            }
+            TcReforgedPort.fx.burst(server, Vec3.atCenterOf(pos), 0xFFFFFF, 16);
             entity.cleanupStarted = true;
             entity.setChanged();
         }

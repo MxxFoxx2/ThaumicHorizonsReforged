@@ -127,9 +127,7 @@ public class EatTaintGoal extends Goal {
         }
         BlockPos pos = this.targetCoordinates;
         if (isTaintBlock(level, pos)) {
-            if (TcReforgedPort.fx.isAvailable()) {
-                TcReforgedPort.fx.blocksplosion(level, pos, 0);
-            }
+            TcReforgedPort.fx.blocksplosion(level, pos, 0);
             level.removeBlock(pos, false);
             TaintBiomes.set(level, pos, Biomes.PLAINS);
             level.playSound(null, this.thePig.getX(), this.thePig.getY(), this.thePig.getZ(),

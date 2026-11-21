@@ -57,37 +57,32 @@ public final class ResearchCompat {
         CRAFTING,
         ARCANE,
         CRUCIBLE,
-        INFUSION,
-        CREATURE_INFUSION
+        INFUSION
     }
 
-    public record PageSpec(PageKind kind, String textKey, String concealedResearch, Identifier image, List<String> recipeKeys, String payload) {
+    public record PageSpec(PageKind kind, String textKey, String concealedResearch, Identifier image, List<String> recipeKeys) {
         public PageSpec {
             recipeKeys = List.copyOf(recipeKeys);
         }
 
         public static PageSpec text(String textKey) {
-            return new PageSpec(PageKind.TEXT, textKey, null, null, List.of(), null);
+            return new PageSpec(PageKind.TEXT, textKey, null, null, List.of());
         }
 
         public static PageSpec concealedText(String concealedResearch, String textKey) {
-            return new PageSpec(PageKind.CONCEALED_TEXT, textKey, concealedResearch, null, List.of(), null);
+            return new PageSpec(PageKind.CONCEALED_TEXT, textKey, concealedResearch, null, List.of());
         }
 
         public static PageSpec image(Identifier image, String captionKey) {
-            return new PageSpec(PageKind.IMAGE, captionKey, null, image, List.of(), null);
+            return new PageSpec(PageKind.IMAGE, captionKey, null, image, List.of());
         }
 
         public static PageSpec aspects() {
-            return new PageSpec(PageKind.ASPECTS, null, null, null, List.of(), null);
+            return new PageSpec(PageKind.ASPECTS, null, null, null, List.of());
         }
 
         public static PageSpec recipes(PageKind kind, String... recipeKeys) {
-            return new PageSpec(kind, null, null, null, List.of(recipeKeys), null);
-        }
-
-        public static PageSpec creatureInfusion(String payload) {
-            return new PageSpec(PageKind.CREATURE_INFUSION, null, null, null, List.of(), payload);
+            return new PageSpec(kind, null, null, null, List.of(recipeKeys));
         }
     }
 }

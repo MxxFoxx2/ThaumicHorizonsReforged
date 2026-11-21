@@ -42,10 +42,8 @@ public final class ArcaneLensHud {
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             collectLens(player.getInventory().getItem(slot));
         }
-        if (TcReforgedPort.baubles.isAvailable()) {
-            for (int slot = 0; slot < TcReforgedPort.baubles.slotCount(); slot++) {
-                collectLens(TcReforgedPort.baubles.get(player, slot));
-            }
+        for (int slot = 0; slot < TcReforgedPort.baubles.slotCount(); slot++) {
+            collectLens(TcReforgedPort.baubles.get(player, slot));
         }
         open = !LENSES.isEmpty() && isWearingGoggles(player);
         return open;

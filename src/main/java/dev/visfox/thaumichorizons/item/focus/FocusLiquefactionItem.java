@@ -286,7 +286,7 @@ public class FocusLiquefactionItem extends FocusItem {
             }
 
             int nuggetLevel = Wands.getFocusUpgrade(stack, NUGGETS);
-            if (nuggetLevel > 0 && TcReforgedPort.items.isAvailable()) {
+            if (nuggetLevel > 0) {
                 Item bonusItem = TcReforgedPort.items.getSmeltingBonus(new ItemStack(blockState.getBlock()));
                 if (bonusItem != null) {
                     int bonusCount = 0;

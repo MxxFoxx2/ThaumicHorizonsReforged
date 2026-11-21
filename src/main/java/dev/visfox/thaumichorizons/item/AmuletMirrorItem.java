@@ -20,7 +20,7 @@ public class AmuletMirrorItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.isLinked(stack);
+        return TcReforgedPort.mirrors.isLinked(stack);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class AmuletMirrorItem extends Item {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
-        if (player == null || !TcReforgedPort.mirrors.isAvailable() || !TcReforgedPort.mirrors.isMirror(level, pos)) {
+        if (player == null || !TcReforgedPort.mirrors.isMirror(level, pos)) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
@@ -39,13 +39,13 @@ public class AmuletMirrorItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
-        if (TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.isLinked(stack)) {
+        if (TcReforgedPort.mirrors.isLinked(stack)) {
             TcReforgedPort.mirrors.appendLink(stack, builder);
         }
         super.appendHoverText(stack, context, display, builder, flag);
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
-        return TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.transport(mirror, items, player, level);
+        return TcReforgedPort.mirrors.transport(mirror, items, player, level);
     }
 }

@@ -65,7 +65,7 @@ public class Familiar extends TamableAnimal {
         super.aiStep();
         if (this.level().isClientSide()) {
             var fx = TcReforgedPort.fx;
-            if (fx.isAvailable() && this.getRandom().nextFloat() > 0.97F) {
+            if (this.getRandom().nextFloat() > 0.97F) {
                 float angle = this.getRandom().nextFloat() * (float) (Math.PI * 2.0);
                 fx.sparkle(
                     this.level(),

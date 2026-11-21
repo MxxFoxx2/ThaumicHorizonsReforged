@@ -461,8 +461,8 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
         Holder<MobEffect> wither = MobEffects.WITHER;
         Holder<MobEffect> hboost = MobEffects.HEALTH_BOOST;
         Holder<MobEffect> satur = MobEffects.SATURATION;
-        Holder<MobEffect> visBoost = TcReforgedPort.potions.isAvailable() ? TcReforgedPort.potions.visExhaust() : null;
-        Holder<MobEffect> taint = TcReforgedPort.potions.isAvailable() ? TcReforgedPort.potions.taintPoison() : null;
+        Holder<MobEffect> visBoost = TcReforgedPort.potions.visExhaust();
+        Holder<MobEffect> taint = TcReforgedPort.potions.taintPoison();
         Holder<MobEffect> visRegen = ThEffects.VIS_REGEN;
         Holder<MobEffect> vacuum = ThEffects.VACUUM;
         Holder<MobEffect> shock = ThEffects.SHOCK;

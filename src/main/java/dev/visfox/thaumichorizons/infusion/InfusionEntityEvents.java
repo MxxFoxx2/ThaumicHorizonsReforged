@@ -117,12 +117,10 @@ public final class InfusionEntityEvents {
                 : entity.getLastHurtByMob();
             if (target != null && target.isAlive()) {
                 target.hurtServer(level, entity.damageSources().magic(), 1.0F);
-                if (TcReforgedPort.fx.isAvailable()) {
-                    TcReforgedPort.fx.arcLightning(level,
-                        new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2.0F, entity.getZ()),
-                        new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0F, target.getZ()),
-                        0xFFFFFF);
-                }
+                TcReforgedPort.fx.arcLightning(level,
+                    new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2.0F, entity.getZ()),
+                    new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0F, target.getZ()),
+                    0xFFFFFF);
                 level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
                     SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.HOSTILE, 1.0F,
                     1.0F + (entity.getRandom().nextFloat() - entity.getRandom().nextFloat()) * 0.2F);
@@ -204,12 +202,10 @@ public final class InfusionEntityEvents {
         Set<Holder<MobEffect>> effects = new HashSet<>();
         effects.add(MobEffects.POISON);
         effects.add(MobEffects.WITHER);
-        if (TcReforgedPort.potions.isAvailable()) {
-            effects.add(TcReforgedPort.potions.visExhaust());
-            effects.add(TcReforgedPort.potions.thaumarhia());
-            effects.add(TcReforgedPort.potions.taintPoison());
-            effects.add(TcReforgedPort.potions.infectiousVisExhaust());
-        }
+        effects.add(TcReforgedPort.potions.visExhaust());
+        effects.add(TcReforgedPort.potions.thaumarhia());
+        effects.add(TcReforgedPort.potions.taintPoison());
+        effects.add(TcReforgedPort.potions.infectiousVisExhaust());
         return effects;
     }
 
@@ -316,9 +312,6 @@ public final class InfusionEntityEvents {
     }
 
     private static void returnDeathItems(Player player, ServerLevel level) {
-        if (!TcReforgedPort.baubles.isAvailable() || !TcReforgedPort.mirrors.isAvailable()) {
-            return;
-        }
         var baubles = TcReforgedPort.baubles;
         int amuletSlot = -1;
         for (int slot = 0; slot < baubles.slotCount(); slot++) {
@@ -430,26 +423,22 @@ public final class InfusionEntityEvents {
         event.setAmount(0.0F);
         current.explode(null, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(),
             0.0F, false, Level.ExplosionInteraction.NONE);
-        if (TcReforgedPort.flux.isAvailable()) {
-            for (int index = 0; index < 25; index++) {
-                int x = (int) player.getX() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
-                int y = (int) player.getY() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
-                int z = (int) player.getZ() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
-                BlockPos pos = new BlockPos(x, y, z);
-                if (current.getBlockState(pos).isAir()) {
-                    TcReforgedPort.flux.spill(current, pos, y > (int) player.getY() + 1);
-                }
+        for (int index = 0; index < 25; index++) {
+            int x = (int) player.getX() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+            int y = (int) player.getY() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+            int z = (int) player.getZ() + current.getRandom().nextInt(8) - current.getRandom().nextInt(8);
+            BlockPos pos = new BlockPos(x, y, z);
+            if (current.getBlockState(pos).isAir()) {
+                TcReforgedPort.flux.spill(current, pos, y > (int) player.getY() + 1);
             }
         }
         player.getInventory().dropAll();
-        if (TcReforgedPort.baubles.isAvailable()) {
-            var baubles = TcReforgedPort.baubles;
-            for (int slot = 0; slot < baubles.slotCount(); slot++) {
-                ItemStack stack = baubles.get(player, slot);
-                if (!stack.isEmpty()) {
-                    player.spawnAtLocation(current, stack);
-                    baubles.set(player, slot, ItemStack.EMPTY);
-                }
+        var baubles = TcReforgedPort.baubles;
+        for (int slot = 0; slot < baubles.slotCount(); slot++) {
+            ItemStack stack = baubles.get(player, slot);
+            if (!stack.isEmpty()) {
+                player.spawnAtLocation(current, stack);
+                baubles.set(player, slot, ItemStack.EMPTY);
             }
         }
         player.removeAllEffects();
@@ -508,10 +497,8 @@ public final class InfusionEntityEvents {
             entity.snapTo(oldX, oldY, oldZ, entity.getYRot(), entity.getXRot());
             return;
         }
-        if (TcReforgedPort.fx.isAvailable()) {
-            TcReforgedPort.fx.arcLightning(level,
-                new Vec3(oldX, oldY, oldZ), new Vec3(entity.getX(), entity.getY(), entity.getZ()), 0xFFFFFF);
-        }
+        TcReforgedPort.fx.arcLightning(level,
+            new Vec3(oldX, oldY, oldZ), new Vec3(entity.getX(), entity.getY(), entity.getZ()), 0xFFFFFF);
         level.playSound(null, oldX, oldY, oldZ, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1.0F, 1.0F);
         entity.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
@@ -539,10 +526,8 @@ public final class InfusionEntityEvents {
         SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(
             EntityNbt.save(living), false, living.getName().getString(), ""));
         living.spawnAtLocation((ServerLevel) level, jar);
-        if (TcReforgedPort.fx.isAvailable()) {
-            TcReforgedPort.fx.containmentCapture(level,
-                new Vec3(living.getX(), living.getY() + living.getBbHeight() / 2.0F, living.getZ()), 0xCC66FF);
-        }
+        TcReforgedPort.fx.containmentCapture(level,
+            new Vec3(living.getX(), living.getY() + living.getBbHeight() / 2.0F, living.getZ()), 0xCC66FF);
         living.discard();
     }
 

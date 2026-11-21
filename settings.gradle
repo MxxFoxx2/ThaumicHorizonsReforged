@@ -8,6 +8,12 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-includeBuild('../thaumcraft-4-reforged')
+// Dev-only override: -Ptc4rPath=../thaumcraft-4-reforged-notlikethiss
+// CI keeps the default sibling checkout. Remove the composite entirely once
+// the minimal add-on hooks ship in the published TC4R artifact.
+def tc4rPath = providers.gradleProperty('tc4rPath').orElse('../thaumcraft-4-reforged').get()
+if (file(tc4rPath).isDirectory()) {
+    includeBuild(tc4rPath)
+}
 
 rootProject.name = 'thaumic-horizons-reforged'

@@ -121,7 +121,7 @@ public final class CloudBlockEntity extends BlockEntity {
      * block on every client tick while its vanilla lightning entity is alive.
      */
     private void renderFiniteLightning(Level level, BlockPos pos, int type) {
-        if ((type != 2 && type != 9) || !TcReforgedPort.fx.isAvailable()) {
+        if (type != 2 && type != 9) {
             return;
         }
 
@@ -227,9 +227,7 @@ public final class CloudBlockEntity extends BlockEntity {
             : null;
 
         var itemCompat = TcReforgedPort.items;
-        var item = id == null || !itemCompat.isAvailable()
-            ? null
-            : itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", id));
+        var item = id == null ? null : itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", id));
         spawnCloudDrop(level, new ItemStack(item != null ? item : (id == null ? Items.GOLD_NUGGET : Items.IRON_NUGGET)));
     }
 
@@ -255,13 +253,11 @@ public final class CloudBlockEntity extends BlockEntity {
         };
         Aspect aspect = aspects[level.getRandom().nextInt(aspects.length)];
         var items = TcReforgedPort.items;
-        if (items.isAvailable()) {
-            items.spawnAspectOrb(level,
-                worldPosition.getX() + level.getRandom().nextDouble(),
-                worldPosition.getY() + 0.5,
-                worldPosition.getZ() + level.getRandom().nextDouble(),
-                aspect, 1);
-        }
+        items.spawnAspectOrb(level,
+            worldPosition.getX() + level.getRandom().nextDouble(),
+            worldPosition.getY() + 0.5,
+            worldPosition.getZ() + level.getRandom().nextDouble(),
+            aspect, 1);
     }
 
     private void spawnExperienceDrop(ServerLevel level) {
@@ -299,12 +295,7 @@ public final class CloudBlockEntity extends BlockEntity {
                 continue;
             }
             if (type == 3) {
-                var items = TcReforgedPort.items;
-                if (items.isAvailable()) {
-                    items.hurtWithDissolve(level, entity, 1.0F);
-                } else {
-                    entity.hurt(level.damageSources().magic(), 1.0F);
-                }
+                TcReforgedPort.items.hurtWithDissolve(level, entity, 1.0F);
                 continue;
             }
             if (!warm) {

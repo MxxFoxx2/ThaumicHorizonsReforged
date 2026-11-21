@@ -52,7 +52,7 @@ public final class VortexStabilizerRenderer
         state.gameTime = level == null ? 0 : level.getGameTime();
         state.partialTicks = partialTicks;
         state.lightCoords = 220;
-        if (level != null && state.redstoned && state.target != null && TcReforgedPort.fx.isAvailable()) {
+        if (level != null && state.redstoned && state.target != null) {
             Direction direction = state.direction;
             TcReforgedPort.fx.beam(level, state.source,
                 Vec3.atCenterOf(state.source),

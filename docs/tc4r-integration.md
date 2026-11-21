@@ -2,7 +2,7 @@
 
 ## Dependency and source of truth
 
-The local development setup uses a composite build of the sibling repository through `includeBuild('../thaumcraft-4-reforged')` in `settings.gradle`. CI checks out a pinned TC4R commit; when changing or debugging an API, compare the local source with the revision pinned in `.github/workflows/ci.yml`.
+CI and local development use a composite build of the sibling TC4R checkout. The default path is `../thaumcraft-4-reforged` (matching CI); locally it can be overridden with `-Ptc4rPath=../thaumcraft-4-reforged-notlikethiss`. CI checks out a pinned TC4R commit; when changing or debugging an API, compare the local source with the revision pinned in `.github/workflows/ci.yml`.
 
 For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` rather than semantic guesses.
 
@@ -44,7 +44,8 @@ Until the host provides a required native hook, TH may implement it through a mi
 
 ## Current add-on hooks and public API
 
-- Verified against local `feat/addon-api` `455a33f961ecd6b7a3dbf5fd7ff7bcbc3b923d9d`; CI pins the earlier `c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb`, which also contains every API currently consumed.
+- CI pins `feat/addon-api` `388aebb2ed9f7af45c580792f8f59976ea9a822b`. Only four additive hook groups are still consumed from that branch: `Wands.isWand` accepting `WandItem` subclasses, the golem stats/texture extension points, `FxProxy.machineBeam`, and `NodeTransducerBlockEntity.stopForVortexConversion()`. Recipe duplicate rejection, infusion-page parents and the unused/no-op FX hooks are now handled inside THR; creature-infusion pages were dead code and were removed.
+- Target state: move those four hooks into `notlikethiss/thaumcraft-4-reforged`, then drop the composite build and the CI pin and depend on the published `thaumcraft:thaumcraft-4-reforged:1.1.3+` artifact. Until that release exists, the pin stays.
 - Public scan API used by Scholar lens: `ScanManager` and `ScanKind`. The TH `LensScanPayload` independently revalidates goggles/lens, range and target on the server; no TC4R client networking is imported.
 - Public rendering helpers allowed for legacy machine renderers: `FacingQuads`, `ModelBoxGeometry`, `TcRenderTypes`, `EntityQuadSink`, `VertexQuadSink`, `WorldRendering` and `WardedRendering`. These are used only from `client/` and cover the original scanner, crystal, brain/jar and halo geometry without a second rendering convention.
 - `WandsRechargeMixin` and `VisStorageRechargeMixin` reject positive recharge and return no room for TH disposable wands. They do not change base wand behavior or require TC4R edits.

@@ -66,10 +66,8 @@ public final class InfusionCheatItem extends Item {
                 mob.setPersistenceRequired();
             }
             InfusionEntityEvents.applyInfusions(entity);
-            if (TcReforgedPort.fx.isAvailable()) {
-                TcReforgedPort.fx.burst(level,
-                    new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ()), 0xFFFFFF, 16);
-            }
+            TcReforgedPort.fx.burst(level,
+                new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ()), 0xFFFFFF, 16);
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;

@@ -50,8 +50,7 @@ public final class EssentiaDynamoRenderer implements BlockEntityRenderer<Essenti
         state.aspectColor = entity.essentia == null ? 0xFFFFFF : entity.essentia.getColor();
         state.color = 0xFF000000 | state.aspectColor;
         state.frame = level == null ? 0 : Math.floorMod((int) (level.getGameTime() * 1.25F + entity.getBlockPos().getX()), 16);
-        if (level != null && entity.essentia != null && entity.ticksProvided > 0 && level.isClientSide()
-            && TcReforgedPort.fx.isAvailable()) {
+        if (level != null && entity.essentia != null && entity.ticksProvided > 0 && level.isClientSide()) {
             long gameTime = level.getGameTime();
             if (gameTime % 4 == 0 && trailTicks.put(entity.getBlockPos(), gameTime) == null) {
                 TcReforgedPort.fx.essentiaTrail(level, entity.getBlockPos(),
