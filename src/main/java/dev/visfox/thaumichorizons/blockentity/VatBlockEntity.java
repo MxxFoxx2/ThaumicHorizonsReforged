@@ -330,6 +330,10 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         return entity.is(net.minecraft.tags.EntityTypeTags.UNDEAD);
     }
 
+    private static @Nullable EntityType<?> vanillaEntityType(String name) {
+        return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(name));
+    }
+
     private static @Nullable EntityType<?> incarnationType(Item item) {
         if (item == Items.BEEF) {
             return vanillaEntityType("cow");
@@ -917,16 +921,9 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             }
             if (out instanceof Integer id && finishLevel instanceof ServerLevel serverLevel) {
                 LivingEntity created = null;
-                if (id < 0) {
-                    EntityType<?> type = vanillaType(-id);
-                    if (type != null) {
-                        created = createFromType(type, serverLevel, contained);
-                    }
-                } else {
-                    EntityType<?> type = modEntityType(id);
-                    if (type != null) {
-                        created = createFromType(type, serverLevel, contained);
-                    }
+                EntityType<?> type = ThInfusionRecipes.outputEntityType(id);
+                if (type != null) {
+                    created = createFromType(type, serverLevel, contained);
                 }
                 if (created != null) {
                     created.snapTo(contained.getX(), contained.getY(), contained.getZ(), contained.getYRot(),
@@ -995,41 +992,6 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 value / divisor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             instance.addTransientModifier(modifier);
         }
-    }
-
-    private static @Nullable EntityType<?> vanillaType(int id) {
-        return switch (id) {
-            case 90 -> vanillaEntityType("pig");
-            case 92 -> vanillaEntityType("cow");
-            case 93 -> vanillaEntityType("chicken");
-            case 96 -> vanillaEntityType("mooshroom");
-            default -> null;
-        };
-    }
-
-    private static @Nullable EntityType<?> vanillaEntityType(String name) {
-        return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(name));
-    }
-
-    private static @Nullable EntityType<?> modEntityType(int id) {
-        return switch (id) {
-            case 2 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chromaticsheep"));
-            case 3 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "selfshearingsheep"));
-            case 4 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "guardianpanther"));
-            case 5 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "gravekeeper"));
-            case 6 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "familiar"));
-            case 7 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chocolatecow"));
-            case 9 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "scholarchicken"));
-            case 10 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "goldchicken"));
-            case 11 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "orepig"));
-            case 12 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "tainteaterpig"));
-            case 13 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed"));
-            case 14 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "seawolf"));
-            case 15 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "netherhound"));
-            case 16 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "lunarwolf"));
-            case 29 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "sheeder"));
-            default -> null;
-        };
     }
 
     public void killMe() {

@@ -483,5 +483,16 @@
   "entity.thaumichorizons.boat_thaumium": "Таумиевая лодка",
   "thaumichorizons.research.pocketPlane.gateway.caption": "Планарные врата",
   "thaumichorizons.research.pocketPlane.gateway.aperture": "Проём портала 3 × 3",
-  "thaumichorizons.research.pocketPlane.gateway.legend": "A: угол • E: древний камень • S: слот"
+  "thaumichorizons.research.pocketPlane.gateway.legend": "A: угол • E: древний камень • S: слот",
+  "critterInfusions.quickLimbs": "Быстрые конечности",
+  "critterInfusions.thaumClaws": "Таум-когти",
+  "critterInfusions.awakeBlood": "Пробуждённая кровь",
+  "critterInfusions.diamondSkin": "Алмазная плоть",
+  "critterInfusions.enderHeart": "Эндер-сердце",
+  "critterInfusions.shockSkin": "Электрическая кожа",
+  "critterInfusions.instilledLoyalty": "Внушённая верность",
+  "critterInfusions.portability": "Портативность",
+  "critterInfusions.runicHide": "Рунная шкура",
+  "critterInfusions.eldritchFangs": "Клыки древних",
+  "thaumichorizons.research.critter.instability": "Нестабильность: %s"
 }
