@@ -1,9 +1,57 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "thaumichorizons:item/syringeblood",
-    "model": {
-      "type": "thaumichorizons:syringe"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui"
+        ],
+        "model": {
+          "type": "thaumcraft:special_owner",
+          "base": "thaumichorizons:item/syringeblood",
+          "model": {
+            "type": "thaumcraft:wand",
+            "view": "inventory"
+          }
+        }
+      },
+      {
+        "when": [
+          "thirdperson_lefthand",
+          "thirdperson_righthand"
+        ],
+        "model": {
+          "type": "thaumcraft:special_owner",
+          "base": "thaumichorizons:item/syringeblood",
+          "model": {
+            "type": "thaumcraft:wand",
+            "view": "equipped"
+          }
+        }
+      },
+      {
+        "when": [
+          "firstperson_lefthand",
+          "firstperson_righthand"
+        ],
+        "model": {
+          "type": "thaumcraft:special_owner",
+          "base": "thaumichorizons:item/syringeblood",
+          "model": {
+            "type": "thaumcraft:wand",
+            "view": "first_person"
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "thaumcraft:special_owner",
+      "base": "thaumichorizons:item/syringeblood",
+      "model": {
+        "type": "thaumcraft:wand",
+        "view": "entity"
+      }
     }
   }
 }

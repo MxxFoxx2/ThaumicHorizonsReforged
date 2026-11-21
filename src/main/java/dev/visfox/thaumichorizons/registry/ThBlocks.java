@@ -115,7 +115,7 @@ public final class ThBlocks {
             .noLootTable().noCollision().lightLevel(state -> 15).sound(SoundType.WOOL)));
     public static final DeferredBlock<VortexStabilizerBlock> VORTEX_STABILIZER = withItem(BLOCKS.registerBlock("vortexstabilizer",
         VortexStabilizerBlock::new, properties -> properties.mapColor(MapColor.METAL).strength(10.0F, 0.0F)
-            .sound(SoundType.METAL)));
+            .sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<AlchemiteBlock> ALCHEMITE = withItem(BLOCKS.registerBlock("alchemite",
         AlchemiteBlock::new, properties -> properties.mapColor(MapColor.COLOR_CYAN).strength(0.7F, 1.0F)
             .lightLevel(state -> 7).sound(SoundType.GRASS)));

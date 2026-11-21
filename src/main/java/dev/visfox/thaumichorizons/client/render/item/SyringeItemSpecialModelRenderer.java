@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
@@ -15,17 +16,29 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
+import thaumcraft.client.render.LegacyItemView;
 
 import java.util.function.Consumer;
 
-/** Restores the legacy translucent 3D syringe model for all four syringe item families. */
+/**
+ * Restores the legacy translucent 3D syringe model for all four syringe item families.
+ * The OBJ (long axis X, centered at origin) is stood upright and re-based to the same
+ * "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer} expects, then placed
+ * per legacy view: inventory isometric, held in hand, ground entity.
+ */
 public final class SyringeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/syringe.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/syringe.png");
     private static final Vector3f MIN = new Vector3f(-0.93F, -0.18F, -0.18F);
     private static final Vector3f MAX = new Vector3f(0.93F, 0.30F, 0.30F);
+    private static final float SCALE = 0.7F;
 
     private final ObjModel model = ObjModel.get(MODEL);
+    private final LegacyItemView view;
+
+    public SyringeItemSpecialModelRenderer(LegacyItemView view) {
+        this.view = view;
+    }
 
     @Override
     public @Nullable Integer extractArgument(ItemStack stack) {
@@ -63,9 +76,11 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         }
 
         poseStack.pushPose();
-        // ModelSyringe's old inventory renderer used scale 0.125 and y=-2.75.
-        poseStack.scale(0.125F, 0.125F, 0.125F);
-        poseStack.translate(0.0F, -22.0F, 0.0F);
+        transform(poseStack);
+        // stand the X-long needle up and put its base on the frame origin
+        poseStack.rotateDegrees(Axis.ZP, 90.0F);
+        poseStack.scale(SCALE, SCALE, SCALE);
+        poseStack.translate(0.0F, -MIN.x, 0.0F);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE), (pose, buffer) -> {
             model.renderPart("Body", pose, buffer, bodyColor, lightCoords);
             model.renderPart("Needle", pose, buffer, 0xFFFFFFFF, lightCoords);
@@ -75,8 +90,18 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         poseStack.popPose();
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked<Integer> {
-        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
+    private void transform(PoseStack poseStack) {
+        view.apply(poseStack);
+        switch (view) {
+            case INVENTORY -> poseStack.rotateDegrees(Axis.ZP, 66.0F);
+            case EQUIPPED, FIRST_PERSON -> poseStack.translate(0.5F, 1.5F, 0.5F);
+            case ENTITY -> poseStack.translate(0.0F, 1.0F, 0.0F);
+        }
+        poseStack.rotateDegrees(Axis.XP, 180.0F);
+    }
+
+    public record Unbaked(LegacyItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
+        public static final MapCodec<Unbaked> MAP_CODEC = LegacyItemView.FIELD.xmap(Unbaked::new, Unbaked::view);
 
         @Override
         public MapCodec<Unbaked> type() {
@@ -85,7 +110,7 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
 
         @Override
         public SpecialModelRenderer<Integer> bake(SpecialModelRenderer.BakingContext context) {
-            return new SyringeItemSpecialModelRenderer();
+            return new SyringeItemSpecialModelRenderer(view);
         }
     }
 }

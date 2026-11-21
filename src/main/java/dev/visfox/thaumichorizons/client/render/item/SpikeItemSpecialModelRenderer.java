@@ -15,12 +15,15 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
+import thaumcraft.client.render.LegacyItemView;
 
 import java.util.function.Consumer;
 
 /**
  * Uses the reference OBJ and matching material texture for Spike block items.
- * The mesh uses the same scale and vertical offset as the legacy inventory renderer.
+ * The mesh (centered, ~1.05 tall) is re-based to the same "base at origin, +Y up"
+ * frame TC4R's {@code WandSpecialRenderer} expects, then placed per legacy view:
+ * inventory isometric, held in hand, ground entity.
  */
 public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL_ID = ThaumicHorizons.id("textures/models/spike.obj");
@@ -30,14 +33,15 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         ThaumicHorizons.id("textures/models/toothspike.png")
     };
 
-    private static final float MIN_X = -0.45304F;
-    private static final float MAX_X = 0.456295F;
     private static final float MIN_Y = -0.5075F;
     private static final float MAX_Y = 0.5425F;
-    private static final float MIN_Z = -0.539455F;
-    private static final float MAX_Z = 0.510545F;
 
     private final ObjModel model = ObjModel.get(MODEL_ID);
+    private final LegacyItemView view;
+
+    public SpikeItemSpecialModelRenderer(LegacyItemView view) {
+        this.view = view;
+    }
 
     @Override
     public @Nullable Integer extractArgument(ItemStack stack) {
@@ -50,14 +54,14 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(MIN_X, MIN_Y, MIN_Z));
-        output.accept(new Vector3f(MIN_X, MIN_Y, MAX_Z));
-        output.accept(new Vector3f(MIN_X, MAX_Y, MIN_Z));
-        output.accept(new Vector3f(MIN_X, MAX_Y, MAX_Z));
-        output.accept(new Vector3f(MAX_X, MIN_Y, MIN_Z));
-        output.accept(new Vector3f(MAX_X, MIN_Y, MAX_Z));
-        output.accept(new Vector3f(MAX_X, MAX_Y, MIN_Z));
-        output.accept(new Vector3f(MAX_X, MAX_Y, MAX_Z));
+        output.accept(new Vector3f(-0.45304F, MIN_Y, -0.539455F));
+        output.accept(new Vector3f(-0.45304F, MIN_Y, 0.510545F));
+        output.accept(new Vector3f(-0.45304F, MAX_Y, -0.539455F));
+        output.accept(new Vector3f(-0.45304F, MAX_Y, 0.510545F));
+        output.accept(new Vector3f(0.456295F, MIN_Y, -0.539455F));
+        output.accept(new Vector3f(0.456295F, MIN_Y, 0.510545F));
+        output.accept(new Vector3f(0.456295F, MAX_Y, -0.539455F));
+        output.accept(new Vector3f(0.456295F, MAX_Y, 0.510545F));
     }
 
     @Override
@@ -68,9 +72,10 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         }
 
         poseStack.pushPose();
+        transform(poseStack);
+        // legacy mesh: centered at origin, so shift its base onto the frame origin
+        poseStack.translate(0.0F, -MIN_Y, 0.0F);
         poseStack.rotateDegrees(Axis.YP, 90.0F);
-        poseStack.scale(0.35F, 0.35F, 0.35F);
-        poseStack.translate(0.0F, -1.45F, 0.0F);
 
         Identifier texture = TEXTURES[spikeType];
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(texture),
@@ -78,8 +83,18 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         poseStack.popPose();
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked<Integer> {
-        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
+    private void transform(PoseStack poseStack) {
+        view.apply(poseStack);
+        switch (view) {
+            case INVENTORY -> poseStack.rotateDegrees(Axis.ZP, 66.0F);
+            case EQUIPPED, FIRST_PERSON -> poseStack.translate(0.5F, 1.5F, 0.5F);
+            case ENTITY -> poseStack.translate(0.0F, 1.0F, 0.0F);
+        }
+        poseStack.rotateDegrees(Axis.XP, 180.0F);
+    }
+
+    public record Unbaked(LegacyItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
+        public static final MapCodec<Unbaked> MAP_CODEC = LegacyItemView.FIELD.xmap(Unbaked::new, Unbaked::view);
 
         @Override
         public MapCodec<Unbaked> type() {
@@ -88,7 +103,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
         @Override
         public SpecialModelRenderer<Integer> bake(SpecialModelRenderer.BakingContext context) {
-            return new SpikeItemSpecialModelRenderer();
+            return new SpikeItemSpecialModelRenderer(view);
         }
     }
 }

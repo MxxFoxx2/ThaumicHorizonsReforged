@@ -53,6 +53,7 @@ THAUMCRAFT_API = [
     "thaumcraft.client.geom.QuadSink",
     "thaumcraft.client.platform.EntityQuadSink",
     "thaumcraft.client.platform.TcRenderTypes",
+    "thaumcraft.client.render.LegacyItemView",
     "thaumcraft.client.render.device.WardedRendering",
     "thaumcraft.client.render.entity.golem.GolemRenderer",
     "thaumcraft.crafting.ArcaneCrafting",
