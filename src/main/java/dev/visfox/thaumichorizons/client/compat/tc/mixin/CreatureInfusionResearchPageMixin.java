@@ -17,39 +17,92 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import thaumcraft.client.recipeview.AspectGrid;
 import thaumcraft.research.ResearchPage;
 
-/** Draws creature infusion recipes (aspects, catalysts, instability) on their dedicated research pages. */
+/** Draws creature and self infusion recipes (aspects, catalysts, instability) on their dedicated research pages. */
 @Mixin(targets = "thaumcraft.client.research.ResearchPageScreen")
 abstract class CreatureInfusionResearchPageMixin {
-    private static final String PAGE_PREFIX = "textures/misc/creature_page/";
+    private static final String CREATURE_PAGE_PREFIX = "textures/misc/creature_page/";
+    private static final String SELF_PAGE_PREFIX = "textures/misc/self_page/";
     private static final int CONTENT_WIDTH = 138;
     private static final int GRID_TOP = 28;
     private static final int MAX_SHOWN_COMPONENTS = 7;
 
     @Inject(method = "drawPage", at = @At("TAIL"))
-    private void thaumichorizons$drawCreaturePage(GuiGraphicsExtractor graphics, @Coerce Object display,
+    private void thaumichorizons$drawInfusionPage(GuiGraphicsExtractor graphics, @Coerce Object display,
         int side, int x, int y, CallbackInfo callback) {
         if (!(display instanceof DisplayPageAccessor accessor)
             || !(accessor.thaumichorizons$getSource() instanceof ResearchPage.Image image)
-            || !ThaumicHorizons.MODID.equals(image.image().getNamespace())
-            || !image.image().getPath().startsWith(PAGE_PREFIX)) {
+            || !ThaumicHorizons.MODID.equals(image.image().getNamespace())) {
             return;
         }
 
-        ThInfusionRecipes.CreatureInfusionRecipe recipe = recipe(image.image().getPath());
-        if (recipe == null) {
+        String path = image.image().getPath();
+        String marker = markerSuffix(path);
+        if (marker == null) {
+            return;
+        }
+        String research = marker.substring(0, marker.indexOf('/'));
+        int index;
+        try {
+            index = Integer.parseInt(marker.substring(marker.indexOf('/') + 1, marker.length() - 4));
+        } catch (NumberFormatException exception) {
             return;
         }
 
+        if (path.startsWith(CREATURE_PAGE_PREFIX)) {
+            ThInfusionRecipes.CreatureInfusionRecipe recipe = recipe(ThInfusionRecipes.getCritterRecipes(),
+                research, index, CreatureInfusionResearchPageMixin::creatureRecipeKey);
+            if (recipe != null) {
+                draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
+                    creatureTitle(recipe));
+            }
+        } else {
+            ThInfusionRecipes.SelfInfusionRecipe recipe = recipe(ThInfusionRecipes.getSelfRecipes(),
+                research, index, ThInfusionRecipes.SelfInfusionRecipe::getResearch);
+            if (recipe != null) {
+                draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
+                    Component.translatable("tc.research_name." + research));
+            }
+        }
+    }
+
+    /** Marker paths are lowercase because {@code Identifier} rejects camelCase; research keys compare case-insensitively. */
+    private static @Nullable String markerSuffix(String path) {
+        if (path.startsWith(CREATURE_PAGE_PREFIX)) {
+            return path.substring(CREATURE_PAGE_PREFIX.length());
+        }
+        if (path.startsWith(SELF_PAGE_PREFIX)) {
+            return path.substring(SELF_PAGE_PREFIX.length());
+        }
+        return null;
+    }
+
+    private interface RecipeKey<T> {
+        String key(T recipe);
+    }
+
+    private static <T> @Nullable T recipe(Iterable<T> recipes, String research, int index, RecipeKey<T> key) {
+        int seen = 0;
+        for (T candidate : recipes) {
+            if (key.key(candidate).equalsIgnoreCase(research)) {
+                if (seen == index) {
+                    return candidate;
+                }
+                seen++;
+            }
+        }
+        return null;
+    }
+
+    private static void draw(GuiGraphicsExtractor graphics, int side, int x, int y,
+        thaumcraft.aspect.AspectList aspects, ItemStack[] components, int instability, Component title) {
         int pageX = x - 15 + side * 152;
         Minecraft minecraft = Minecraft.getInstance();
 
-        graphics.centeredText(minecraft.font, title(recipe), pageX + CONTENT_WIDTH / 2, y + 9, 0xFF505050);
+        graphics.centeredText(minecraft.font, title, pageX + CONTENT_WIDTH / 2, y + 9, 0xFF505050);
 
-        thaumcraft.aspect.AspectList aspects = recipe.getAspects();
         int rows = AspectGrid.rows(aspects, 4);
         AspectGrid.draw(graphics, aspects, 4, CONTENT_WIDTH, pageX + 7, y + GRID_TOP);
 
-        ItemStack[] components = recipe.getComponents();
         int componentsTop = y + GRID_TOP + rows * AspectGrid.SIZE + 12;
         int shown = Math.min(components.length, MAX_SHOWN_COMPONENTS);
         int startX = pageX + 7 + (CONTENT_WIDTH - shown * AspectGrid.SIZE) / 2;
@@ -60,36 +113,11 @@ abstract class CreatureInfusionResearchPageMixin {
         }
 
         graphics.centeredText(minecraft.font,
-            Component.translatable("thaumichorizons.research.critter.instability", recipe.getInstability()),
+            Component.translatable("thaumichorizons.research.critter.instability", instability),
             pageX + CONTENT_WIDTH / 2, componentsTop + 22, 0xFF777777);
     }
 
-    private static ThInfusionRecipes.@Nullable CreatureInfusionRecipe recipe(String path) {
-        String rest = path.substring(PAGE_PREFIX.length());                 // "<research>/<index>.png"
-        int slash = rest.indexOf('/');
-        if (slash <= 0 || !rest.endsWith(".png")) {
-            return null;
-        }
-        String research = rest.substring(0, slash);
-        int index;
-        try {
-            index = Integer.parseInt(rest.substring(slash + 1, rest.length() - 4));
-        } catch (NumberFormatException exception) {
-            return null;
-        }
-        int seen = 0;
-        for (ThInfusionRecipes.CreatureInfusionRecipe candidate : ThInfusionRecipes.getCritterRecipes()) {
-            if (candidate.getResearch().equalsIgnoreCase(research)) {
-                if (seen == index) {
-                    return candidate;
-                }
-                seen++;
-            }
-        }
-        return null;
-    }
-
-    private static Component title(ThInfusionRecipes.CreatureInfusionRecipe recipe) {
+    private static Component creatureTitle(ThInfusionRecipes.CreatureInfusionRecipe recipe) {
         Object output = recipe.getRecipeOutput();
         if (output instanceof Integer id && id != 0) {
             EntityType<?> type = ThInfusionRecipes.outputEntityType(id);
@@ -105,5 +133,9 @@ abstract class CreatureInfusionResearchPageMixin {
             }
         }
         return Component.translatable(recipe.getResearch());
+    }
+
+    private static String creatureRecipeKey(ThInfusionRecipes.CreatureInfusionRecipe recipe) {
+        return recipe.getResearch();
     }
 }
