@@ -52,6 +52,7 @@ THAUMCRAFT_API = [
     "thaumcraft.client.geom.ModelBoxGeometry",
     "thaumcraft.client.geom.QuadSink",
     "thaumcraft.client.platform.EntityQuadSink",
+    "thaumcraft.client.platform.ItemGeometry",
     "thaumcraft.client.platform.TcRenderTypes",
     "thaumcraft.client.render.LegacyItemView",
     "thaumcraft.client.render.device.WardedRendering",

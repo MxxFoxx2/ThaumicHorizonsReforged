@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
+import thaumcraft.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -81,12 +81,14 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         poseStack.rotateDegrees(Axis.ZP, 90.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
         poseStack.translate(0.0F, -MIN.x, 0.0F);
-        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE), (pose, buffer) -> {
-            model.renderPart("Body", pose, buffer, bodyColor, lightCoords);
-            model.renderPart("Needle", pose, buffer, 0xFFFFFFFF, lightCoords);
-            model.renderPart("PlungerA", pose, buffer, 0xFFFFFFFF, lightCoords);
-            model.renderPart("PlungerB", pose, buffer, 0xFFFFFFFF, lightCoords);
-        });
+        ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, true,
+            sink -> model.renderSink("Body", sink, bodyColor, lightCoords));
+        ItemGeometry.solid(collector.order(1), poseStack, TEXTURE, false,
+            sink -> {
+                model.renderSink("Needle", sink, 0xFFFFFFFF, lightCoords);
+                model.renderSink("PlungerA", sink, 0xFFFFFFFF, lightCoords);
+                model.renderSink("PlungerB", sink, 0xFFFFFFFF, lightCoords);
+            });
         poseStack.popPose();
     }
 
