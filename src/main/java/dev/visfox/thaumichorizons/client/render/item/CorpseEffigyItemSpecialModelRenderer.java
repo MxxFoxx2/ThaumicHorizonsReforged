@@ -75,7 +75,7 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
         poseStack.pushPose();
         transform(poseStack);
         // the OBJ is legacy Y-down with the head above the origin: flip upright, feet on the frame origin
-        poseStack.scale(1.0F, -1.0F, 1.0F);
+        poseStack.rotateDegrees(Axis.XP, 180.0F);
         poseStack.translate(0.0F, 24.0F, 0.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, false,

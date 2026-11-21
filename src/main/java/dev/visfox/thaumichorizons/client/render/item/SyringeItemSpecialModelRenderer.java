@@ -73,7 +73,7 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
             transform(poseStack);
             poseStack.rotateDegrees(Axis.ZP, 90.0F);
             poseStack.scale(SCALE, SCALE, SCALE);
-            poseStack.translate(0.0F, 7.0F, 0.0F);
+            poseStack.translate(22.5F, 7.0F, 0.0F);
             output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
     }
@@ -90,7 +90,7 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         // stand the X-long needle up and put the plunger end on the frame origin
         poseStack.rotateDegrees(Axis.ZP, 90.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.translate(0.0F, 7.0F, 0.0F);
+        poseStack.translate(22.5F, 7.0F, 0.0F);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, true,
             sink -> model.renderSink("Body", sink, bodyColor, lightCoords));
         ItemGeometry.solid(collector.order(1), poseStack, TEXTURE, false,

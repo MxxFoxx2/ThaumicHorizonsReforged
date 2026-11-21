@@ -93,7 +93,9 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
     private void transform(PoseStack poseStack) {
         view.apply(poseStack);
         switch (view) {
-            case INVENTORY -> poseStack.rotateDegrees(Axis.ZP, 66.0F);
+            case INVENTORY -> {
+                // no wand tilt: the spike stands upright in the slot
+            }
             case EQUIPPED, FIRST_PERSON -> poseStack.translate(0.5F, 1.5F, 0.5F);
             case ENTITY -> poseStack.translate(0.0F, 1.0F, 0.0F);
         }
