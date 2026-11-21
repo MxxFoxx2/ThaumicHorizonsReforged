@@ -494,5 +494,8 @@
   "critterInfusions.portability": "Портативность",
   "critterInfusions.runicHide": "Рунная шкура",
   "critterInfusions.eldritchFangs": "Клыки древних",
-  "thaumichorizons.research.critter.instability": "Нестабильность: %s"
+  "thaumichorizons.research.critter.instability": "Нестабильность: %s",
+  "block.thaumichorizons.spiketh": "Металлический шип",
+  "block.thaumichorizons.spikewoodth": "Деревянный шип",
+  "block.thaumichorizons.spiketoothth": "Зуб"
 }
