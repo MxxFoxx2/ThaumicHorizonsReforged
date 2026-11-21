@@ -8,19 +8,20 @@
       "model": "thaumichorizons:block/vortexstabilizer"
     },
     "facing=north": {
-      "model": "thaumichorizons:block/vortexstabilizer",
-      "y": 180
+      "model": "thaumichorizons:block/vortexstabilizer_north"
     },
     "facing=south": {
-      "model": "thaumichorizons:block/vortexstabilizer"
+      "model": "thaumichorizons:block/vortexstabilizer_south"
     },
     "facing=west": {
       "model": "thaumichorizons:block/vortexstabilizer",
+      "x": 270,
       "y": 90
     },
     "facing=east": {
       "model": "thaumichorizons:block/vortexstabilizer",
-      "y": 270
+      "x": 90,
+      "y": 90
     }
   }
 }
