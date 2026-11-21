@@ -8,10 +8,10 @@
           "gui"
         ],
         "model": {
-          "type": "thaumcraft:special_owner",
+          "type": "minecraft:special",
           "base": "thaumichorizons:item/syringeinjection",
           "model": {
-            "type": "thaumcraft:wand",
+            "type": "thaumichorizons:syringe",
             "view": "inventory"
           }
         }
@@ -22,10 +22,10 @@
           "thirdperson_righthand"
         ],
         "model": {
-          "type": "thaumcraft:special_owner",
+          "type": "minecraft:special",
           "base": "thaumichorizons:item/syringeinjection",
           "model": {
-            "type": "thaumcraft:wand",
+            "type": "thaumichorizons:syringe",
             "view": "equipped"
           }
         }
@@ -36,20 +36,20 @@
           "firstperson_righthand"
         ],
         "model": {
-          "type": "thaumcraft:special_owner",
+          "type": "minecraft:special",
           "base": "thaumichorizons:item/syringeinjection",
           "model": {
-            "type": "thaumcraft:wand",
+            "type": "thaumichorizons:syringe",
             "view": "first_person"
           }
         }
       }
     ],
     "fallback": {
-      "type": "thaumcraft:special_owner",
+      "type": "minecraft:special",
       "base": "thaumichorizons:item/syringeinjection",
       "model": {
-        "type": "thaumcraft:wand",
+        "type": "thaumichorizons:syringe",
         "view": "entity"
       }
     }
