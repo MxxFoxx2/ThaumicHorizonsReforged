@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.SpikeBlock;
-import thaumcraft.client.platform.ItemGeometry;
+import dev.visfox.thaumichorizons.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
@@ -21,9 +21,9 @@ import java.util.function.Consumer;
 
 /**
  * Uses the reference OBJ and matching material texture for Spike block items.
- * The mesh (centered, ~1.05 tall) is re-based to the same "base at origin, +Y up"
- * frame TC4R's {@code WandSpecialRenderer} expects, then placed per legacy view:
- * inventory isometric, held in hand, ground entity.
+ * The OBJ is legacy-scale (3 units tall, base at y 0): it is scaled to ~1 block and
+ * re-based to the "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer}
+ * expects, per legacy view.
  */
 public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL_ID = ThaumicHorizons.id("textures/models/spike.obj");
@@ -32,9 +32,19 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         ThaumicHorizons.id("textures/models/woodenspike.png"),
         ThaumicHorizons.id("textures/models/toothspike.png")
     };
+    /** mesh: y 0 (base) .. 3 (tip), x -1.46 .. 1.54, z +-1.3; scale puts 3 units at 1.05 blocks */
+    private static final float SCALE = 0.35F;
 
-    private static final float MIN_Y = -0.5075F;
-    private static final float MAX_Y = 0.5425F;
+    private static final Vector3f[] MESH_CORNERS = {
+        new Vector3f(-1.46F, 0.0F, -1.29F),
+        new Vector3f(-1.46F, 0.0F, 1.30F),
+        new Vector3f(-1.46F, 3.0F, -1.29F),
+        new Vector3f(-1.46F, 3.0F, 1.30F),
+        new Vector3f(1.54F, 0.0F, -1.29F),
+        new Vector3f(1.54F, 0.0F, 1.30F),
+        new Vector3f(1.54F, 3.0F, -1.29F),
+        new Vector3f(1.54F, 3.0F, 1.30F)
+    };
 
     private final ObjModel model = ObjModel.get(MODEL_ID);
     private final LegacyItemView view;
@@ -54,14 +64,13 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(-0.45304F, MIN_Y, -0.539455F));
-        output.accept(new Vector3f(-0.45304F, MIN_Y, 0.510545F));
-        output.accept(new Vector3f(-0.45304F, MAX_Y, -0.539455F));
-        output.accept(new Vector3f(-0.45304F, MAX_Y, 0.510545F));
-        output.accept(new Vector3f(0.456295F, MIN_Y, -0.539455F));
-        output.accept(new Vector3f(0.456295F, MIN_Y, 0.510545F));
-        output.accept(new Vector3f(0.456295F, MAX_Y, -0.539455F));
-        output.accept(new Vector3f(0.456295F, MAX_Y, 0.510545F));
+        for (Vector3f corner : MESH_CORNERS) {
+            PoseStack poseStack = new PoseStack();
+            transform(poseStack);
+            poseStack.scale(SCALE, SCALE, SCALE);
+            poseStack.rotateDegrees(Axis.YP, 90.0F);
+            output.accept(corner.transform(poseStack.last().pose()));
+        }
     }
 
     @Override
@@ -73,8 +82,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
         poseStack.pushPose();
         transform(poseStack);
-        // legacy mesh: centered at origin, so shift its base onto the frame origin
-        poseStack.translate(0.0F, -MIN_Y, 0.0F);
+        poseStack.scale(SCALE, SCALE, SCALE);
         poseStack.rotateDegrees(Axis.YP, 90.0F);
 
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURES[spikeType], false,

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import thaumcraft.client.platform.ItemGeometry;
+import dev.visfox.thaumichorizons.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -20,14 +20,15 @@ import java.util.function.Consumer;
 
 /**
  * Reuses the ModelBiped-derived Corpse Effigy mesh for item, ground and hand rendering.
- * The mesh (legacy Y-down, ~2.1 tall) is flipped upright, re-based to the same
- * "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer} expects and scaled
- * to wand height, then placed per legacy view: inventory isometric, held, ground entity.
+ * The OBJ is legacy-scale (32 units = 2 blocks, Y-down, head at y -8): it is flipped
+ * upright, scaled to wand height and re-based to the "base at origin, +Y up" frame
+ * TC4R's {@code WandSpecialRenderer} expects, per legacy view.
  */
 public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelRenderer<Boolean> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/corpseeffigy.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/block/corpseeffigy.png");
-    private static final float SCALE = 0.65F;
+    /** mesh: y -8 (head) .. 24 (feet), x +-8, z +-4; scale puts 32 units at 1.4 blocks */
+    private static final float SCALE = 0.04375F;
 
     private final ObjModel model = ObjModel.get(MODEL);
     private final LegacyItemView view;
@@ -41,16 +42,27 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
         return stack.is(ThItems.CORPSE_EFFIGY.get()) ? Boolean.TRUE : null;
     }
 
+    private static final Vector3f[] MESH_CORNERS = {
+        new Vector3f(-8.0F, -8.0F, -4.0F),
+        new Vector3f(-8.0F, -8.0F, 4.0F),
+        new Vector3f(-8.0F, 24.0F, -4.0F),
+        new Vector3f(-8.0F, 24.0F, 4.0F),
+        new Vector3f(8.0F, -8.0F, -4.0F),
+        new Vector3f(8.0F, -8.0F, 4.0F),
+        new Vector3f(8.0F, 24.0F, -4.0F),
+        new Vector3f(8.0F, 24.0F, 4.0F)
+    };
+
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(-0.55F, -1.10F, -0.30F));
-        output.accept(new Vector3f(-0.55F, -1.10F, 0.30F));
-        output.accept(new Vector3f(-0.55F, 1.00F, -0.30F));
-        output.accept(new Vector3f(-0.55F, 1.00F, 0.30F));
-        output.accept(new Vector3f(0.55F, -1.10F, -0.30F));
-        output.accept(new Vector3f(0.55F, -1.10F, 0.30F));
-        output.accept(new Vector3f(0.55F, 1.00F, -0.30F));
-        output.accept(new Vector3f(0.55F, 1.00F, 0.30F));
+        for (Vector3f corner : MESH_CORNERS) {
+            PoseStack poseStack = new PoseStack();
+            transform(poseStack);
+            poseStack.scale(1.0F, -1.0F, 1.0F);
+            poseStack.translate(0.0F, 24.0F, 0.0F);
+            poseStack.scale(SCALE, SCALE, SCALE);
+            output.accept(corner.transform(poseStack.last().pose()));
+        }
     }
 
     @Override
@@ -62,10 +74,9 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
 
         poseStack.pushPose();
         transform(poseStack);
-        // the OBJ is legacy Y-down (head at -1.10): flip upright and put the feet on the frame origin
-        poseStack.rotateDegrees(Axis.ZP, 180.0F);
-        poseStack.rotateDegrees(Axis.YP, 180.0F);
-        poseStack.translate(0.0F, 1.00F, 0.0F);
+        // the OBJ is legacy Y-down with the head above the origin: flip upright, feet on the frame origin
+        poseStack.scale(1.0F, -1.0F, 1.0F);
+        poseStack.translate(0.0F, 24.0F, 0.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, false,
             sink -> model.renderSink("effigy", sink, 0xFFFFFFFF, lightCoords));

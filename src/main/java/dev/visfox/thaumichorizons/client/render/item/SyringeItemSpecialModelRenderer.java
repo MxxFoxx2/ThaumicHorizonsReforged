@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import thaumcraft.client.platform.ItemGeometry;
+import dev.visfox.thaumichorizons.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -22,16 +22,15 @@ import java.util.function.Consumer;
 
 /**
  * Restores the legacy translucent 3D syringe model for all four syringe item families.
- * The OBJ (long axis X, centered at origin) is stood upright and re-based to the same
- * "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer} expects, then placed
- * per legacy view: inventory isometric, held in hand, ground entity.
+ * The OBJ is legacy-scale (15 units long on X, lying at y 21..24): it is stood up on its
+ * base, scaled to wand height and re-based to the "base at origin, +Y up" frame TC4R's
+ * {@code WandSpecialRenderer} expects, per legacy view.
  */
 public final class SyringeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/syringe.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/syringe.png");
-    private static final Vector3f MIN = new Vector3f(-0.93F, -0.18F, -0.18F);
-    private static final Vector3f MAX = new Vector3f(0.93F, 0.30F, 0.30F);
-    private static final float SCALE = 0.7F;
+    /** mesh: x -7 (plunger) .. 8 (needle), 15 units long; scale puts 15 units at 1.3 blocks */
+    private static final float SCALE = 0.0867F;
 
     private final ObjModel model = ObjModel.get(MODEL);
     private final LegacyItemView view;
@@ -56,16 +55,27 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         return null;
     }
 
+    private static final Vector3f[] MESH_CORNERS = {
+        new Vector3f(-7.0F, 21.0F, -1.0F),
+        new Vector3f(-7.0F, 21.0F, 2.0F),
+        new Vector3f(-7.0F, 24.0F, -1.0F),
+        new Vector3f(-7.0F, 24.0F, 2.0F),
+        new Vector3f(8.0F, 21.0F, -1.0F),
+        new Vector3f(8.0F, 21.0F, 2.0F),
+        new Vector3f(8.0F, 24.0F, -1.0F),
+        new Vector3f(8.0F, 24.0F, 2.0F)
+    };
+
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(MIN.x, MIN.y, MIN.z));
-        output.accept(new Vector3f(MIN.x, MIN.y, MAX.z));
-        output.accept(new Vector3f(MIN.x, MAX.y, MIN.z));
-        output.accept(new Vector3f(MIN.x, MAX.y, MAX.z));
-        output.accept(new Vector3f(MAX.x, MIN.y, MIN.z));
-        output.accept(new Vector3f(MAX.x, MIN.y, MAX.z));
-        output.accept(new Vector3f(MAX.x, MAX.y, MIN.z));
-        output.accept(new Vector3f(MAX.x, MAX.y, MAX.z));
+        for (Vector3f corner : MESH_CORNERS) {
+            PoseStack poseStack = new PoseStack();
+            transform(poseStack);
+            poseStack.rotateDegrees(Axis.ZP, 90.0F);
+            poseStack.scale(SCALE, SCALE, SCALE);
+            poseStack.translate(0.0F, 7.0F, 0.0F);
+            output.accept(corner.transform(poseStack.last().pose()));
+        }
     }
 
     @Override
@@ -77,10 +87,10 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
 
         poseStack.pushPose();
         transform(poseStack);
-        // stand the X-long needle up and put its base on the frame origin
+        // stand the X-long needle up and put the plunger end on the frame origin
         poseStack.rotateDegrees(Axis.ZP, 90.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.translate(0.0F, -MIN.x, 0.0F);
+        poseStack.translate(0.0F, 7.0F, 0.0F);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, true,
             sink -> model.renderSink("Body", sink, bodyColor, lightCoords));
         ItemGeometry.solid(collector.order(1), poseStack, TEXTURE, false,
