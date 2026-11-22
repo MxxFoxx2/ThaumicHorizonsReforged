@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.crafting;
 
 import dev.visfox.thaumichorizons.item.SyringeKeys;
+import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.resources.Identifier;
@@ -13,7 +14,6 @@ import thaumcraft.crafting.ShapedArcaneRecipe;
 import thaumcraft.crafting.ShapelessArcaneRecipe;
 import thaumcraft.crafting.TcIngredient;
 import thaumcraft.crafting.TcRecipes;
-import thaumcraft.crafting.TcRecipe;
 import thaumcraft.crafting.TcStack;
 
 public final class ThRecipes {
@@ -41,13 +41,6 @@ public final class ThRecipes {
         infusionRecombinator();
         mirrorAmulet();
         advancedGolem();
-    }
-
-    private static <T extends TcRecipe> T registerUnique(T recipe) {
-        if (TcRecipes.get(recipe.key()) != null) {
-            throw new IllegalStateException("Duplicate Thaumic Horizons recipe key: " + recipe.key());
-        }
-        return TcRecipes.register(recipe);
     }
 
     private static void registerPhialData() {
