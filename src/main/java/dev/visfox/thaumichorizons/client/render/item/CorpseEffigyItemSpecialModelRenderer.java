@@ -64,10 +64,9 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
 
     private void transformModel(PoseStack poseStack) {
         transform(poseStack);
-        // PoseStack post-multiplies: flip the legacy Y-down mesh, move its feet to zero, then scale.
+        // The shared view transform already flips Y; rebase the feet to zero before scaling.
         poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.translate(0.0F, 24.0F, 0.0F);
-        poseStack.scale(1.0F, -1.0F, 1.0F);
+        poseStack.translate(0.0F, -24.0F, 0.0F);
     }
 
     @Override
