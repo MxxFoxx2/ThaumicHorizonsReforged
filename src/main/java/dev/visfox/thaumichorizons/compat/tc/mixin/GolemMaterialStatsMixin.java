@@ -1,7 +1,6 @@
 package dev.visfox.thaumichorizons.compat.tc.mixin;
 
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
