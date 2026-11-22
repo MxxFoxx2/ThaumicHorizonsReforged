@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
-import thaumcraft.entity.golem.GolemStats;
 
 /**
  * Own golem materials of Thaumic Horizons. Independent from the stock TC4R
@@ -32,6 +31,10 @@ public enum GolemMaterialTH {
     CAKE("cake", 20, 6, 0.35F, false, 2, 4, 25, 1, 750),
     WEB("web", 15, 6, 0.35F, false, 2, 4, 40, 1, 1000),
     VOID("void", 25, 15, 0.40F, true, 2, 8, 20, 3, 0);
+
+    public record MaterialStats(int health, int armor, float speed, boolean fireResist, int upgrades,
+        int carry, int regenDelay, int strength, int visCost, boolean heavy) {
+    }
 
     public static final GolemMaterialTH DEFAULT = VOID;
 
