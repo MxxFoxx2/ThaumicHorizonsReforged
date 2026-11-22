@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.SpikeBlock;
-import thaumcraft.client.platform.ItemGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
@@ -85,8 +85,11 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         poseStack.scale(SCALE, SCALE, SCALE);
         poseStack.rotateDegrees(Axis.YP, 90.0F);
 
-        ItemGeometry.solid(collector.order(0), poseStack, TEXTURES[spikeType], false,
-            sink -> model.renderSink(sink, 0xFFFFFFFF, lightCoords));
+        // spike.obj is triangle-only: EntityQuadSink derives normals from a duplicated
+        // fourth vertex and would render zero normals, so emit the OBJ faces directly
+        // with their authored normals and no backface culling.
+        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURES[spikeType]),
+            (pose, buffer) -> model.renderAll(pose, buffer, 0xFFFFFFFF, lightCoords));
         poseStack.popPose();
     }
 
