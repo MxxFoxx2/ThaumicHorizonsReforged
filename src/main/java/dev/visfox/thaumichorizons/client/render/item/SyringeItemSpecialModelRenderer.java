@@ -23,13 +23,13 @@ import java.util.function.Consumer;
 /**
  * Restores the legacy translucent 3D syringe model for all four syringe item families.
  * The OBJ is legacy-scale (15 units long on X, lying at y 21..24): it is stood up on its
- * base, scaled to wand height and re-based to the "base at origin, +Y up" frame TC4R's
- * {@code WandSpecialRenderer} expects, per legacy view.
+ * base (plunger at +X, needle at -X), scaled to wand height and re-based to the
+ * "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer} expects, per legacy view.
  */
 public final class SyringeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/syringe.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/syringe.png");
-    /** mesh: x -7 (plunger) .. 8 (needle), 15 units long; scale puts 15 units at 1.3 blocks */
+    /** mesh: x -7..-3 (needle) .. 6..8 (plunger), 15 units long; scale puts it at 1.3 blocks */
     private static final float SCALE = 0.0867F;
 
     private final ObjModel model = ObjModel.get(MODEL);
@@ -70,12 +70,17 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
     public void getExtents(Consumer<Vector3fc> output) {
         for (Vector3f corner : MESH_CORNERS) {
             PoseStack poseStack = new PoseStack();
-            transform(poseStack);
-            poseStack.rotateDegrees(Axis.ZP, 90.0F);
-            poseStack.scale(SCALE, SCALE, SCALE);
-            poseStack.translate(22.5F, 7.0F, 0.0F);
+            transformModel(poseStack);
             output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
+    }
+
+    private void transformModel(PoseStack poseStack) {
+        transform(poseStack);
+        // +X is the plunger end; center the OBJ cross-section and place x=8 at the frame origin.
+        poseStack.rotateDegrees(Axis.ZP, 90.0F);
+        poseStack.scale(SCALE, SCALE, SCALE);
+        poseStack.translate(-8.0F, -22.5F, -0.5F);
     }
 
     @Override
@@ -86,11 +91,7 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         }
 
         poseStack.pushPose();
-        transform(poseStack);
-        // stand the X-long needle up and put the plunger end on the frame origin
-        poseStack.rotateDegrees(Axis.ZP, 90.0F);
-        poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.translate(22.5F, 7.0F, 0.0F);
+        transformModel(poseStack);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, true,
             sink -> model.renderSink("Body", sink, bodyColor, lightCoords));
         ItemGeometry.solid(collector.order(1), poseStack, TEXTURE, false,
