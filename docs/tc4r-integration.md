@@ -47,6 +47,7 @@ Until the host provides a required native hook, TH may implement it through a mi
 - Verified against local `feat/addon-api` `455a33f961ecd6b7a3dbf5fd7ff7bcbc3b923d9d`; CI pins the earlier `c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb`, which also contains every API currently consumed.
 - Public scan API used by Scholar lens: `ScanManager` and `ScanKind`. The TH `LensScanPayload` independently revalidates goggles/lens, range and target on the server; no TC4R client networking is imported.
 - Public rendering helpers allowed for legacy machine renderers: `FacingQuads`, `ModelBoxGeometry`, `TcRenderTypes`, `EntityQuadSink`, `VertexQuadSink`, `WorldRendering` and `WardedRendering`. These are used only from `client/` and cover the original scanner, crystal, brain/jar and halo geometry without a second rendering convention.
+- `AspectGrid` is the host's public research-page aspect grid. TH uses it only in the client research-page mixin so creature and self-infusion pages render the same aspect layout as the host; an adapter would duplicate the host's grid geometry and constants.
 - `WandsRechargeMixin` and `VisStorageRechargeMixin` reject positive recharge and return no room for TH disposable wands. They do not change base wand behavior or require TC4R edits.
 - Client-only mixins live in `client/` and have separate `thaumichorizons-client.mixins.json` / `thaumichorizons-tc-client.mixins.json` packages; common mixins remain isolated in their own configs to avoid Mixin package ownership errors.
 

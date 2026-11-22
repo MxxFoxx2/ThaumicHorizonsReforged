@@ -232,8 +232,6 @@ public final class ThInfusionRecipes {
     public static @Nullable EntityType<?> outputEntityType(int id) {
         if (id < 0) {
             return switch (id) {
-                case -20 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("zombie_horse"));
-                case -21 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("skeleton_horse"));
                 case -90 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("pig"));
                 case -92 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("cow"));
                 case -93 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("chicken"));
@@ -256,6 +254,8 @@ public final class ThInfusionRecipes {
             case 14 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "seawolf"));
             case 15 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "netherhound"));
             case 16 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "lunarwolf"));
+            case 20 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_zombie"));
+            case 21 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_skeleton"));
             case 22 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "nightmare"));
             case 29 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "sheeder"));
             default -> null;

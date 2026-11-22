@@ -74,6 +74,7 @@ THAUMCRAFT_API = [
     "thaumcraft.entity.golem.GolemStats",
     "thaumcraft.entity.golem.GolemType",
     "thaumcraft.client.render.entity.golem.GolemRenderer",
+    "thaumcraft.client.recipeview.AspectGrid",
     "thaumcraft.client.geom.CubeGeometry",
     "thaumcraft.client.geom.QuadSink",
     "thaumcraft.client.geom.FacingQuads",
