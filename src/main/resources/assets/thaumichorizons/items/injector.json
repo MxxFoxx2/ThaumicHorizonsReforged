@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "thaumichorizons:item/injector"
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/injector_special_base",
+    "model": {
+      "type": "thaumichorizons:injector"
+    }
   }
 }
