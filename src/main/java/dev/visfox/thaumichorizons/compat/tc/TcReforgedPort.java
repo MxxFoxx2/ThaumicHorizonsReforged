@@ -578,12 +578,25 @@ public final class TcReforgedPort {
             fx().essentiaTrail(level, from, BlockPos.containing(to), 8, color, 1.0F);
         }
 
+        private void invokeOptionalFx(String method, Class<?>[] parameterTypes, Object[] arguments) {
+            try {
+                thaumcraft.fx.FxProxy.class.getMethod(method, parameterTypes).invoke(fx(), arguments);
+            } catch (NoSuchMethodException ignored) {
+                // Optional FX extensions are not part of the public stock TC4R 1.1.3 API.
+            } catch (ReflectiveOperationException exception) {
+                ThaumicHorizons.LOGGER.error("Failed to invoke optional TC4R FX extension: {}", method, exception);
+            }
+        }
+
         public void blocksplosion(Level level, BlockPos center, int color) {
-            fx().blocksplosion(level, center, color);
+            invokeOptionalFx("blocksplosion", new Class<?>[] {Level.class, BlockPos.class, int.class},
+                new Object[] {level, center, color});
         }
 
         public void containmentCapture(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().containmentCapture(level, pos.x, pos.y, pos.z, color);
+            invokeOptionalFx("containmentCapture",
+                new Class<?>[] {Level.class, double.class, double.class, double.class, int.class},
+                new Object[] {level, pos.x, pos.y, pos.z, color});
         }
 
         public void essentiaBubble(Level level, BlockPos pos, int color) {
@@ -591,7 +604,9 @@ public final class TcReforgedPort {
         }
 
         public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().deadCreature(level, pos.x, pos.y, pos.z, color);
+            invokeOptionalFx("deadCreature",
+                new Class<?>[] {Level.class, double.class, double.class, double.class, int.class},
+                new Object[] {level, pos.x, pos.y, pos.z, color});
         }
     }
 
