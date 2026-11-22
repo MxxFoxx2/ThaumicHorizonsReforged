@@ -21,16 +21,14 @@ import thaumcraft.client.render.LegacyItemView;
 import java.util.function.Consumer;
 
 /**
- * Restores the legacy translucent 3D syringe model for all four syringe item families.
- * The OBJ is legacy-scale (15 units long on X, lying at y 21..24): it is stood up on its
- * base (plunger at +X, needle at -X), scaled to wand height and re-based to the
- * "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer} expects, per legacy view.
+ * Restores the legacy translucent syringe model using its original per-context item transforms.
+ * The OBJ retains the ModelSyringe axes: the needle points toward -X and the plunger toward +X.
  */
 public final class SyringeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/syringe.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/syringe.png");
-    /** mesh: x -7..-3 (needle) .. 6..8 (plunger), 15 units long; scale puts it at 1.3 blocks */
-    private static final float SCALE = 0.0867F;
+    /** ModelSyringe.render used 0.125 for all four parts. */
+    private static final float MODEL_SCALE = 0.125F;
 
     private final ObjModel model = ObjModel.get(MODEL);
     private final LegacyItemView view;
@@ -76,11 +74,16 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
     }
 
     private void transformModel(PoseStack poseStack) {
-        transform(poseStack);
-        // +X is the plunger end; center the OBJ cross-section and place x=8 at the frame origin.
-        poseStack.rotateDegrees(Axis.ZP, 90.0F);
-        poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.translate(-8.0F, -22.5F, -0.5F);
+        view.apply(poseStack);
+        switch (view) {
+            case INVENTORY -> poseStack.translate(0.0F, -2.75F, 0.0F);
+            case ENTITY -> poseStack.translate(0.0F, -2.0F, 0.0F);
+            case EQUIPPED, FIRST_PERSON -> {
+                poseStack.rotateDegrees(Axis.ZP, -66.0F);
+                poseStack.translate(-1.0F, -2.25F, 0.75F);
+            }
+        }
+        poseStack.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
     }
 
     @Override
@@ -103,15 +106,6 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
         poseStack.popPose();
     }
 
-    private void transform(PoseStack poseStack) {
-        view.apply(poseStack);
-        switch (view) {
-            case INVENTORY -> poseStack.rotateDegrees(Axis.ZP, 66.0F);
-            case EQUIPPED, FIRST_PERSON -> poseStack.translate(0.5F, 1.5F, 0.5F);
-            case ENTITY -> poseStack.translate(0.0F, 1.0F, 0.0F);
-        }
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
-    }
 
     public record Unbaked(LegacyItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
         public static final MapCodec<Unbaked> MAP_CODEC = LegacyItemView.FIELD.xmap(Unbaked::new, Unbaked::view);

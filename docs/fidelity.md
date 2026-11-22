@@ -152,12 +152,12 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Tamable TH mobs (panther/gravekeeper/familiar) register AI goals in `registerGoals()` (server-only). Building `BreedGoal` in the constructor cast `ClientLevel`→`ServerLevel` on the client and disconnected players on spawn; goals now never construct client-side.
 - Block-entity item persistence uses `ItemStack.OPTIONAL_CODEC` (permits empty slots), matching TC4R; plain `ItemStack.CODEC` rejected air/0 and dropped inventories on save.
 
-## Legacy item mesh coordinate frames — source fix, visual acceptance pending
+## Legacy item display transforms — source fix, visual acceptance pending
 
-- The Corpse Effigy OBJ preserves the original `ModelBiped` Y-down coordinates: the head reaches y = -8 and the feet reach y = 24. Its item transform now converts this to the TC4R wand frame (feet at the origin, +Y toward the head) with the shared view's X-180° orientation flip, a -24-unit local Y rebase and the 1.4-block scale. `getExtents()` and `submit()` share the same transform helper.
-- The Syringe OBJ has the needle at x = -7..-3, the body at x = -3..6 and the plunger at x = 6..8. Its item transform now places the plunger end at the frame origin and points the needle along +Y; the barrel cross-section is centered from its original y/z bounds. `getExtents()` and `submit()` share the same transform helper.
-- These are coordinate-derived source corrections, not visual acceptance. Inventory, ground, first-person and third-person appearance must still be checked in `docs/verification.md`.
-
+- Syringe item rendering now keeps the original ModelSyringe axes and 1/8 model scale. Inventory, dropped-item and both hand contexts use the separate translations/rotation from the 1.7.10 ItemSyringeRender rather than the wand renderer's upright-rod transform.
+- Corpse Effigy item rendering now restores the original ModelBiped rotations (Z 180°, then Y 180°), 1/8 model scale, and the distinct inventory/entity/hand offsets and 0.5 item scale where the 1.7.10 renderer used it.
+- Spike item rendering restores an upright tip in inventory and hand views by flipping the OBJ around its 1.5-unit midpoint and centering it in the item-view band. Dropped-item placement uses a separate base offset. The placed-block renderer is unchanged.
+- These changes reproduce the source-level transform rules; they are not visual acceptance. Check GUI, dropped-item, first-person and third-person views in `docs/verification.md`, including tip direction, slot alignment, hand anchoring, scale and clipping.
 ## Addon wand recognition & primed-alchemite client safety
 
 - TC4R `Wands.isWand` matched only the base wand item (`stack.is(ModItems.WAND)`), so the TH disposable wand — a `WandItem` subclass mirroring 1.7.10 `ItemWandCastingDisposable extends ItemWandCasting` — was rejected by the arcane workbench, focus use, charging and the vis HUD. The fork seam (`feat/addon-api`) now accepts any `WandItem` subclass; without add-ons the only `WandItem` is the base wand, so vanilla behavior is unchanged. Documented in TC4R `docs/ADDON_API.md`.

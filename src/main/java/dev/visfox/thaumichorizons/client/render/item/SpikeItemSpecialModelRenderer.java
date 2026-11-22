@@ -21,9 +21,8 @@ import java.util.function.Consumer;
 
 /**
  * Uses the reference OBJ and matching material texture for Spike block items.
- * The OBJ is legacy-scale (3 units tall, base at y 0): it is scaled to ~1 block and
- * re-based to the "base at origin, +Y up" frame TC4R's {@code WandSpecialRenderer}
- * expects, per legacy view.
+ * In GUI and hand views, the view frame presents the legacy +Y direction inverted,
+ * so the mesh is flipped around its midpoint and centered in the visible item band.
  */
 public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL_ID = ThaumicHorizons.id("textures/models/spike.obj");
@@ -34,6 +33,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
     };
     /** mesh: y 0 (base) .. 3 (tip), x -1.46 .. 1.54, z +-1.3; scale puts 3 units at 1.05 blocks */
     private static final float SCALE = 0.35F;
+    private static final float MESH_MID = 1.5F;
 
     private static final Vector3f[] MESH_CORNERS = {
         new Vector3f(-1.46F, 0.0F, -1.29F),
@@ -91,8 +91,20 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
     private void transformModel(PoseStack poseStack) {
         view.apply(poseStack);
-        poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
+        switch (view) {
+            case INVENTORY, EQUIPPED, FIRST_PERSON -> {
+                poseStack.translate(0.0F, 0.69F, 0.0F);
+                poseStack.scale(SCALE, SCALE, SCALE);
+                poseStack.rotateDegrees(Axis.XP, 180.0F);
+                poseStack.translate(0.0F, -MESH_MID, 0.0F);
+                poseStack.rotateDegrees(Axis.YP, 90.0F);
+            }
+            case ENTITY -> {
+                poseStack.scale(SCALE, SCALE, SCALE);
+                poseStack.translate(0.0F, -1.45F, 0.0F);
+                poseStack.rotateDegrees(Axis.YP, 90.0F);
+            }
+        }
     }
 
     public record Unbaked(LegacyItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
