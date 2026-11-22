@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
@@ -103,6 +104,7 @@ public final class SoulJarItemSpecialModelRenderer implements SpecialModelRender
         }
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.01F, 0.5F);
+        poseStack.rotateDegrees(Axis.YP, 90.0F);
         poseStack.scale(0.25F, 0.25F, 0.25F);
         minecraft.getEntityRenderDispatcher().submit(state.preview(), camera,
             0.0F, 0.0F, 0.0F, poseStack, collector);
@@ -112,10 +114,10 @@ public final class SoulJarItemSpecialModelRenderer implements SpecialModelRender
     private static void renderSoul(PoseStack.Pose pose, VertexConsumer buffer, int frame, int light) {
         float u0 = (float) frame / SoulJarFrames.FRAME_COUNT;
         float u1 = (float) (frame + 1) / SoulJarFrames.FRAME_COUNT;
-        vertex(pose, buffer, -0.4F, -0.4F, u0, 1.0F, light);
-        vertex(pose, buffer, 0.4F, -0.4F, u1, 1.0F, light);
-        vertex(pose, buffer, 0.4F, 0.4F, u1, 0.0F, light);
-        vertex(pose, buffer, -0.4F, 0.4F, u0, 0.0F, light);
+        vertex(pose, buffer, -0.15F, -0.45F, u0, 1.0F, light);
+        vertex(pose, buffer, 0.15F, -0.45F, u1, 1.0F, light);
+        vertex(pose, buffer, 0.15F, 0.45F, u1, 0.0F, light);
+        vertex(pose, buffer, -0.15F, 0.45F, u0, 0.0F, light);
     }
 
     private static void vertex(PoseStack.Pose pose, VertexConsumer buffer,

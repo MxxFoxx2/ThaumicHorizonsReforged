@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 public final class InjectorItemSpecialModelRenderer implements SpecialModelRenderer<InjectorItemSpecialModelRenderer.State> {
     private static final Identifier MODEL_ID = ThaumicHorizons.id("textures/models/injector.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/injector.png");
-    private static final float MODEL_SCALE = 0.0625F;
+    private static final float MODEL_SCALE = 0.125F;
 
     private final ObjModel model = ObjModel.get(MODEL_ID);
 
@@ -73,9 +73,9 @@ public final class InjectorItemSpecialModelRenderer implements SpecialModelRende
         // control inventory, ground, first-person and third-person placement.
         poseStack.rotateDegrees(Axis.ZP, 180.0F);
         poseStack.rotateDegrees(Axis.YP, 180.0F);
+        poseStack.translate(0.38F, -0.1F, 0.38F);
         poseStack.rotateDegrees(Axis.YP, 90.0F);
         poseStack.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
-        poseStack.translate(-5.0F, -2.0F, 2.0F);
 
         renderPart("Drum", 2.5F, 2.25F, 0.0F, 0.0F, 0.0F, state.cylinderRotation() * 2.0F,
             poseStack, collector, lightCoords);

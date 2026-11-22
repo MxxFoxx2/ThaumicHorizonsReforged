@@ -1,9 +1,89 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "thaumichorizons:item/syringebloodsample",
-    "model": {
-      "type": "thaumichorizons:syringe"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "ground",
+        "model": {
+          "type": "minecraft:special",
+          "base": "thaumichorizons:item/syringebloodsample",
+          "model": {
+            "type": "thaumichorizons:syringe"
+          },
+          "transformation": {
+            "right_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "scale": [
+              1,
+              1,
+              1
+            ],
+            "left_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "translation": [
+              0,
+              0.75,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "when": [
+          "firstperson_lefthand",
+          "firstperson_righthand",
+          "thirdperson_lefthand",
+          "thirdperson_righthand",
+          "fixed"
+        ],
+        "model": {
+          "type": "minecraft:special",
+          "base": "thaumichorizons:item/syringebloodsample",
+          "model": {
+            "type": "thaumichorizons:syringe"
+          },
+          "transformation": {
+            "right_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "scale": [
+              1,
+              1,
+              1
+            ],
+            "left_rotation": [
+              0,
+              0,
+              -0.54463904,
+              0.83867057
+            ],
+            "translation": [
+              0.05003609,
+              1.11691378,
+              0.75
+            ]
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "thaumichorizons:item/syringebloodsample",
+      "model": {
+        "type": "thaumichorizons:syringe"
+      }
     }
   }
 }

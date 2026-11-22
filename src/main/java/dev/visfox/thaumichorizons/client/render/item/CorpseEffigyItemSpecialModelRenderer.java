@@ -51,8 +51,8 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
         poseStack.rotateDegrees(Axis.ZP, 180.0F);
         poseStack.rotateDegrees(Axis.YP, 180.0F);
         // Match the legacy GUI/hand path: 0.125 ModelBiped scale, halved by the item renderer.
+        poseStack.translate(0.0F, -14.4F, 0.0F);
         poseStack.scale(0.0625F, 0.0625F, 0.0625F);
-        poseStack.translate(0.0F, -7.2F, 0.0F);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURE),
             (pose, buffer) -> model.renderPart("effigy", pose, buffer, 0xFFFFFFFF, lightCoords));
         poseStack.popPose();
