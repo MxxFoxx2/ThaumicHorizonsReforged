@@ -13,6 +13,7 @@ import thaumcraft.crafting.ShapedArcaneRecipe;
 import thaumcraft.crafting.ShapelessArcaneRecipe;
 import thaumcraft.crafting.TcIngredient;
 import thaumcraft.crafting.TcRecipes;
+import thaumcraft.crafting.TcRecipe;
 import thaumcraft.crafting.TcStack;
 
 public final class ThRecipes {
@@ -42,6 +43,13 @@ public final class ThRecipes {
         advancedGolem();
     }
 
+    private static <T extends TcRecipe> T registerUnique(T recipe) {
+        if (TcRecipes.get(recipe.key()) != null) {
+            throw new IllegalStateException("Duplicate Thaumic Horizons recipe key: " + recipe.key());
+        }
+        return TcRecipes.register(recipe);
+    }
+
     private static void registerPhialData() {
         TcStack.registerDataHandler("phial", (stack, value) ->
             SyringeKeys.BLOOD.set(stack, new SyringeKeys.BloodData(Boolean.parseBoolean(value))));
@@ -52,7 +60,7 @@ public final class ThRecipes {
     }
 
     private static void normal0() {
-        TcRecipes.registerUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
+        registerUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
     }
 
     private static void crucible0() {
