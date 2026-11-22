@@ -1,7 +1,6 @@
 package dev.visfox.thaumichorizons.client.compat.tc.mixin;
 
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.spongepowered.asm.mixin.Final;
