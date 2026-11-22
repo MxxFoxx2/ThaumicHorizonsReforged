@@ -115,3 +115,24 @@ jobs:
 
           echo "Verified distributable: $expected"
           du -h "$expected"
+
+      - name: Create distributable checksum
+        working-directory: thaumic-horizons-reforged
+        shell: bash
+        run: |
+          set -euo pipefail
+          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          jar="build/libs/thaumic-horizons-reforged-${mod_version}-${minecraft_version}.jar"
+          sha256sum "$jar" > "${jar}.sha256"
+
+      - name: Upload distributable
+        uses: actions/upload-artifact@v7
+        with:
+          name: thaumic-horizons-reforged-${{ github.sha }}
+          path: |
+            thaumic-horizons-reforged/build/libs/*.jar
+            thaumic-horizons-reforged/build/libs/*.jar.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
