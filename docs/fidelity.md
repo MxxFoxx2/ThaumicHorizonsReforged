@@ -154,7 +154,7 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 
 ## Legacy item mesh coordinate frames — source fix, visual acceptance pending
 
-- The Corpse Effigy OBJ preserves the original `ModelBiped` Y-down coordinates: the head reaches y = -8 and the feet reach y = 24. Its item transform now converts this to the TC4R wand frame (feet at the origin, +Y toward the head) with one Y flip, a 24-unit rebase and the 1.4-block scale. `getExtents()` and `submit()` share the same transform helper.
+- The Corpse Effigy OBJ preserves the original `ModelBiped` Y-down coordinates: the head reaches y = -8 and the feet reach y = 24. Its item transform now converts this to the TC4R wand frame (feet at the origin, +Y toward the head) with the shared view's X-180° orientation flip, a -24-unit local Y rebase and the 1.4-block scale. `getExtents()` and `submit()` share the same transform helper.
 - The Syringe OBJ has the needle at x = -7..-3, the body at x = -3..6 and the plunger at x = 6..8. Its item transform now places the plunger end at the frame origin and points the needle along +Y; the barrel cross-section is centered from its original y/z bounds. `getExtents()` and `submit()` share the same transform helper.
 - These are coordinate-derived source corrections, not visual acceptance. Inventory, ground, first-person and third-person appearance must still be checked in `docs/verification.md`.
 
