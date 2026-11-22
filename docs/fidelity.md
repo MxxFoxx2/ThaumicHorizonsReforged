@@ -1,5 +1,17 @@
 # Fidelity
 
+## Stock TC4R 1.1.3 compatibility profile
+
+The supported public host is official Thaumcraft 4: Reforged 1.1.3 for Minecraft 26.3 (tag `26.3`, commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`). THR no longer requires the separate add-on API fork.
+
+- **TH golems:** material health, armor, speed, water behavior, strength, carry capacity, upgrade-slot count, texture and regeneration delay are supplied by TH's own `GolemMaterialTH` and narrow compatibility mixins. The host's stock golems are not modified.
+- **Transduction Amplifier:** automatic conversion of the aura node to a Vortex when more than three transducers are active is disabled when the host lacks `NodeTransducerBlockEntity.stopForVortexConversion()`. Replacing the node without stopping the running transducer would be unsafe; the normal amplifier behavior remains available.
+- **Optional extensions:** machine-beam FX and the Creature Infusion research-page extension are not present in official TC4R 1.1.3. Their adapters safely no-op when unavailable. No active TH content definition currently uses either extension.
+- **Wand recognition:** TH supplies an adapter mixin so the official host's wand checks recognize the TH disposable wand as a `WandItem` subclass.
+
+These are compatibility adaptations, not claims of full visual or in-game acceptance. See [verification.md](verification.md) for the remaining runtime checks.
+
+
 Known deviations and incomplete port areas relative to the 1.7.10 reference. Unlisted behavior has not necessarily been exhaustively verified as 1:1.
 
 ## Player infusions (Chameleon Skin) — intentional redesign
