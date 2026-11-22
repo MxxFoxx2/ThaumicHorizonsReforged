@@ -34,8 +34,6 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
     };
     /** mesh: y 0 (base) .. 3 (tip), x -1.46 .. 1.54, z +-1.3; scale puts 3 units at 1.05 blocks */
     private static final float SCALE = 0.35F;
-    /** остриё OBJ на y=3, база на y=0; середина для флипа */
-    private static final float MESH_MID = 1.5F;
 
     private static final Vector3f[] MESH_CORNERS = {
         new Vector3f(-1.46F, 0.0F, -1.29F),
@@ -93,13 +91,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
     private void transformModel(PoseStack poseStack) {
         view.apply(poseStack);
-        // +Y of the view frame points down-right in the slot; the spike tip (OBJ y=3)
-        // must land on -Y (up-left), so flip about the mesh middle and center on the
-        // wand band (0.06..1.31, center 0.69).
-        poseStack.translate(0.0F, 0.69F, 0.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
-        poseStack.translate(0.0F, -MESH_MID, 0.0F);
         poseStack.rotateDegrees(Axis.YP, 90.0F);
     }
 
