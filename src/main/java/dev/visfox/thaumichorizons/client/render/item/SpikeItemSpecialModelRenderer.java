@@ -34,6 +34,8 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
     };
     /** mesh: y 0 (base) .. 3 (tip), x -1.46 .. 1.54, z +-1.3; scale puts 3 units at 1.05 blocks */
     private static final float SCALE = 0.35F;
+    /** остриё OBJ на y=3, база на y=0; середина для флипа */
+    private static final float MESH_MID = 1.5F;
 
     private static final Vector3f[] MESH_CORNERS = {
         new Vector3f(-1.46F, 0.0F, -1.29F),
@@ -66,9 +68,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
     public void getExtents(Consumer<Vector3fc> output) {
         for (Vector3f corner : MESH_CORNERS) {
             PoseStack poseStack = new PoseStack();
-            transform(poseStack);
-            poseStack.scale(SCALE, SCALE, SCALE);
-            poseStack.rotateDegrees(Axis.YP, 90.0F);
+            transformModel(poseStack);
             output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
     }
@@ -81,9 +81,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         }
 
         poseStack.pushPose();
-        transform(poseStack);
-        poseStack.scale(SCALE, SCALE, SCALE);
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
+        transformModel(poseStack);
 
         // spike.obj is triangle-only: EntityQuadSink derives normals from a duplicated
         // fourth vertex and would render zero normals, so emit the OBJ faces directly
@@ -93,16 +91,16 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         poseStack.popPose();
     }
 
-    private void transform(PoseStack poseStack) {
+    private void transformModel(PoseStack poseStack) {
         view.apply(poseStack);
-        switch (view) {
-            case INVENTORY -> {
-                // no wand tilt: the spike stands upright in the slot
-            }
-            case EQUIPPED, FIRST_PERSON -> poseStack.translate(0.5F, 1.5F, 0.5F);
-            case ENTITY -> poseStack.translate(0.0F, 1.0F, 0.0F);
-        }
+        // +Y of the view frame points down-right in the slot; the spike tip (OBJ y=3)
+        // must land on -Y (up-left), so flip about the mesh middle and center on the
+        // wand band (0.06..1.31, center 0.69).
+        poseStack.translate(0.0F, 0.69F, 0.0F);
+        poseStack.scale(SCALE, SCALE, SCALE);
         poseStack.rotateDegrees(Axis.XP, 180.0F);
+        poseStack.translate(0.0F, -MESH_MID, 0.0F);
+        poseStack.rotateDegrees(Axis.YP, 90.0F);
     }
 
     public record Unbaked(LegacyItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
