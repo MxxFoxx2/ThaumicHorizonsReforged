@@ -46,7 +46,6 @@ import thaumcraft.Thaumcraft;
 import thaumcraft.entity.golem.GolemBase;
 import thaumcraft.entity.golem.GolemKeys;
 import thaumcraft.entity.golem.GolemSnapshot;
-import thaumcraft.entity.golem.GolemStats;
 import thaumcraft.entity.golem.GolemType;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.entity.ai.AttackOnCollideGoalTH;
@@ -146,8 +145,37 @@ public class EntityGolemTH extends GolemBase {
     }
 
     @Override
-    public GolemStats golemStats(GolemType type) {
-        return material().stats();
+    public int getGolemStrength() {
+        return material().strength + getUpgradeAmount(1);
+    }
+
+    @Override
+    public int getCarryLimit() {
+        int base = material().carry;
+        return base + Math.min(16, Math.max(4, base)) * getUpgradeAmount(1);
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return material().fireResist;
+    }
+
+    @Override
+    public void configure(GolemType type, GolemSnapshot state) {
+        super.configure(type, state);
+        GolemMaterialTH golemMaterial = material();
+        getAttribute(Attributes.MAX_HEALTH).setBaseValue(
+            golemMaterial.health + (state.decoration().contains("H") ? 5 : 0));
+        getAttribute(Attributes.ARMOR).setBaseValue(golemMaterial.armor
+            + (state.decoration().contains("V") ? 1 : 0)
+            + (state.decoration().contains("P") ? 4 : 0));
+        getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(
+            2 + getGolemStrength() + getUpgradeAmount(1) + (state.decoration().contains("M") ? 2 : 0));
+        setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType.WATER,
+            golemMaterial.stats().heavy() ? 0.0F : 8.0F);
+        if (getHealth() > getMaxHealth()) {
+            setHealth(getMaxHealth());
+        }
     }
 
     @Override
@@ -155,9 +183,21 @@ public class EntityGolemTH extends GolemBase {
         return GolemType.WOOD;
     }
 
-    @Override
     public Identifier getGolemTexture() {
         return ThaumicHorizons.id("textures/model/golem_" + material().id() + ".png");
+    }
+
+    public double getMaterialMovementSpeed() {
+        GolemMaterialTH golemMaterial = material();
+        float speed = golemMaterial.speed
+            * (getGolemDecoration().contains("B") ? 1.1F : 1.0F)
+            * (getGolemDecoration().contains("P") ? 0.88F : 1.0F)
+            * (1.0F + getUpgradeAmount(0) * 0.15F)
+            * (isAdvanced() ? 1.1F : 1.0F);
+        if (isInWater() && golemMaterial.stats().heavy()) {
+            speed *= 2.0F;
+        }
+        return isWorking() ? speed : 0.0F;
     }
 
     public @Nullable BlockState getGolemBlockState() {
