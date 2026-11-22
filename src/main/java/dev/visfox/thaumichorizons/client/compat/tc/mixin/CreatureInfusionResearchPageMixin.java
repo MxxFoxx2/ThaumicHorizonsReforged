@@ -1,6 +1,5 @@
 package dev.visfox.thaumichorizons.client.compat.tc.mixin;
 
-import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
@@ -20,60 +19,52 @@ import thaumcraft.research.ResearchPage;
 /** Draws creature and self infusion recipes (aspects, catalysts, instability) on their dedicated research pages. */
 @Mixin(targets = "thaumcraft.client.research.ResearchPageScreen")
 abstract class CreatureInfusionResearchPageMixin {
-    private static final String CREATURE_PAGE_PREFIX = "textures/misc/creature_page/";
-    private static final String SELF_PAGE_PREFIX = "textures/misc/self_page/";
+    private static final String CREATURE_PAYLOAD = "creature";
+    private static final String SELF_PAYLOAD = "self";
     private static final int CONTENT_WIDTH = 138;
     private static final int GRID_TOP = 28;
     private static final int MAX_SHOWN_COMPONENTS = 7;
 
-    @Inject(method = "drawPage", at = @At("TAIL"))
+    // Creature/self pages always follow a text page, so cancelling drawPage does not skip the research header.
+    @Inject(method = "drawPage", at = @At("HEAD"), cancellable = true)
     private void thaumichorizons$drawInfusionPage(GuiGraphicsExtractor graphics, @Coerce Object display,
         int side, int x, int y, CallbackInfo callback) {
         if (!(display instanceof DisplayPageAccessor accessor)
-            || !(accessor.thaumichorizons$getSource() instanceof ResearchPage.Image image)
-            || !ThaumicHorizons.MODID.equals(image.image().getNamespace())) {
+            || !(accessor.thaumichorizons$getSource() instanceof ResearchPage.CreatureInfusion page)) {
             return;
         }
 
-        String path = image.image().getPath();
-        String marker = markerSuffix(path);
-        if (marker == null) {
+        String[] parts = page.payload().split("/", 3);
+        if (parts.length != 3) {
             return;
         }
-        String research = marker.substring(0, marker.indexOf('/'));
         int index;
         try {
-            index = Integer.parseInt(marker.substring(marker.indexOf('/') + 1, marker.length() - 4));
+            index = Integer.parseInt(parts[2]);
         } catch (NumberFormatException exception) {
             return;
         }
 
-        if (path.startsWith(CREATURE_PAGE_PREFIX)) {
+        if (CREATURE_PAYLOAD.equals(parts[0])) {
             ThInfusionRecipes.CreatureInfusionRecipe recipe = recipe(ThInfusionRecipes.getCritterRecipes(),
-                research, index, CreatureInfusionResearchPageMixin::creatureRecipeKey);
-            if (recipe != null) {
-                draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
-                    creatureTitle(recipe));
+                parts[1], index, CreatureInfusionResearchPageMixin::creatureRecipeKey);
+            if (recipe == null) {
+                return;
             }
-        } else {
+            draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
+                creatureTitle(recipe));
+        } else if (SELF_PAYLOAD.equals(parts[0])) {
             ThInfusionRecipes.SelfInfusionRecipe recipe = recipe(ThInfusionRecipes.getSelfRecipes(),
-                research, index, ThInfusionRecipes.SelfInfusionRecipe::getResearch);
-            if (recipe != null) {
-                draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
-                    Component.translatable("tc.research_name." + research));
+                parts[1], index, ThInfusionRecipes.SelfInfusionRecipe::getResearch);
+            if (recipe == null) {
+                return;
             }
+            draw(graphics, side, x, y, recipe.getAspects(), recipe.getComponents(), recipe.getInstability(),
+                Component.translatable("tc.research_name." + recipe.getResearch()));
+        } else {
+            return;
         }
-    }
-
-    /** Marker paths are lowercase because {@code Identifier} rejects camelCase; research keys compare case-insensitively. */
-    private static @Nullable String markerSuffix(String path) {
-        if (path.startsWith(CREATURE_PAGE_PREFIX)) {
-            return path.substring(CREATURE_PAGE_PREFIX.length());
-        }
-        if (path.startsWith(SELF_PAGE_PREFIX)) {
-            return path.substring(SELF_PAGE_PREFIX.length());
-        }
-        return null;
+        callback.cancel();
     }
 
     private interface RecipeKey<T> {

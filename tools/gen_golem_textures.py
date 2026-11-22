@@ -16,7 +16,7 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 REPO = Path(__file__).resolve().parent.parent
-TEMPLATE = REPO.parent / "thaumcraft-4-reforged-notlikethiss" / "src/main/resources/assets/thaumcraft/textures/model/golem_straw.png"
+TEMPLATE = REPO.parent / "thaumcraft-4-reforged" / "src/main/resources/assets/thaumcraft/textures/model/golem_straw.png"
 OUT = REPO / "src/main/resources/assets/thaumichorizons/textures/model"
 VOID_LEGACY = REPO / "reference/1.7.10/src/main/resources/assets/thaumichorizons/textures/models/golem_void.png"
 

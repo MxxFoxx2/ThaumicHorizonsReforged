@@ -326,14 +326,14 @@ public final class ConfigResearch {
             List.of(Flag.CONCEALED), List.of("healingVat", "focusContainment"), List.of(),
             List.of("generalInfusion"), List.of(), 0,
             PageSpec.text("infusionVat1"),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/1.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/2.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/3.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/4.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/5.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/6.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/infusionvat/7.png"), null),
+            PageSpec.creatureInfusion("creature/infusionvat/0"),
+            PageSpec.creatureInfusion("creature/infusionvat/1"),
+            PageSpec.creatureInfusion("creature/infusionvat/2"),
+            PageSpec.creatureInfusion("creature/infusionvat/3"),
+            PageSpec.creatureInfusion("creature/infusionvat/4"),
+            PageSpec.creatureInfusion("creature/infusionvat/5"),
+            PageSpec.creatureInfusion("creature/infusionvat/6"),
+            PageSpec.creatureInfusion("creature/infusionvat/7"),
             PageSpec.recipes(PageKind.INFUSION, "infusionVat"),
             PageSpec.text("infusionVat2"),
             PageSpec.text("infusionVat3"),
@@ -631,7 +631,7 @@ public final class ConfigResearch {
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("generalInfusion", "RUNICAUGMENTATION"),
             List.of(), List.of(), List.of(), 0,
             PageSpec.text("generalInfusion8"),
-            PageSpec.image(th("textures/misc/creature_page/runiccreature/0.png"), null));
+            PageSpec.creatureInfusion("creature/runiccreature/0"));
     }
 
     private static void registerEldritchFangs() {
@@ -640,7 +640,7 @@ public final class ConfigResearch {
             List.of(Flag.CONCEALED), List.of("generalInfusion", "VOIDMETAL"), List.of(), List.of(),
             List.of(), 0,
             PageSpec.text("generalInfusion9"),
-            PageSpec.image(th("textures/misc/creature_page/eldritchfangs/0.png"), null));
+            PageSpec.creatureInfusion("creature/eldritchfangs/0"));
     }
 
     private static void registerPortability() {
@@ -656,8 +656,8 @@ public final class ConfigResearch {
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("generalInfusion"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("sheepInfusion1"),
-            PageSpec.image(th("textures/misc/creature_page/sheepinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/sheepinfusion/1.png"), null));
+            PageSpec.creatureInfusion("creature/sheepinfusion/0"),
+            PageSpec.creatureInfusion("creature/sheepinfusion/1"));
     }
 
     private static void registerCatInfusion() {
@@ -667,9 +667,9 @@ public final class ConfigResearch {
             PageSpec.text("catInfusion1"),
             PageSpec.text("catInfusion2"),
             PageSpec.text("catInfusion3"),
-            PageSpec.image(th("textures/misc/creature_page/catinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/catinfusion/1.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/catinfusion/2.png"), null));
+            PageSpec.creatureInfusion("creature/catinfusion/0"),
+            PageSpec.creatureInfusion("creature/catinfusion/1"),
+            PageSpec.creatureInfusion("creature/catinfusion/2"));
     }
 
     private static void registerCowInfusion() {
@@ -677,8 +677,8 @@ public final class ConfigResearch {
             9, -5, 1, th("textures/item/cow.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("cowInfusion1"),
-            PageSpec.image(th("textures/misc/creature_page/cowinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/cowinfusion/1.png"), null),
+            PageSpec.creatureInfusion("creature/cowinfusion/0"),
+            PageSpec.creatureInfusion("creature/cowinfusion/1"),
             PageSpec.recipes(PageKind.CRAFTING, "cowInfusion"),
             PageSpec.recipes(PageKind.ARCANE, "cowInfusionIceCream"),
             PageSpec.text("cowInfusion2"));
@@ -690,8 +690,8 @@ public final class ConfigResearch {
             List.of(Flag.SECONDARY, Flag.CONCEALED), List.of("generalInfusion"), List.of(),
             List.of(), List.of(), 0,
             PageSpec.text("chickenInfusion1"),
-            PageSpec.image(th("textures/misc/creature_page/chickeninfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/chickeninfusion/1.png"), null),
+            PageSpec.creatureInfusion("creature/chickeninfusion/0"),
+            PageSpec.creatureInfusion("creature/chickeninfusion/1"),
             PageSpec.text("chickenInfusion2"));
     }
 
@@ -700,8 +700,8 @@ public final class ConfigResearch {
             12, -5, 1, th("textures/item/pig.png"),
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("pigInfusion1"),
-            PageSpec.image(th("textures/misc/creature_page/piginfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/piginfusion/1.png"), null),
+            PageSpec.creatureInfusion("creature/piginfusion/0"),
+            PageSpec.creatureInfusion("creature/piginfusion/1"),
             PageSpec.text("pigInfusion2"));
     }
 
@@ -712,9 +712,9 @@ public final class ConfigResearch {
             PageSpec.text("dogInfusion1"),
             PageSpec.text("dogInfusion2"),
             PageSpec.text("dogInfusion3"),
-            PageSpec.image(th("textures/misc/creature_page/doginfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/doginfusion/1.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/doginfusion/2.png"), null));
+            PageSpec.creatureInfusion("creature/doginfusion/0"),
+            PageSpec.creatureInfusion("creature/doginfusion/1"),
+            PageSpec.creatureInfusion("creature/doginfusion/2"));
     }
 
     private static void registerHorseInfusion() {
@@ -723,9 +723,9 @@ public final class ConfigResearch {
             List.of(Flag.CONCEALED), List.of("generalInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("horseInfusion2"),
             PageSpec.text("horseInfusion3"),
-            PageSpec.image(th("textures/misc/creature_page/horseinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/horseinfusion/1.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/horseinfusion/2.png"), null));
+            PageSpec.creatureInfusion("creature/horseinfusion/0"),
+            PageSpec.creatureInfusion("creature/horseinfusion/1"),
+            PageSpec.creatureInfusion("creature/horseinfusion/2"));
     }
 
     private static void registerNightmareInfusion() {
@@ -735,7 +735,7 @@ public final class ConfigResearch {
             List.of(), 0,
             PageSpec.text("nightmareInfusion1"),
             PageSpec.text("nightmareInfusion2"),
-            PageSpec.image(th("textures/misc/creature_page/nightmareinfusion/0.png"), null));
+            PageSpec.creatureInfusion("creature/nightmareinfusion/0"));
     }
 
     private static void registerSheederInfusion() {
@@ -743,8 +743,8 @@ public final class ConfigResearch {
             10, -7, 2, th("textures/item/sheep.png"),
             List.of(Flag.CONCEALED), List.of("sheepInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("sheederInfusion1"),
-            PageSpec.image(th("textures/misc/creature_page/sheederinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/creature_page/sheederinfusion/1.png"), null));
+            PageSpec.creatureInfusion("creature/sheederinfusion/0"),
+            PageSpec.creatureInfusion("creature/sheederinfusion/1"));
     }
 
     private static void registerSelfInfusion() {
@@ -755,9 +755,9 @@ public final class ConfigResearch {
             PageSpec.text("selfInfusion1"),
             PageSpec.text("selfInfusion2"),
             PageSpec.text("selfInfusion3"),
-            PageSpec.image(th("textures/misc/self_page/selfinfusion/0.png"), null),
-            PageSpec.image(th("textures/misc/self_page/selfinfusion/1.png"), null),
-            PageSpec.image(th("textures/misc/self_page/selfinfusion/2.png"), null));
+            PageSpec.creatureInfusion("self/selfinfusion/0"),
+            PageSpec.creatureInfusion("self/selfinfusion/1"),
+            PageSpec.creatureInfusion("self/selfinfusion/2"));
     }
 
     private static void registerHumanInfusion() {
@@ -774,7 +774,7 @@ public final class ConfigResearch {
             19, 2, 2, th("textures/item/morphicfingers.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("morphicFingers1"),
-            PageSpec.image(th("textures/misc/self_page/morphicfingers/0.png"), null));
+            PageSpec.creatureInfusion("self/morphicfingers/0"));
     }
 
     private static void registerSilverHeart() {
@@ -783,7 +783,7 @@ public final class ConfigResearch {
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("silverHeart1"),
             PageSpec.text("silverHeart2"),
-            PageSpec.image(th("textures/misc/self_page/silverheart/0.png"), null));
+            PageSpec.creatureInfusion("self/silverheart/0"));
     }
 
     private static void registerSynthSkin() {
@@ -791,7 +791,7 @@ public final class ConfigResearch {
             19, 0, 2, th("textures/item/synthskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("synthSkin1"),
-            PageSpec.image(th("textures/misc/self_page/synthskin/0.png"), null));
+            PageSpec.creatureInfusion("self/synthskin/0"));
     }
 
     private static void registerAmphibious() {
@@ -799,7 +799,7 @@ public final class ConfigResearch {
             19, 1, 2, mc("textures/item/cod.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("amphibious1"),
-            PageSpec.image(th("textures/misc/self_page/amphibious/0.png"), null));
+            PageSpec.creatureInfusion("self/amphibious/0"));
     }
 
     private static void registerWarpedTumor() {
@@ -807,7 +807,7 @@ public final class ConfigResearch {
             19, 4, 3, th("textures/item/warpedtumor.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("warpedTumor1"),
-            PageSpec.image(th("textures/misc/self_page/warpedtumor/0.png"), null));
+            PageSpec.creatureInfusion("self/warpedtumor/0"));
     }
 
     private static void registerSpiderClimb() {
@@ -815,7 +815,7 @@ public final class ConfigResearch {
             19, 3, 2, th("textures/item/spiderclimb.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("spiderClimb1"),
-            PageSpec.image(th("textures/misc/self_page/spiderclimb/0.png"), null));
+            PageSpec.creatureInfusion("self/spiderclimb/0"));
     }
 
     private static void registerChameleonSkin() {
@@ -823,6 +823,6 @@ public final class ConfigResearch {
             19, -2, 2, th("textures/item/chameleonskin.png"),
             List.of(Flag.CONCEALED), List.of("humanInfusion"), List.of(), List.of(), List.of(), 0,
             PageSpec.text("chameleonSkin1"),
-            PageSpec.image(th("textures/misc/self_page/chameleonskin/0.png"), null));
+            PageSpec.creatureInfusion("self/chameleonskin/0"));
     }
 }
