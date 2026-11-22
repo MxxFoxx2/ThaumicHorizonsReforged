@@ -1,8 +1,12 @@
 # Thaumic Horizons: Reforged
 
+[![CI](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/MxxFoxx2/ThaumicHorizonsReforged?include_prereleases&label=release)](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/releases)
+[![License: LGPL-3.0-or-later](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue)](LICENSE.txt)
+
 Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; maintained by [GTNewHorizons](https://github.com/GTNewHorizons/ThaumicHorizons)) for **Minecraft 26.3** on **NeoForge**, built as an add-on for [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged).
 
-The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
+The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, boats and mounts, clouds and spikes, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
 
 > [!WARNING]
 > **Official host compatibility:** Thaumic Horizons: Reforged `0.1.0-beta.2` targets the public [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3), pinned to commit [`99499a8`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2). No custom TC4R fork is required.
@@ -24,19 +28,22 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 ## What the mod adds
 
 - **Creature infusion.** Jar a critter with the wand, drop it into the Vat with components, and get a TH creature: Chocolate Cow, Ore Pig, Endersteed, Seawolf, slimes, the Sheeder, and more — 30 critter recipes with vanilla parents replaced 1:1. Infused creatures gain permanent effects and replaced AI.
-- **Player self-infusions.** Ten infusions from the Vat: swiftness, regeneration, resistance, morphic fingers, silver heart, synth skin, amphibious, warp tumor (siphons your warp into a reservoir), spider climb (C key), and Chameleon Skin (X key) — reimplemented without the original sync bug, using attachment-driven full invisibility that hides armor. Two-client and persistence checks are tracked in [docs/verification.md](docs/verification.md).
+- **Player self-infusions.** Ten infusions from the Vat: swiftness, regeneration, resistance, morphic fingers (M key), silver heart, synth skin, amphibious, warp tumor (siphons your warp into a reservoir), spider climb (C key), and Chameleon Skin (X key) — reimplemented without the original sync bug, using attachment-driven full invisibility that hides armor. Two-client and persistence checks are tracked in [docs/verification.md](docs/verification.md).
 - **The Vat.** A 1:1 multiblock with curative, incarnation, creature-infusion, and clone modes (corpse effigy → self-clone).
-- **Souls.** Soul jars, the Soul Sieve, the Inspiratron (souls → completed research), the Soulforge, and the Soul Beacon; containment focus captures Lost Souls.
-- **Blood.** The Blood Infuser and the syringe family: draw blood, inject potions and nutrients.
-- **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
+- **Souls.** Soul jars (filled jars render their stored creature as an item preview), the Soul Sieve, the Inspiratron (souls → completed research), the Soulforge, and the Soul Beacon; containment focus captures Lost Souls.
+- **Blood and projectiles.** The Seroconverter (Blood Infuser) and the syringe family: draw blood, inject potions and nutrients, and fire syringe darts or blast phials from the seven-slot Injector.
+- **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Teleological Recombinator, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
 - **Golems.** TH golem materials from grass to void salt, placed from blocks with golem powder, paired with the TH bell.
-- **Lenses and foci.** Five arcane lenses with the lens case, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
+- **Lenses and foci.** Five arcane lenses with the lens case and a V-key radial selector, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
+- **Mounts and boats.** Greatwood and Thaumium boats (the Thaumium boat can be steered through lava), the Endersteed, the Nightmare, and zombie/skeleton horses with TH attributes.
+- **Clouds and spikes.** Ten cloud types with precipitation, lightning, growth and drop effects, plus metal, wood and tooth spike blocks with directional collision.
+- **Field gear.** Mirrored Amulet (death inventory transfer through linked mirrors), Void Putty repair, Incubated Egg, and the Corpse Effigy used by the Vat clone mode.
 - **Pocket plane.** Shared, aspect-themed pocket dimensions created through the Vortex; a Planar Keystone binds a player to one pocket plane (`thaumichorizons:pocket_plane` is registered and loads on a dedicated server; terrain and portal gameplay still need in-game verification).
 
 ## Installation
 
 1. Create a **Minecraft 26.3** profile with **NeoForge 26.3.0.57-beta**.
-2. Install **TerraBlender 26.3-26.3.0.0.9**.
+2. Install **TerraBlender 26.3-26.3.0.0.9** (required by TC4R).
 3. Install the official [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3). Use the published `thaumcraft-4-reforged-1.1.3-26.3.jar` from that release.
 4. Drop `thaumic-horizons-reforged-0.1.0-beta.2-26.3.jar` into the same `mods` folder.
 
@@ -48,21 +55,22 @@ The compatibility build is tested against official TC4R commit [`99499a8`](https
 
 ## Building and development
 
-The source port and development instructions are in the repository. From the repository root:
+Java 25 and a sibling checkout of the official TC4R repository are required. `settings.gradle` includes `../thaumcraft-4-reforged`; clone it next to this repository and check out the official `26.3` tag (commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`) before building. From the repository root:
 
 ```sh
 ./gradlew build
+./gradlew test
 ./gradlew runClient
 ./gradlew runServer
 python3 -I tools/check_seams.py
 python3 -I tools/check_assets.py
 ```
 
-Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) imports those rules for Claude Code. The architecture and TC4R integration boundaries are explained in [docs/architecture.md](docs/architecture.md) and [docs/tc4r-integration.md](docs/tc4r-integration.md). The prerelease smoke gate and unverified behavior inventory are tracked in [docs/verification.md](docs/verification.md).
+On Windows use `gradlew.bat` and `python` instead. Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) imports those rules for Claude Code. The architecture and TC4R integration boundaries are explained in [docs/architecture.md](docs/architecture.md) and [docs/tc4r-integration.md](docs/tc4r-integration.md). The prerelease smoke gate and unverified behavior inventory are tracked in [docs/verification.md](docs/verification.md).
 
 ## Status and roadmap
 
-The `0.1.0-beta.2` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, vehicles, projectiles, cloud/spike content and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not prerelease blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
+The `0.1.0-beta.2` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, boats and mounts, projectiles, clouds/spikes, utility items and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not prerelease blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
 
 ## Authors and license
 
@@ -71,5 +79,7 @@ This port derives from the GTNH fork of Thaumic Horizons, so the distributed por
 ## Links
 
 - **Releases**: [GitHub Releases](../../releases)
+- **CI**: [GitHub Actions](.github/workflows/ci.yml)
+- **Documentation**: [docs/](docs/)
 - **Upstream host**: [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged)
 - **Original Thaumic Horizons**: [GTNewHorizons/ThaumicHorizons](https://github.com/GTNewHorizons/ThaumicHorizons)
