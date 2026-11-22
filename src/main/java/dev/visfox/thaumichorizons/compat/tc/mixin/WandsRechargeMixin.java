@@ -9,9 +9,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.Wands;
+import thaumcraft.wand.WandItem;
 
 @Mixin(value = Wands.class, remap = false)
 public abstract class WandsRechargeMixin {
+    @Inject(method = "isWand", at = @At("HEAD"), cancellable = true)
+    private static void thaumichorizons$recognizeAddonWands(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (stack.getItem() instanceof WandItem) {
+            cir.setReturnValue(true);
+        }
+    }
+
     @Inject(method = "getAspectsWithRoom", at = @At("HEAD"), cancellable = true)
     private static void thaumichorizons$noRoom(ItemStack stack, CallbackInfoReturnable<AspectList> cir) {
         if (stack.getItem() instanceof DisposableWandItem) {

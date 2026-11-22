@@ -72,6 +72,7 @@ public class ThaumicHorizons {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        dev.visfox.thaumichorizons.compat.tc.TcReforgedPort.logCompatibility();
         event.enqueueWork(() -> {
             DispenserBlock.registerBehavior(ThItems.BOAT_GREATWOOD.get(),
                 new BoatDispenseItemBehavior(ThEntities.BOAT_GREATWOOD.get()));
