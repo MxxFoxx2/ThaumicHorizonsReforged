@@ -57,12 +57,17 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
     public void getExtents(Consumer<Vector3fc> output) {
         for (Vector3f corner : MESH_CORNERS) {
             PoseStack poseStack = new PoseStack();
-            transform(poseStack);
-            poseStack.scale(1.0F, -1.0F, 1.0F);
-            poseStack.translate(0.0F, 24.0F, 0.0F);
-            poseStack.scale(SCALE, SCALE, SCALE);
+            transformModel(poseStack);
             output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
         }
+    }
+
+    private void transformModel(PoseStack poseStack) {
+        transform(poseStack);
+        // PoseStack post-multiplies: flip the legacy Y-down mesh, move its feet to zero, then scale.
+        poseStack.scale(SCALE, SCALE, SCALE);
+        poseStack.translate(0.0F, 24.0F, 0.0F);
+        poseStack.scale(1.0F, -1.0F, 1.0F);
     }
 
     @Override
@@ -73,11 +78,7 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
         }
 
         poseStack.pushPose();
-        transform(poseStack);
-        // the OBJ is legacy Y-down with the head above the origin: flip upright, feet on the frame origin
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
-        poseStack.translate(0.0F, 24.0F, 0.0F);
-        poseStack.scale(SCALE, SCALE, SCALE);
+        transformModel(poseStack);
         ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, false,
             sink -> model.renderSink("effigy", sink, 0xFFFFFFFF, lightCoords));
         poseStack.popPose();
