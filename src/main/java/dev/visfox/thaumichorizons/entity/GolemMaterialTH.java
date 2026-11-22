@@ -94,9 +94,9 @@ public enum GolemMaterialTH {
         return id;
     }
 
-    public GolemStats stats() {
+    public MaterialStats stats() {
         boolean heavy = this == ROCK || this == METAL || this == REDSTONE;
-        return new GolemStats(health, armor, speed, fireResist, upgrades, carry, regenDelay, strength, visCost, heavy);
+        return new MaterialStats(health, armor, speed, fireResist, upgrades, carry, regenDelay, strength, visCost, heavy);
     }
 
     public static GolemMaterialTH byId(@Nullable String id) {
