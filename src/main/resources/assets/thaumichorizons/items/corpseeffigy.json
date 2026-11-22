@@ -1,9 +1,89 @@
 {
   "model": {
-    "type": "minecraft:special",
-    "base": "thaumichorizons:item/corpseeffigy",
-    "model": {
-      "type": "thaumichorizons:corpse_effigy"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "ground",
+        "model": {
+          "type": "minecraft:special",
+          "base": "thaumichorizons:item/corpseeffigy",
+          "model": {
+            "type": "thaumichorizons:corpse_effigy"
+          },
+          "transformation": {
+            "right_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "scale": [
+              2,
+              2,
+              2
+            ],
+            "left_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "translation": [
+              0,
+              1.2,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "when": [
+          "firstperson_lefthand",
+          "firstperson_righthand",
+          "thirdperson_lefthand",
+          "thirdperson_righthand",
+          "fixed"
+        ],
+        "model": {
+          "type": "minecraft:special",
+          "base": "thaumichorizons:item/corpseeffigy",
+          "model": {
+            "type": "thaumichorizons:corpse_effigy"
+          },
+          "transformation": {
+            "right_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "scale": [
+              1,
+              1,
+              1
+            ],
+            "left_rotation": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "translation": [
+              -0.5,
+              1.1,
+              0.5
+            ]
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "thaumichorizons:item/corpseeffigy",
+      "model": {
+        "type": "thaumichorizons:corpse_effigy"
+      }
     }
   }
 }

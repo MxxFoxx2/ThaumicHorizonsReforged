@@ -1,4 +1,5 @@
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -167,6 +168,195 @@ def violated_rule(relative, imported):
     return None
 
 
+
+def check_item_model_definitions(root):
+    assets = Path(root) / "src" / "main" / "resources" / "assets" / "thaumichorizons"
+    items_dir = assets / "items"
+    source_root = Path(root) / SOURCE_DIR
+    client_sources = sorted((source_root / "client").rglob("*.java"))
+    errors = []
+
+    if not items_dir.is_dir():
+        print(f"item models: item definition directory not found: {items_dir}")
+        return 1
+
+    if not client_sources:
+        print(f"item models: no client Java sources found under {source_root / 'client'}")
+        return 1
+
+    registration_pattern = re.compile(
+        r'event\.register\s*\(\s*ThaumicHorizons\.id\("([\w]+)"\)\s*,\s*[\w.]+\.Unbaked\.MAP_CODEC\s*\)'
+    )
+    registered_types = set()
+    registration_locations = {}
+    for source_path in client_sources:
+        for renderer_id in registration_pattern.findall(source_path.read_text(encoding="utf-8")):
+            registered_types.add(renderer_id)
+            registration_locations.setdefault(renderer_id, []).append(source_path)
+
+    for renderer_id, locations in registration_locations.items():
+        if len(locations) > 1:
+            errors.append(
+                f"renderer type thaumichorizons:{renderer_id} is registered more than once: "
+                + ", ".join(str(location) for location in locations)
+            )
+
+    definitions = sorted(items_dir.glob("*.json"))
+    model_files = sorted((assets / "models").glob("**/*.json"))
+    special_count = 0
+    checked_models = set()
+    visiting_models = set()
+    checked_textures = set()
+
+    def check_texture_reference(reference, source):
+        if not isinstance(reference, str) or not reference or reference.startswith("#"):
+            return
+        namespace, resource = reference.split(":", 1) if ":" in reference else ("thaumichorizons", reference)
+        if namespace != "thaumichorizons":
+            return
+        if resource.endswith(".png"):
+            resource = resource[:-4]
+        texture_path = assets.parent / namespace / "textures" / (resource + ".png")
+        key = str(texture_path)
+        if key in checked_textures:
+            return
+        checked_textures.add(key)
+        if not texture_path.is_file():
+            errors.append(f"{source}: texture reference {reference} does not resolve to {texture_path}")
+
+    def check_model_file(model_path):
+        if model_path in checked_models or model_path in visiting_models:
+            return
+        visiting_models.add(model_path)
+        try:
+            model = json.loads(model_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exception:
+            errors.append(f"{model_path}: invalid model JSON: {exception}")
+            visiting_models.remove(model_path)
+            checked_models.add(model_path)
+            return
+
+        parent = model.get("parent") if isinstance(model, dict) else None
+        if isinstance(parent, str):
+            check_model_reference(parent, model_path)
+
+        textures = model.get("textures", {}) if isinstance(model, dict) else {}
+        if isinstance(textures, dict):
+            for texture in textures.values():
+                check_texture_reference(texture, model_path)
+
+        visiting_models.remove(model_path)
+        checked_models.add(model_path)
+
+    def check_model_reference(reference, source):
+        if not isinstance(reference, str) or ":" not in reference:
+            return
+        namespace, resource = reference.split(":", 1)
+        if namespace != "thaumichorizons":
+            return
+
+        if resource.startswith("item/"):
+            model_path = assets / "models" / "item" / (resource.removeprefix("item/") + ".json")
+        elif resource.startswith("block/"):
+            model_path = assets / "models" / "block" / (resource.removeprefix("block/") + ".json")
+        else:
+            return
+
+        if not model_path.is_file():
+            errors.append(f"{source}: model reference {reference} does not resolve to {model_path}")
+        else:
+            check_model_file(model_path)
+
+    for model_path in model_files:
+        check_model_file(model_path)
+
+    def check_item_model_node(model_node, source):
+        nonlocal special_count
+
+        if not isinstance(model_node, dict):
+            errors.append(f"{source}: nested item model must be an object")
+            return
+
+        model_kind = model_node.get("type")
+        if model_kind == "minecraft:model":
+            check_model_reference(model_node.get("model"), source)
+        elif model_kind == "minecraft:special":
+            special_count += 1
+            check_model_reference(model_node.get("base"), source)
+            special_model = model_node.get("model")
+            special_type = special_model.get("type") if isinstance(special_model, dict) else None
+            if not isinstance(special_type, str) or ":" not in special_type:
+                errors.append(f"{source}: special model has no namespaced renderer type")
+                return
+            namespace, renderer_id = special_type.split(":", 1)
+            if namespace == "thaumichorizons" and renderer_id not in registered_types:
+                errors.append(
+                    f"{source}: renderer type {special_type} is not registered "
+                    "by a client-side renderer registration"
+                )
+        elif model_kind == "minecraft:select":
+            cases = model_node.get("cases")
+            if not isinstance(cases, list) or not cases:
+                errors.append(f"{source}: select item model has no cases")
+            else:
+                for case in cases:
+                    if not isinstance(case, dict) or "when" not in case or "model" not in case:
+                        errors.append(f"{source}: malformed select item model case")
+                        continue
+                    check_item_model_node(case["model"], source)
+            fallback = model_node.get("fallback")
+            if fallback is not None:
+                check_item_model_node(fallback, source)
+        elif model_kind == "minecraft:condition":
+            for key in ("on_true", "on_false"):
+                if key in model_node:
+                    check_item_model_node(model_node[key], source)
+        elif model_kind == "minecraft:composite":
+            children = model_node.get("models")
+            if not isinstance(children, list):
+                errors.append(f"{source}: composite item model has no models array")
+            else:
+                for child in children:
+                    check_item_model_node(child, source)
+        elif model_kind == "minecraft:range_dispatch":
+            entries = model_node.get("entries", [])
+            if not isinstance(entries, list):
+                errors.append(f"{source}: range_dispatch entries must be an array")
+            else:
+                for entry in entries:
+                    if isinstance(entry, dict) and "model" in entry:
+                        check_item_model_node(entry["model"], source)
+            fallback = model_node.get("fallback")
+            if fallback is not None:
+                check_item_model_node(fallback, source)
+
+    for definition_path in definitions:
+        try:
+            definition = json.loads(definition_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exception:
+            errors.append(f"{definition_path}: invalid item definition JSON: {exception}")
+            continue
+
+        model_definition = definition.get("model") if isinstance(definition, dict) else None
+        if not isinstance(model_definition, dict):
+            errors.append(f"{definition_path}: missing top-level model definition")
+            continue
+        check_item_model_node(model_definition, definition_path)
+
+    for error in errors:
+        print(error)
+
+    if errors:
+        print(f"item model validation failed: {len(errors)} error(s) in {len(definitions)} definitions")
+        return 1
+
+    print(
+        f"item models ok: {len(definitions)} definitions, {len(model_files)} models, "
+        f"{len(checked_textures)} local textures, {special_count} special definitions, "
+        f"{len(registered_types)} registered renderer types"
+    )
+    return 0
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
@@ -189,7 +379,11 @@ def main():
         print(violation)
     if violations:
         print(f"{len(violations)} seam violations in {files} files")
+
+    item_model_status = check_item_model_definitions(arguments.root)
+    if violations or item_model_status:
         return 1
+
     print(f"seams ok: {files} files checked")
     return 0
 

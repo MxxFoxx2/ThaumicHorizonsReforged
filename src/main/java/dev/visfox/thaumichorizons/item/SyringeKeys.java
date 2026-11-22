@@ -47,6 +47,44 @@ public final class SyringeKeys {
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
     }
 
+    /** Client-visible draw and rotating-cylinder state for the legacy injector model. */
+    public record InjectorVisualData(int useTicks, int rotation, int rotationTarget, int rotationStartedAt) {
+        public static final InjectorVisualData EMPTY = new InjectorVisualData(0, 0, 0, 0);
+
+        public static final Codec<InjectorVisualData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.INT.optionalFieldOf("use_ticks", 0).forGetter(InjectorVisualData::useTicks),
+            Codec.INT.optionalFieldOf("rotation", 0).forGetter(InjectorVisualData::rotation),
+            Codec.INT.optionalFieldOf("rotation_target", 0).forGetter(InjectorVisualData::rotationTarget),
+            Codec.INT.optionalFieldOf("rotation_started_at", 0).forGetter(InjectorVisualData::rotationStartedAt)
+        ).apply(instance, InjectorVisualData::new));
+
+        public static final StreamCodec<ByteBuf, InjectorVisualData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, InjectorVisualData::useTicks,
+            ByteBufCodecs.INT, InjectorVisualData::rotation,
+            ByteBufCodecs.INT, InjectorVisualData::rotationTarget,
+            ByteBufCodecs.INT, InjectorVisualData::rotationStartedAt,
+            InjectorVisualData::new);
+
+        public InjectorVisualData withUseTicks(int ticks) {
+            return new InjectorVisualData(Math.max(0, ticks), rotation, rotationTarget, rotationStartedAt);
+        }
+
+        public float drawProgress() {
+            float charge = Math.min(useTicks / 30.0F, 1.0F);
+            return (charge * charge + charge * 2.0F) / 3.0F;
+        }
+
+        public float rotationAt(int gameTick) {
+            int elapsed = Math.max(0, gameTick - rotationStartedAt);
+            float progress = Math.min(elapsed / 10.0F, 1.0F);
+            int delta = Math.floorMod(rotationTarget - rotation + 180, 360) - 180;
+            return rotation + delta * progress;
+        }
+    }
+
+    public static final StackKey<InjectorVisualData> INJECTOR_VISUAL =
+        StackKey.register("injector_visual", InjectorVisualData.CODEC, InjectorVisualData.STREAM_CODEC);
+
     public static final StackKey<InjectionData> INJECTION = StackKey.register("syringe_injection", InjectionData.CODEC, InjectionData.STREAM_CODEC);
     public static final StackKey<BloodData> BLOOD = StackKey.register("syringe_blood", BloodData.CODEC, BloodData.STREAM_CODEC);
     public static final StackKey<AmmoData> AMMO = StackKey.register("injector_ammo", AmmoData.CODEC, AmmoData.STREAM_CODEC);
@@ -73,6 +111,7 @@ public final class SyringeKeys {
         Objects.requireNonNull(INJECTION);
         Objects.requireNonNull(BLOOD);
         Objects.requireNonNull(AMMO);
+        Objects.requireNonNull(INJECTOR_VISUAL);
         Objects.requireNonNull(SAMPLE);
     }
 

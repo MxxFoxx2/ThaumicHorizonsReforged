@@ -4,6 +4,8 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.render.item.SpikeItemSpecialModelRenderer;
 import dev.visfox.thaumichorizons.client.render.item.SyringeItemSpecialModelRenderer;
 import dev.visfox.thaumichorizons.client.render.item.CorpseEffigyItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.InjectorItemSpecialModelRenderer;
+import dev.visfox.thaumichorizons.client.render.item.SoulJarItemSpecialModelRenderer;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
@@ -24,6 +26,8 @@ public final class ThBlockRenderers {
         event.register(ThaumicHorizons.id("spike"), SpikeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
         event.register(ThaumicHorizons.id("syringe"), SyringeItemSpecialModelRenderer.Unbaked.MAP_CODEC);
         event.register(ThaumicHorizons.id("corpse_effigy"), CorpseEffigyItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("injector"), InjectorItemSpecialModelRenderer.Unbaked.MAP_CODEC);
+        event.register(ThaumicHorizons.id("soul_jar"), SoulJarItemSpecialModelRenderer.Unbaked.MAP_CODEC);
     }
 
     @SubscribeEvent

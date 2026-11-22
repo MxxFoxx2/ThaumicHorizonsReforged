@@ -3,6 +3,8 @@ package dev.visfox.thaumichorizons.item;
 import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
 import dev.visfox.thaumichorizons.entity.SyringeProjectile;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import dev.visfox.thaumichorizons.item.SyringeKeys.InjectorVisualData;
+import net.minecraft.world.entity.LivingEntity;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.HolderGetter;
@@ -51,12 +53,24 @@ public class InjectorItem extends Item {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level world, net.minecraft.world.entity.LivingEntity entity, int timeLeft) {
-        if (!(entity instanceof Player player)) {
-            return true;
-        }
+    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int ticksRemaining) {
+        int usedTicks = Math.max(0, getUseDuration(stack, livingEntity) - ticksRemaining);
+        SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
+            visual -> visual.withUseTicks(usedTicks));
+    }
+
+    @Override
+    public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
+        SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
+            visual -> visual.withUseTicks(0));
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
         ItemStack ammo = getAmmo(stack, 0);
-        if (ammo == null) {
+        if (!(entity instanceof Player player) || ammo == null) {
+            SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
+                visual -> visual.withUseTicks(0));
             return true;
         }
 
@@ -64,9 +78,19 @@ public class InjectorItem extends Item {
         float draw = charge / 30.0F;
         draw = (draw * draw + draw * 2.0F) / 3.0F;
         if (draw < 0.1F) {
+            SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
+                visual -> visual.withUseTicks(0));
             return true;
         }
         draw = Math.min(draw, 1.0F);
+
+        int gameTick = (int) (world.getGameTime() & 0x7FFFFFFFL);
+        InjectorVisualData previousVisual =
+            SyringeKeys.INJECTOR_VISUAL.getOrDefault(stack, InjectorVisualData.EMPTY);
+        int currentRotation = Math.round(previousVisual.rotationAt(gameTick));
+        int nextRotationTarget = Math.floorMod(previousVisual.rotationTarget() + 90, 360);
+        SyringeKeys.INJECTOR_VISUAL.set(stack,
+            new InjectorVisualData(0, currentRotation, nextRotationTarget, gameTick));
 
         if (!world.isClientSide()) {
             float projectilePower = draw * 2.0F;

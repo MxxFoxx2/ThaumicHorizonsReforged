@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "thaumichorizons:item/souljar"
+    "type": "minecraft:special",
+    "base": "thaumichorizons:item/souljar",
+    "model": {
+      "type": "thaumichorizons:soul_jar"
+    }
   }
 }
