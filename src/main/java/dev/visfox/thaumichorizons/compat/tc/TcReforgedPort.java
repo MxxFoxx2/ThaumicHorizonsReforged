@@ -104,6 +104,13 @@ public final class TcReforgedPort {
                     + "no active TH research entry currently uses this page type.");
         }
     }
+    public static <T extends thaumcraft.crafting.TcRecipe> T registerRecipeUnique(T recipe) {
+        if (thaumcraft.crafting.TcRecipes.get(recipe.key()) != null) {
+            throw new IllegalStateException("Duplicate Thaumic Horizons recipe key: " + recipe.key());
+        }
+        return thaumcraft.crafting.TcRecipes.register(recipe);
+    }
+
     public static final TcAspects aspects = new TcAspects();
     public static final TcResearch research = new TcResearch();
     public static final TcWarp warp = new TcWarp();
