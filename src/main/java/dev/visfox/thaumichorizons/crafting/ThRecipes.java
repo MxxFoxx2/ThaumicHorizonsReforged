@@ -22,6 +22,7 @@ public final class ThRecipes {
     public static void init() {
         registerPhialData();
         normal0();
+        compound0();
         crucible0();
         crucible1();
         crucible2();
@@ -53,6 +54,19 @@ public final class ThRecipes {
 
     private static void normal0() {
         TcReforgedPort.registerRecipeUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
+    }
+
+    private static void compound0() {
+        String planks = "thaumcraft:greatwood_planks";
+        String construct = "thaumcraft:alchemical_construct";
+        String glass = "minecraft:glass";
+        String water = "minecraft:water_bucket";
+        TcReforgedPort.registerCompoundRecipe("CurativeVat", "healingVat",
+            new AspectList().add(Aspect.WATER, 50).add(Aspect.EARTH, 50).add(Aspect.ORDER, 50), 3, 4, 3, List.of(
+                planks, planks, planks, planks, construct, planks, planks, planks, planks,
+                glass, glass, glass, glass, water, glass, glass, glass, glass,
+                glass, glass, glass, glass, water, glass, glass, glass, glass,
+                planks, planks, planks, planks, construct, planks, planks, planks, planks));
     }
 
     private static void crucible0() {
