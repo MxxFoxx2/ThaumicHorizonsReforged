@@ -70,6 +70,10 @@ jobs:
         working-directory: thaumic-horizons-reforged
         run: python3 -I tools/check_seams.py
 
+      - name: Check model, texture and research-page assets
+        working-directory: thaumic-horizons-reforged
+        run: python3 -I tools/check_assets.py
+
       - name: Build with Gradle
         working-directory: thaumic-horizons-reforged
         run: chmod +x ./gradlew && ./gradlew build --configuration-cache --build-cache --parallel --console=plain

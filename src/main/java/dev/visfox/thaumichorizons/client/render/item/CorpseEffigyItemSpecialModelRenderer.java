@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
-import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
+import thaumcraft.client.platform.ItemGeometry;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -17,27 +17,69 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/** Reuses the ModelBiped-derived Corpse Effigy mesh for item, ground and hand rendering. */
+/**
+ * Reuses the ModelBiped-derived Corpse Effigy mesh with the original legacy item transforms.
+ * The OBJ keeps ModelBiped's Y-down coordinates; the source renderer's two 180-degree
+ * rotations and per-context offsets establish its upright pose and placement.
+ */
 public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelRenderer<Boolean> {
     private static final Identifier MODEL = ThaumicHorizons.id("textures/models/corpseeffigy.obj");
     private static final Identifier TEXTURE = ThaumicHorizons.id("textures/block/corpseeffigy.png");
+    /** ModelBiped.render used 0.125; the item renderer applied an additional 0.5 in GUI and hands. */
+    /** legacy ModelBase.render scale: 1/16 block per model unit */
+    private static final float MODEL_SCALE = 0.0625F;
+    private static final float ITEM_SCALE = 0.5F;
+
     private final ObjModel model = ObjModel.get(MODEL);
+    private final ThItemView view;
+
+    public CorpseEffigyItemSpecialModelRenderer(ThItemView view) {
+        this.view = view;
+    }
 
     @Override
     public @Nullable Boolean extractArgument(ItemStack stack) {
         return stack.is(ThItems.CORPSE_EFFIGY.get()) ? Boolean.TRUE : null;
     }
 
+    private static final Vector3f[] MESH_CORNERS = {
+        new Vector3f(-8.0F, -8.0F, -4.0F),
+        new Vector3f(-8.0F, -8.0F, 4.0F),
+        new Vector3f(-8.0F, 24.0F, -4.0F),
+        new Vector3f(-8.0F, 24.0F, 4.0F),
+        new Vector3f(8.0F, -8.0F, -4.0F),
+        new Vector3f(8.0F, -8.0F, 4.0F),
+        new Vector3f(8.0F, 24.0F, -4.0F),
+        new Vector3f(8.0F, 24.0F, 4.0F)
+    };
+
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(-0.55F, -1.10F, -0.30F));
-        output.accept(new Vector3f(-0.55F, -1.10F, 0.30F));
-        output.accept(new Vector3f(-0.55F, 1.00F, -0.30F));
-        output.accept(new Vector3f(-0.55F, 1.00F, 0.30F));
-        output.accept(new Vector3f(0.55F, -1.10F, -0.30F));
-        output.accept(new Vector3f(0.55F, -1.10F, 0.30F));
-        output.accept(new Vector3f(0.55F, 1.00F, -0.30F));
-        output.accept(new Vector3f(0.55F, 1.00F, 0.30F));
+        for (Vector3f corner : MESH_CORNERS) {
+            PoseStack poseStack = new PoseStack();
+            transformModel(poseStack);
+            output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
+        }
+    }
+
+    private void transformModel(PoseStack poseStack) {
+        view.apply(poseStack);
+        poseStack.rotateDegrees(Axis.ZP, 180.0F);
+        poseStack.rotateDegrees(Axis.YP, 180.0F);
+        switch (view) {
+            case INVENTORY -> {
+                // center the 1.0-block effigy on the wand band (0.06..1.31)
+                poseStack.translate(0.0F, 0.44F, 0.0F);
+                poseStack.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
+            }
+            case ENTITY -> poseStack.translate(0.0F, 0.0F, 0.0F);
+            case EQUIPPED, FIRST_PERSON -> {
+                // hold by the middle, like the wand band (0.06..1.31)
+                poseStack.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
+                poseStack.translate(0.0F, 0.44F, 0.0F);
+            }
+        }
+        poseStack.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
     }
 
     @Override
@@ -48,18 +90,15 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
         }
 
         poseStack.pushPose();
-        poseStack.rotateDegrees(Axis.ZP, 180.0F);
-        poseStack.rotateDegrees(Axis.YP, 180.0F);
-        // Match the legacy GUI/hand path: 0.125 ModelBiped scale, halved by the item renderer.
-        poseStack.translate(0.0F, -14.4F, 0.0F);
-        poseStack.scale(0.0625F, 0.0625F, 0.0625F);
-        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURE),
-            (pose, buffer) -> model.renderPart("effigy", pose, buffer, 0xFFFFFFFF, lightCoords));
+        transformModel(poseStack);
+        ItemGeometry.solid(collector.order(0), poseStack, TEXTURE, false,
+            sink -> model.renderSink("effigy", sink, 0xFFFFFFFF, lightCoords));
         poseStack.popPose();
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked<Boolean> {
-        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
+
+    public record Unbaked(ThItemView view) implements SpecialModelRenderer.Unbaked<Boolean> {
+        public static final MapCodec<Unbaked> MAP_CODEC = ThItemView.FIELD.xmap(Unbaked::new, Unbaked::view);
 
         @Override
         public MapCodec<Unbaked> type() {
@@ -68,7 +107,7 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
 
         @Override
         public SpecialModelRenderer<Boolean> bake(SpecialModelRenderer.BakingContext context) {
-            return new CorpseEffigyItemSpecialModelRenderer();
+            return new CorpseEffigyItemSpecialModelRenderer(view);
         }
     }
 }

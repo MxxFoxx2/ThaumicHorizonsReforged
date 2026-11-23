@@ -81,6 +81,7 @@ THAUMCRAFT_API = [
     "thaumcraft.client.geom.ModelBoxGeometry",
     "thaumcraft.client.geom.InfusionHaloGeometry",
     "thaumcraft.client.platform.TcRenderTypes",
+    "thaumcraft.client.platform.ItemGeometry",
     "thaumcraft.client.platform.EntityQuadSink",
             "thaumcraft.client.render.device.WardedRendering",
     "thaumcraft.entity.golem.GolemKeys",
@@ -281,7 +282,7 @@ def check_item_model_definitions(root):
         model_kind = model_node.get("type")
         if model_kind == "minecraft:model":
             check_model_reference(model_node.get("model"), source)
-        elif model_kind == "minecraft:special":
+        elif model_kind in ("minecraft:special", "thaumcraft:special_owner"):
             special_count += 1
             check_model_reference(model_node.get("base"), source)
             special_model = model_node.get("model")
@@ -295,6 +296,10 @@ def check_item_model_definitions(root):
                     f"{source}: renderer type {special_type} is not registered "
                     "by a client-side renderer registration"
                 )
+            if isinstance(special_model, dict):
+                view = special_model.get("view", "entity")
+                if view not in {"inventory", "equipped", "first_person", "entity"}:
+                    errors.append(f"{source}: unsupported TH special-renderer view {view!r}")
         elif model_kind == "minecraft:select":
             cases = model_node.get("cases")
             if not isinstance(cases, list) or not cases:

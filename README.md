@@ -68,6 +68,10 @@ python3 -I tools/check_assets.py
 
 On Windows use `gradlew.bat` and `python` instead. Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) imports those rules for Claude Code. The architecture and TC4R integration boundaries are explained in [docs/architecture.md](docs/architecture.md) and [docs/tc4r-integration.md](docs/tc4r-integration.md). The prerelease smoke gate and unverified behavior inventory are tracked in [docs/verification.md](docs/verification.md).
 
+## Visual implementation
+
+Syringes, the Corpse Effigy and the three spike items use per-context 3D transforms for inventory, dropped-item, first-person and third-person rendering. These are source-level corrections; the remaining visual acceptance checks are tracked in [docs/verification.md](docs/verification.md). Research-page image references are packaged as transparent markers and rendered by the client-side research-page mixins.
+
 ## Status and roadmap
 
 The `0.1.0-beta.2` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, boats and mounts, projectiles, clouds/spikes, utility items and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not prerelease blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).

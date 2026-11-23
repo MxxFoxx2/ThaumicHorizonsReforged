@@ -11,6 +11,7 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
+import thaumcraft.client.geom.QuadSink;
 
 /**
  * Minimal OBJ loader for the 1.7.10 machine models ported from the reference mod.
@@ -106,6 +107,30 @@ public final class ObjModel {
     public void renderAll(PoseStack.Pose pose, VertexConsumer buffer, int argb, int light) {
         for (String name : groups.keySet()) {
             renderPart(name, pose, buffer, argb, light);
+        }
+    }
+
+    /** Emits the whole model (or one group) through a {@link QuadSink}; the sink applies the pose and normals. */
+    public void renderSink(QuadSink sink, int argb, int light) {
+        for (String name : groups.keySet()) {
+            renderPartSink(name, sink, argb, light);
+        }
+    }
+
+    public void renderSink(String name, QuadSink sink, int argb, int light) {
+        renderPartSink(name, sink, argb, light);
+    }
+
+    private void renderPartSink(String name, QuadSink sink, int argb, int light) {
+        List<float[][]> faces = groups.get(name);
+        if (faces == null) {
+            return;
+        }
+        for (float[][] face : faces) {
+            for (int index = 0; index < 4 && index < face.length; index++) {
+                float[] vertex = face[index];
+                sink.vertex(vertex[0], vertex[1], vertex[2], vertex[3], vertex[4], argb, light);
+            }
         }
     }
 
