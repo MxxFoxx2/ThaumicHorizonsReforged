@@ -43,6 +43,19 @@ class ConfigResearchRegistrationTest {
     }
 
     @Test
+    void creatureAndSelfInfusionPagesUseStandardImageMarkers() {
+        ResearchCategory category = ResearchCategories.get(CATEGORY);
+        assertNotNull(category);
+        long markerCount = category.research().stream()
+            .flatMap(entry -> entry.pages().stream())
+            .filter(page -> page instanceof ResearchPage.Image image
+                && (image.image().getPath().startsWith("textures/misc/creature_page/")
+                    || image.image().getPath().startsWith("textures/misc/self_page/")))
+            .count();
+        assertEquals(40L, markerCount);
+    }
+
+    @Test
     void everyInfusionPageEntryListsInfusionAsHiddenParent() {
         ResearchCategory category = ResearchCategories.get(CATEGORY);
         assertNotNull(category);
