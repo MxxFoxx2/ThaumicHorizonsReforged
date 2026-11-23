@@ -64,13 +64,11 @@ public final class ThDispenserBehaviors {
             ItemStack projectileStack = stack.copyWithCount(1);
             if (stack.getItem() instanceof SyringeInjectionItem syringe && syringe.isPhial(stack)) {
                 BlastPhialProjectile projectile = new BlastPhialProjectile(level,
-                    target.getX() + 0.5F, target.getY() + 0.5F, target.getZ() + 0.5F, projectileStack);
-                projectile.shoot(facing.getStepX(), facing.getStepY() + 0.1F, facing.getStepZ(), 1.1F, 6.0F);
+                    target.getX() + 0.5F, target.getY() + 0.5F, target.getZ() + 0.5F, projectileStack, facing);
                 level.addFreshEntity(projectile);
             } else {
                 SyringeProjectile projectile = new SyringeProjectile(level,
-                    target.getX() + 0.5F, target.getY() + 0.5F, target.getZ() + 0.5F, projectileStack);
-                projectile.shoot(facing.getStepX(), facing.getStepY() + 0.1F, facing.getStepZ(), 1.1F, 6.0F);
+                    target.getX() + 0.5F, target.getY() + 0.5F, target.getZ() + 0.5F, projectileStack, facing);
                 level.addFreshEntity(projectile);
             }
             stack.shrink(1);
