@@ -6,7 +6,8 @@
   "refmap": "thaumichorizons.refmap.json",
   "mixins": [
     "WandsRechargeMixin",
-    "VisStorageRechargeMixin"
+    "VisStorageRechargeMixin",
+    "GolemMaterialStatsMixin"
   ],
   "client": [],
   "injectors": {

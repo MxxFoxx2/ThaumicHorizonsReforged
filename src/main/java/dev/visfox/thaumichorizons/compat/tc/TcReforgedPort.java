@@ -68,6 +68,7 @@ import thaumcraft.research.PlayerKnowledge;
 import thaumcraft.research.Warp;
 import thaumcraft.research.WarpType;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
+import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.ResearchCompat;
 import dev.visfox.thaumichorizons.compat.ResearchCompat.Flag;
 import dev.visfox.thaumichorizons.compat.ResearchCompat.PageKind;
@@ -76,6 +77,40 @@ import dev.visfox.thaumichorizons.compat.ResearchCompat.ResearchSpec;
 import dev.visfox.thaumichorizons.compat.WarpKind;
 
 public final class TcReforgedPort {
+    private static boolean hasMethod(Class<?> owner, String name, Class<?>... parameterTypes) {
+        try {
+            owner.getMethod(name, parameterTypes);
+            return true;
+        } catch (NoSuchMethodException ignored) {
+            return false;
+        }
+    }
+
+    public static void logCompatibility() {
+        if (!hasMethod(NodeTransducerBlockEntity.class, "stopForVortexConversion")) {
+            ThaumicHorizons.LOGGER.warn(
+                "TC4R compatibility: the stock host lacks NodeTransducerBlockEntity.stopForVortexConversion; "
+                    + "Transduction Amplifier automatic multi-transducer-to-Vortex conversion is disabled.");
+        }
+        if (!hasMethod(thaumcraft.fx.FxProxy.class, "machineBeam", Level.class, BlockPos.class,
+                net.minecraft.world.phys.Vec3.class, net.minecraft.world.phys.Vec3.class,
+                int.class, float.class, int.class)) {
+            ThaumicHorizons.LOGGER.info(
+                "TC4R compatibility: optional machine-beam FX extension is unavailable; its adapter is a no-op.");
+        }
+        if (!hasMethod(ResearchPage.class, "creatureInfusion", String.class)) {
+            ThaumicHorizons.LOGGER.info(
+                "TC4R compatibility: optional Creature Infusion research page extension is unavailable; "
+                    + "no active TH research entry currently uses this page type.");
+        }
+    }
+    public static <T extends thaumcraft.crafting.TcRecipe> T registerRecipeUnique(T recipe) {
+        if (thaumcraft.crafting.TcRecipes.get(recipe.key()) != null) {
+            throw new IllegalStateException("Duplicate Thaumic Horizons recipe key: " + recipe.key());
+        }
+        return thaumcraft.crafting.TcRecipes.register(recipe);
+    }
+
     public static final TcAspects aspects = new TcAspects();
     public static final TcResearch research = new TcResearch();
     public static final TcWarp warp = new TcWarp();
@@ -131,8 +166,13 @@ public final class TcReforgedPort {
             if (!spec.parents().isEmpty()) {
                 item.setParents(spec.parents().toArray(String[]::new));
             }
-            if (!spec.parentsHidden().isEmpty()) {
-                item.setParentsHidden(spec.parentsHidden().toArray(String[]::new));
+            List<String> hiddenParents = new ArrayList<>(spec.parentsHidden());
+            if (spec.pages().stream().anyMatch(page -> page.kind() == PageKind.INFUSION)
+                    && !hiddenParents.contains("INFUSION")) {
+                hiddenParents.add("INFUSION");
+            }
+            if (!hiddenParents.isEmpty()) {
+                item.setParentsHidden(hiddenParents.toArray(String[]::new));
             }
             if (!spec.siblings().isEmpty()) {
                 item.setSiblings(spec.siblings().toArray(String[]::new));
@@ -157,7 +197,6 @@ public final class TcReforgedPort {
                 }
             }
             item.setPages(pages.toArray(new ResearchPage[0]));
-            item.requireInfusionResearch();
             item.registerResearchItem();
         }
 
@@ -185,8 +224,19 @@ public final class TcReforgedPort {
                 case ARCANE -> ResearchPage.arcane(page.recipeKeys().toArray(String[]::new));
                 case CRUCIBLE -> ResearchPage.crucible(page.recipeKeys().toArray(String[]::new));
                 case INFUSION -> ResearchPage.infusion(page.recipeKeys().toArray(String[]::new));
-                case CREATURE_INFUSION -> ResearchPage.creatureInfusion(page.payload());
+                case CREATURE_INFUSION -> creatureInfusionPage(page.payload());
             };
+        }
+
+        private @Nullable ResearchPage creatureInfusionPage(String payload) {
+            try {
+                return (ResearchPage) ResearchPage.class.getMethod("creatureInfusion", String.class)
+                    .invoke(null, payload);
+            } catch (NoSuchMethodException ignored) {
+                return null;
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException("Failed to create optional TC4R Creature Infusion research page", exception);
+            }
         }
 
         public boolean isComplete(Player player, String researchKey) {
@@ -248,7 +298,7 @@ public final class TcReforgedPort {
         }
 
         public boolean isWand(ItemStack stack) {
-            return thaumcraft.wand.Wands.isWand(stack);
+            return stack.getItem() instanceof thaumcraft.wand.WandItem;
         }
 
         public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
@@ -472,9 +522,18 @@ public final class TcReforgedPort {
             return List.copyOf(combinations);
         }
 
-        public void stopTransducerForVortexConversion(ServerLevel level, BlockPos transducerPos) {
-            if (level.getBlockEntity(transducerPos) instanceof NodeTransducerBlockEntity transducer) {
-                transducer.stopForVortexConversion();
+        public boolean stopTransducerForVortexConversion(ServerLevel level, BlockPos transducerPos) {
+            if (!(level.getBlockEntity(transducerPos) instanceof NodeTransducerBlockEntity transducer)) {
+                return false;
+            }
+            try {
+                NodeTransducerBlockEntity.class.getMethod("stopForVortexConversion").invoke(transducer);
+                return true;
+            } catch (NoSuchMethodException ignored) {
+                return false;
+            } catch (ReflectiveOperationException exception) {
+                ThaumicHorizons.LOGGER.error("Failed to stop TC4R node transducer before Vortex conversion", exception);
+                return false;
             }
         }
     }
@@ -506,7 +565,16 @@ public final class TcReforgedPort {
 
         public void beam(Level level, BlockPos key, net.minecraft.world.phys.Vec3 from,
             net.minecraft.world.phys.Vec3 to, int color, float width, int type) {
-            fx().machineBeam(level, key, from, to, color, width, type);
+            thaumcraft.fx.FxProxy proxy = fx();
+            try {
+                thaumcraft.fx.FxProxy.class.getMethod("machineBeam", Level.class, BlockPos.class,
+                    net.minecraft.world.phys.Vec3.class, net.minecraft.world.phys.Vec3.class,
+                    int.class, float.class, int.class).invoke(proxy, level, key, from, to, color, width, type);
+            } catch (NoSuchMethodException ignored) {
+                // This optional visual extension is absent from stock TC4R 1.1.3.
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException("Failed to invoke optional TC4R machine-beam FX", exception);
+            }
         }
 
         public void blockSparkle(Level level, BlockPos pos, int color, int count) {
@@ -517,12 +585,25 @@ public final class TcReforgedPort {
             fx().essentiaTrail(level, from, BlockPos.containing(to), 8, color, 1.0F);
         }
 
+        private void invokeOptionalFx(String method, Class<?>[] parameterTypes, Object[] arguments) {
+            try {
+                thaumcraft.fx.FxProxy.class.getMethod(method, parameterTypes).invoke(fx(), arguments);
+            } catch (NoSuchMethodException ignored) {
+                // Optional FX extensions are not part of the public stock TC4R 1.1.3 API.
+            } catch (ReflectiveOperationException exception) {
+                ThaumicHorizons.LOGGER.error("Failed to invoke optional TC4R FX extension: {}", method, exception);
+            }
+        }
+
         public void blocksplosion(Level level, BlockPos center, int color) {
-            fx().blocksplosion(level, center, color);
+            invokeOptionalFx("blocksplosion", new Class<?>[] {Level.class, BlockPos.class, int.class},
+                new Object[] {level, center, color});
         }
 
         public void containmentCapture(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().containmentCapture(level, pos.x, pos.y, pos.z, color);
+            invokeOptionalFx("containmentCapture",
+                new Class<?>[] {Level.class, double.class, double.class, double.class, int.class},
+                new Object[] {level, pos.x, pos.y, pos.z, color});
         }
 
         public void essentiaBubble(Level level, BlockPos pos, int color) {
@@ -530,7 +611,9 @@ public final class TcReforgedPort {
         }
 
         public void deadCreatureFx(Level level, net.minecraft.world.phys.Vec3 pos, int color) {
-            fx().deadCreature(level, pos.x, pos.y, pos.z, color);
+            invokeOptionalFx("deadCreature",
+                new Class<?>[] {Level.class, double.class, double.class, double.class, int.class},
+                new Object[] {level, pos.x, pos.y, pos.z, color});
         }
     }
 

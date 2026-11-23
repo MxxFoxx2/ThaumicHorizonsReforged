@@ -2,7 +2,7 @@
 
 ## Dependency and source of truth
 
-The local development setup uses a composite build of the sibling repository through `includeBuild('../thaumcraft-4-reforged')` in `settings.gradle`. CI checks out a pinned TC4R commit; when changing or debugging an API, compare the local source with the revision pinned in `.github/workflows/ci.yml`.
+The local development setup uses a composite build of the sibling repository through `includeBuild('../thaumcraft-4-reforged')` in `settings.gradle`. The supported host is the official TC4R 1.1.3 Minecraft 26.3 release, tag `26.3`, pinned to commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`. CI checks out that exact public revision. Keep the sibling checkout on the same tag when building locally.
 
 For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` rather than semantic guesses.
 
@@ -12,11 +12,21 @@ For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` 
 2. If the call is a plain public TC4R API (allowlisted in `tools/check_seams.py`), call TC4R directly from gameplay code.
 3. Keep TC4R-specific lookups, effects, blocks, internal objects and mixins in `compat/tc/`.
 4. A direct import in gameplay code is allowed only if the type is intentionally exposed in `THAUMCRAFT_API` in `tools/check_seams.py`. Before adding an exception, explain why it is public add-on API and why an adapter is unsuitable.
-5. TC4R is a hard dependency: there are no fallback backends and no availability gates to honor.
+5. TC4R is a required dependency, but optional host extensions must be capability-checked. Prefer a safe no-op or disabling only the dependent feature over linking directly against a fork-only method.
 
-## Golem stats
+## TH golem compatibility
 
-- `GolemBase.golemStats()` (overridable) is the TC4R extension point for golem characteristics; `EntityGolemTH` feeds it from its own `GolemMaterialTH`. `GolemBase.getGolemTexture()` is overridable for the model texture. `GolemType` stays stock Thaumcraft: no TH materials there.
+- Stock TC4R 1.1.3 exposes `GolemBase.getGolemStrength()`, `getCarryLimit()`, `configure()`, `aiStep()` and `fireImmune()`, but does not expose the fork-only `GolemStats`, `golemStats()` or `getGolemTexture()` contract.
+- `EntityGolemTH` owns its `GolemMaterialTH` values and overrides the public host methods for strength, carry capacity, health, armor and fire immunity. `GolemMaterialStatsMixin` adapts movement speed, water behavior, upgrade-slot count and per-material regeneration delay on the base golem tick/configuration path.
+- `GolemRendererTHMixin` applies the material texture and any additional TH upgrade slots to the official renderer. These mixins are scoped to TH entities and leave stock golems unchanged.
+
+## Optional host extensions
+
+- The official host has no `NodeTransducerBlockEntity.stopForVortexConversion()`. TH checks for this method reflectively; the automatic multi-transducer-to-Vortex conversion runs only when the host can safely stop the transducer. On stock TC4R 1.1.3 that one conversion path is disabled.
+- The official host has no `FxProxy.machineBeam(...)`; the optional adapter is a no-op when the method is absent.
+- The optional `ResearchPage.creatureInfusion(String)` page type is loaded reflectively. Current TH research definitions do not request it, so there is no missing active page in the supported build.
+- `ResearchItem.requireInfusionResearch()` is not needed at runtime: TH reproduces its behavior in the adapter by adding the hidden `INFUSION` parent for research items with infusion pages.
+- `Wands.isWand(ItemStack)` in stock TC4R only recognizes the built-in wand item. TH's TC4R compatibility mixin restores the add-on contract by recognizing any `WandItem` subclass, which includes the TH disposable wand.
 
 ## Host API details worth preserving
 
@@ -39,12 +49,12 @@ Until the host provides a required native hook, TH may implement it through a mi
 
 - Prefer additive-only API changes; preserve behavior when TH is absent.
 - Document new add-on-facing API in the fork's `docs/ADDON_API.md`.
-- Build against the intended local composite checkout and confirm CI pins the tested revision.
+- Build against the official `26.3` tag in the local composite checkout and confirm CI pins the same revision.
 - Changes to `notlikethiss/thaumcraft-4-reforged` upstream require explicit user direction.
 
 ## Current add-on hooks and public API
 
-- Verified against local `feat/addon-api` `455a33f961ecd6b7a3dbf5fd7ff7bcbc3b923d9d`; CI pins the earlier `c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb`, which also contains every API currently consumed.
+- Verified against official `notlikethiss/thaumcraft-4-reforged` tag `26.3` / commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`.
 - Public scan API used by Scholar lens: `ScanManager` and `ScanKind`. The TH `LensScanPayload` independently revalidates goggles/lens, range and target on the server; no TC4R client networking is imported.
 - Public rendering helpers allowed for legacy machine renderers: `FacingQuads`, `ModelBoxGeometry`, `TcRenderTypes`, `EntityQuadSink`, `VertexQuadSink`, `WorldRendering` and `WardedRendering`. These are used only from `client/` and cover the original scanner, crystal, brain/jar and halo geometry without a second rendering convention.
 - `WandsRechargeMixin` and `VisStorageRechargeMixin` reject positive recharge and return no room for TH disposable wands. They do not change base wand behavior or require TC4R edits.

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
     paths-ignore:
       - "docs/**"
   pull_request:
@@ -32,22 +32,22 @@ jobs:
         with:
           path: thaumic-horizons-reforged
 
-      # The addon currently consumes APIs that are only present in this fork.
-      # Pin the exact tested revision so CI does not silently change underneath us.
-      - name: Checkout TC4 Reforged add-on API
+      # Build against the public Minecraft 26.3 / TC4R 1.1.3 release.
+      # Pin the resolved tag commit so CI never follows a moving branch.
+      - name: Checkout official Thaumcraft 4 Reforged
         uses: actions/checkout@v7
         with:
-          repository: MxxFoxx2/thaumcraft-4-reforged
-          ref: feat/addon-api
+          repository: notlikethiss/thaumcraft-4-reforged
+          ref: 26.3
           path: thaumcraft-4-reforged
           persist-credentials: false
 
-      - name: Verify pinned TC4R revision
+      - name: Verify official TC4R 1.1.3 revision
         run: |
           checked=$(git -C thaumcraft-4-reforged rev-parse HEAD)
-          echo "Checked out TC4R revision: $checked"
-          if [ "$checked" != "388aebb2ed9f7af45c580792f8f59976ea9a822b" ]; then
-            echo "::error::TC4R revision mismatch: expected 388aebb2ed9f7af45c580792f8f59976ea9a822b, got $checked" >&2
+          echo "Checked out official TC4R revision: $checked"
+          if [ "$checked" != "99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2" ]; then
+            echo "::error::TC4R 1.1.3 revision mismatch: expected 99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2, got $checked" >&2
             exit 1
           fi
 
@@ -115,3 +115,24 @@ jobs:
 
           echo "Verified distributable: $expected"
           du -h "$expected"
+
+      - name: Create distributable checksum
+        working-directory: thaumic-horizons-reforged
+        shell: bash
+        run: |
+          set -euo pipefail
+          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          jar="build/libs/thaumic-horizons-reforged-${mod_version}-${minecraft_version}.jar"
+          sha256sum "$jar" > "${jar}.sha256"
+
+      - name: Upload distributable
+        uses: actions/upload-artifact@v7
+        with:
+          name: thaumic-horizons-reforged-${{ github.sha }}
+          path: |
+            thaumic-horizons-reforged/build/libs/*.jar
+            thaumic-horizons-reforged/build/libs/*.jar.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
