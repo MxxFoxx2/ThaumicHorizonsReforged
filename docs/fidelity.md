@@ -27,7 +27,7 @@ The original applied Chameleon Skin as a permanent non-curative `Potion.invisibi
 
 - Greatwood and Thaumium variants use the 26.3 vanilla boat placement, passenger, steering, collision and save/load implementation, with separate entity/item registrations and the original TH boat textures.
 - Thaumium Boat overrides the NeoForge boat-fluid hooks for water and lava, is registered fire-immune, and clears fire / refreshes a short Fire Resistance effect for living passengers while the boat is in lava.
-- Both item registrations use the vanilla BoatItem placement path; their dispenser behaviors are registered through BoatDispenseItemBehavior, which consults the boat-fluid hook.
+- Both item registrations use the vanilla BoatItem placement path; `ThDispenserBehaviors.BoatBehavior` places Thaumium boats on lava as well as water.
 - The original arcane recipe aspect costs and ingredients are restored and linked to the existing Greatwood/Thaumium research pages.
 - The 1.7.10 movement multipliers are not copied into the modern paddle-control physics. Exact relative speed and collision-damage parity therefore remain a live-client comparison, not a claimed 1:1 port.
 
@@ -263,3 +263,25 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Pocket Plane source and dimension data: commit [`e38d16a`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/e38d16ae8e68544a3dc6d45627b00cc1cf19ce47). The sources compile against MC 26.3 / NeoForge 26.3. Commit [`7eb9b8c`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/7eb9b8c) migrated the dimension type and biome definitions to current codecs; a fresh dedicated-server run reached `Done` and loaded `thaumichorizons:pocket_plane`. Terrain and portal behavior remain game-unverified.
 - Mirror Amulet item, infusion recipe, research page, mirror-link behavior, and death-item transport: commit [`8538a7f`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8538a7f). Runtime behavior still needs an in-game check.
 - Void Putty repair and Focus Illumination dye recipe serializers and recipes: commit [`8512e83`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/8512e83). Both still need an in-game check.
+
+
+## Creature and self-infusion research pages
+
+- The 40 recipe pages use the official host's standard `ResearchPage.Image` records as stable marker IDs under `textures/misc/creature_page/<research>/<index>.png` and `textures/misc/self_page/<research>/<index>.png`.
+- `CreatureInfusionResearchPageMixin` resolves each marker against `ThInfusionRecipes` and draws the result title, aspect costs, catalyst icons and instability. The marker pages are rendered by TH client code; they do not depend on the optional fork-only `ResearchPage.CreatureInfusion` type.
+- This renderer still requires live-client visual acceptance on official TC4R 1.1.3.
+
+## Curative Vat research structure
+
+- `healingVat` links to the `CurativeVat` compound recipe: a 3×4×3 structure with greatwood planks, alchemical constructs, glass and water cells, and WATER 50 / EARTH 50 / ORDER 50.
+- The two water layers use water buckets for the book display because modern water has no item form; this does not change the in-world structure requirement.
+
+## Dispenser and furnace parity
+
+- Restored registrations for Alchemite, Incubated Egg, blast phials, filled injection syringes and Greatwood/Thaumium boats. Projectile behaviors spawn the same TH entity classes as direct use; invalid boat placement does not consume the item.
+- Thaumium Boat dispensing accepts lava as well as water.
+- `SmeltingBonusesMixin` adds the original TH meat → meat-nugget bonus to the Infernal Furnace bonus table. The mixin uses the official host's private registration helper and is guarded so it adds the entry only once.
+
+## Remaining research-page gap
+
+- The 1.7.10 `voidPutty` page renders a custom dynamic repair recipe. Official TC4R 1.1.3 has no native page type for an arbitrary dynamic repair recipe. Gameplay repair remains implemented; only that visual research page remains absent. Do not substitute a misleading static recipe page.
