@@ -6,6 +6,7 @@ import dev.visfox.thaumichorizons.entity.NightmareTH;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
@@ -225,6 +226,40 @@ public final class ThInfusionRecipes {
     public static ArrayList<SelfInfusionRecipe> getSelfRecipes() {
         ensureRecipes();
         return selfRecipes;
+    }
+
+    /** Resolves a critter-recipe output id into the entity type it produces; negative ids reference vanilla entities. */
+    public static @Nullable EntityType<?> outputEntityType(int id) {
+        if (id < 0) {
+            return switch (id) {
+                case -90 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("pig"));
+                case -92 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("cow"));
+                case -93 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("chicken"));
+                case -96 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("mooshroom"));
+                default -> null;
+            };
+        }
+        return switch (id) {
+            case 2 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chromaticsheep"));
+            case 3 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "selfshearingsheep"));
+            case 4 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "guardianpanther"));
+            case 5 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "gravekeeper"));
+            case 6 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "familiar"));
+            case 7 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chocolatecow"));
+            case 9 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "scholarchicken"));
+            case 10 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "goldchicken"));
+            case 11 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "orepig"));
+            case 12 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "tainteaterpig"));
+            case 13 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed"));
+            case 14 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "seawolf"));
+            case 15 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "netherhound"));
+            case 16 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "lunarwolf"));
+            case 20 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_zombie"));
+            case 21 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_skeleton"));
+            case 22 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "nightmare"));
+            case 29 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "sheeder"));
+            default -> null;
+        };
     }
 
     public static void init() {
@@ -449,7 +484,7 @@ public final class ThInfusionRecipes {
             null,
             new ItemStack[] { new ItemStack(Items.SADDLE), tc("zombie_brain"), new ItemStack(Items.GOLDEN_APPLE) },
             7));
-        critterRecipes.add(new CreatureInfusionRecipe("runicHide", tag("runicCreature", 8), 7,
+        critterRecipes.add(new CreatureInfusionRecipe("runicCreature", tag("runicHide", 8), 7,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.ARMOR, 16).add(thaumcraft.aspect.Aspect.MAGIC, 32)
                 .add(thaumcraft.aspect.Aspect.ENERGY, 16).add(thaumcraft.aspect.Aspect.FLESH, 8),
             null,
