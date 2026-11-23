@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -62,6 +63,30 @@ def main():
                 errors.append(f"{path}: cannot read JSON ({error})")
                 continue
             walk(data, path, assets, checked, errors)
+    # ResearchPage.Image marker pages are registered from Java rather than JSON.
+    # Check those texture identifiers too, so a missing marker cannot silently ship.
+    project_root = assets
+    for _ in range(4):
+        project_root = project_root.parent
+    research_source = (
+        project_root / "src" / "main" / "java" / "dev" / "visfox"
+        / "thaumichorizons" / "research" / "ConfigResearch.java"
+    )
+    image_pattern = re.compile(r'PageSpec\.image\(th\("textures/([^"]+)"\)')
+    if research_source.is_file():
+        source_text = research_source.read_text(encoding="utf-8")
+        for match in image_pattern.finditer(source_text):
+            relative_texture = match.group(1)
+            target = assets / NAMESPACE / "textures" / relative_texture
+            checked.append(f"research-image:{relative_texture}")
+            if not target.is_file():
+                errors.append(
+                    f"{research_source}: missing research image marker "
+                    f"{relative_texture} ({target.as_posix()})"
+                )
+    else:
+        errors.append(f"research registration source not found: {research_source}")
+
     if not files or not checked:
         errors.append(f"no asset references found under {assets}")
     for error in errors:

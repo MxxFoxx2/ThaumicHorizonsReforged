@@ -4,85 +4,53 @@
     "property": "minecraft:display_context",
     "cases": [
       {
-        "when": "ground",
+        "when": [
+          "gui"
+        ],
         "model": {
-          "type": "minecraft:special",
+          "type": "thaumcraft:special_owner",
           "base": "thaumichorizons:item/syringeinjection",
           "model": {
-            "type": "thaumichorizons:syringe"
-          },
-          "transformation": {
-            "right_rotation": [
-              0,
-              0,
-              0,
-              1
-            ],
-            "scale": [
-              1,
-              1,
-              1
-            ],
-            "left_rotation": [
-              0,
-              0,
-              0,
-              1
-            ],
-            "translation": [
-              0,
-              0.75,
-              0
-            ]
+            "type": "thaumichorizons:syringe",
+            "view": "inventory"
+          }
+        }
+      },
+      {
+        "when": [
+          "thirdperson_lefthand",
+          "thirdperson_righthand"
+        ],
+        "model": {
+          "type": "thaumcraft:special_owner",
+          "base": "thaumichorizons:item/syringeinjection",
+          "model": {
+            "type": "thaumichorizons:syringe",
+            "view": "equipped"
           }
         }
       },
       {
         "when": [
           "firstperson_lefthand",
-          "firstperson_righthand",
-          "thirdperson_lefthand",
-          "thirdperson_righthand",
-          "fixed"
+          "firstperson_righthand"
         ],
         "model": {
-          "type": "minecraft:special",
+          "type": "thaumcraft:special_owner",
           "base": "thaumichorizons:item/syringeinjection",
           "model": {
-            "type": "thaumichorizons:syringe"
-          },
-          "transformation": {
-            "right_rotation": [
-              0,
-              0,
-              0,
-              1
-            ],
-            "scale": [
-              1,
-              1,
-              1
-            ],
-            "left_rotation": [
-              0,
-              0,
-              -0.54463904,
-              0.83867057
-            ],
-            "translation": [
-              0.05003609,
-              1.11691378,
-              0.75
-            ]
+            "type": "thaumichorizons:syringe",
+            "view": "first_person"
           }
         }
       }
     ],
     "fallback": {
-      "type": "minecraft:special",
+      "type": "thaumcraft:special_owner",
       "base": "thaumichorizons:item/syringeinjection",
       "model": {
-        "type": "thaumichorizons:syringe"
+        "type": "thaumichorizons:syringe",
+        "view": "entity"
       }
     }
   }

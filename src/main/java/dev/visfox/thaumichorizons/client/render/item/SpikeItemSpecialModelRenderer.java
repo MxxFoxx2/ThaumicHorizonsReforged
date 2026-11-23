@@ -20,7 +20,8 @@ import java.util.function.Consumer;
 
 /**
  * Uses the reference OBJ and matching material texture for Spike block items.
- * The mesh uses the same scale and vertical offset as the legacy inventory renderer.
+ * In GUI and hand views, the view frame presents the legacy +Y direction inverted,
+ * so the mesh is flipped around its midpoint and centered in the visible item band.
  */
 public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer<Integer> {
     private static final Identifier MODEL_ID = ThaumicHorizons.id("textures/models/spike.obj");
@@ -29,15 +30,26 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         ThaumicHorizons.id("textures/models/woodenspike.png"),
         ThaumicHorizons.id("textures/models/toothspike.png")
     };
+    /** mesh: y 0 (base) .. 3 (tip), x -1.46 .. 1.54, z +-1.3; scale puts 3 units at 1.05 blocks */
+    private static final float SCALE = 0.35F;
 
-    private static final float MIN_X = -0.45304F;
-    private static final float MAX_X = 0.456295F;
-    private static final float MIN_Y = -0.5075F;
-    private static final float MAX_Y = 0.5425F;
-    private static final float MIN_Z = -0.539455F;
-    private static final float MAX_Z = 0.510545F;
+    private static final Vector3f[] MESH_CORNERS = {
+        new Vector3f(-1.46F, 0.0F, -1.29F),
+        new Vector3f(-1.46F, 0.0F, 1.30F),
+        new Vector3f(-1.46F, 3.0F, -1.29F),
+        new Vector3f(-1.46F, 3.0F, 1.30F),
+        new Vector3f(1.54F, 0.0F, -1.29F),
+        new Vector3f(1.54F, 0.0F, 1.30F),
+        new Vector3f(1.54F, 3.0F, -1.29F),
+        new Vector3f(1.54F, 3.0F, 1.30F)
+    };
 
     private final ObjModel model = ObjModel.get(MODEL_ID);
+    private final ThItemView view;
+
+    public SpikeItemSpecialModelRenderer(ThItemView view) {
+        this.view = view;
+    }
 
     @Override
     public @Nullable Integer extractArgument(ItemStack stack) {
@@ -50,14 +62,11 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(MIN_X, MIN_Y, MIN_Z));
-        output.accept(new Vector3f(MIN_X, MIN_Y, MAX_Z));
-        output.accept(new Vector3f(MIN_X, MAX_Y, MIN_Z));
-        output.accept(new Vector3f(MIN_X, MAX_Y, MAX_Z));
-        output.accept(new Vector3f(MAX_X, MIN_Y, MIN_Z));
-        output.accept(new Vector3f(MAX_X, MIN_Y, MAX_Z));
-        output.accept(new Vector3f(MAX_X, MAX_Y, MIN_Z));
-        output.accept(new Vector3f(MAX_X, MAX_Y, MAX_Z));
+        for (Vector3f corner : MESH_CORNERS) {
+            PoseStack poseStack = new PoseStack();
+            transformModel(poseStack);
+            output.accept(poseStack.last().pose().transformPosition(corner.x, corner.y, corner.z, new Vector3f()));
+        }
     }
 
     @Override
@@ -68,18 +77,41 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
         }
 
         poseStack.pushPose();
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
-        poseStack.scale(0.35F, 0.35F, 0.35F);
-        poseStack.translate(0.0F, -1.45F, 0.0F);
+        transformModel(poseStack);
 
-        Identifier texture = TEXTURES[spikeType];
-        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(texture),
+        // spike.obj is triangle-only: EntityQuadSink derives normals from a duplicated
+        // fourth vertex and would render zero normals, so emit the OBJ faces directly
+        // with their authored normals and no backface culling.
+        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURES[spikeType]),
             (pose, buffer) -> model.renderAll(pose, buffer, 0xFFFFFFFF, lightCoords));
         poseStack.popPose();
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked<Integer> {
-        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
+    private void transformModel(PoseStack poseStack) {
+        view.apply(poseStack);
+        switch (view) {
+            case INVENTORY -> {
+                // pixel-measured: the mesh sits 0.19 units high in the slot
+                poseStack.translate(0.0F, -0.55F, 0.0F);
+                poseStack.scale(SCALE, SCALE, SCALE);
+                poseStack.rotateDegrees(Axis.YP, 90.0F);
+            }
+            case EQUIPPED, FIRST_PERSON -> {
+                // hang from the hand anchor like the syringe (1.05 units below it)
+                poseStack.translate(0.0F, -3.0F, 0.0F);
+                poseStack.scale(SCALE, SCALE, SCALE);
+                poseStack.rotateDegrees(Axis.YP, 90.0F);
+            }
+            case ENTITY -> {
+                poseStack.scale(SCALE, SCALE, SCALE);
+                poseStack.translate(0.0F, -1.45F, 0.0F);
+                poseStack.rotateDegrees(Axis.YP, 90.0F);
+            }
+        }
+    }
+
+    public record Unbaked(ThItemView view) implements SpecialModelRenderer.Unbaked<Integer> {
+        public static final MapCodec<Unbaked> MAP_CODEC = ThItemView.FIELD.xmap(Unbaked::new, Unbaked::view);
 
         @Override
         public MapCodec<Unbaked> type() {
@@ -88,7 +120,7 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
 
         @Override
         public SpecialModelRenderer<Integer> bake(SpecialModelRenderer.BakingContext context) {
-            return new SpikeItemSpecialModelRenderer();
+            return new SpikeItemSpecialModelRenderer(view);
         }
     }
 }

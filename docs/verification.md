@@ -258,3 +258,19 @@ The following source changes are covered by CI and targeted registration tests, 
 - Dispensers: test Alchemite ignition, Incubated Egg, filled syringes, blast phials, Greatwood Boat and Thaumium Boat on water and lava; check item consumption and projectile direction.
 - Infernal Furnace: test the meat → meat-nugget bonus and confirm the mixin appends the entry once.
 - Infusion output mapping: test zombie horse, skeleton horse and Nightmare outputs from their corresponding Vat recipes.
+
+
+## Post-beta.2 item transforms and asset markers
+
+The syringe, spike and Corpse Effigy renderers now use the official TC4R 1.1.3 `special_owner` item-model wrapper with TH-owned view data. This removes the old fork-only `LegacyItemView` dependency. The research-page image files are transparent marker textures: the client mixins draw the actual infusion recipes and the Planar Gateway diagram.
+
+- [ ] Inspect empty, blood, blood-sample and injection syringes in inventory, dropped-item, first-person and third-person contexts; verify tint, alpha, scale, orientation, clipping and pickup.
+- [ ] Inspect the Corpse Effigy in the same four display contexts; verify its upright pose, scale, texture UVs and bounds.
+- [ ] Inspect all three spike materials in inventory, dropped-item, first-person and third-person contexts; verify the point direction, hand anchor, scale, collision-free bounds and material texture.
+- [ ] Inspect the Slot receptacle from all six sides; verify per-face UV orientation and no texture seams.
+- [ ] Inspect the Vortex Stabilizer facing up, down, north, south, east and west; verify the model opening and beam orientation match the block entity.
+- [ ] Open all 40 creature/self-infusion research marker pages and confirm the client renderer draws the correct title, aspects, catalysts and instability without a missing texture.
+- [ ] Open the Pocket Plane research page and confirm the transparent image marker permits the 5×5 gateway diagram to render with correct item icons and caption.
+- [ ] Confirm resource reload and dedicated-server startup remain clean after the new marker assets and item model definitions are added.
+
+CI now validates the Java-registered research-page image markers as well as JSON model and texture references. The checklist above remains live-client acceptance work; CI does not prove visual correctness.
