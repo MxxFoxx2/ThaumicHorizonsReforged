@@ -8,7 +8,8 @@
   "client": [
     "DisplayPageAccessor",
     "PlanarGatewayResearchPageMixin",
-    "GolemRendererTHMixin"
+    "GolemRendererTHMixin",
+    "CreatureInfusionResearchPageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

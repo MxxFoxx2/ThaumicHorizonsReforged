@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import dev.visfox.thaumichorizons.aspect.ConfigAspects;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusion;
 import dev.visfox.thaumichorizons.platform.DataAttachments;
+import dev.visfox.thaumichorizons.platform.ThDispenserBehaviors;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import dev.visfox.thaumichorizons.registry.ThCreativeTabs;
@@ -14,8 +15,6 @@ import dev.visfox.thaumichorizons.research.ConfigResearch;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import dev.visfox.thaumichorizons.registry.ThMenus;
 import dev.visfox.thaumichorizons.registry.ThSounds;
-import net.minecraft.core.dispenser.BoatDispenseItemBehavior;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -73,12 +72,7 @@ public class ThaumicHorizons {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         dev.visfox.thaumichorizons.compat.tc.TcReforgedPort.logCompatibility();
-        event.enqueueWork(() -> {
-            DispenserBlock.registerBehavior(ThItems.BOAT_GREATWOOD.get(),
-                new BoatDispenseItemBehavior(ThEntities.BOAT_GREATWOOD.get()));
-            DispenserBlock.registerBehavior(ThItems.BOAT_THAUMIUM.get(),
-                new BoatDispenseItemBehavior(ThEntities.BOAT_THAUMIUM.get()));
-        });
+        event.enqueueWork(ThDispenserBehaviors::register);
         LOGGER.info("Thaumic Horizons: Reforged loaded");
     }
 

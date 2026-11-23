@@ -27,12 +27,12 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 ## What the mod adds
 
-- **Creature infusion.** Jar a critter with the wand, drop it into the Vat with components, and get a TH creature: Chocolate Cow, Ore Pig, Endersteed, Seawolf, slimes, the Sheeder, and more — 30 critter recipes with vanilla parents replaced 1:1. Infused creatures gain permanent effects and replaced AI.
+- **Creature infusion.** Jar a critter with the wand, drop it into the Vat with components, and get a TH creature: Chocolate Cow, Ore Pig, Endersteed, Seawolf, slimes, the Sheeder, and more — 30 critter recipes with vanilla parents replaced 1:1. Infused creatures gain permanent effects and replaced AI. The research book renders creature and self-infusion recipe data in dedicated pages.
 - **Player self-infusions.** Ten infusions from the Vat: swiftness, regeneration, resistance, morphic fingers (M key), silver heart, synth skin, amphibious, warp tumor (siphons your warp into a reservoir), spider climb (C key), and Chameleon Skin (X key) — reimplemented without the original sync bug, using attachment-driven full invisibility that hides armor. Two-client and persistence checks are tracked in [docs/verification.md](docs/verification.md).
 - **The Vat.** A 1:1 multiblock with curative, incarnation, creature-infusion, and clone modes (corpse effigy → self-clone).
 - **Souls.** Soul jars (filled jars render their stored creature as an item preview), the Soul Sieve, the Inspiratron (souls → completed research), the Soulforge, and the Soul Beacon; containment focus captures Lost Souls.
-- **Blood and projectiles.** The Seroconverter (Blood Infuser) and the syringe family: draw blood, inject potions and nutrients, and fire syringe darts or blast phials from the seven-slot Injector.
-- **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Teleological Recombinator, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport.
+- **Blood and projectiles.** The Seroconverter (Blood Infuser) and the syringe family: draw blood, inject potions and nutrients, and fire syringe darts or blast phials from the seven-slot Injector; dispensers can launch filled syringes, blast phials and incubated eggs.
+- **Machines.** Vis Dynamo, Essentia Dynamo, Node Monitor, Synthetic Node, Transduction Amplifier, Teleological Recombinator, Vortex and Vortex Stabilizer, Alchemite — all wired into the TC4R vis net and essentia transport. The Infernal Furnace also receives the original meat → meat-nugget bonus.
 - **Golems.** TH golem materials from grass to void salt, placed from blocks with golem powder, paired with the TH bell.
 - **Lenses and foci.** Five arcane lenses with the lens case and a V-key radial selector, containment/liquefaction/disintegration/illumination/animation foci, and the disposable crystal wand.
 - **Mounts and boats.** Greatwood and Thaumium boats (the Thaumium boat can be steered through lava), the Endersteed, the Nightmare, and zombie/skeleton horses with TH attributes.

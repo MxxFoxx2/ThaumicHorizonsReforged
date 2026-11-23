@@ -111,6 +111,18 @@ public final class TcReforgedPort {
         return thaumcraft.crafting.TcRecipes.register(recipe);
     }
 
+    public static thaumcraft.crafting.CompoundRecipe registerCompoundRecipe(
+        String key, String research, AspectList aspects, int width, int height, int depth, List<String> blocks) {
+        if (thaumcraft.crafting.TcRecipes.get(key) != null) {
+            throw new IllegalStateException("Duplicate Thaumic Horizons recipe key: " + key);
+        }
+        List<thaumcraft.crafting.TcStack> stacks = blocks.stream()
+            .map(thaumcraft.crafting.TcStack::of)
+            .toList();
+        return thaumcraft.crafting.TcRecipes.register(
+            new thaumcraft.crafting.CompoundRecipe(key, research, aspects, width, height, depth, stacks));
+    }
+
     public static final TcAspects aspects = new TcAspects();
     public static final TcResearch research = new TcResearch();
     public static final TcWarp warp = new TcWarp();
@@ -224,6 +236,7 @@ public final class TcReforgedPort {
                 case ARCANE -> ResearchPage.arcane(page.recipeKeys().toArray(String[]::new));
                 case CRUCIBLE -> ResearchPage.crucible(page.recipeKeys().toArray(String[]::new));
                 case INFUSION -> ResearchPage.infusion(page.recipeKeys().toArray(String[]::new));
+                case COMPOUND -> ResearchPage.compound(page.recipeKeys().getFirst());
                 case CREATURE_INFUSION -> creatureInfusionPage(page.payload());
             };
         }

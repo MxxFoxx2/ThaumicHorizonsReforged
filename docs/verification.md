@@ -247,3 +247,14 @@ Static source audit (2026-11-18): the 1.7.10 `ChunkProviderPocketPlane` also ret
 - **Fixed: integrated-server crash on first damage.** Any damage event (observed via drowning) ran `InfusionEntityEvents.trySoulBeaconReturn`, whose first reference to `SoulBeaconKeys` class-initialized it *after* registry freeze: `DataKey$Builder.build → DataAttachments.register → DeferredRegister.register` threw `IllegalStateException: Cannot register new entries to DeferredRegister after RegisterEvent has been fired` and took the whole game down (crash report `crash-2026-11-20_18.24.38-server.txt`). Fix: `SoulBeaconKeys.initialize()` called from the mod constructor next to the other key classes (commit `d8c6b5b`); `build` incl. JUnit suite green, and two drowning deaths after the fix produced damage events with no crash.
 - **Fixed: `ObjModel` `ConcurrentModificationException` during parallel model bake** (`ObjModel.java:32`, previously logged at every resource reload) failed baking of `thaumichorizons:corpseeffigy`, `spiketoothth` and `spikewoodth` item models → "Missing item model" warnings and invisible/purple items. Fixed by making the loader cache a `ConcurrentHashMap` (commit `3e79d85`); the 18:29 client reload after the fix bakes all three models with no TH bake failures and no CME — the corpse-effigy and spike item-renderer checklist items (Injector projectiles section) are unblocked for their in-game visual checks.
 - Not a mod bug: the "dead mouse buttons" impression was caused by `options.txt` bindings `key_key.attack=key.keyboard.u`, `key_key.use=key.keyboard.j` (mouse buttons unbound from attack/use). Restored to mouse buttons.
+
+
+## Content/mechanics parity pass on official TC4R 1.1.3
+
+The following source changes are covered by CI and targeted registration tests, but still require live-client or dedicated-server acceptance:
+
+- Creature/self-infusion book pages: verify all 40 marker pages render without a missing-texture flash, with correct titles, aspects, catalysts and instability.
+- Curative Vat: verify the compound page shows the 3×4×3 layout and the in-world Vat still accepts the intended block/water structure.
+- Dispensers: test Alchemite ignition, Incubated Egg, filled syringes, blast phials, Greatwood Boat and Thaumium Boat on water and lava; check item consumption and projectile direction.
+- Infernal Furnace: test the meat → meat-nugget bonus and confirm the mixin appends the entry once.
+- Infusion output mapping: test zombie horse, skeleton horse and Nightmare outputs from their corresponding Vat recipes.

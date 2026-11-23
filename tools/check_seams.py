@@ -42,6 +42,7 @@ OUTSIDE_CLIENT = [
 OUTSIDE_CLIENT_EXCEPT_FILES = ("ThaumicHorizonsClient.java",)
 
 THAUMCRAFT_API = [
+    "thaumcraft.client.recipeview.AspectGrid",
     "thaumcraft.Thaumcraft",
         "thaumcraft.aspect.Aspect",
     "thaumcraft.aspect.AspectList",
