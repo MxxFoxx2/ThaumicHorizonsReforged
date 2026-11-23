@@ -57,7 +57,7 @@ abstract class CreatureInfusionResearchPageMixin {
         callback.cancel();
     }
 
-    private static @Nullable ThInfusionRecipes.CreatureInfusionRecipe creatureRecipe(String path, String prefix) {
+    private static ThInfusionRecipes.@Nullable CreatureInfusionRecipe creatureRecipe(String path, String prefix) {
         String marker = marker(path, prefix);
         if (marker == null) {
             return null;
@@ -84,7 +84,7 @@ abstract class CreatureInfusionResearchPageMixin {
         return null;
     }
 
-    private static @Nullable ThInfusionRecipes.SelfInfusionRecipe selfRecipe(String path, String prefix) {
+    private static ThInfusionRecipes.@Nullable SelfInfusionRecipe selfRecipe(String path, String prefix) {
         String marker = marker(path, prefix);
         if (marker == null) {
             return null;
