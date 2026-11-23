@@ -24,7 +24,7 @@ For old Thaumcraft item and block metadata, use TC4R's `tools/data/id_map.json` 
 
 - The official host has no `NodeTransducerBlockEntity.stopForVortexConversion()`. TH checks for this method reflectively; the automatic multi-transducer-to-Vortex conversion runs only when the host can safely stop the transducer. On stock TC4R 1.1.3 that one conversion path is disabled.
 - The official host has no `FxProxy.machineBeam(...)`; the optional adapter is a no-op when the method is absent.
-- The optional `ResearchPage.creatureInfusion(String)` page type is loaded reflectively. Current TH research definitions do not request it, so there is no missing active page in the supported build.
+- Creature and self-infusion recipe pages use the stock `ResearchPage.Image` type as a marker and are rendered client-side by TH. The optional `ResearchPage.creatureInfusion(String)` extension is not required or used by active TH research definitions.
 - `ResearchItem.requireInfusionResearch()` is not needed at runtime: TH reproduces its behavior in the adapter by adding the hidden `INFUSION` parent for research items with infusion pages.
 - `Wands.isWand(ItemStack)` in stock TC4R only recognizes the built-in wand item. TH's TC4R compatibility mixin restores the add-on contract by recognizing any `WandItem` subclass, which includes the TH disposable wand.
 
