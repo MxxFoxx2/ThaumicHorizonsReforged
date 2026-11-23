@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.entity;
 
 import dev.visfox.thaumichorizons.registry.ThEntities;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -33,6 +34,13 @@ public final class BlastPhialProjectile extends ThrownSplashPotion {
             owner.getZ() - Mth.sin(yaw) * 0.16F
         );
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, power * 1.5F, 1.0F);
+    }
+
+    public BlastPhialProjectile(Level level, double x, double y, double z, ItemStack injection, Direction facing) {
+        super(ThEntities.BLAST_PHIAL.get(), level);
+        this.setItem(toSplashPotion(injection));
+        this.setPos(x, y, z);
+        this.shoot(facing.getStepX(), facing.getStepY() + 0.1F, facing.getStepZ(), 1.1F, 6.0F);
     }
 
     public static ItemStack toSplashPotion(ItemStack injection) {
