@@ -3,6 +3,7 @@ package dev.visfox.thaumichorizons.entity;
 import dev.visfox.thaumichorizons.item.SyringeInjectionItem;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ItemSupplier;
@@ -25,6 +26,15 @@ public final class SyringeProjectile extends AbstractArrow implements ItemSuppli
         this.setBaseDamage(1.5D);
         this.pickup = owner instanceof net.minecraft.world.entity.player.Player ? Pickup.ALLOWED : Pickup.DISALLOWED;
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, power * 1.5F, 1.0F);
+    }
+
+    public SyringeProjectile(Level level, double x, double y, double z, ItemStack injection, Direction facing) {
+        super(ThEntities.SYRINGE.get(), level);
+        this.setBaseDamage(1.5D);
+        this.setPickupItemStack(injection.copy());
+        this.pickup = Pickup.DISALLOWED;
+        this.setPos(x, y, z);
+        this.shoot(facing.getStepX(), facing.getStepY() + 0.1F, facing.getStepZ(), 1.1F, 6.0F);
     }
 
     @Override
