@@ -58,6 +58,7 @@ public final class ResearchCompat {
         ARCANE,
         CRUCIBLE,
         INFUSION,
+        COMPOUND,
         CREATURE_INFUSION
     }
 
