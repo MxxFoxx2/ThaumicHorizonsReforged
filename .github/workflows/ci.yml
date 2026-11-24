@@ -108,8 +108,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\\r')"
-          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\\r')"
+          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
           expected="build/libs/thaumic-horizons-reforged-${mod_version}-${minecraft_version}.jar"
 
           test -s "$expected" || {
@@ -121,7 +121,7 @@ jobs:
           mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name '*.jar' -print | sort)
           test "${#jars[@]}" -eq 1 || {
             echo "::error::Expected exactly one JAR in build/libs; found ${#jars[@]}"
-            printf '%s\\n' "${jars[@]}"
+            printf '%s\n' "${jars[@]}"
             exit 1
           }
           test "${jars[0]}" = "$expected"
@@ -135,9 +135,9 @@ jobs:
             }
           done
 
-          if grep -Eq '(^|/)(reference|docs|tools|run|runs|logs|\\.git|\\.gradle|\\.github)(/|$)|(^|/)(AGENTS\\.md|CLAUDE\\.md|README[^/]*|LICENSE[^/]*)$|\\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"; then
+          if grep -Eq '(^|/)(reference|docs|tools|run|runs|logs|\.git|\.gradle|\.github)(/|$)|(^|/)(AGENTS\.md|CLAUDE\.md|README[^/]*|LICENSE[^/]*)$|\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"; then
             echo "::error::Development-only files or sources leaked into the distributable:"
-            grep -E '(^|/)(reference|docs|tools|run|runs|logs|\\.git|\\.gradle|\\.github)(/|$)|(^|/)(AGENTS\\.md|CLAUDE\\.md|README[^/]*|LICENSE[^/]*)$|\\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"
+            grep -E '(^|/)(reference|docs|tools|run|runs|logs|\.git|\.gradle|\.github)(/|$)|(^|/)(AGENTS\.md|CLAUDE\.md|README[^/]*|LICENSE[^/]*)$|\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"
             exit 1
           fi
 
@@ -149,8 +149,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\\r')"
-          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\\r')"
+          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
           jar="build/libs/thaumic-horizons-reforged-${mod_version}-${minecraft_version}.jar"
           sha256sum "$jar" > "${jar}.sha256"
 
