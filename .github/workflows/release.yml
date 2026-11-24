@@ -8,6 +8,11 @@ on:
         required: true
         type: boolean
         default: false
+      fixed_issues:
+        description: "Comma-separated issue numbers fixed in this release; leave empty when there are none."
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -24,6 +29,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      issues: read
     env:
       CI: "true"
 
@@ -151,27 +157,66 @@ jobs:
       - name: Prepare release notes
         working-directory: thaumic-horizons-reforged
         shell: bash
+        env:
+          FIXED_ISSUES: ${{ inputs.fixed_issues }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          fixes_section=""
+          if [[ -n "${FIXED_ISSUES//[[:space:],]/}" ]]; then
+            IFS=',' read -r -a requested_issues <<< "$FIXED_ISSUES"
+            declare -A seen_issues=()
+            fixes_section=$'\n## Fixes\n\n'
+            for raw_number in "${requested_issues[@]}"; do
+              issue_number="$(printf '%s' "$raw_number" | xargs)"
+              [[ "$issue_number" =~ ^[1-9][0-9]*$ ]] || {
+                echo "::error::Invalid issue number: $raw_number. Use comma-separated numbers without #."
+                exit 1
+              }
+              [[ -z "${seen_issues[$issue_number]:-}" ]] || {
+                echo "::error::Duplicate issue number: $issue_number"
+                exit 1
+              }
+              seen_issues[$issue_number]=1
+
+              issue_json="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${issue_number}")"
+              issue_state="$(jq -r '.state // empty' <<< "$issue_json")"
+              state_reason="$(jq -r '.state_reason // empty' <<< "$issue_json")"
+              is_pull_request="$(jq -r 'has("pull_request")' <<< "$issue_json")"
+              [[ "$is_pull_request" == "false" ]] || {
+                echo "::error::#$issue_number is a pull request, not an issue."
+                exit 1
+              }
+              [[ "$issue_state" == "closed" && "$state_reason" == "completed" ]] || {
+                echo "::error::#$issue_number must be closed as completed before it can appear under Fixes."
+                exit 1
+              }
+              issue_title="$(jq -r '.title | gsub("[\\r\\n]"; " ")' <<< "$issue_json")"
+              issue_url="$(jq -r '.html_url' <<< "$issue_json")"
+              fixes_section+="- [#${issue_number}](${issue_url}) — ${issue_title}"$'\n'
+            done
+            fixes_section+=$'\n'
+          fi
+
           cat > "$RUNNER_TEMP/release-notes.md" <<EOF
           # Thaumic Horizons: Reforged ${MOD_VERSION} — Minecraft ${MINECRAFT_VERSION}
 
-          This is the initial **0.x public release** for Minecraft 26.3 / NeoForge 26.3.0.57-beta. It is published as a regular GitHub release (not a beta/prerelease), but it is **not the 1.0.0 stability milestone**.
+          This is the initial **0.x public release** for this Minecraft version line. It is published as a regular GitHub release (not a beta/prerelease), but it is **not the 1.0.0 stability milestone**.
 
           ## Host compatibility
 
-          Targets the official [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3), pinned to commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`. No custom TC4R fork is required.
+          Targets the official Thaumcraft 4: Reforged 1.1.3 line for Minecraft ${MINECRAFT_VERSION}, pinned to commit <code>99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2</code>.
 
-          On the official host, automatic multi-transducer-to-Vortex conversion in the Transduction Amplifier remains disabled because the public host API has no safe transducer-stop hook. Optional machine-beam FX and Creature Infusion research-page extensions are unavailable; active TH content does not currently depend on them.
-
+          ${fixes_section}
           ## Validation
 
           This workflow reruns the build, JUnit suite, API-seam checks, asset checks and distributable-JAR validation. See [docs/verification.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/verification.md) for the tested scope.
 
-          This release does not claim exhaustive gameplay parity. Multiplayer, persistence and several end-to-end workflows remain under verification; Pocket Plane travel and recovery are especially not yet validated as a complete playable loop. Back up worlds before testing.
+          Gameplay, multiplayer, persistence and visual acceptance coverage remains limited to the evidence recorded on this branch. Pocket Plane travel and recovery are not yet verified as a complete playable loop. Back up worlds before testing.
 
           ## Versioning
 
-          `0.1.0` is intentionally pre-1.0: it exits the beta label without claiming the compatibility guarantees of `1.0.0`.
+          <code>${MOD_VERSION}</code> is intentionally pre-1.0: it exits the beta label without claiming the compatibility guarantees of <code>1.0.0</code>.
           EOF
 
       - name: Publish non-prerelease GitHub Release
