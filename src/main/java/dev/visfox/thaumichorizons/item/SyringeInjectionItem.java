@@ -11,10 +11,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import net.minecraft.world.level.Level;
 
@@ -34,8 +34,8 @@ public class SyringeInjectionItem extends Item {
     }
 
     @Override
-    public net.minecraft.world.item.ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return net.minecraft.world.item.ItemUseAnimation.BOW;
+    public net.minecraft.world.item.UseAnim getUseAnimation(ItemStack stack) {
+        return net.minecraft.world.item.UseAnim.BOW;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SyringeInjectionItem extends Item {
     }
 
     @Override
-    public net.minecraft.world.InteractionResult use(Level world, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (isPhial(stack)) {
             ItemStack projectileStack = stack.copy();
@@ -59,10 +59,10 @@ public class SyringeInjectionItem extends Item {
             if (!world.isClientSide()) {
                 world.addFreshEntity(new BlastPhialProjectile(world, player, projectileStack, 0.5F));
             }
-            return net.minecraft.world.InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
         player.startUsingItem(hand);
-        return net.minecraft.world.InteractionResult.CONSUME;
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
@@ -77,11 +77,12 @@ public class SyringeInjectionItem extends Item {
     }
 
     @Override
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!target.level().isClientSide()) {
             applyEffects(stack, target);
         }
         stack.shrink(1);
+        return true;
     }
 
     public static void applyEffects(ItemStack stack, LivingEntity target) {
@@ -94,8 +95,9 @@ public class SyringeInjectionItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
-        Consumer<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines,
+        TooltipFlag flag) {
+        Consumer<Component> tooltip = lines::add;
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
         if (contents != null) {
             for (MobEffectInstance effect : contents.getAllEffects()) {

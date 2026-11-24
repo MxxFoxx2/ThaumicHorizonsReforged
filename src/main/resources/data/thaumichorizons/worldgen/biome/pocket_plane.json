@@ -3,8 +3,29 @@
   "temperature": 0.8,
   "downfall": 0.0,
   "effects": {
-    "water_color": "#3f76e4"
+    "fog_color": 12638463,
+    "water_color": 4159204,
+    "water_fog_color": 329011,
+    "sky_color": 0
   },
-  "carvers": [],
-  "features": [[], [], [], []]
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "spawners": {},
+  "spawn_costs": {}
 }

@@ -3,21 +3,20 @@ package dev.visfox.thaumichorizons.client.render.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.model.animal.pig.PigModel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.model.PigModel;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.state.PigRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.animal.Pig;
 
 public class TaintEaterPigRenderer extends PigRenderer {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/entity/taintfeeder.png");
-    private static final Identifier EYES_TEXTURE = ThaumicHorizons.id("textures/entity/taintfeeder_eyes.png");
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/entity/taintfeeder.png");
+    private static final ResourceLocation EYES_TEXTURE = ThaumicHorizons.id("textures/entity/taintfeeder_eyes.png");
 
     public TaintEaterPigRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -25,26 +24,26 @@ public class TaintEaterPigRenderer extends PigRenderer {
     }
 
     @Override
-    public Identifier getTextureLocation(PigRenderState state) {
+    public ResourceLocation getTextureLocation(Pig entity) {
         return TEXTURE;
     }
 
-    private static final class TaintFeederEyesLayer extends RenderLayer<PigRenderState, PigModel> {
-        private TaintFeederEyesLayer(RenderLayerParent<PigRenderState, PigModel> parent) {
+    private static final class TaintFeederEyesLayer extends RenderLayer<Pig, PigModel<Pig>> {
+        private TaintFeederEyesLayer(RenderLayerParent<Pig, PigModel<Pig>> parent) {
             super(parent);
         }
 
         @Override
-        public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, PigRenderState state, float yRot, float xRot) {
+        public void render(PoseStack poseStack, MultiBufferSource buffers, int lightCoords, Pig entity,
+            float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
+            float netHeadYaw, float headPitch) {
             // Original shouldRenderPass blends the eyes overlay at alpha 0.32+0.32*sin, fullbright;
             // an opaque cutout pass would paint the whole body cyan.
-            float pulse = Mth.sin((float) Math.toRadians((state.ageInTicks % 45) * 8.0F));
+            float pulse = Mth.sin((float) Math.toRadians((ageInTicks % 45) * 8.0F));
             int alpha = (int) ((0.32F + 0.32F * pulse) * 255.0F);
-            // 9-arg overload: 7th is tintedColor, 9th outlineColor. The 7-arg overload
-            // treats its last param as outlineColor and forces an opaque tint.
-            submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack,
-                ThRenderTypes.entityTranslucent(EYES_TEXTURE), LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-                (alpha << 24) | 0xFFFFFF, null, state.outlineColor);
+            getParentModel().renderToBuffer(poseStack,
+                buffers.getBuffer(ThRenderTypes.entityTranslucent(EYES_TEXTURE)),
+                0xF000F0, OverlayTexture.NO_OVERLAY, (alpha << 24) | 0xFFFFFF);
         }
     }
 }

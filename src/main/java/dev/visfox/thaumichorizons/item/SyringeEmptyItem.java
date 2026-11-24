@@ -11,16 +11,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class SyringeEmptyItem extends Item {
     public SyringeEmptyItem(Properties properties) {
@@ -28,7 +28,7 @@ public class SyringeEmptyItem extends Item {
     }
 
     @Override
-    public net.minecraft.world.InteractionResult use(Level world, Player p, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player p, InteractionHand hand) {
         ItemStack stack = p.getItemInHand(hand);
         Entity ent = EntityRay.getPointedEntity(world, p, 1.5);
         if (ent instanceof LivingEntity critter && !(ent instanceof Player)) {
@@ -58,7 +58,7 @@ public class SyringeEmptyItem extends Item {
                 world.playSound(null, p.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
         }
-        return net.minecraft.world.InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(stack);
     }
 
     public static boolean isValidCritter(LivingEntity critter) {
@@ -69,6 +69,6 @@ public class SyringeEmptyItem extends Item {
     }
 
     public static boolean isUndead(LivingEntity entity) {
-        return entity.is(net.minecraft.tags.EntityTypeTags.UNDEAD);
+        return entity.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD);
     }
 }

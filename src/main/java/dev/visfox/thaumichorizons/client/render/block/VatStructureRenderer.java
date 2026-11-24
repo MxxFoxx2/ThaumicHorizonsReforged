@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.client.render.block;
 
+import dev.visfox.thaumichorizons.lib.EntityPlacement;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -11,16 +13,15 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.client.render.VatRenderAlphaContext;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,10 +38,10 @@ import net.minecraft.world.phys.Vec3;
  * blocks therefore use invisible vanilla render shapes to avoid drawing a
  * second set of full cubes underneath this model.</p>
  */
-public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockEntity, VatStructureRenderer.State> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/vat.png");
-    private static final Identifier EFFIGY_TEXTURE = ThaumicHorizons.id("textures/block/corpseeffigy.png");
-    private static final Identifier REVIVED_EFFIGY_TEXTURE =
+public final class VatStructureRenderer implements ThStateBlockRenderer<VatBlockEntity, VatStructureRenderer.State> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/models/vat.png");
+    private static final ResourceLocation EFFIGY_TEXTURE = ThaumicHorizons.id("textures/block/corpseeffigy.png");
+    private static final ResourceLocation REVIVED_EFFIGY_TEXTURE =
         ThaumicHorizons.id("textures/models/corpseeffigyrevived.png");
     private static final int TEXTURE_SIZE = 512;
     private static final int[][] QUAD_VERTICES = {
@@ -71,18 +72,19 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     private final Map<VatBlockEntity, CachedSample> sampleEntities = new WeakHashMap<>();
 
     public VatStructureRenderer(BlockEntityRendererProvider.Context context) {
-        this.entityRenderer = context.entityRenderer();
+        this.entityRenderer = context.getEntityRenderer();
     }
 
-    public static final class State extends BlockEntityRenderState {
-        public EntityRenderState containedEntity;
+    public static final class State extends ThBlockEntityRenderState {
+        public LivingEntity containedEntity;
         public float containedEntityBob;
         public float containedEntityAlpha = 1.0F;
-        public EntityRenderState sampleItem;
+        public ItemEntity sampleItem;
         public float sampleItemBob;
         public boolean corpseEffigy;
         public boolean revivedEffigy;
         public float effigyBob;
+        public float partialTicks;
     }
 
     private record Box(int u, int v, float x, float y, float z, float width, float height, float depth) {
@@ -101,8 +103,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
 
     @Override
     public void extractRenderState(VatBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         state.containedEntity = null;
         state.containedEntityBob = 0.0F;
         state.containedEntityAlpha = 1.0F;
@@ -111,6 +112,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
         state.corpseEffigy = false;
         state.revivedEffigy = false;
         state.effigyBob = 0.0F;
+        state.partialTicks = partialTicks;
         if (entity.getLevel() instanceof ClientLevel clientLevel) {
             float bob = (float) Math.cos(Math.toRadians(clientLevel.getGameTime() + partialTicks)) * 0.1F;
             CompoundTag previewData = entity.getEntityPreviewData();
@@ -120,9 +122,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                 if (cached == null || !cached.data().equals(previewData)) {
                     Entity created = EntityNbt.load(previewData, clientLevel);
                     if (created instanceof LivingEntity living) {
-                        living.snapTo(entity.getBlockPos().getX() + 0.5,
-                            entity.getBlockPos().getY() - 1.75,
-                            entity.getBlockPos().getZ() + 0.5, 0.0F, 0.0F);
+                        EntityPlacement.snapTo(living, entity.getBlockPos().getX() + 0.5, entity.getBlockPos().getY() - 1.75, entity.getBlockPos().getZ() + 0.5, 0.0F, 0.0F);
                         cached = new CachedPreview(previewData.copy(), living);
                         previewEntities.put(entity, cached);
                     } else {
@@ -131,7 +131,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                     }
                 }
                 if (cached != null) {
-                    state.containedEntity = entityRenderer.extractEntity(cached.entity(), partialTicks);
+                    state.containedEntity = cached.entity();
                     state.containedEntityBob = bob;
                     // Legacy TileVatSlaveRender uses (800 - progress) / 800 in clone mode.
                     state.containedEntityAlpha = entity.mode == 1
@@ -162,7 +162,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
                 } else {
                     cached.entity().setItem(entity.sample.copy());
                 }
-                state.sampleItem = entityRenderer.extractEntity(cached.entity(), partialTicks);
+                state.sampleItem = cached.entity();
                 state.sampleItemBob = bob;
             } else {
                 sampleEntities.remove(entity);
@@ -171,8 +171,8 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-        net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector,
+        dev.visfox.thaumichorizons.client.platform.ThCameraRenderState camera) {
         poseStack.pushPose();
         // Match TileVatRender's local origin and ModelRenderer's 1/16 model scale.
         poseStack.translate(0.5F, -0.5F, 0.5F);
@@ -183,27 +183,29 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
 
         if (state.containedEntity != null) {
             poseStack.pushPose();
-            Runnable submitContained = () -> entityRenderer.submit(state.containedEntity, camera, 0.5,
-                -1.75 + state.containedEntityBob, 0.5, poseStack, collector);
+            poseStack.translate(0.5, -1.75 + state.containedEntityBob, 0.5);
+            Runnable renderContained = () -> entityRenderer.getRenderer(state.containedEntity)
+                .render(state.containedEntity, 0.0F, state.partialTicks, poseStack, collector.buffers, state.lightCoords);
             if (state.containedEntityAlpha < 1.0F) {
-                VatRenderAlphaContext.run(state.containedEntityAlpha, submitContained);
+                VatRenderAlphaContext.run(state.containedEntityAlpha, renderContained);
             } else {
-                submitContained.run();
+                renderContained.run();
             }
             poseStack.popPose();
         } else if (state.corpseEffigy || state.revivedEffigy) {
-            Identifier effigyTexture = state.revivedEffigy ? REVIVED_EFFIGY_TEXTURE : EFFIGY_TEXTURE;
+            ResourceLocation effigyTexture = state.revivedEffigy ? REVIVED_EFFIGY_TEXTURE : EFFIGY_TEXTURE;
             poseStack.pushPose();
             poseStack.translate(0.5F, -1.5F + state.effigyBob, 0.5F);
-            poseStack.rotateDegrees(Axis.ZP, 180.0F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
             poseStack.scale(0.1F, 0.1F, 0.1F);
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutout(effigyTexture),
                 (pose, buffer) -> effigyModel.renderPart("effigy", pose, buffer, 0xFFFFFFFF, state.lightCoords));
             poseStack.popPose();
         } else if (state.sampleItem != null) {
             poseStack.pushPose();
-            entityRenderer.submit(state.sampleItem, camera, 0.5, -1.0 + state.sampleItemBob,
-                0.5, poseStack, collector);
+            poseStack.translate(0.5, -1.0 + state.sampleItemBob, 0.5);
+            entityRenderer.getRenderer(state.sampleItem)
+                .render(state.sampleItem, 0.0F, state.partialTicks, poseStack, collector.buffers, state.lightCoords);
             poseStack.popPose();
         }
     }

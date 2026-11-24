@@ -8,16 +8,16 @@ import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class PortalTHBlockEntity extends ThBlockEntity {
     private int count;
@@ -96,7 +96,7 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
     }
 
     private @Nullable ServerLevel sourceLevel(ServerLevel current) {
-        Identifier dimension = Identifier.tryParse(sourceDimension);
+        ResourceLocation dimension = ResourceLocation.tryParse(sourceDimension);
         if (dimension == null) {
             return null;
         }
@@ -116,7 +116,7 @@ public final class PortalTHBlockEntity extends ThBlockEntity {
                 return;
             }
         }
-        if (level.dimension().identifier().toString().equals(sourceDimension)) {
+        if (level.dimension().location().toString().equals(sourceDimension)) {
             xAligned = GatewayPortalBlock.isXAligned(level, pos);
             alignmentKnown = true;
             setChanged();

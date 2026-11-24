@@ -8,7 +8,7 @@ import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +36,7 @@ public class PortalTHBlock extends Block implements net.minecraft.world.level.bl
     }
 
     @Override
-    public @org.jspecify.annotations.Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @javax.annotation.Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PortalTHBlockEntity(pos, state);
     }
 
@@ -61,8 +61,7 @@ public class PortalTHBlock extends Block implements net.minecraft.world.level.bl
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
-            net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide() || !(entity instanceof ServerPlayer player)
             || player.isPassenger() || player.isVehicle()) {
             return;
@@ -105,7 +104,7 @@ public class PortalTHBlock extends Block implements net.minecraft.world.level.bl
             || (endpoint[3] != 0 && endpoint[3] != 1)) {
             return;
         }
-        Identifier dimensionId = Identifier.tryParse(dimensionName);
+        ResourceLocation dimensionId = ResourceLocation.tryParse(dimensionName);
         if (dimensionId == null) {
             return;
         }

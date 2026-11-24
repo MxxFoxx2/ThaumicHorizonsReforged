@@ -3,22 +3,22 @@ package dev.visfox.thaumichorizons.client.render.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VisDynamoBlockEntity;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public final class VisDynamoRenderer implements BlockEntityRenderer<VisDynamoBlockEntity, VisDynamoRenderer.State> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/goldring.png");
+public final class VisDynamoRenderer implements ThStateBlockRenderer<VisDynamoBlockEntity, VisDynamoRenderer.State> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/models/goldring.png");
 
     public VisDynamoRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public float rise;
         public float rotation;
         public float rotation2;
@@ -34,8 +34,7 @@ public final class VisDynamoRenderer implements BlockEntityRenderer<VisDynamoBlo
 
     @Override
     public void extractRenderState(VisDynamoBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.rise = entity.rise;
         state.rotation = entity.rotation;
@@ -46,8 +45,8 @@ public final class VisDynamoRenderer implements BlockEntityRenderer<VisDynamoBlo
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
-        MachineRenderHelper.scanner(poseStack, collector, camera, TEXTURE, state.rise, state.rotation,
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
+        MachineRenderHelper.scanner(poseStack, collector, TEXTURE, state.rise, state.rotation,
             state.rotation2, state.active, state.color, state.lightCoords, state.frame);
     }
 }

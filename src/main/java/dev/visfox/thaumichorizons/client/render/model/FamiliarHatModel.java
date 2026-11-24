@@ -1,6 +1,9 @@
 package dev.visfox.thaumichorizons.client.render.model;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.entity.Familiar;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -9,31 +12,38 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.entity.state.FelineRenderState;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 
 /**
  * The Familiar's original wizard hat from the 1.7.10 ModelFamiliar.
  *
  * <p>The geometry uses the modern Ocelot head pivot. Pitch and yaw are taken
- * from the extracted feline render state.</p>
+ * from the live entity, matching the old extracted feline state.</p>
  */
-public final class FamiliarHatModel extends EntityModel<FelineRenderState> {
+public final class FamiliarHatModel extends EntityModel<Familiar> {
     public static final ModelLayerLocation LAYER =
         new ModelLayerLocation(ThaumicHorizons.id("familiar_hat"), "main");
 
+    private final ModelPart root;
     public final ModelPart head;
 
     public FamiliarHatModel(ModelPart root) {
-        super(root);
+        super(RenderType::entityCutoutNoCull);
+        this.root = root;
         this.head = root.getChild("head");
     }
 
     @Override
-    public void setupAnim(FelineRenderState state) {
-        super.setupAnim(state);
-        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
-        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
+    public void setupAnim(Familiar entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+        float netHeadYaw, float headPitch) {
+        this.head.xRot = headPitch * Mth.DEG_TO_RAD;
+        this.head.yRot = netHeadYaw * Mth.DEG_TO_RAD;
+    }
+
+    @Override
+    public void renderToBuffer(PoseStack poses, VertexConsumer buffer, int light, int overlay, int color) {
+        root.render(poses, buffer, light, overlay, color);
     }
 
     public static LayerDefinition createLayer() {

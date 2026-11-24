@@ -8,11 +8,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class ContainerCase extends AbstractContainerMenu {
     public static final int CASE_SLOTS = 18;
@@ -30,7 +30,7 @@ public class ContainerCase extends AbstractContainerMenu {
     }
 
     public ContainerCase(int windowId, Inventory playerInventory, int selectedSlot) {
-        super((MenuType<ContainerCase>) BuiltInRegistries.MENU.getValue(ThaumicHorizons.id("case")), windowId);
+        super((MenuType<ContainerCase>) BuiltInRegistries.MENU.get(ThaumicHorizons.id("case")), windowId);
         this.playerInventory = playerInventory;
         this.caseSlotIndex = selectedSlot;
         this.blockedSlot = HOTBAR_START + selectedSlot;
@@ -75,11 +75,11 @@ public class ContainerCase extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(int slotIndex, int buttonNum, ContainerInput containerInput, Player player) {
+    public void clicked(int slotIndex, int buttonNum, ClickType containerInput, Player player) {
         if (slotIndex == blockedSlot) {
             return;
         }
-        if (containerInput == ContainerInput.SWAP && buttonNum == blockedSlot - HOTBAR_START) {
+        if (containerInput == ClickType.SWAP && buttonNum == blockedSlot - HOTBAR_START) {
             return;
         }
         super.clicked(slotIndex, buttonNum, containerInput, player);

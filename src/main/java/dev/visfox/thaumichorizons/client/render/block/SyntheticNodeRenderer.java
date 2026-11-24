@@ -5,12 +5,12 @@ import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.blockentity.SyntheticNodeBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.aspect.Aspect;
@@ -19,13 +19,13 @@ import thaumcraft.client.geom.CubeGeometry;
 import thaumcraft.client.platform.EntityQuadSink;
 import thaumcraft.client.platform.TcRenderTypes;
 
-public final class SyntheticNodeRenderer implements BlockEntityRenderer<SyntheticNodeBlockEntity, SyntheticNodeRenderer.State> {
-    private static final Identifier CRYSTAL = Identifier.fromNamespaceAndPath("thaumcraft", "textures/model/crystal.png");
+public final class SyntheticNodeRenderer implements ThStateBlockRenderer<SyntheticNodeBlockEntity, SyntheticNodeRenderer.State> {
+    private static final ResourceLocation CRYSTAL = ResourceLocation.fromNamespaceAndPath("thaumcraft", "textures/model/crystal.png");
 
     public SyntheticNodeRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public float rotation;
         public int color;
         public List<Aspect> aspects = List.of();
@@ -39,8 +39,7 @@ public final class SyntheticNodeRenderer implements BlockEntityRenderer<Syntheti
 
     @Override
     public void extractRenderState(SyntheticNodeBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.rotation = entity.rotation + partialTicks;
         state.current = entity.getAspects().copy();
@@ -66,13 +65,13 @@ public final class SyntheticNodeRenderer implements BlockEntityRenderer<Syntheti
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, state.rotation);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
         poseStack.scale(0.165F, 0.55F, 0.165F);
-        poseStack.rotateDegrees(Axis.ZP, 40.5F);
-        poseStack.rotateDegrees(Axis.XP, 40.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(40.5F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(40.5F));
         collector.submitCustomGeometry(poseStack, TcRenderTypes.entityTranslucent(CRYSTAL),
             (pose, buffer) -> CubeGeometry.render(new EntityQuadSink(pose, buffer), 0, state.color, state.lightCoords));
         poseStack.popPose();
@@ -87,7 +86,7 @@ public final class SyntheticNodeRenderer implements BlockEntityRenderer<Syntheti
             float y = (float) (0.64 + 0.1 * Math.sin(radian));
             float z = (float) (0.5 + distance * Math.cos(2.0 * radian + offset * index));
             float scale = 0.1F + 0.005F * state.current.getAmount(aspect);
-            MachineRenderHelper.strip(poseStack, collector, camera, MachineRenderHelper.NODES,
+            MachineRenderHelper.strip(poseStack, collector, MachineRenderHelper.NODES,
                 x, y, z, scale, 32, 1, frame, 0xFF000000 | aspect.getColor(), state.lightCoords);
         }
     }

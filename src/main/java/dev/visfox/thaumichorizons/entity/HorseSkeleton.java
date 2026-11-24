@@ -1,23 +1,23 @@
 package dev.visfox.thaumichorizons.entity;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.equine.SkeletonHorse;
+import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Thaumic Horizons' skeleton horse: vanilla skeleton horse with the legacy
  * flat +0.1 movement-speed bonus.
  */
 public final class HorseSkeleton extends SkeletonHorse {
-    private static final Identifier SPEED_BONUS_ID =
-        Identifier.fromNamespaceAndPath("thaumichorizons", "horse_skeleton_speed");
+    private static final ResourceLocation SPEED_BONUS_ID =
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "horse_skeleton_speed");
 
-    public HorseSkeleton(EntityType<? extends HorseSkeleton> type, Level level) {
+    public HorseSkeleton(EntityType<HorseSkeleton> type, Level level) {
         super(type, level);
         applyLegacySpeedBonus();
     }
@@ -35,8 +35,8 @@ public final class HorseSkeleton extends SkeletonHorse {
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         // Keep old saves compatible without stacking the speed modifier.
         applyLegacySpeedBonus();
     }

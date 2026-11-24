@@ -5,18 +5,18 @@ import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.node.Node;
@@ -86,7 +86,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
 
     public boolean addEssence(ItemStack heldItem) {
         Item wispEssence = TcReforgedPort.items.lookup(
-            Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
+            ResourceLocation.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
         if (wispEssence == null || !heldItem.is(wispEssence) || heldItem.isEmpty()) {
             return false;
         }
@@ -113,7 +113,7 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
         }
         essenceDropsGenerated = true;
         Item wispEssence = TcReforgedPort.items.lookup(
-            Identifier.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
+            ResourceLocation.fromNamespaceAndPath("thaumcraft", "wisp_essence"));
         if (wispEssence == null) {
             return drops;
         }
@@ -342,10 +342,8 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
         }
         return result;
     }
-
-    @Override
     protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
+        super.loadAdditional(input.tag(), input.lookup());
         aspectsMax = input.read("aspectsMax", AspectList.CODEC).orElseGet(AspectList::new);
         aspects = input.read("aspects", AspectList.CODEC).orElseGet(AspectList::new);
         fractionalAspects = input.read("aspectsFractional", AspectList.CODEC).orElseGet(AspectList::new);
@@ -353,10 +351,8 @@ public class SyntheticNodeBlockEntity extends VisNode implements Node, WandInter
         targetColor = drainColor;
         color = drainColor;
     }
-
-    @Override
     protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+        super.saveAdditional(output.tag(), output.lookup());
         output.store("aspectsMax", AspectList.CODEC, aspectsMax);
         output.store("aspects", AspectList.CODEC, aspects);
         output.store("aspectsFractional", AspectList.CODEC, fractionalAspects);

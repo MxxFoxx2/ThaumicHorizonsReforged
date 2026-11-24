@@ -3,7 +3,7 @@ package dev.visfox.thaumichorizons.container;
 import dev.visfox.thaumichorizons.blockentity.InspiratronBlockEntity;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.registry.ThMenus;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class InspiratronMenu extends AbstractContainerMenu {
-    private static final Identifier KNOWLEDGE_FRAGMENT = Identifier.fromNamespaceAndPath("thaumcraft", "knowledge_fragment");
+    private static final ResourceLocation KNOWLEDGE_FRAGMENT = ResourceLocation.fromNamespaceAndPath("thaumcraft", "knowledge_fragment");
     private final InspiratronBlockEntity tile;
 
     public InspiratronMenu(int containerId, Inventory inventory, InspiratronBlockEntity tile) {

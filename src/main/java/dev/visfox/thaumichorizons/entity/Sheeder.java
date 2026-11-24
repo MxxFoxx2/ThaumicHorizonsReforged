@@ -22,13 +22,12 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.EatBlockGoal;
 import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.nbt.CompoundTag;
 
 public class Sheeder extends Spider implements Shearable {
     private static final EntityDataAccessor<Byte> DATA_SHEARED = SynchedEntityData.defineId(Sheeder.class, EntityDataSerializers.BYTE);
@@ -36,7 +35,7 @@ public class Sheeder extends Spider implements Shearable {
     private int sheepTimer;
     private final EatBlockGoal grazeGoal;
 
-    public Sheeder(EntityType<? extends Sheeder> type, Level level) {
+    public Sheeder(EntityType<Sheeder> type, Level level) {
         super(type, level);
         this.grazeGoal = new EatBlockGoal(this);
         this.setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType.WATER, -1.0F);
@@ -69,9 +68,9 @@ public class Sheeder extends Spider implements Shearable {
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel level) {
+    protected void customServerAiStep() {
         this.sheepTimer = this.grazeGoal.getEatAnimationTick();
-        super.customServerAiStep(level);
+        super.customServerAiStep();
     }
 
     @Override
@@ -102,11 +101,11 @@ public class Sheeder extends Spider implements Shearable {
     }
 
     @Override
-    public void shear(ServerLevel level, SoundSource soundSource, ItemStack tool) {
-        level.playSound(null, this, SoundEvents.SHEEP_SHEAR, soundSource, 1.0F, 1.0F);
+    public void shear(SoundSource soundSource) {
+        this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, soundSource, 1.0F, 1.0F);
         int count = 2 + this.random.nextInt(4);
         for (int index = 0; index < count; ++index) {
-            this.spawnAtLocation(level, new ItemStack(Items.STRING), 1.0F);
+            this.spawnAtLocation(new ItemStack(Items.STRING), 1.0F);
         }
         this.setSheared(true);
     }
@@ -131,21 +130,21 @@ public class Sheeder extends Spider implements Shearable {
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.setSheared(input.getBooleanOr("Sheared", false));
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setSheared(tag.getBoolean("Sheared"));
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putBoolean("Sheared", this.isSheared());
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Sheared", this.isSheared());
     }
 
     @Override
-    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean hitByPlayer) {
+    protected void dropFromLootTable(DamageSource source, boolean hitByPlayer) {
         if (!this.isSheared()) {
-            this.spawnAtLocation(level, new ItemStack(Items.STRING), 0.0F);
+            this.spawnAtLocation(new ItemStack(Items.STRING), 0.0F);
         }
     }
 }

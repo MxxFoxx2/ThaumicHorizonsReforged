@@ -12,9 +12,30 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public final class VoidPuttyRepairRecipe extends CustomRecipe {
+    public VoidPuttyRepairRecipe() {
+        super(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
+    }
+
     public static final VoidPuttyRepairRecipe INSTANCE = new VoidPuttyRepairRecipe();
-    public static final RecipeSerializer<VoidPuttyRepairRecipe> SERIALIZER =
-        new RecipeSerializer<>(MapCodec.unit(INSTANCE), StreamCodec.<RegistryFriendlyByteBuf, VoidPuttyRepairRecipe>unit(INSTANCE));
+    private static final MapCodec<VoidPuttyRepairRecipe> CODEC = MapCodec.unit(INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, VoidPuttyRepairRecipe> STREAM_CODEC =
+        StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<VoidPuttyRepairRecipe> SERIALIZER = new RecipeSerializer<>() {
+        @Override
+        public MapCodec<VoidPuttyRepairRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, VoidPuttyRepairRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+    };
+
+    @Override
+    public boolean canCraftInDimensions(int width, int height) {
+        return true;
+    }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
@@ -40,12 +61,12 @@ public final class VoidPuttyRepairRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input) {
+    public ItemStack assemble(CraftingInput input, net.minecraft.core.HolderLookup.Provider registries) {
         ItemStack target = null;
         for (int slot = 0; slot < input.size(); slot++) {
             ItemStack stack = input.getItem(slot);
             if (!stack.isEmpty() && stack.isDamageableItem() && stack.isDamaged()) {
-                if (target != null || !stack.has(DataComponents.REPAIRABLE)) {
+                if (target != null || !stack.has(DataComponents.REPAIR_COST)) {
                     return ItemStack.EMPTY;
                 }
                 target = stack;

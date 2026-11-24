@@ -5,7 +5,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import java.util.List;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class HurtByTargetGoalTH extends TargetGoalTH {
     private final boolean alertOthers;

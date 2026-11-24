@@ -25,10 +25,10 @@ public final class LensEffectsHandler {
     }
 
     @SubscribeEvent
-    static void overlay(net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent event) {
-        if (event.getOverlayType() == net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent.OverlayType.WATER
+    static void overlay(net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent event) {
+        if (event.getOverlayType() == net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType.WATER
             && hasLens(event.getPlayer(), "LensWater")) {
-            event.setCustomRenderer(net.neoforged.neoforge.client.CustomBlockScreenEffectRenderer.NO_OP);
+            event.setCanceled(true);
         }
     }
 

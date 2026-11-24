@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import dev.visfox.thaumichorizons.lib.TagInput;
+
 import com.mojang.serialization.Codec;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.ThaumicHorizonsConfig;
@@ -8,8 +10,10 @@ import dev.visfox.thaumichorizons.registry.ThBlocks;
 import java.util.HashMap;
 import java.util.LinkedList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -17,15 +21,14 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.saveddata.SavedDataType;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 
 public class PocketPlanes extends SavedData {
     public static final Codec<PocketPlanes> CODEC = CompoundTag.CODEC.xmap(PocketPlanes::load, PocketPlanes::save);
-    public static final SavedDataType<PocketPlanes> TYPE = new SavedDataType<>(ThaumicHorizons.id("pocketplane"),
-        PocketPlanes::new, CODEC);
+    public static final SavedData.Factory<PocketPlanes> TYPE = new SavedData.Factory<>(PocketPlanes::new,
+        (tag, lookup) -> CODEC.parse(lookup.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow());
     public static final LinkedList<PocketPlaneData> planes = new LinkedList<>();
     public static final HashMap<Integer, BlockPos> positions = new HashMap<>();
     public static int pocketPlaneMAXID = 0;
@@ -46,7 +49,7 @@ public class PocketPlanes extends SavedData {
             pocketPlaneMAXID = 0;
             activeServer = server;
         }
-        return server.overworld().getDataStorage().computeIfAbsent(TYPE);
+        return server.overworld().getDataStorage().computeIfAbsent(TYPE, "pocketplane");
     }
 
     public static void onServerStopped(MinecraftServer server) {
@@ -56,6 +59,12 @@ public class PocketPlanes extends SavedData {
             pocketPlaneMAXID = 0;
             activeServer = null;
         }
+    }
+
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.merge(save(this));
+        return tag;
     }
 
     private static CompoundTag save(PocketPlanes data) {
@@ -80,10 +89,10 @@ public class PocketPlanes extends SavedData {
     private static PocketPlanes load(CompoundTag tag) {
         PocketPlanes data = new PocketPlanes();
         planes.clear();
-        ListTag planeNBT = tag.getListOrEmpty("Data");
-        int storedMaxId = tag.getIntOr("MaxID", 0);
+        ListTag planeNBT = TagInput.getListOrEmpty(tag, "Data");
+        int storedMaxId = TagInput.getIntOr(tag, "MaxID", 0);
         for (int i = 0; i < planeNBT.size(); ++i) {
-            planes.add(PocketPlaneData.read(planeNBT.getCompoundOrEmpty(i)));
+            planes.add(PocketPlaneData.read(TagInput.getCompoundOrEmpty(planeNBT, i)));
         }
 
         // Plane IDs are dense and append-only: the list index is also the
@@ -97,8 +106,8 @@ public class PocketPlanes extends SavedData {
         }
 
         positions.clear();
-        CompoundTag positionz = tag.getCompoundOrEmpty("Positions");
-        for (String id : positionz.keySet()) {
+        CompoundTag positionz = TagInput.getCompoundOrEmpty(tag, "Positions");
+        for (String id : TagInput.keySet(positionz)) {
             final int planeId;
             try {
                 planeId = Integer.parseInt(id);
@@ -107,7 +116,7 @@ public class PocketPlanes extends SavedData {
                 continue;
             }
 
-            int[] pos = positionz.getIntArray(id).orElse(null);
+            int[] pos = TagInput.getIntArrayOr(positionz, id);
             if (planeId < 0 || planeId >= planes.size() || pos == null || pos.length < 3) {
                 ThaumicHorizons.LOGGER.warn("Ignoring malformed Pocket Plane return-position entry '{}'", id);
                 continue;
@@ -121,7 +130,7 @@ public class PocketPlanes extends SavedData {
             int vortexX, int vortexY, int vortexZ, String returnDimension) {
         PocketPlanes saved = get(server);
         if (!ThaumicHorizonsConfig.pocketPlaneEnabled()
-                || net.minecraft.resources.Identifier.tryParse(returnDimension) == null) {
+                || net.minecraft.resources.ResourceLocation.tryParse(returnDimension) == null) {
             return false;
         }
         ServerLevel world = PocketDimension.level(server);
@@ -221,7 +230,7 @@ public class PocketPlanes extends SavedData {
             || (portal[0] == 0 && portal[1] == 0 && portal[2] == 0)
             || (portal[3] != 0 && portal[3] != 1)
             || dimension.isEmpty()
-            || net.minecraft.resources.Identifier.tryParse(dimension) == null;
+            || net.minecraft.resources.ResourceLocation.tryParse(dimension) == null;
     }
 
     public static void destroyPortal(int id, int which, MinecraftServer server) {
@@ -266,7 +275,7 @@ public class PocketPlanes extends SavedData {
     public static void makePortal(int id, int which, int xCoord, int yCoord, int zCoord,
             String dimension, boolean xAligned, MinecraftServer server) {
         ServerLevel world = PocketDimension.level(server);
-        if (world == null || !validPlane(id) || net.minecraft.resources.Identifier.tryParse(dimension) == null) {
+        if (world == null || !validPlane(id) || net.minecraft.resources.ResourceLocation.tryParse(dimension) == null) {
             return;
         }
         PocketPlaneData data = planes.get(id);

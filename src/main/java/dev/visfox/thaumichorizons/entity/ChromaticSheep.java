@@ -2,12 +2,12 @@ package dev.visfox.thaumichorizons.entity;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 
 public class ChromaticSheep extends Sheep {
-    public ChromaticSheep(EntityType<? extends ChromaticSheep> type, Level level) {
+    public ChromaticSheep(EntityType<ChromaticSheep> type, Level level) {
         super(type, level);
     }
 

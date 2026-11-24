@@ -1,23 +1,23 @@
 package dev.visfox.thaumichorizons.entity;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.equine.ZombieHorse;
+import net.minecraft.world.entity.animal.horse.ZombieHorse;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Thaumic Horizons' zombie horse: the vanilla undead horse with the legacy
  * flat +20 max-health bonus.
  */
 public final class HorseZombie extends ZombieHorse {
-    private static final Identifier HEALTH_BONUS_ID =
-        Identifier.fromNamespaceAndPath("thaumichorizons", "horse_zombie_health");
+    private static final ResourceLocation HEALTH_BONUS_ID =
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "horse_zombie_health");
 
-    public HorseZombie(EntityType<? extends HorseZombie> type, Level level) {
+    public HorseZombie(EntityType<HorseZombie> type, Level level) {
         super(type, level);
         applyLegacyHealthBonus();
         this.setHealth(this.getMaxHealth());
@@ -36,8 +36,8 @@ public final class HorseZombie extends ZombieHorse {
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         // Attribute data is restored from NBT by the superclass. Re-apply only
         // when loading an older save that predates this modifier.
         applyLegacyHealthBonus();

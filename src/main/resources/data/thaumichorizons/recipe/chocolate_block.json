@@ -2,15 +2,33 @@
   "type": "minecraft:crafting_shapeless",
   "category": "building",
   "ingredients": [
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate",
-    "thaumichorizons:barchocolate"
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    },
+    {
+      "item": "thaumichorizons:barchocolate"
+    }
   ],
   "result": {
     "id": "thaumichorizons:chocolate"

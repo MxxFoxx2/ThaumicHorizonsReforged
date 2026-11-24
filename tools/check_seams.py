@@ -173,42 +173,31 @@ def violated_rule(relative, imported):
 
 def check_item_model_definitions(root):
     assets = Path(root) / "src" / "main" / "resources" / "assets" / "thaumichorizons"
-    items_dir = assets / "items"
     source_root = Path(root) / SOURCE_DIR
     client_sources = sorted((source_root / "client").rglob("*.java"))
     errors = []
 
-    if not items_dir.is_dir():
-        print(f"item models: item definition directory not found: {items_dir}")
+    if (assets / "items").is_dir():
+        errors.append(
+            f"{assets / 'items'}: 26.x item definitions are not used by Minecraft 1.21.1; "
+            "item models belong in models/item"
+        )
+
+    registry = parse_registry(source_root / "registry")
+    item_ids = registry["items"]
+    if not item_ids:
+        errors.append(f"no registered items found under {source_root / 'registry'}")
+
+    item_model_dir = assets / "models/item"
+    if not item_model_dir.is_dir():
+        print(f"item models: item model directory not found: {item_model_dir}")
         return 1
 
-    if not client_sources:
-        print(f"item models: no client Java sources found under {source_root / 'client'}")
-        return 1
-
-    registration_pattern = re.compile(
-        r'event\.register\s*\(\s*ThaumicHorizons\.id\("([\w]+)"\)\s*,\s*[\w.]+\.Unbaked\.MAP_CODEC\s*\)'
-    )
-    registered_types = set()
-    registration_locations = {}
-    for source_path in client_sources:
-        for renderer_id in registration_pattern.findall(source_path.read_text(encoding="utf-8")):
-            registered_types.add(renderer_id)
-            registration_locations.setdefault(renderer_id, []).append(source_path)
-
-    for renderer_id, locations in registration_locations.items():
-        if len(locations) > 1:
-            errors.append(
-                f"renderer type thaumichorizons:{renderer_id} is registered more than once: "
-                + ", ".join(str(location) for location in locations)
-            )
-
-    definitions = sorted(items_dir.glob("*.json"))
     model_files = sorted((assets / "models").glob("**/*.json"))
-    special_count = 0
     checked_models = set()
     visiting_models = set()
     checked_textures = set()
+    referenced_models = set()
 
     def check_texture_reference(reference, source):
         if not isinstance(reference, str) or not reference or reference.startswith("#"):
@@ -264,6 +253,7 @@ def check_item_model_definitions(root):
         else:
             return
 
+        referenced_models.add(model_path)
         if not model_path.is_file():
             errors.append(f"{source}: model reference {reference} does not resolve to {model_path}")
         else:
@@ -272,96 +262,75 @@ def check_item_model_definitions(root):
     for model_path in model_files:
         check_model_file(model_path)
 
-    def check_item_model_node(model_node, source):
-        nonlocal special_count
+    for item_id in sorted(item_ids):
+        model_path = item_model_dir / f"{item_id}.json"
+        if not model_path.is_file():
+            errors.append(f"item {item_id}: no models/item/{item_id}.json")
 
-        if not isinstance(model_node, dict):
-            errors.append(f"{source}: nested item model must be an object")
-            return
-
-        model_kind = model_node.get("type")
-        if model_kind == "minecraft:model":
-            check_model_reference(model_node.get("model"), source)
-        elif model_kind in ("minecraft:special", "thaumcraft:special_owner"):
-            special_count += 1
-            check_model_reference(model_node.get("base"), source)
-            special_model = model_node.get("model")
-            special_type = special_model.get("type") if isinstance(special_model, dict) else None
-            if not isinstance(special_type, str) or ":" not in special_type:
-                errors.append(f"{source}: special model has no namespaced renderer type")
-                return
-            namespace, renderer_id = special_type.split(":", 1)
-            if namespace == "thaumichorizons" and renderer_id not in registered_types:
-                errors.append(
-                    f"{source}: renderer type {special_type} is not registered "
-                    "by a client-side renderer registration"
-                )
-            if isinstance(special_model, dict):
-                view = special_model.get("view", "entity")
-                if view not in {"inventory", "equipped", "first_person", "entity"}:
-                    errors.append(f"{source}: unsupported TH special-renderer view {view!r}")
-        elif model_kind == "minecraft:select":
-            cases = model_node.get("cases")
-            if not isinstance(cases, list) or not cases:
-                errors.append(f"{source}: select item model has no cases")
-            else:
-                for case in cases:
-                    if not isinstance(case, dict) or "when" not in case or "model" not in case:
-                        errors.append(f"{source}: malformed select item model case")
-                        continue
-                    check_item_model_node(case["model"], source)
-            fallback = model_node.get("fallback")
-            if fallback is not None:
-                check_item_model_node(fallback, source)
-        elif model_kind == "minecraft:condition":
-            for key in ("on_true", "on_false"):
-                if key in model_node:
-                    check_item_model_node(model_node[key], source)
-        elif model_kind == "minecraft:composite":
-            children = model_node.get("models")
-            if not isinstance(children, list):
-                errors.append(f"{source}: composite item model has no models array")
-            else:
-                for child in children:
-                    check_item_model_node(child, source)
-        elif model_kind == "minecraft:range_dispatch":
-            entries = model_node.get("entries", [])
-            if not isinstance(entries, list):
-                errors.append(f"{source}: range_dispatch entries must be an array")
-            else:
-                for entry in entries:
-                    if isinstance(entry, dict) and "model" in entry:
-                        check_item_model_node(entry["model"], source)
-            fallback = model_node.get("fallback")
-            if fallback is not None:
-                check_item_model_node(fallback, source)
-
-    for definition_path in definitions:
-        try:
-            definition = json.loads(definition_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exception:
-            errors.append(f"{definition_path}: invalid item definition JSON: {exception}")
+    for model_path in sorted(item_model_dir.glob("*.json")):
+        if model_path in referenced_models:
             continue
-
-        model_definition = definition.get("model") if isinstance(definition, dict) else None
-        if not isinstance(model_definition, dict):
-            errors.append(f"{definition_path}: missing top-level model definition")
-            continue
-        check_item_model_node(model_definition, definition_path)
+        if model_path.stem not in item_ids:
+            errors.append(
+                f"{model_path}: model does not belong to a registered item "
+                "and is not used as a parent"
+            )
 
     for error in errors:
         print(error)
 
     if errors:
-        print(f"item model validation failed: {len(errors)} error(s) in {len(definitions)} definitions")
+        print(f"item model validation failed: {len(errors)} error(s)")
         return 1
 
     print(
-        f"item models ok: {len(definitions)} definitions, {len(model_files)} models, "
-        f"{len(checked_textures)} local textures, {special_count} special definitions, "
-        f"{len(registered_types)} registered renderer types"
+        f"item models ok: {len(item_ids)} registered items, {len(model_files)} models, "
+        f"{len(checked_textures)} local textures"
     )
     return 0
+
+
+REGISTRY_ITEM_PATTERNS = (
+    re.compile(r'DeferredItem<[^>]*>\s+(\w+)\s*=\s*ITEMS\.registerItem\(\s*"([^"]+)"'),
+    re.compile(r'DeferredItem<[^>]*>\s+(\w+)\s*=\s*spawnEgg\(\s*"([^"]+)"'),
+    re.compile(r'DeferredItem<[^>]*>\s+(\w+)\s*=\s*cloudItem\(\s*"([^"]+)"'),
+)
+
+REGISTRY_BLOCK_PATTERN = re.compile(
+    r'DeferredBlock<[^>]*>\s+(\w+)\s*=\s*(withItem\()?\s*BLOCKS\.registerBlock\(\s*"([^"]+)"'
+)
+
+REGISTRY_HELPER_PATTERNS = (
+    (re.compile(r'DeferredItem<[^>]*>\s+(\w+)\s*=\s*infusionCheat\((\d+)\)'), "infusioncheat"),
+    (re.compile(r'DeferredItem<[^>]*>\s+(\w+)\s*=\s*selfInfusionCheat\((\d+)\)'), "infusionselfcheat"),
+)
+
+
+def parse_registry(registry_dir):
+    """Collect registered item ids and the constants that reference them."""
+    items = {}
+    blocks = {}
+
+    for source_path in sorted(registry_dir.glob("*.java")):
+        text = source_path.read_text(encoding="utf-8")
+        for pattern in REGISTRY_ITEM_PATTERNS:
+            for constant, name in pattern.findall(text):
+                if pattern is REGISTRY_ITEM_PATTERNS[1]:
+                    name = name + "_spawn_egg"
+                items[constant] = name
+        for pattern, prefix in REGISTRY_HELPER_PATTERNS:
+            for constant, number in pattern.findall(text):
+                suffix = "" if int(number) == 1 else number
+                items[constant] = prefix + suffix
+        for constant, has_item, name in REGISTRY_BLOCK_PATTERN.findall(text):
+            blocks[constant] = (name, bool(has_item))
+
+    item_ids = set(items.values())
+    for name, has_item in blocks.values():
+        if has_item:
+            item_ids.add(name)
+
+    return {"items": item_ids, "constants": items, "blocks": blocks}
 
 def main():
     parser = argparse.ArgumentParser()

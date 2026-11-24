@@ -26,23 +26,23 @@ public final class PocketRegistry {
         Registries.CHUNK_GENERATOR, ThaumicHorizons.MODID);
 
     public static final net.neoforged.neoforge.registries.DeferredBlock<GatewayPortalBlock> GATEWAY_TH = BLOCKS.registerBlock("gatewayth",
-        GatewayPortalBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 7));
+        GatewayPortalBlock::new,THRegistryProps.block(properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 7)));
     public static final net.neoforged.neoforge.registries.DeferredBlock<PortalTHBlock> PORTAL_TH = BLOCKS.registerBlock("portalth",
-        PortalTHBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 11));
+        PortalTHBlock::new,THRegistryProps.block(properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).noOcclusion().lightLevel(s -> 11)));
     public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> PORTAL_ITEM = ITEMS.registerItem("portalth",
         properties -> new BlockItem(PORTAL_TH.get(), properties.stacksTo(1)));
     public static final net.neoforged.neoforge.registries.DeferredBlock<SlotBlock> SLOT = BLOCKS.registerBlock("slotth",
-        SlotBlock::new, properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0F, 15.0F).noOcclusion());
+        SlotBlock::new,THRegistryProps.block(properties -> properties.mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0F, 15.0F).noOcclusion()));
     public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> SLOT_ITEM = ITEMS.registerItem("slotth",
         properties -> new BlockItem(SLOT.get(), properties.stacksTo(1)));
     public static final net.neoforged.neoforge.registries.DeferredItem<KeystoneItem> KEYSTONE_TH = ITEMS.registerItem("keystoneth",
-        KeystoneItem::new, properties -> properties.stacksTo(1));
+        KeystoneItem::new,THRegistryProps.item(properties -> properties.stacksTo(1)));
     public static final net.neoforged.neoforge.registries.DeferredItem<PlanarConduitItem> PLANAR_CONDUIT = ITEMS.registerItem("planarconduit",
-        PlanarConduitItem::new, properties -> properties.stacksTo(1));
+        PlanarConduitItem::new,THRegistryProps.item(properties -> properties.stacksTo(1)));
     public static final Supplier<BlockEntityType<PortalTHBlockEntity>> PORTAL_BE = BLOCK_ENTITIES.register("portalth",
-        () -> new BlockEntityType<>(PortalTHBlockEntity::new, PORTAL_TH.get()));
+        () -> BlockEntityType.Builder.of(PortalTHBlockEntity::new, PORTAL_TH.get()).build(null));
     public static final Supplier<BlockEntityType<SlotBlockEntity>> SLOT_BE = BLOCK_ENTITIES.register("slotth",
-        () -> new BlockEntityType<>(SlotBlockEntity::new, SLOT.get()));
+        () -> BlockEntityType.Builder.of(SlotBlockEntity::new, SLOT.get()).build(null));
     public static final Supplier<com.mojang.serialization.MapCodec<? extends ChunkGenerator>> POCKET_GENERATOR = CHUNK_GENERATORS.register(
         "pocket_plane", () -> PocketPlaneChunkGenerator.CODEC);
 

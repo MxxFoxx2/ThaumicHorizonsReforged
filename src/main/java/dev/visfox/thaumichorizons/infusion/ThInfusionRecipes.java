@@ -8,27 +8,27 @@ import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.entity.animal.chicken.Chicken;
-import net.minecraft.world.entity.animal.cow.Cow;
-import net.minecraft.world.entity.animal.feline.Ocelot;
-import net.minecraft.world.entity.animal.pig.Pig;
-import net.minecraft.world.entity.animal.sheep.Sheep;
-import net.minecraft.world.entity.animal.wolf.Wolf;
-import net.minecraft.world.entity.animal.equine.Horse;
-import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class ThInfusionRecipes {
     private static final ArrayList<CreatureInfusionRecipe> critterRecipes = new ArrayList<>();
@@ -232,42 +232,42 @@ public final class ThInfusionRecipes {
     public static @Nullable EntityType<?> outputEntityType(int id) {
         if (id < 0) {
             return switch (id) {
-                case -90 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("pig"));
-                case -92 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("cow"));
-                case -93 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("chicken"));
-                case -96 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("mooshroom"));
+                case -90 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("pig"));
+                case -92 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("cow"));
+                case -93 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("chicken"));
+                case -96 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("mooshroom"));
                 default -> null;
             };
         }
         return switch (id) {
-            case 2 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chromaticsheep"));
-            case 3 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "selfshearingsheep"));
-            case 4 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "guardianpanther"));
-            case 5 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "gravekeeper"));
-            case 6 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "familiar"));
-            case 7 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "chocolatecow"));
-            case 9 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "scholarchicken"));
-            case 10 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "goldchicken"));
-            case 11 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "orepig"));
-            case 12 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "tainteaterpig"));
-            case 13 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed"));
-            case 14 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "seawolf"));
-            case 15 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "netherhound"));
-            case 16 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "lunarwolf"));
-            case 20 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_zombie"));
-            case 21 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "horse_skeleton"));
-            case 22 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "nightmare"));
-            case 29 -> BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumichorizons", "sheeder"));
+            case 2 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "chromaticsheep"));
+            case 3 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "selfshearingsheep"));
+            case 4 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "guardianpanther"));
+            case 5 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "gravekeeper"));
+            case 6 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "familiar"));
+            case 7 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "chocolatecow"));
+            case 9 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "scholarchicken"));
+            case 10 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "goldchicken"));
+            case 11 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "orepig"));
+            case 12 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "tainteaterpig"));
+            case 13 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "endersteed"));
+            case 14 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "seawolf"));
+            case 15 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "netherhound"));
+            case 16 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "lunarwolf"));
+            case 20 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "horse_zombie"));
+            case 21 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "horse_skeleton"));
+            case 22 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "nightmare"));
+            case 29 -> BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumichorizons", "sheeder"));
             default -> null;
         };
     }
 
     public static void init() {
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.GHAST);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.ENDERMAN);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.WITCH);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.BLAZE);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.MAGMA_CUBE);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.GHAST);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.ENDERMAN);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.WITCH);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.BLAZE);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.MAGMA_CUBE);
         classBanList.add((type, entity) -> tcEntityType("pech") == type);
         classBanList.add((type, entity) -> tcEntityType("wisp") == type);
         classBanList.add((type, entity) -> entity instanceof thaumcraft.entity.TaintedMob);
@@ -284,12 +284,12 @@ public final class ThInfusionRecipes {
 
     private static @Nullable EntityType<?> tcEntityType(String name) {
         return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE
-            .getOptional(Identifier.fromNamespaceAndPath("thaumcraft", name))
+            .getOptional(ResourceLocation.fromNamespaceAndPath("thaumcraft", name))
             .orElse(null);
     }
 
     private static @Nullable Item tcItem(String name) {
-        return TcReforgedPort.items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        return TcReforgedPort.items.lookup(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
     }
 
     private static ItemStack tc(String name) {
@@ -303,12 +303,12 @@ public final class ThInfusionRecipes {
     }
 
     private static ItemStack block(String name) {
-        var block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        var block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
         return block.map(b -> new ItemStack(b)).orElse(ItemStack.EMPTY);
     }
 
     private static ItemStack block(String name, int count) {
-        var block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        var block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
         return block.map(b -> new ItemStack(b, count)).orElse(ItemStack.EMPTY);
     }
 
@@ -329,7 +329,7 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.DARKNESS, 4).add(thaumcraft.aspect.Aspect.SLIME, 4)
                 .add(thaumcraft.aspect.Aspect.EXCHANGE, 2),
             Chicken.class,
-            new ItemStack[] { new ItemStack(Items.DYE.black()), new ItemStack(Items.SHEARS) },
+            new ItemStack[] { new ItemStack(Items.BLACK_DYE), new ItemStack(Items.SHEARS) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("chickenInfusion", 10, 6,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.GREED, 8).add(thaumcraft.aspect.Aspect.METAL, 8)
@@ -353,8 +353,8 @@ public final class ThInfusionRecipes {
         critterRecipes.add(new CreatureInfusionRecipe("sheepInfusion", 2, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.SENSES, 8).add(thaumcraft.aspect.Aspect.EXCHANGE, 4),
             Sheep.class,
-            new ItemStack[] { new ItemStack(Items.DYE.red()), new ItemStack(Items.LAPIS_LAZULI),
-                new ItemStack(Items.DYE.yellow()) },
+            new ItemStack[] { new ItemStack(Items.RED_DYE), new ItemStack(Items.LAPIS_LAZULI),
+                new ItemStack(Items.YELLOW_DYE) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("sheepInfusion", 3, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.TOOL, 8).add(thaumcraft.aspect.Aspect.CLOTH, 4),
@@ -372,8 +372,8 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.CLOTH, 32).add(thaumcraft.aspect.Aspect.EXCHANGE, 8)
                 .add(thaumcraft.aspect.Aspect.MIND, 16),
             Spider.class,
-            new ItemStack[] { tc("zombie_brain"), new ItemStack(Items.WOOL.white()), new ItemStack(Items.WOOL.white()),
-                new ItemStack(Items.WOOL.white()) },
+            new ItemStack[] { tc("zombie_brain"), new ItemStack(Items.WHITE_WOOL), new ItemStack(Items.WHITE_WOOL),
+                new ItemStack(Items.WHITE_WOOL) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("catInfusion", 4, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.BEAST, 8).add(thaumcraft.aspect.Aspect.WEAPON, 8),
@@ -391,7 +391,7 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.TRAP, 8).add(thaumcraft.aspect.Aspect.AURA, 4)
                 .add(thaumcraft.aspect.Aspect.ENERGY, 16),
             Ocelot.class,
-            new ItemStack[] { tc("balanced_shard"), new ItemStack(Items.WOOL.black()), tc("balanced_shard"),
+            new ItemStack[] { tc("balanced_shard"), new ItemStack(Items.BLACK_WOOL), tc("balanced_shard"),
                 new ItemStack(Items.GOLD_NUGGET) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("dogInfusion", 14, 2,
@@ -563,23 +563,23 @@ public final class ThInfusionRecipes {
         selfRecipes.add(new SelfInfusionRecipe("chameleonSkin", 7,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.SENSES, 48).add(thaumcraft.aspect.Aspect.EXCHANGE, 32)
                 .add(thaumcraft.aspect.Aspect.VOID, 32),
-            new ItemStack[] { new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.DYE.red()),
-                new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.DYE.yellow()),
-                new ItemStack(Items.DYE.black()), new ItemStack(Items.BONE_MEAL) },
+            new ItemStack[] { new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.RED_DYE),
+                new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.YELLOW_DYE),
+                new ItemStack(Items.BLACK_DYE), new ItemStack(Items.BONE_MEAL) },
             10));
     }
 
     private static ItemStack regenerationPotion() {
         ItemStack stack = new ItemStack(Items.SPLASH_POTION);
         stack.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(), java.util.Optional.empty(),
-            java.util.List.of(new MobEffectInstance(MobEffects.REGENERATION, 1200, 1)), java.util.Optional.empty()));
+            java.util.List.of(new MobEffectInstance(MobEffects.REGENERATION, 1200, 1))));
         return stack;
     }
 
     private static ItemStack waterBreathingPotion() {
         ItemStack stack = new ItemStack(Items.SPLASH_POTION);
         stack.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(), java.util.Optional.empty(),
-            java.util.List.of(new MobEffectInstance(MobEffects.WATER_BREATHING, 9600, 0)), java.util.Optional.empty()));
+            java.util.List.of(new MobEffectInstance(MobEffects.WATER_BREATHING, 9600, 0))));
         return stack;
     }
 

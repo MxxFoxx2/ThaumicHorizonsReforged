@@ -3,7 +3,7 @@ package dev.visfox.thaumichorizons.platform;
 import dev.visfox.thaumichorizons.entity.NightmareTH;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.level.portal.DimensionTransition;
 
 /**
  * Isolates Minecraft's version-sensitive cross-dimension entity transfer API
@@ -14,13 +14,13 @@ public final class NightmareTeleport {
     }
 
     public static boolean transfer(NightmareTH nightmare, ServerLevel destination, Vec3 position) {
-        return nightmare.teleport(new TeleportTransition(
+        return nightmare.changeDimension(new DimensionTransition(
             destination,
             position,
             Vec3.ZERO,
             nightmare.getYRot(),
             nightmare.getXRot(),
-            TeleportTransition.PLAY_PORTAL_SOUND
+            DimensionTransition.PLAY_PORTAL_SOUND
         )) != null;
     }
 }

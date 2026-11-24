@@ -4,7 +4,7 @@ import dev.visfox.thaumichorizons.item.SyringeKeys;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.crafting.CraftingRecipeRef;
@@ -53,7 +53,7 @@ public final class ThRecipes {
     }
 
     private static void normal0() {
-        TcReforgedPort.registerRecipeUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", Identifier.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
+        TcReforgedPort.registerRecipeUnique(new CraftingRecipeRef("cowInfusion", "cowInfusion", ResourceLocation.parse("thaumichorizons:barchocolate"), TcStack.of("thaumichorizons:barchocolate")));
     }
 
     private static void compound0() {

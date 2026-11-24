@@ -4,7 +4,7 @@ import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.block.IlluminationLightBlock;
 import dev.visfox.thaumichorizons.registry.ThBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.WandItem;
@@ -26,7 +26,7 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusIlluminationItem extends FocusItem {
     public static final FocusUpgradeType SOLAR = new FocusUpgradeType(32, "solar",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/solar.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/solar.png"),
         new AspectList().add(Aspect.ORDER, 8).add(Aspect.VOID, 4));
 
     public static final int[] COLORS = {1973019, 11743532, 3887386, 5320730, 2437522, 8073150, 2651799, 11250603,
@@ -56,7 +56,7 @@ public class FocusIlluminationItem extends FocusItem {
     }
 
     @Override
-    public FocusUpgradeType @Nullable [] getPossibleUpgradesByRank(ItemStack focus, int rank) {
+    public @Nullable FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focus, int rank) {
         return switch (rank) {
             case 1, 2, 4, 5 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL};
             case 3 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, SOLAR};
@@ -84,7 +84,7 @@ public class FocusIlluminationItem extends FocusItem {
         int color = Math.max(0, Math.min(COLORS.length - 1, focus.getDamageValue()));
         BlockState lightState = light.defaultBlockState().setValue(IlluminationLightBlock.COLOR, color);
         level.setBlock(pos, lightState, 3);
-        player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+        player.swing(InteractionHand.MAIN_HAND, true);
         if (!level.isClientSide()) {
             THSounds.play(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), "wand", SoundSource.PLAYERS, 1.0F, 1.0F);
         }
@@ -92,7 +92,7 @@ public class FocusIlluminationItem extends FocusItem {
     }
 
     @Override
-    public net.minecraft.resources.@Nullable Identifier getFocusTexture(ItemStack focus) {
-        return Identifier.fromNamespaceAndPath("thaumichorizons", "item/focus_illumination");
+    public @Nullable ResourceLocation getFocusTexture(ItemStack focus) {
+        return ResourceLocation.fromNamespaceAndPath("thaumichorizons", "item/focus_illumination");
     }
 }

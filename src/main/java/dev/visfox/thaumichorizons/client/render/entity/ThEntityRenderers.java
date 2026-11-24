@@ -1,15 +1,16 @@
 package dev.visfox.thaumichorizons.client.render.entity;
 
 import dev.visfox.thaumichorizons.ThaumicHorizons;
+import dev.visfox.thaumichorizons.entity.BlastPhialProjectile;
+import dev.visfox.thaumichorizons.entity.EggIncubatedEntity;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.client.render.model.FamiliarHatModel;
 import dev.visfox.thaumichorizons.client.render.entity.SyringeProjectileRenderer;
 import net.minecraft.client.renderer.entity.SheepRenderer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.object.boat.BoatModel;
+import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.renderer.entity.UndeadHorseRenderer;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,8 +26,8 @@ public final class ThEntityRenderers {
     @SubscribeEvent
     static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(FamiliarHatModel.LAYER, FamiliarHatModel::createLayer);
-        event.registerLayerDefinition(ThBoatRenderer.GREATWOOD_LAYER, BoatModel::createBoatModel);
-        event.registerLayerDefinition(ThBoatRenderer.THAUMIUM_LAYER, BoatModel::createBoatModel);
+        event.registerLayerDefinition(ThBoatRenderer.GREATWOOD_LAYER, BoatModel::createBodyModel);
+        event.registerLayerDefinition(ThBoatRenderer.THAUMIUM_LAYER, BoatModel::createBodyModel);
     }
 
     @SubscribeEvent
@@ -38,9 +39,9 @@ public final class ThEntityRenderers {
             new ThBoatRenderer(context, ThBoatRenderer.THAUMIUM_LAYER,
                 ThaumicHorizons.id("textures/entity/boatthaumium.png")));
         event.registerEntityRenderer(ThEntities.ALCHEMITE_PRIMED.get(), AlchemitePrimedRenderer::new);
-        event.registerEntityRenderer(ThEntities.EGG_INCUBATED.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ThEntities.EGG_INCUBATED.get(), context -> new ThrownItemRenderer<EggIncubatedEntity>(context, 1.0F, true));
         event.registerEntityRenderer(ThEntities.SYRINGE.get(), SyringeProjectileRenderer::new);
-        event.registerEntityRenderer(ThEntities.BLAST_PHIAL.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ThEntities.BLAST_PHIAL.get(), context -> new ThrownItemRenderer<BlastPhialProjectile>(context, 1.0F, true));
         event.registerEntityRenderer(ThEntities.CHROMATIC_SHEEP.get(), SheepRenderer::new);
         event.registerEntityRenderer(ThEntities.SELF_SHEARING_SHEEP.get(), SheepRenderer::new);
         event.registerEntityRenderer(ThEntities.GUARDIAN_PANTHER.get(), GuardianPantherRenderer::new);
@@ -53,11 +54,9 @@ public final class ThEntityRenderers {
         event.registerEntityRenderer(ThEntities.TAINT_EATER_PIG.get(), TaintEaterPigRenderer::new);
         event.registerEntityRenderer(ThEntities.ENDERSTEED.get(), EndersteedRenderer::new);
         event.registerEntityRenderer(ThEntities.HORSE_ZOMBIE.get(), context ->
-            new UndeadHorseRenderer(context, EquipmentClientInfo.LayerType.ZOMBIE_HORSE_SADDLE,
-                ModelLayers.ZOMBIE_HORSE_SADDLE, UndeadHorseRenderer.Type.ZOMBIE, UndeadHorseRenderer.Type.ZOMBIE_BABY));
+            new UndeadHorseRenderer(context, ModelLayers.ZOMBIE_HORSE));
         event.registerEntityRenderer(ThEntities.HORSE_SKELETON.get(), context ->
-            new UndeadHorseRenderer(context, EquipmentClientInfo.LayerType.SKELETON_HORSE_SADDLE,
-                ModelLayers.SKELETON_HORSE_SADDLE, UndeadHorseRenderer.Type.SKELETON, UndeadHorseRenderer.Type.SKELETON_BABY));
+            new UndeadHorseRenderer(context, ModelLayers.SKELETON_HORSE));
         event.registerEntityRenderer(ThEntities.NIGHTMARE.get(), NightmareRenderer::new);
         event.registerEntityRenderer(ThEntities.SEAWOLF.get(), SeawolfRenderer::new);
         event.registerEntityRenderer(ThEntities.NETHER_HOUND.get(), NetherHoundRenderer::new);

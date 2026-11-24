@@ -1,38 +1,37 @@
 package dev.visfox.thaumichorizons.client.platform;
 
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 public final class ThRenderTypes {
     private ThRenderTypes() {
     }
 
-    public static RenderType eyes(Identifier texture) {
-        return RenderTypes.eyes(texture);
+    public static RenderType eyes(ResourceLocation texture) {
+        return RenderType.eyes(texture);
     }
 
-    public static RenderType entityTranslucent(Identifier texture) {
-        return RenderTypes.entityTranslucent(texture);
+    public static RenderType entityTranslucent(ResourceLocation texture) {
+        return RenderType.entityTranslucent(texture);
     }
 
-    public static RenderType entityCutout(Identifier texture) {
-        return RenderTypes.entityCutout(texture);
+    public static RenderType entityCutout(ResourceLocation texture) {
+        return RenderType.entityCutout(texture);
     }
 
-    public static RenderType entityCutoutNoCull(Identifier texture) {
-        return RenderTypes.entityCutout(texture, false);
+    public static RenderType entityCutoutNoCull(ResourceLocation texture) {
+        return RenderType.entityCutoutNoCull(texture);
     }
 
-    public static RenderType textSeeThrough(Identifier texture) {
-        return RenderTypes.textSeeThrough(texture);
+    public static RenderType textSeeThrough(ResourceLocation texture) {
+        return RenderType.textSeeThrough(texture);
     }
 
     public static RenderType lightning() {
-        return RenderTypes.lightning();
+        return RenderType.lightning();
     }
 
-    public static RenderType beaconBeam(Identifier texture, boolean translucent) {
-        return RenderTypes.beaconBeam(texture, translucent);
+    public static RenderType beaconBeam(ResourceLocation texture, boolean translucent) {
+        return RenderType.beaconBeam(texture, translucent);
     }
 }

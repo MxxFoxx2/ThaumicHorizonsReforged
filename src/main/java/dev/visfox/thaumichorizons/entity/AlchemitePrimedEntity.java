@@ -6,23 +6,20 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoveSimulationType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.nbt.CompoundTag;
+import javax.annotation.Nullable;
 
 public class AlchemitePrimedEntity extends Entity {
     private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(AlchemitePrimedEntity.class,
         EntityDataSerializers.INT);
     private @Nullable LivingEntity alchemitePlacedBy;
 
-    public AlchemitePrimedEntity(EntityType<? extends AlchemitePrimedEntity> type, Level level) {
+    public AlchemitePrimedEntity(EntityType<AlchemitePrimedEntity> type, Level level) {
         super(type, level);
         this.blocksBuilding = true;
     }
@@ -47,11 +44,6 @@ public class AlchemitePrimedEntity extends Entity {
     @Override
     protected Entity.MovementEmission getMovementEmission() {
         return Entity.MovementEmission.NONE;
-    }
-
-    @Override
-    public MoveSimulationType getMoveSimulationType() {
-        return MoveSimulationType.SERVER_AND_CLIENT;
     }
 
     @Override
@@ -92,7 +84,7 @@ public class AlchemitePrimedEntity extends Entity {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float damage) {
+    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float damage) {
         return false;
     }
 
@@ -105,12 +97,12 @@ public class AlchemitePrimedEntity extends Entity {
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        output.putInt("Fuse", this.getFuse());
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        tag.putInt("Fuse", this.getFuse());
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        this.setFuse(input.getIntOr("Fuse", 80));
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        this.setFuse(tag.contains("Fuse") ? tag.getInt("Fuse") : 80);
     }
 }

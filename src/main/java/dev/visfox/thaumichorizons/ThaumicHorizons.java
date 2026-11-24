@@ -76,7 +76,7 @@ public class ThaumicHorizons {
         LOGGER.info("Thaumic Horizons: Reforged loaded");
     }
 
-    public static net.minecraft.resources.Identifier id(String path) {
-        return net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, path);
+    public static net.minecraft.resources.ResourceLocation id(String path) {
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

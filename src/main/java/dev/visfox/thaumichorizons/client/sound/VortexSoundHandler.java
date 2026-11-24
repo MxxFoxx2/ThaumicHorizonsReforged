@@ -15,7 +15,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientResourceLoadFinishedEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 @EventBusSubscriber(modid = ThaumicHorizons.MODID, value = Dist.CLIENT)
@@ -29,11 +28,6 @@ public final class VortexSoundHandler {
     private static int tickCounter;
 
     private VortexSoundHandler() {
-    }
-
-    @SubscribeEvent
-    static void onResourcesReloaded(ClientResourceLoadFinishedEvent event) {
-        stopAll(Minecraft.getInstance());
     }
 
     @SubscribeEvent
@@ -108,6 +102,10 @@ public final class VortexSoundHandler {
                 iterator.remove();
             }
         }
+    }
+
+    public static void onResourceReload() {
+        stopAll(Minecraft.getInstance());
     }
 
     private static void stopAll(Minecraft minecraft) {

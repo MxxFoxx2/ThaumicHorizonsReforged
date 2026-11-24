@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.compat;
 
 import java.util.List;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public final class ResearchCompat {
     private ResearchCompat() {
@@ -26,7 +26,7 @@ public final class ResearchCompat {
         int column,
         int row,
         int complexity,
-        Identifier icon,
+        ResourceLocation icon,
         List<Flag> flags,
         List<String> parents,
         List<String> parentsHidden,
@@ -62,7 +62,7 @@ public final class ResearchCompat {
         CREATURE_INFUSION
     }
 
-    public record PageSpec(PageKind kind, String textKey, String concealedResearch, Identifier image, List<String> recipeKeys, String payload) {
+    public record PageSpec(PageKind kind, String textKey, String concealedResearch, ResourceLocation image, List<String> recipeKeys, String payload) {
         public PageSpec {
             recipeKeys = List.copyOf(recipeKeys);
         }
@@ -75,7 +75,7 @@ public final class ResearchCompat {
             return new PageSpec(PageKind.CONCEALED_TEXT, textKey, concealedResearch, null, List.of(), null);
         }
 
-        public static PageSpec image(Identifier image, String captionKey) {
+        public static PageSpec image(ResourceLocation image, String captionKey) {
             return new PageSpec(PageKind.IMAGE, captionKey, null, image, List.of(), null);
         }
 

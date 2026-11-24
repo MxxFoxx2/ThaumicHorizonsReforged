@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class SyntheticNodeBlock extends Block implements EntityBlock {
     private static final VoxelShape SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0);
@@ -36,10 +36,9 @@ public class SyntheticNodeBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
-            BlockPos pos, boolean movedByPiston) {
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         dropEssence(level, pos);
-        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     private static void dropEssence(Level level, BlockPos pos) {

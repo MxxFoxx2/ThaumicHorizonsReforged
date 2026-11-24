@@ -7,7 +7,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -18,8 +18,13 @@ import net.neoforged.neoforge.fluids.FluidType;
  * float on lava and protects its passengers from fire while immersed.
  */
 public final class ThaumiumBoat extends Boat {
-    public ThaumiumBoat(EntityType<? extends ThaumiumBoat> type, Level level) {
-        super(type, level, ThItems.BOAT_THAUMIUM::get);
+    public ThaumiumBoat(EntityType<ThaumiumBoat> type, Level level) {
+        super(type, level);
+    }
+
+    @Override
+    public net.minecraft.world.item.Item getDropItem() {
+        return ThItems.BOAT_THAUMIUM.get();
     }
 
     @Override

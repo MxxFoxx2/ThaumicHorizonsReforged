@@ -8,6 +8,7 @@
   "client": [
     "DisplayPageAccessor",
     "PlanarGatewayResearchPageMixin",
+    "VoidPuttyResearchPageMixin",
     "GolemRendererTHMixin",
     "CreatureInfusionResearchPageMixin"
   ],

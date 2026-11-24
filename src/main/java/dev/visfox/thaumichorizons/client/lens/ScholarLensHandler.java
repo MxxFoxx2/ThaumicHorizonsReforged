@@ -7,7 +7,7 @@ import dev.visfox.thaumichorizons.client.screen.ThGui;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import dev.visfox.thaumichorizons.network.LensScanPayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -23,7 +23,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.node.Node;
@@ -98,9 +98,9 @@ public final class ScholarLensHandler {
             && minecraft.level.getBlockEntity(scan.pos()) instanceof Node node) {
             aspects = node.getAspects();
         }
-        GuiGraphicsExtractor graphics = event.getGuiGraphics();
+        GuiGraphics graphics = event.getGuiGraphics();
         int centerX = graphics.guiWidth() / 2;
-        graphics.centeredText(minecraft.font, name, centerX, 5, 0xFFFFFFFF);
+        graphics.drawCenteredString(minecraft.font, name, centerX, 5, 0xFFFFFFFF);
         if (aspects != null) {
             int count = aspects.size();
             int rowWidth = Math.min(5, count) * 18;

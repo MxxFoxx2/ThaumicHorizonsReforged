@@ -5,7 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,15 +26,15 @@ public class ItemLensCase extends Item {
     }
 
     @Override
-    public InteractionResult use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            int selectedSlot = serverPlayer.getInventory().getSelectedSlot();
+            int selectedSlot = serverPlayer.getInventory().selected;
             serverPlayer.openMenu(new SimpleMenuProvider(
                 (windowId, inventory, p) -> new ContainerCase(windowId, inventory, selectedSlot), TITLE),
                 buffer -> buffer.writeVarInt(selectedSlot));
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(stack);
     }
 
     public static ItemStack[] getContents(ItemStack stack) {

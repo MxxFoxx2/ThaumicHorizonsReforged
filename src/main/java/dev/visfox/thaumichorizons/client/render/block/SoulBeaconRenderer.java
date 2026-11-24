@@ -4,25 +4,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.visfox.thaumichorizons.blockentity.SoulBeaconBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public final class SoulBeaconRenderer implements BlockEntityRenderer<SoulBeaconBlockEntity, SoulBeaconRenderer.State> {
-    private static final Identifier BEAM = Identifier.withDefaultNamespace("textures/entity/beacon_beam.png");
+public final class SoulBeaconRenderer implements ThStateBlockRenderer<SoulBeaconBlockEntity, SoulBeaconRenderer.State> {
+    private static final ResourceLocation BEAM = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
     private static final int COLOR = 0x20FFFFFF;
 
     public SoulBeaconRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public boolean visible;
         public float time;
     }
@@ -34,8 +34,7 @@ public final class SoulBeaconRenderer implements BlockEntityRenderer<SoulBeaconB
 
     @Override
     public void extractRenderState(SoulBeaconBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.visible = level != null && level.canSeeSky(entity.getBlockPos());
         state.time = (level == null ? 0L : level.getGameTime()) + partialTicks;
@@ -43,7 +42,7 @@ public final class SoulBeaconRenderer implements BlockEntityRenderer<SoulBeaconB
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         if (!state.visible) {
             return;
         }

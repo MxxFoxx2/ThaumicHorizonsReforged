@@ -6,9 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.essentia.EssentiaTransport;
@@ -226,10 +226,8 @@ public class EssentiaDynamoBlockEntity extends VisNode implements EssentiaTransp
         }
         return result;
     }
-
-    @Override
     protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
+        super.loadAdditional(input.tag(), input.lookup());
         essentia = input.read("essentia", Aspect.CODEC).orElse(null);
         ticksProvided = input.getIntOr("ticks", 0);
         primalsProvided = input.read("primalsProvided", AspectList.CODEC).orElseGet(AspectList::new);
@@ -241,10 +239,8 @@ public class EssentiaDynamoBlockEntity extends VisNode implements EssentiaTransp
             killMe();
         }
     }
-
-    @Override
     protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+        super.saveAdditional(output.tag(), output.lookup());
         if (essentia != null) {
             output.store("essentia", Aspect.CODEC, essentia);
         }

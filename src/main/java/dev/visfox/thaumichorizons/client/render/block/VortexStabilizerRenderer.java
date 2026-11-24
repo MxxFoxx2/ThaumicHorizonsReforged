@@ -7,26 +7,26 @@ import dev.visfox.thaumichorizons.blockentity.VortexStabilizerBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.client.render.model.ObjModel;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public final class VortexStabilizerRenderer
-    implements BlockEntityRenderer<VortexStabilizerBlockEntity, VortexStabilizerRenderer.State> {
-    private static final Identifier HEMIS_OBJ = Identifier.fromNamespaceAndPath("thaumcraft", "models/obj/hemis.obj");
+    implements ThStateBlockRenderer<VortexStabilizerBlockEntity, VortexStabilizerRenderer.State> {
+    private static final ResourceLocation HEMIS_OBJ = ResourceLocation.fromNamespaceAndPath("thaumcraft", "models/obj/hemis.obj");
     private final ObjModel hemis = ObjModel.get(HEMIS_OBJ);
 
     public VortexStabilizerRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public boolean redstoned;
         public BlockPos source;
         public BlockPos target;
@@ -42,8 +42,7 @@ public final class VortexStabilizerRenderer
 
     @Override
     public void extractRenderState(VortexStabilizerBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.redstoned = entity.redstoned;
         state.source = entity.getBlockPos();
@@ -64,7 +63,7 @@ public final class VortexStabilizerRenderer
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         if (!state.redstoned || state.target == null) {
             return;
         }
@@ -73,7 +72,7 @@ public final class VortexStabilizerRenderer
             float age = (time + index * 4.0F) % 12.0F;
             float fade = age / 12.0F;
             int frame = Math.min(15, (int) (14.0F * fade) + 1);
-            Identifier texture = Identifier.fromNamespaceAndPath("thaumcraft", "textures/model/hemis" + frame + ".png");
+            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("thaumcraft", "textures/model/hemis" + frame + ".png");
             poseStack.pushPose();
             poseStack.translate(state.target.getX() - state.source.getX() + 0.5F,
                 state.target.getY() - state.source.getY() + 0.5F,
@@ -98,8 +97,8 @@ public final class VortexStabilizerRenderer
             case UP -> -90.0F;
             default -> 0.0F;
         };
-        poseStack.rotateDegrees(Axis.YP, -yaw);
-        poseStack.rotateDegrees(Axis.XP, pitch);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-yaw));
+        poseStack.mulPose(Axis.XP.rotationDegrees(pitch));
     }
 
     @Override

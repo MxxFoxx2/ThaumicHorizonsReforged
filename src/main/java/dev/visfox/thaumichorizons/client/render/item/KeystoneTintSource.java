@@ -1,33 +1,26 @@
 package dev.visfox.thaumichorizons.client.render.item;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.color.item.ItemTintSource;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Uses the color persisted on the bound Keystone itself. This avoids trying
  * to read server-only PocketPlanes SavedData from a remote client.
  */
-public record KeystoneTintSource() implements ItemTintSource {
-    public static final MapCodec<KeystoneTintSource> MAP_CODEC = MapCodec.unit(new KeystoneTintSource());
+public record KeystoneTintSource() implements ItemColor {
+    public static final KeystoneTintSource INSTANCE = new KeystoneTintSource();
+    public static final MapCodec<KeystoneTintSource> MAP_CODEC = MapCodec.unit(INSTANCE);
 
     @Override
-    public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {
+    public int getColor(ItemStack stack, int tintIndex) {
         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
             return 0xFFFFFFFF;
         }
-        int color = customData.copyTag().getIntOr("color", 0xFFFFFF);
+        int color = customData.copyTag().getInt("color");
         return color | 0xFF000000;
-    }
-
-    @Override
-    public MapCodec<KeystoneTintSource> type() {
-        return MAP_CODEC;
     }
 }

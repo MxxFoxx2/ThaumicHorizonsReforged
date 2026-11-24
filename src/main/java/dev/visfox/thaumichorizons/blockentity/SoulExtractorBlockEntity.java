@@ -24,9 +24,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.vis.VisNet;
 import thaumcraft.vis.VisNode;
@@ -136,18 +136,14 @@ public class SoulExtractorBlockEntity extends VisNode implements net.minecraft.w
             sieveInventory.setItem(0, ItemStack.EMPTY);
         }
     }
-
-    @Override
     protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
+        super.loadAdditional(input.tag(), input.lookup());
         ticksLeft = input.getIntOr("ticks", 0);
         extracting = input.getBooleanOr("extracting", false);
         sieveInventory.setItem(0, input.read("soulsand", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY));
     }
-
-    @Override
     protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+        super.saveAdditional(output.tag(), output.lookup());
         output.putInt("ticks", ticksLeft);
         output.putBoolean("extracting", extracting);
         if (!sieveInventory.getItem(0).isEmpty()) {

@@ -6,7 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
+import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,8 +17,8 @@ import net.minecraft.world.level.Level;
  * Splash-phial projectile. Potion data is transferred from the TH syringe item
  * into a vanilla splash-potion stack so vanilla potion impact rules are retained.
  */
-public final class BlastPhialProjectile extends ThrownSplashPotion {
-    public BlastPhialProjectile(EntityType<? extends BlastPhialProjectile> type, Level level) {
+public final class BlastPhialProjectile extends ThrownPotion {
+    public BlastPhialProjectile(EntityType<BlastPhialProjectile> type, Level level) {
         super(type, level);
     }
 

@@ -13,6 +13,7 @@ import dev.visfox.thaumichorizons.entity.NightmareTH;
 import dev.visfox.thaumichorizons.entity.EggIncubatedEntity;
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.entity.Familiar;
+import dev.visfox.thaumichorizons.entity.GreatwoodBoat;
 import dev.visfox.thaumichorizons.entity.GoldChicken;
 import dev.visfox.thaumichorizons.entity.Gravekeeper;
 import dev.visfox.thaumichorizons.entity.GuardianPanther;
@@ -32,39 +33,32 @@ import dev.visfox.thaumichorizons.entity.ThaumiumBoat;
 import dev.visfox.thaumichorizons.entity.VoltSlime;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ThEntities {
-    public static final DeferredRegister.Entities ENTITIES = DeferredRegister.createEntities(ThaumicHorizons.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, ThaumicHorizons.MODID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<AlchemitePrimedEntity>> ALCHEMITE_PRIMED =
-        ENTITIES.registerEntityType("alchemiteprimed", AlchemitePrimedEntity::new, MobCategory.MISC,
-            builder -> builder.sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10));
+        ENTITIES.register("alchemiteprimed", () -> EntityType.Builder.<AlchemitePrimedEntity>of(AlchemitePrimedEntity::new, MobCategory.MISC).sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10).build("thaumichorizons:alchemiteprimed"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SyringeProjectile>> SYRINGE =
-        ENTITIES.registerEntityType("syringe_projectile", SyringeProjectile::new, MobCategory.MISC,
-            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
+        ENTITIES.register("syringe_projectile", () -> EntityType.Builder.<SyringeProjectile>of(SyringeProjectile::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10).build("thaumichorizons:syringe_projectile"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BlastPhialProjectile>> BLAST_PHIAL =
-        ENTITIES.registerEntityType("blast_phial", BlastPhialProjectile::new, MobCategory.MISC,
-            builder -> builder.sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10));
+        ENTITIES.register("blast_phial", () -> EntityType.Builder.<BlastPhialProjectile>of(BlastPhialProjectile::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10).build("thaumichorizons:blast_phial"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EggIncubatedEntity>> EGG_INCUBATED =
-        ENTITIES.registerEntityType("eggincubated", EggIncubatedEntity::new, MobCategory.MISC,
-            builder -> builder.sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(20).fireImmune());
+        ENTITIES.register("eggincubated", () -> EntityType.Builder.<EggIncubatedEntity>of(EggIncubatedEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(20).fireImmune().build("thaumichorizons:eggincubated"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Boat>> BOAT_GREATWOOD =
-        ENTITIES.registerEntityType("boat_greatwood",
-            (type, level) -> new Boat(type, level, ThItems.BOAT_GREATWOOD::get), MobCategory.MISC,
-            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<GreatwoodBoat>> BOAT_GREATWOOD =
+        ENTITIES.register("boat_greatwood", () -> EntityType.Builder.of(GreatwoodBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3).build("thaumichorizons:boat_greatwood"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThaumiumBoat>> BOAT_THAUMIUM =
-        ENTITIES.registerEntityType("boat_thaumium", ThaumiumBoat::new, MobCategory.MISC,
-            builder -> builder.sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3).fireImmune());
+        ENTITIES.register("boat_thaumium", () -> EntityType.Builder.of(ThaumiumBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).updateInterval(3).fireImmune().build("thaumichorizons:boat_thaumium"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChromaticSheep>> CHROMATIC_SHEEP = creature(
         "chromaticsheep", ChromaticSheep::new, builder -> builder.sized(0.9F, 1.3F).eyeHeight(1.213F));
@@ -87,16 +81,13 @@ public final class ThEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<TaintEaterPig>> TAINT_EATER_PIG = creature(
         "tainteaterpig", TaintEaterPig::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.78F));
     public static final DeferredHolder<EntityType<?>, EntityType<Endersteed>> ENDERSTEED = creature(
-        "endersteed", Endersteed::new, builder -> builder.sized(1.3965F, 1.6F).eyeHeight(1.473F));
+        "endersteed", (type, level) -> new Endersteed(type, level), builder -> builder.sized(1.3965F, 1.6F).eyeHeight(1.473F));
     public static final DeferredHolder<EntityType<?>, EntityType<HorseZombie>> HORSE_ZOMBIE =
-        ENTITIES.registerEntityType("horse_zombie", HorseZombie::new, MobCategory.CREATURE,
-            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+        ENTITIES.register("horse_zombie", () -> EntityType.Builder.of(HorseZombie::new, MobCategory.CREATURE).sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).build("thaumichorizons:horse_zombie"));
     public static final DeferredHolder<EntityType<?>, EntityType<HorseSkeleton>> HORSE_SKELETON =
-        ENTITIES.registerEntityType("horse_skeleton", HorseSkeleton::new, MobCategory.CREATURE,
-            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3));
+        ENTITIES.register("horse_skeleton", () -> EntityType.Builder.of(HorseSkeleton::new, MobCategory.CREATURE).sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).build("thaumichorizons:horse_skeleton"));
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareTH>> NIGHTMARE =
-        ENTITIES.registerEntityType("nightmare", NightmareTH::new, MobCategory.CREATURE,
-            builder -> builder.sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).fireImmune());
+        ENTITIES.register("nightmare", () -> EntityType.Builder.<NightmareTH>of((type, level) -> new NightmareTH(type, level), MobCategory.CREATURE).sized(1.3965F, 1.6F).clientTrackingRange(64).updateInterval(3).fireImmune().build("thaumichorizons:nightmare"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Seawolf>> SEAWOLF = creature(
         "seawolf", Seawolf::new, builder -> builder.sized(0.6F, 0.85F).eyeHeight(0.425F));
@@ -105,28 +96,27 @@ public final class ThEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<LunarWolf>> LUNAR_WOLF = creature(
         "lunarwolf", LunarWolf::new, builder -> builder.sized(0.6F, 0.85F).eyeHeight(0.425F));
     public static final DeferredHolder<EntityType<?>, EntityType<MeatSlime>> MEAT_SLIME = creature(
-        "meatslime", MeatSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F).notInPeaceful());
+        "meatslime", MeatSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F));
     public static final DeferredHolder<EntityType<?>, EntityType<MercurialSlime>> MERCURIAL_SLIME = creature(
-        "mercurialslime", MercurialSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F).notInPeaceful());
+        "mercurialslime", MercurialSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F));
     public static final DeferredHolder<EntityType<?>, EntityType<VoltSlime>> VOLT_SLIME = creature(
-        "voltslime", VoltSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F).notInPeaceful());
+        "voltslime", VoltSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F));
     public static final DeferredHolder<EntityType<?>, EntityType<MedSlime>> MED_SLIME = creature(
-        "medslime", MedSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F).notInPeaceful());
+        "medslime", MedSlime::new, builder -> builder.sized(2.04F, 2.04F).eyeHeight(1.02F));
     public static final DeferredHolder<EntityType<?>, EntityType<Sheeder>> SHEEDER = creature(
         "sheeder", Sheeder::new, builder -> builder.sized(1.4F, 0.9F).eyeHeight(0.65F));
     public static final DeferredHolder<EntityType<?>, EntityType<LostSoul>> LOST_SOUL = creature(
-        "lostsoul", LostSoul::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.45F).notInPeaceful());
+        "lostsoul", LostSoul::new, builder -> builder.sized(0.9F, 0.9F).eyeHeight(0.45F));
     public static final DeferredHolder<EntityType<?>, EntityType<EntityGolemTH>> GOLEM_TH =
-        ENTITIES.registerEntityType("golemth", EntityGolemTH::new, MobCategory.MISC,
-            builder -> builder.sized(0.4F, 0.95F).clientTrackingRange(4).updateInterval(3));
+        ENTITIES.register("golemth", () -> EntityType.Builder.of(EntityGolemTH::new, MobCategory.MISC).sized(0.4F, 0.95F).clientTrackingRange(4).updateInterval(3).build("thaumichorizons:golemth"));
 
     private ThEntities() {
     }
 
     private static <T extends net.minecraft.world.entity.Mob> DeferredHolder<EntityType<?>, EntityType<T>> creature(
         String name, EntityType.EntityFactory<T> factory, java.util.function.UnaryOperator<EntityType.Builder<T>> customize) {
-        return ENTITIES.registerEntityType(name, factory, MobCategory.CREATURE,
-            builder -> customize.apply(builder).clientTrackingRange(64).updateInterval(3));
+        return ENTITIES.register(name, () -> customize.apply(EntityType.Builder.of(factory, MobCategory.CREATURE))
+            .clientTrackingRange(64).updateInterval(3).build("thaumichorizons:" + name));
     }
 
     public static void register(IEventBus bus) {

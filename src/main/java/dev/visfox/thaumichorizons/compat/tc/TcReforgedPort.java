@@ -10,13 +10,13 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.AddonAspects;
 import thaumcraft.damage.ModDamageTypes;
 import thaumcraft.entity.AspectOrb;
@@ -141,7 +141,7 @@ public final class TcReforgedPort {
             return true;
         }
 
-        public void registerAspect(String tag, int color, List<String> componentTags, int blend, Identifier texture) {
+        public void registerAspect(String tag, int color, List<String> componentTags, int blend, ResourceLocation texture) {
             Aspect[] components = TcConversions.resolveAspects(componentTags).toArray(new Aspect[0]);
             AddonAspects.addRegistrar(api -> api.register(tag, color, components, blend, texture));
         }
@@ -166,7 +166,7 @@ public final class TcReforgedPort {
             return true;
         }
 
-        public void registerCategory(String key, Identifier icon, Identifier background) {
+        public void registerCategory(String key, ResourceLocation icon, ResourceLocation background) {
             ResearchCategories.registerCategory(key, icon, background);
         }
 
@@ -291,7 +291,7 @@ public final class TcReforgedPort {
             Knowledge.sync(player);
         }
 
-        public void registerItemWarp(Identifier item, int warp) {
+        public void registerItemWarp(ResourceLocation item, int warp) {
             Warp.registerItem(item, warp);
         }
     }
@@ -305,8 +305,8 @@ public final class TcReforgedPort {
             return SmeltingBonuses.get(input);
         }
 
-        public @Nullable Item lookup(Identifier id) {
-            Item item = BuiltInRegistries.ITEM.getValue(id);
+        public @Nullable Item lookup(ResourceLocation id) {
+            Item item = BuiltInRegistries.ITEM.get(id);
             return item == Items.AIR ? null : item;
         }
 
@@ -333,7 +333,7 @@ public final class TcReforgedPort {
             for (int itemIndex = 0; itemIndex < salisMundusCount; itemIndex++) {
                 int wispCount = level.getRandom().nextInt(4) + 1;
                 for (int i = 0; i < wispCount; i++) {
-                    Wisp wisp = ModEntities.WISP.get().create(level, EntitySpawnReason.TRIGGERED);
+                    Wisp wisp = ModEntities.WISP.get().create(level);
                     if (wisp == null) {
                         continue;
                     }
@@ -392,7 +392,7 @@ public final class TcReforgedPort {
         public void appendLink(ItemStack stack, Consumer<Component> builder) {
             GlobalPos link = MirrorKeys.LINK.get(stack);
             if (link != null) {
-                MirrorLinks.appendLink(link, builder);
+                MirrorLinks.appendLink("Linked to ", link, builder);
             }
         }
 
@@ -657,7 +657,7 @@ public final class TcReforgedPort {
 
         private static Holder<MobEffect> effect(String path) {
             return BuiltInRegistries.MOB_EFFECT
-                .get(Identifier.fromNamespaceAndPath("thaumcraft", path))
+                .getHolder(ResourceLocation.fromNamespaceAndPath("thaumcraft", path))
                 .<Holder<MobEffect>>map(reference -> reference)
                 .orElse(MobEffects.POISON);
         }

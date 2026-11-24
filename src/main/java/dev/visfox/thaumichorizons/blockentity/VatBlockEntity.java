@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
+import dev.visfox.thaumichorizons.lib.EntityPlacement;
+
 import dev.visfox.thaumichorizons.block.SoulBeaconBlock;
 import dev.visfox.thaumichorizons.entity.GuardianPanther;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
@@ -23,7 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ProblemReporter;
@@ -33,7 +35,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -42,8 +44,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.villager.Villager;
-import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -54,12 +56,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.storage.TagValueInput;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.essentia.Essentia;
@@ -247,7 +248,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 } else if (sample != null && tickLevel instanceof ServerLevel serverLevel) {
                     EntityType<?> type = incarnationType(sample.getItem());
                     if (type != null) {
-                        Entity created = type.create(tickLevel, EntitySpawnReason.MOB_SUMMONED);
+                        Entity created = type.create(tickLevel);
                         if (created instanceof LivingEntity living) {
                             setEntityContained(living);
                         }
@@ -327,11 +328,11 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
     }
 
     private static boolean isUndead(LivingEntity entity) {
-        return entity.is(net.minecraft.tags.EntityTypeTags.UNDEAD);
+        return entity.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD);
     }
 
     private static @Nullable EntityType<?> vanillaEntityType(String name) {
-        return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(name));
+        return BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace(name));
     }
 
     private static @Nullable EntityType<?> incarnationType(Item item) {
@@ -400,8 +401,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
             Holder<MobEffect> type = effect.getEffect();
             if (type.value() == MobEffects.POISON.value() || type.value() == MobEffects.BLINDNESS.value()
                 || type.value() == MobEffects.HUNGER.value() || type.value() == MobEffects.WEAKNESS.value()
-                || type.value() == MobEffects.WITHER.value() || type.value() == MobEffects.NAUSEA.value()
-                || type.value() == MobEffects.MINING_FATIGUE.value() || type.value() == MobEffects.SLOWNESS.value()) {
+                || type.value() == MobEffects.WITHER.value() || type.value() == MobEffects.CONFUSION.value()
+                || type.value() == MobEffects.DIG_SLOWDOWN.value() || type.value() == MobEffects.MOVEMENT_SLOWDOWN.value()) {
                 return true;
             }
         }
@@ -417,10 +418,10 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
 
     private static void removeNegativeEffects(LivingEntity ent) {
         ent.removeEffect(MobEffects.BLINDNESS);
-        ent.removeEffect(MobEffects.NAUSEA);
-        ent.removeEffect(MobEffects.MINING_FATIGUE);
+        ent.removeEffect(MobEffects.CONFUSION);
+        ent.removeEffect(MobEffects.DIG_SLOWDOWN);
         ent.removeEffect(MobEffects.HUNGER);
-        ent.removeEffect(MobEffects.SLOWNESS);
+        ent.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
         ent.removeEffect(MobEffects.POISON);
         ent.removeEffect(MobEffects.WEAKNESS);
         ent.removeEffect(MobEffects.WITHER);
@@ -484,11 +485,11 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                 TcReforgedPort.fx.blockSparkle(level, worldPosition.below(), 16777215, 20);
                 TcReforgedPort.fx.blockSparkle(level, worldPosition.below(2), 16777215, 20);
                 Villager villager = new Villager((EntityType<Villager>) vanillaEntityType("villager"), level);
-                VillagerProfession profession = BuiltInRegistries.VILLAGER_PROFESSION
-                    .getValue(Identifier.tryParse(jarData.villagerType()));
+                ResourceLocation professionId = ResourceLocation.tryParse(jarData.villagerType());
+                VillagerProfession profession = professionId == null ? null
+                    : BuiltInRegistries.VILLAGER_PROFESSION.get(professionId);
                 if (profession != null) {
-                    villager.setVillagerData(villager.getVillagerData()
-                        .withProfession(BuiltInRegistries.VILLAGER_PROFESSION.wrapAsHolder(profession)));
+                    villager.setVillagerData(villager.getVillagerData().setProfession(profession));
                 }
                 setEntityContained(villager);
                 mode = 0;
@@ -603,7 +604,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         LivingEntity contained = getEntityContained();
         if (contained == null || isUndead(contained) || contained instanceof Player
             || contained instanceof Villager
-            || contained instanceof net.minecraft.world.entity.animal.golem.AbstractGolem) {
+            || contained instanceof net.minecraft.world.entity.animal.AbstractGolem) {
             return false;
         }
         return !ThInfusionRecipes.isBanned(contained.getType(), contained);
@@ -808,9 +809,9 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                                 new Vec3(worldPosition.getX(), worldPosition.getY() - 2, worldPosition.getZ()),
                                 0xFFFFFF);
                         } else if (itemCount-- <= 1) {
-                            net.minecraft.world.item.ItemStackTemplate remainder =
-                                pedestal.getItem(0).getItem().getCraftingRemainder();
-                            ItemStack leftover = remainder == null ? ItemStack.EMPTY : remainder.create();
+                            net.minecraft.world.item.Item remainderItem =
+                                pedestal.getItem(0).getItem().getCraftingRemainingItem();
+                            ItemStack leftover = remainderItem == null ? ItemStack.EMPTY : new ItemStack(remainderItem);
                             pedestal.setItem(0, leftover.isEmpty() ? ItemStack.EMPTY : leftover.copy());
                             recipeIngredients.remove(a);
                         }
@@ -931,8 +932,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
                     created = createFromType(type, serverLevel, contained);
                 }
                 if (created != null) {
-                    created.snapTo(contained.getX(), contained.getY(), contained.getZ(), contained.getYRot(),
-                        contained.getXRot());
+                    EntityPlacement.snapTo(created, contained.getX(), contained.getY(), contained.getZ(), contained.getYRot(), contained.getXRot());
                     setEntityContained(created);
                 }
             } else if (out instanceof LinkedHashMap<?, ?> tagMods) {
@@ -973,12 +973,12 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
 
     private static @Nullable LivingEntity createFromType(EntityType<?> type, ServerLevel serverLevel,
         LivingEntity contained) {
-        Entity created = type.create(serverLevel, EntitySpawnReason.CONVERSION);
+        Entity created = type.create(serverLevel);
         if (!(created instanceof LivingEntity living)) {
             return null;
         }
         CompoundTag oldData = EntityNbt.save(contained);
-        living.load(TagValueInput.create(ProblemReporter.DISCARDING, serverLevel.registryAccess(), oldData));
+        living.load(oldData);
         if (living instanceof GuardianPanther panther) {
             panther.resetStats();
         }
@@ -993,7 +993,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
         AttributeInstance instance = entity.getAttribute(attribute);
         if (instance != null) {
             AttributeModifier modifier = new AttributeModifier(
-                Identifier.fromNamespaceAndPath("thaumichorizons", "vat_" + attribute.getRegisteredName().replace(":", "_")),
+                ResourceLocation.fromNamespaceAndPath("thaumichorizons", "vat_" + attribute.getRegisteredName().replace(":", "_")),
                 value / divisor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             instance.addTransientModifier(modifier);
         }
@@ -1173,7 +1173,7 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
      * Treat the returned tag as read-only; the renderer caches a copy when it changes.
      */
     public @Nullable CompoundTag getEntityPreviewData() {
-        if (entityNbtObj == null || "PLAYER".equals(entityNbtObj.getStringOr("id", ""))) {
+        if (entityNbtObj == null || "PLAYER".equals(entityNbtObj.getString("id"))) {
             return null;
         }
         return entityNbtObj;
@@ -1182,15 +1182,14 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
     public void setEntityContained(@Nullable LivingEntity newEntity) {
         entityContained = newEntity;
         if (entityContained != null) {
-            entityContained.snapTo(worldPosition.getX() + 0.5, worldPosition.getY() - 1.75,
-                worldPosition.getZ() + 0.5, 0.0F, 0.0F);
+            EntityPlacement.snapTo(entityContained, worldPosition.getX() + 0.5, worldPosition.getY() - 1.75, worldPosition.getZ() + 0.5, 0.0F, 0.0F);
         }
     }
 
     private void loadContainedEntity(CompoundTag entityNbt, ServerLevel serverLevel) {
-        String id = entityNbt.getStringOr("id", "");
+        String id = entityNbt.getString("id");
         if (id.equals("PLAYER")) {
-            String name = entityNbt.getStringOr("playerName", "");
+            String name = entityNbt.getString("playerName");
             entityContained = serverLevel.getServer().getPlayerList().getPlayerByName(name);
         } else if (!id.isEmpty()) {
             Entity loaded = EntityNbt.load(entityNbt, serverLevel);
@@ -1202,8 +1201,8 @@ public class VatBlockEntity extends ThBlockEntity implements EssentiaTransport, 
 
     private LinkedHashMap<String, Integer> tagToMods(CompoundTag tag) {
         LinkedHashMap<String, Integer> mods = new LinkedHashMap<>();
-        for (String key : tag.keySet()) {
-            mods.put(key, (int) tag.getDoubleOr(key, 0.0));
+        for (String key : tag.getAllKeys()) {
+            mods.put(key, (int) tag.getDouble(key));
         }
         return mods;
     }

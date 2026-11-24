@@ -28,6 +28,9 @@ reference/neo/
 Thaumcraft-1.7.10-4.2.3.5.jar
 .codegraph/
 .deferred-pocket/
+
+# Port-time decompiler; downloaded on demand, not part of the tracked sources.
+tools/vineflower-*.jar
 docs/superpowers/
 javac.*.args
 WATCHDOG.yml

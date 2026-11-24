@@ -7,7 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ItemSupplier;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
  * while carrying the original potion contents in its recoverable syringe stack.
  */
 public final class SyringeProjectile extends AbstractArrow implements ItemSupplier {
-    public SyringeProjectile(EntityType<? extends SyringeProjectile> type, Level level) {
+    public SyringeProjectile(EntityType<SyringeProjectile> type, Level level) {
         super(type, level);
         this.setBaseDamage(1.5D);
     }

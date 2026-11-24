@@ -3,7 +3,7 @@ package dev.visfox.thaumichorizons.entity.ai;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class RandomPositionGeneratorTH {
     private RandomPositionGeneratorTH() {

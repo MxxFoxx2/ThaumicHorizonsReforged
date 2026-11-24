@@ -10,23 +10,22 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.animal.equine.AbstractHorse;
-import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 
 public class Endersteed extends Horse {
-    private static final net.minecraft.resources.Identifier SPEED_MODIFIER_ID =
-        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed_speed");
-    private static final net.minecraft.resources.Identifier JUMP_MODIFIER_ID =
-        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed_jump");
-    private static final net.minecraft.resources.Identifier HEALTH_MODIFIER_ID =
-        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "endersteed_health");
+    private static final net.minecraft.resources.ResourceLocation SPEED_MODIFIER_ID =
+        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumichorizons", "endersteed_speed");
+    private static final net.minecraft.resources.ResourceLocation JUMP_MODIFIER_ID =
+        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumichorizons", "endersteed_jump");
+    private static final net.minecraft.resources.ResourceLocation HEALTH_MODIFIER_ID =
+        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumichorizons", "endersteed_health");
 
     private boolean initialized;
 
@@ -40,9 +39,9 @@ public class Endersteed extends Horse {
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.initialized = input.getBooleanOr("initialized", false);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.initialized = tag.getBoolean("initialized");
         if (!this.initialized) {
             this.getAttribute(Attributes.MOVEMENT_SPEED)
                 .addPermanentModifier(new AttributeModifier(SPEED_MODIFIER_ID, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
@@ -55,9 +54,9 @@ public class Endersteed extends Horse {
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putBoolean("initialized", this.initialized);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("initialized", this.initialized);
     }
 
     @Override

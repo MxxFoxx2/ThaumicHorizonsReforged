@@ -5,24 +5,24 @@ import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.SoulExtractorBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.client.geom.ModelBoxGeometry;
 import thaumcraft.client.geom.QuadSink;
 import thaumcraft.client.platform.EntityQuadSink;
 
-public final class SoulSieveRenderer implements BlockEntityRenderer<SoulExtractorBlockEntity, SoulSieveRenderer.State> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/soulsieve.png");
+public final class SoulSieveRenderer implements ThStateBlockRenderer<SoulExtractorBlockEntity, SoulSieveRenderer.State> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/models/soulsieve.png");
 
     public SoulSieveRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public float sieveMotion;
         public int ticksLeft;
     }
@@ -34,23 +34,23 @@ public final class SoulSieveRenderer implements BlockEntityRenderer<SoulExtracto
 
     @Override
     public void extractRenderState(SoulExtractorBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         state.sieveMotion = entity.sieveMotion + partialTicks;
         state.ticksLeft = entity.ticksLeft;
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURE), (pose, buffer) -> {
             QuadSink sink = new EntityQuadSink(pose, buffer);
             renderStationary(sink, state.lightCoords);
             float movement = 0.15625F * (float) (Math.cos(Math.toRadians(state.sieveMotion)) - 1.0F);
-            pose.translate(0.0F, -movement, 0.0F);
-            renderMoving(sink, state.lightCoords);
+            QuadSink movingSink = (x, y, z, u, v, argb, light) ->
+                sink.vertex(x, y - movement, z, u, v, argb, light);
+            renderMoving(movingSink, state.lightCoords);
             if (state.ticksLeft > 0) {
                 box(sink, -7, 10, -7, 14, 3, 14, 72, 16, 64, 32, state.lightCoords);
             }

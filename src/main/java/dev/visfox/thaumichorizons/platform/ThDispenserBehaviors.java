@@ -15,9 +15,9 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -121,7 +121,7 @@ public final class ThDispenserBehaviors {
                 return stack;
             }
 
-            Boat boat = type.create(level, EntitySpawnReason.DISPENSER);
+            Boat boat = type.create(level);
             if (boat == null) {
                 return stack;
             }

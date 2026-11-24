@@ -9,7 +9,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.entity.golem.GolemBase;
 
 public class FollowPlayerGoal extends Goal {
@@ -89,7 +89,7 @@ public class FollowPlayerGoal extends Goal {
                             && hasSolidTopSurface(level, x + dx, y - 1, z + dz)
                             && !isNormalCube(level, x + dx, y, z + dz)
                             && !isNormalCube(level, x + dx, y + 1, z + dz)) {
-                            this.pet.snapTo(x + dx + 0.5, y, z + dz + 0.5, this.pet.getYRot(), this.pet.getXRot());
+                            this.pet.absMoveTo(x + dx + 0.5, y, z + dz + 0.5, this.pet.getYRot(), this.pet.getXRot());
                             this.pathfinder.stop();
                             return;
                         }

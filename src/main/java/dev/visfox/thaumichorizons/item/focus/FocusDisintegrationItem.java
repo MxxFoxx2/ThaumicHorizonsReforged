@@ -8,7 +8,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.Thaumcraft;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectHelper;
@@ -46,7 +46,7 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusDisintegrationItem extends FocusItem {
     public static final FocusUpgradeType ENERVATION = new FocusUpgradeType(35, "enervation",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/enervation.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/enervation.png"),
         new AspectList().add(Aspect.DEATH, 8));
 
     private static final ResourceKey<DamageType> DISSOLVE =
@@ -163,11 +163,10 @@ public class FocusDisintegrationItem extends FocusItem {
             && wand.consumeAllVis(stack, player, COST_CRITTER, true, true)) {
             ItemStack focusStack = Wands.getFocusItem(stack);
             if (isUpgradedWith(focusStack, ENERVATION)) {
-                living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 40, 0));
+                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0));
             }
             if (level instanceof ServerLevel serverLevel) {
-                living.hurtServer(serverLevel, level.damageSources().source(DISSOLVE),
-                    0.5F + 0.25F * Wands.getFocusPotency(stack)
+                living.hurt(level.damageSources().source(DISSOLVE), 0.5F + 0.25F * Wands.getFocusPotency(stack)
                         + 0.5F * getUpgradeLevel(Wands.getFocusItem(stack), ENERVATION));
             }
             return;
@@ -179,7 +178,7 @@ public class FocusDisintegrationItem extends FocusItem {
                 AspectList aspects = getAspects(itemEntity.getItem().getItem());
                 for (Aspect asp : aspects == null ? java.util.List.<Aspect>of() : aspects.getAspects()) {
                     ItemStack essence = new ItemStack(
-                        BuiltInRegistries.ITEM.getValue(Thaumcraft.id("crystallized_essence")),
+                        BuiltInRegistries.ITEM.get(Thaumcraft.id("crystallized_essence")),
                         aspects == null ? 0 : aspects.getAmount(asp) * num);
                     if (!essence.isEmpty()) {
                         AspectKeys.ASPECTS.set(essence, new AspectList().add(asp, 1));
@@ -213,7 +212,7 @@ public class FocusDisintegrationItem extends FocusItem {
     }
 
     @Override
-    public FocusUpgradeType @Nullable [] getPossibleUpgradesByRank(ItemStack focus, int rank) {
+    public @Nullable FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focus, int rank) {
         return switch (rank) {
             case 1, 2, 4 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.POTENCY};
             case 3 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.POTENCY,
@@ -240,7 +239,7 @@ public class FocusDisintegrationItem extends FocusItem {
         if (aspects != null && aspects.size() > 0 && wand.consumeAllVis(stack, player, COST, true, true)) {
             for (Aspect asp : aspects.getAspects()) {
                 ItemStack essence = new ItemStack(
-                    BuiltInRegistries.ITEM.getValue(Thaumcraft.id("crystallized_essence")), aspects.getAmount(asp));
+                    BuiltInRegistries.ITEM.get(Thaumcraft.id("crystallized_essence")), aspects.getAmount(asp));
                 if (!essence.isEmpty()) {
                     AspectKeys.ASPECTS.set(essence, new AspectList().add(asp, 1));
                     serverLevel.addFreshEntity(new InvulnerableItemEntity(serverLevel, pos.getX() + 0.5,
@@ -269,7 +268,7 @@ public class FocusDisintegrationItem extends FocusItem {
         AABB search = entityplayer.getBoundingBox()
             .expandTowards(vec3d2.x * range, vec3d2.y * range, vec3d2.z * range)
             .inflate(1.1F);
-        Item essenceItem = BuiltInRegistries.ITEM.getValue(Thaumcraft.id("crystallized_essence"));
+        Item essenceItem = BuiltInRegistries.ITEM.get(Thaumcraft.id("crystallized_essence"));
         double d2 = 0.0D;
         for (Entity entity : world.getEntities(entityplayer, search, entity -> true)) {
             if (entity instanceof ItemEntity itemEntity && essenceItem != null
@@ -300,7 +299,7 @@ public class FocusDisintegrationItem extends FocusItem {
     }
 
     @Override
-    public net.minecraft.resources.@Nullable Identifier getFocusTexture(ItemStack focus) {
-        return Identifier.fromNamespaceAndPath("thaumichorizons", "item/focus_disintegration");
+    public @Nullable ResourceLocation getFocusTexture(ItemStack focus) {
+        return ResourceLocation.fromNamespaceAndPath("thaumichorizons", "item/focus_disintegration");
     }
 }

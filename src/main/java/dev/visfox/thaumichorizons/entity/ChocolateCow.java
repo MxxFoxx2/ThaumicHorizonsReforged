@@ -9,17 +9,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.Prediction;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class ChocolateCow extends Cow {
-    public ChocolateCow(EntityType<? extends ChocolateCow> type, Level level) {
+    public ChocolateCow(EntityType<ChocolateCow> type, Level level) {
         super(type, level);
     }
 
@@ -33,14 +31,14 @@ public class ChocolateCow extends Cow {
         if (held.is(Items.BUCKET)) {
             ItemStack chocolate = new ItemStack(ThItems.BUCKET_CHOCOLATE.get());
             held.consume(1, player);
-            player.getInventory().placeItemBackInInventory(chocolate, Prediction.SERVER_ONLY);
-            return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+            player.getInventory().placeItemBackInInventory(chocolate);
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
         return super.mobInteract(player, hand);
     }
 
     @Override
     public @Nullable ChocolateCow getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.CHOCOLATE_COW.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.CHOCOLATE_COW.get().create(level);
     }
 }

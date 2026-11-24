@@ -8,6 +8,9 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-includeBuild('../thaumcraft-4-reforged')
+def tc4rPath = providers.gradleProperty('tc4rPath').orElse('../thaumcraft-4-reforged').get()
+if (file(tc4rPath).isDirectory()) {
+    includeBuild(tc4rPath)
+}
 
 rootProject.name = 'thaumic-horizons-reforged'

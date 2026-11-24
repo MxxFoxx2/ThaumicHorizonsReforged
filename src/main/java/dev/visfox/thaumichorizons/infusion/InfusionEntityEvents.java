@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.infusion;
 
+import dev.visfox.thaumichorizons.lib.EntityPlacement;
+
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.WarpKind;
@@ -25,7 +27,7 @@ import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,7 +51,7 @@ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -64,7 +66,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber(modid = ThaumicHorizons.MODID)
 public final class InfusionEntityEvents {
@@ -116,7 +118,7 @@ public final class InfusionEntityEvents {
                 ? mob.getTarget()
                 : entity.getLastHurtByMob();
             if (target != null && target.isAlive()) {
-                target.hurtServer(level, entity.damageSources().magic(), 1.0F);
+                target.hurt(entity.damageSources().magic(), 1.0F);
                 if (TcReforgedPort.fx.isAvailable()) {
                     TcReforgedPort.fx.arcLightning(level,
                         new Vec3(entity.getX(), entity.getY() + entity.getBbHeight() / 2.0F, entity.getZ()),
@@ -129,7 +131,7 @@ public final class InfusionEntityEvents {
             }
         }
         if (entity.tickCount % 100 == 0 && CreatureInfusions.hasInfusion(entity, RUNIC_CREATURE)) {
-            int charge = entity.getPersistentData().getIntOr("runicCharge", 0) + 1;
+            int charge = entity.getPersistentData().getInt("runicCharge") + 1;
             if (charge > 6) {
                 charge = 6;
             }
@@ -143,7 +145,7 @@ public final class InfusionEntityEvents {
             clearSilverHeartEffects(player);
         }
         if (data.infusion(CreatureInfusion.SYNTH_SKIN) != 0 && player.tickCount % 200 == 0
-            && player.getFoodData().needsFood() && player.level().isBrightOutside()
+            && player.getFoodData().needsFood() && player.level().isDay()
             && player.level().canSeeSky(player.blockPosition())) {
             player.getFoodData().eat(1, 0.0F);
         }
@@ -215,14 +217,14 @@ public final class InfusionEntityEvents {
 
     private static void applyPlayerPotionInfusions(Player player, CreatureInfusionData data) {
         if (data.infusion(CreatureInfusion.SWIFTNESS) != 0) {
-            player.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, MobEffectInstance.INFINITE_DURATION, 0, true, false));
-            player.addEffect(new MobEffectInstance(MobEffects.SPEED, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.JUMP, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, MobEffectInstance.INFINITE_DURATION, 0, true, false));
         }
         if (data.infusion(CreatureInfusion.REGENERATION) != 0) {
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, MobEffectInstance.INFINITE_DURATION, 0, true, false));
         }
         if (data.infusion(CreatureInfusion.RESISTANCE) != 0) {
-            player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, true, false));
         }
     }
 
@@ -242,11 +244,11 @@ public final class InfusionEntityEvents {
                 continue;
             }
             if (infusion == QUICK_LIMBS) {
-                entity.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+                entity.addEffect(new MobEffectInstance(MobEffects.JUMP, MobEffectInstance.INFINITE_DURATION, 0, true, false));
             } else if (infusion == AWAKE_BLOOD) {
                 entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, MobEffectInstance.INFINITE_DURATION, 0, true, false));
             } else if (infusion == DIAMOND_SKIN) {
-                entity.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+                entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, MobEffectInstance.INFINITE_DURATION, 0, true, false));
             } else if (infusion == RUNIC_CREATURE && !entity.getPersistentData().contains("runicCharge")) {
                 entity.getPersistentData().putInt("runicCharge", 6);
             } else if (infusion == INSTILLED_LOYALTY && entity instanceof Mob mob) {
@@ -292,11 +294,11 @@ public final class InfusionEntityEvents {
                     case 3 -> new ItemStack(Items.COD);
                     default -> new ItemStack(Items.ROTTEN_FLESH);
                 };
-                entity.spawnAtLocation(level, drop);
+                entity.spawnAtLocation(drop);
             } else if (slime instanceof dev.visfox.thaumichorizons.entity.MercurialSlime) {
                 ItemStack quicksilver = tcStack("quicksilver");
                 if (!quicksilver.isEmpty()) {
-                    entity.spawnAtLocation(level, quicksilver);
+                    entity.spawnAtLocation(quicksilver);
                 }
             }
         }
@@ -357,7 +359,7 @@ public final class InfusionEntityEvents {
         Vec3 eye = player.position().add(0.0, player.getEyeHeight(), 0.0);
         TcReforgedPort.fx.containmentCapture(level, eye, 29631);
         THSounds.play(level, eye, "craftfail", SoundSource.PLAYERS, 1.0F, 1.0F);
-        Item pearl = TcReforgedPort.items.lookup(Identifier.parse("thaumcraft:primordial_pearl"));
+        Item pearl = TcReforgedPort.items.lookup(ResourceLocation.parse("thaumcraft:primordial_pearl"));
         if (pearl != null) {
             ItemEntity drop = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), new ItemStack(pearl));
             drop.setUnlimitedLifetime();
@@ -390,7 +392,7 @@ public final class InfusionEntityEvents {
             teleport(entity);
         }
         if (!entity.level().isClientSide() && CreatureInfusions.hasInfusion(entity, RUNIC_CREATURE)) {
-            int charge = entity.getPersistentData().getIntOr("runicCharge", 0);
+            int charge = entity.getPersistentData().getInt("runicCharge");
             if (charge <= 0 || source.is(DamageTypes.DROWN) || source.is(DamageTypes.WITHER)
                 || source.is(DamageTypes.FELL_OUT_OF_WORLD) || source.is(DamageTypes.STARVE)) {
                 return;
@@ -411,11 +413,11 @@ public final class InfusionEntityEvents {
         if (!data.set()) {
             return false;
         }
-        Identifier dimension = Identifier.tryParse(data.dimension());
+        ResourceLocation dimension = ResourceLocation.tryParse(data.dimension());
         if (dimension == null) {
             return false;
         }
-        ServerLevel current = player.level();
+        ServerLevel current = (ServerLevel) player.level();
         ServerLevel beaconLevel = current.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
         if (beaconLevel == null) {
             return false;
@@ -447,7 +449,7 @@ public final class InfusionEntityEvents {
             for (int slot = 0; slot < baubles.slotCount(); slot++) {
                 ItemStack stack = baubles.get(player, slot);
                 if (!stack.isEmpty()) {
-                    player.spawnAtLocation(current, stack);
+                    player.spawnAtLocation(stack);
                     baubles.set(player, slot, ItemStack.EMPTY);
                 }
             }
@@ -499,13 +501,13 @@ public final class InfusionEntityEvents {
                 && !level.getBlockState(new net.minecraft.core.BlockPos(blockX, blockY - 1, blockZ)).isSolid()) {
                 --blockY;
             }
-            entity.snapTo(targetX, blockY, targetZ, entity.getYRot(), entity.getXRot());
+            EntityPlacement.snapTo(entity, targetX, blockY, targetZ, entity.getYRot(), entity.getXRot());
             if (level.noCollision(entity, entity.getBoundingBox()) && !level.containsAnyLiquid(entity.getBoundingBox())) {
                 teleported = true;
             }
         }
         if (!teleported) {
-            entity.snapTo(oldX, oldY, oldZ, entity.getYRot(), entity.getXRot());
+            EntityPlacement.snapTo(entity, oldX, oldY, oldZ, entity.getYRot(), entity.getXRot());
             return;
         }
         if (TcReforgedPort.fx.isAvailable()) {
@@ -538,7 +540,7 @@ public final class InfusionEntityEvents {
         ItemStack jar = new ItemStack(ThBlocks.SOUL_JAR.get());
         SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(
             EntityNbt.save(living), false, living.getName().getString(), ""));
-        living.spawnAtLocation((ServerLevel) level, jar);
+        living.spawnAtLocation(jar);
         if (TcReforgedPort.fx.isAvailable()) {
             TcReforgedPort.fx.containmentCapture(level,
                 new Vec3(living.getX(), living.getY() + living.getBbHeight() / 2.0F, living.getZ()), 0xCC66FF);
@@ -548,7 +550,7 @@ public final class InfusionEntityEvents {
 
     private static ItemStack tcStack(String name) {
         var items = TcReforgedPort.items;
-        net.minecraft.world.item.Item item = items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        net.minecraft.world.item.Item item = items.lookup(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
         return item == null ? ItemStack.EMPTY : new ItemStack(item);
     }
 }

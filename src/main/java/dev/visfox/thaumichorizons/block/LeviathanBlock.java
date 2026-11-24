@@ -20,22 +20,22 @@ public class LeviathanBlock extends Block {
             double d2 = pos.getX() + random.nextFloat();
             double d3 = pos.getY() + random.nextFloat();
             double d4 = pos.getZ() + random.nextFloat();
-            if (l == 0 && !level.getBlockState(pos.above()).isSolidRender()) {
+            if (l == 0 && !level.getBlockState(pos.above()).isSolidRender(level, pos.above())) {
                 d3 = pos.getY() + 1 + d0;
             }
-            if (l == 1 && !level.getBlockState(pos.below()).isSolidRender()) {
+            if (l == 1 && !level.getBlockState(pos.below()).isSolidRender(level, pos.below())) {
                 d3 = pos.getY() - d0;
             }
-            if (l == 2 && !level.getBlockState(pos.south()).isSolidRender()) {
+            if (l == 2 && !level.getBlockState(pos.south()).isSolidRender(level, pos.south())) {
                 d4 = pos.getZ() + 1 + d0;
             }
-            if (l == 3 && !level.getBlockState(pos.north()).isSolidRender()) {
+            if (l == 3 && !level.getBlockState(pos.north()).isSolidRender(level, pos.north())) {
                 d4 = pos.getZ() - d0;
             }
-            if (l == 4 && !level.getBlockState(pos.east()).isSolidRender()) {
+            if (l == 4 && !level.getBlockState(pos.east()).isSolidRender(level, pos.east())) {
                 d2 = pos.getX() + 1 + d0;
             }
-            if (l == 5 && !level.getBlockState(pos.west()).isSolidRender()) {
+            if (l == 5 && !level.getBlockState(pos.west()).isSolidRender(level, pos.west())) {
                 d2 = pos.getX() - d0;
             }
             if (random.nextInt(10) == 0 && (d2 < pos.getX() || d2 > pos.getX() + 1

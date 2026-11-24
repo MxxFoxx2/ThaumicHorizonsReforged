@@ -6,7 +6,7 @@ from pathlib import Path
 
 DEFAULT_ASSETS = Path("src") / "main" / "resources" / "assets"
 NAMESPACE = "thaumichorizons"
-DIRECTORIES = ("blockstates", "models", "items")
+DIRECTORIES = ("blockstates", "models")
 
 
 def check_reference(assets, kind, reference, source, checked, errors):

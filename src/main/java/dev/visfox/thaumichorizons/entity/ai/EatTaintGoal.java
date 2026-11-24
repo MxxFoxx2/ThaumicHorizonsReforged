@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,19 +18,19 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.taint.TaintBiomes;
 
 public class EatTaintGoal extends Goal {
-    private static final Set<Identifier> TAINT_BLOCK_IDS = Set.of(
-        Identifier.fromNamespaceAndPath("thaumcraft", "crusted_taint"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "tainted_soil"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "fibrous_taint"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "tainted_grass"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "tainted_plant"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "spore_stalk"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "mature_spore_stalk"),
-        Identifier.fromNamespaceAndPath("thaumcraft", "flesh_block"));
+    private static final Set<ResourceLocation> TAINT_BLOCK_IDS = Set.of(
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "crusted_taint"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "tainted_soil"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "fibrous_taint"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "tainted_grass"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "tainted_plant"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "spore_stalk"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "mature_spore_stalk"),
+        ResourceLocation.fromNamespaceAndPath("thaumcraft", "flesh_block"));
     private static final Set<Block> TAINT_BLOCKS = new HashSet<>();
 
     private final TaintEaterPig thePig;
@@ -46,7 +46,7 @@ public class EatTaintGoal extends Goal {
     private static boolean isTaintBlock(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (TAINT_BLOCKS.isEmpty()) {
-            for (Identifier id : TAINT_BLOCK_IDS) {
+            for (ResourceLocation id : TAINT_BLOCK_IDS) {
                 BuiltInRegistries.BLOCK.getOptional(id).ifPresent(TAINT_BLOCKS::add);
             }
         }

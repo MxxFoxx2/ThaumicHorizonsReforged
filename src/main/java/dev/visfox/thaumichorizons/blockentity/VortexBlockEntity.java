@@ -14,7 +14,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,12 +30,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.WandInteractable;
@@ -134,7 +134,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
             return;
         }
         Item primordialPearl = TcReforgedPort.items.lookup(
-            Identifier.fromNamespaceAndPath("thaumcraft", "primordial_pearl"));
+            ResourceLocation.fromNamespaceAndPath("thaumcraft", "primordial_pearl"));
         List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class,
             new AABB(worldPosition).inflate(1.0, 1.0, 1.0));
         if (primordialPearl != null && ThaumicHorizonsConfig.pocketPlaneEnabled()) {
@@ -170,7 +170,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         }
         boolean created = PocketPlanes.generatePocketPlane(aspects, data, server,
             worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-            source.dimension().identifier().toString());
+            source.dimension().location().toString());
         if (!created) {
             return false;
         }
@@ -201,7 +201,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                 }
                 BlockPos returnPos = PocketPlanes.returnPosition(dimensionID);
                 String returnDimension = PocketPlanes.returnDimension(dimensionID);
-                Identifier identifier = Identifier.tryParse(returnDimension);
+                ResourceLocation identifier = ResourceLocation.tryParse(returnDimension);
                 if (returnPos == null || identifier == null) {
                     continue;
                 }
@@ -267,12 +267,12 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
         }
     }
 
-    private static Identifier voidMetalIngotId() {
-        return Identifier.fromNamespaceAndPath("thaumcraft", "void_metal_ingot");
+    private static ResourceLocation voidMetalIngotId() {
+        return ResourceLocation.fromNamespaceAndPath("thaumcraft", "void_metal_ingot");
     }
 
-    private static Identifier salisMundusId() {
-        return Identifier.fromNamespaceAndPath("thaumcraft", "salis_mundus");
+    private static ResourceLocation salisMundusId() {
+        return ResourceLocation.fromNamespaceAndPath("thaumcraft", "salis_mundus");
     }
 
     void handleHungryNode() {
@@ -289,8 +289,7 @@ public class VortexBlockEntity extends ThBlockEntity implements WandInteractable
                             if (eo instanceof FallingBlockEntity) {
                                 eo.discard();
                             } else if (level instanceof ServerLevel serverLevel) {
-                                eo.hurtServer(serverLevel, level.damageSources().fellOutOfWorld(),
-                                    (float) (3.0 - beams / 2.0));
+                                eo.hurt(level.damageSources().fellOutOfWorld(), (float) (3.0 - beams / 2.0));
                             }
                         }
                     }

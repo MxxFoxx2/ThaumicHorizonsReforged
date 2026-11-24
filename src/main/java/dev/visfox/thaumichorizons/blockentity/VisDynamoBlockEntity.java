@@ -8,8 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import thaumcraft.aspect.Aspect;
@@ -191,10 +191,8 @@ public class VisDynamoBlockEntity extends VisNode implements WandInteractable {
             color = (r2 + r3) / 5 << 16 | (g2 + g3) / 5 << 8 | (b2 + b3) / 5;
         }
     }
-
-    @Override
     protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
+        super.loadAdditional(input.tag(), input.lookup());
         ticksProvided = input.getIntOr("ticks", 0);
         provideAer = input.getBooleanOr("aer", true);
         provideAqua = input.getBooleanOr("aqua", true);
@@ -207,10 +205,8 @@ public class VisDynamoBlockEntity extends VisNode implements WandInteractable {
         targetColor = drainColor;
         color = drainColor;
     }
-
-    @Override
     protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+        super.saveAdditional(output.tag(), output.lookup());
         output.putInt("ticks", ticksProvided);
         output.putBoolean("aer", provideAer);
         output.putBoolean("aqua", provideAqua);

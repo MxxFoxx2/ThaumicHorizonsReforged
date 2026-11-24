@@ -9,7 +9,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class AttackOnCollideGoalTH extends Goal {
     private final Mob attacker;
@@ -118,14 +118,14 @@ public class AttackOnCollideGoalTH extends Goal {
         if (distanceSq <= reach && this.attackTick <= 20) {
             this.attackTick = 20;
             if (!this.attacker.getMainHandItem().isEmpty()) {
-                this.attacker.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+                this.attacker.swing(InteractionHand.MAIN_HAND, true);
             }
             float damage = 3.0F;
             if (this.attacker.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
                 damage += (float) this.attacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
             }
             if (this.attacker.level() instanceof ServerLevel level) {
-                target.hurtServer(level, this.attacker.damageSources().mobAttack(this.attacker), damage);
+                target.hurt(this.attacker.damageSources().mobAttack(this.attacker), damage);
             }
         }
     }

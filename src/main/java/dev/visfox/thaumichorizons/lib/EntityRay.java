@@ -8,7 +8,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class EntityRay {
     private EntityRay() {
@@ -22,7 +22,7 @@ public final class EntityRay {
         Vec3 vec3d3 = vec3d.add(look.scale(range));
         double border = 1.1;
         List<Entity> list = world.getEntities(entityplayer,
-            entityplayer.getBoundingBox().expandTowards(look.scale(range)).inflate(border), e -> e.canBeCollidedWith(null));
+            entityplayer.getBoundingBox().expandTowards(look.scale(range)).inflate(border), e -> e.canBeCollidedWith());
         double d2 = 0.0;
         for (Entity entity : list) {
             HitResult clip = world.clip(new ClipContext(

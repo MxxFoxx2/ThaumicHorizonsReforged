@@ -2,10 +2,18 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:sugar",
-    "thaumichorizons:meatnuggetth",
-    "thaumcraft:beef_nugget",
-    "thaumcraft:fish_nugget"
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "thaumichorizons:meatnuggetth"
+    },
+    {
+      "item": "thaumcraft:beef_nugget"
+    },
+    {
+      "item": "thaumcraft:fish_nugget"
+    }
   ],
   "result": {
     "id": "thaumcraft:triple_meat_treat"

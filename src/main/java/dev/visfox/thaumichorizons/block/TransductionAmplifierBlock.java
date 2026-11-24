@@ -16,8 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.redstone.Orientation;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.node.EnergizedNodeBlockEntity;
 
 public class TransductionAmplifierBlock extends Block implements EntityBlock {
@@ -55,7 +54,7 @@ public class TransductionAmplifierBlock extends Block implements EntityBlock {
 
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
-        @Nullable Orientation orientation, boolean movedByPiston) {
+        BlockPos sourcePos, boolean movedByPiston) {
         BlockEntity entity = level.getBlockEntity(pos);
         if (entity instanceof TransductionAmplifierBlockEntity amplifier) {
             boolean powered = level.hasNeighborSignal(pos);
@@ -65,7 +64,7 @@ public class TransductionAmplifierBlock extends Block implements EntityBlock {
                 amplifier.shouldActivate = true;
             }
         }
-        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        super.neighborChanged(state, level, pos, neighborBlock, sourcePos, movedByPiston);
     }
 
     @Override

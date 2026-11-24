@@ -7,7 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,7 @@ public record LensChangePayload(String lens) implements CustomPacketPayload {
             return;
         }
         ItemStack head = serverPlayer.getItemBySlot(EquipmentSlot.HEAD);
-        Item goggles = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
+        Item goggles = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
         if (goggles != null && head.is(goggles)) {
             LensManager.changeLens(head, serverPlayer, payload.lens());
         }

@@ -34,7 +34,7 @@ public class GolemPowderItem extends Item {
         if (state.hasBlockEntity() || state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) {
             return InteractionResult.FAIL;
         }
-        if (!state.isSolidRender() && !FocusAnimationItem.isWhitelisted(state)) {
+        if (!state.isSolidRender(level, pos) && !FocusAnimationItem.isWhitelisted(state)) {
             return InteractionResult.FAIL;
         }
         if (level.isClientSide()) {

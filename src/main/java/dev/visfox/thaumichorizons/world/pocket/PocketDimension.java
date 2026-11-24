@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class PocketDimension {
     public static final ResourceKey<Level> POCKET_PLANE = ResourceKey.create(Registries.DIMENSION, ThaumicHorizons.id("pocket_plane"));

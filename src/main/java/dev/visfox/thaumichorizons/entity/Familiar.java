@@ -6,7 +6,6 @@ import dev.visfox.thaumichorizons.registry.ThEntities;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -21,17 +20,17 @@ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.animal.feline.Ocelot;
+import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.Wands;
 
 public class Familiar extends TamableAnimal {
-    public Familiar(EntityType<? extends Familiar> type, Level level) {
+    public Familiar(EntityType<Familiar> type, Level level) {
         super(type, level);
         this.setTame(true, false);
     }
@@ -95,6 +94,6 @@ public class Familiar extends TamableAnimal {
 
     @Override
     public @Nullable Familiar getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.FAMILIAR.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.FAMILIAR.get().create(level);
     }
 }

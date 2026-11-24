@@ -16,8 +16,8 @@ public final class InfusionClientEvents {
     }
 
     @SubscribeEvent
-    static void onRenderPlayerPre(RenderPlayerEvent.Pre<?> event) {
-        Entity entity = Minecraft.getInstance().level == null ? null : Minecraft.getInstance().level.getEntity(event.getRenderState().id);
+    static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
+        Entity entity = event.getEntity();
         if (entity instanceof Player player
             && CreatureInfusion.hasChameleon(player)
             && CreatureInfusion.isChameleonActive(player)) {

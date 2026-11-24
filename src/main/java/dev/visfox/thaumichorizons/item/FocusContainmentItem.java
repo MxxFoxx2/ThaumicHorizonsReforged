@@ -25,7 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.entity.CombatUtils;
@@ -38,7 +38,7 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusContainmentItem extends FocusItem {
     public static final FocusUpgradeType SLOW = new FocusUpgradeType(36, "slow",
-        net.minecraft.resources.Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/slow.png"),
+        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/slow.png"),
         new AspectList().add(Aspect.TRAP, 8));
     public static final HashMap<String, Entity> hitCritters = new HashMap<>();
     public static final HashMap<String, Float> contain = new HashMap<>();
@@ -116,7 +116,7 @@ public class FocusContainmentItem extends FocusItem {
             ItemStack focusItem = Wands.getFocusItem(wand);
             int slowLevel = focusItem == null ? 0 : getUpgradeLevel(focusItem, SLOW);
             if (slowLevel > 0) {
-                mob.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 40, slowLevel - 1, false, true));
+                mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, slowLevel - 1, false, true));
             }
             if (hitCritters.get(pp) == null || ent.getId() != hitCritters.get(pp).getId()) {
                 hitCritters.put(pp, ent);
@@ -153,7 +153,7 @@ public class FocusContainmentItem extends FocusItem {
         SoulJarKeys.SoulJarData data = new SoulJarKeys.SoulJarData(entityData, false, ent.getName().getString(), "");
         SoulJarKeys.DATA.set(jar, data);
         if (!p.getInventory().add(jar)) {
-            p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
+            p.drop(jar, false);
         }
         TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;
@@ -166,7 +166,7 @@ public class FocusContainmentItem extends FocusItem {
         ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
         SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(new CompoundTag(), true, "", ""));
         if (!p.getInventory().add(jar)) {
-            p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
+            p.drop(jar, false);
         }
         TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;

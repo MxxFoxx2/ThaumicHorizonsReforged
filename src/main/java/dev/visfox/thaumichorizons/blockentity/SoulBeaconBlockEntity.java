@@ -25,7 +25,7 @@ public class SoulBeaconBlockEntity extends BlockEntity {
         Level level = player.level();
         SoulBeaconKeys.SoulBeaconData data = new SoulBeaconKeys.SoulBeaconData(true, worldPosition.getX(),
             worldPosition.getY(), worldPosition.getZ(),
-            level.dimension().identifier().toString());
+            level.dimension().location().toString());
         SoulBeaconKeys.DATA.set(player, data);
         player.sendSystemMessage(Component.translatable("thaumichorizons.setBeacon")
             .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));

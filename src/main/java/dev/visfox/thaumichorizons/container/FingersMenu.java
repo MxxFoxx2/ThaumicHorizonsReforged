@@ -17,7 +17,7 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.crafting.ArcaneCrafting;
 import thaumcraft.wand.WandItem;
 import thaumcraft.wand.Wands;
@@ -91,12 +91,12 @@ public class FingersMenu extends AbstractContainerMenu {
         }
         List<ItemStack> grid = gridStacks();
         CraftingInput input = CraftingInput.ofPositioned(ArcaneCrafting.GRID_SIZE, ArcaneCrafting.GRID_SIZE, grid).input();
-        Optional<RecipeHolder<CraftingRecipe>> recipe = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, level);
+        Optional<RecipeHolder<CraftingRecipe>> recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
         ItemStack result = ItemStack.EMPTY;
         if (recipe.isPresent()) {
             RecipeHolder<CraftingRecipe> holder = recipe.get();
-            if (resultContainer.setRecipeUsed(serverPlayer, holder)) {
-                ItemStack assembled = holder.value().assemble(input);
+            if (resultContainer.setRecipeUsed(level, serverPlayer, holder)) {
+                ItemStack assembled = holder.value().assemble(input, level.registryAccess());
                 if (assembled.isItemEnabled(level.enabledFeatures())) {
                     result = assembled;
                 }
@@ -187,7 +187,7 @@ public class FingersMenu extends AbstractContainerMenu {
                 }
                 ItemStack stack = inventory.removeItemNoUpdate(i);
                 if (!stack.isEmpty()) {
-                    player.drop(stack, false, net.minecraft.util.Prediction.PREDICTED);
+                    player.drop(stack, false);
                 }
             }
         }

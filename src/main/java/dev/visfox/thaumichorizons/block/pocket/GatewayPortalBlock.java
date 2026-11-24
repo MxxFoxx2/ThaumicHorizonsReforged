@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class GatewayPortalBlock extends Block {
     public static final IntegerProperty MD = IntegerProperty.create("gateway_md", 0, 14);
@@ -26,9 +26,8 @@ public class GatewayPortalBlock extends Block {
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
-            BlockPos pos, boolean movedByPiston) {
-        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
         {
             int md = state.getValue(MD);
             int slotX = 0;

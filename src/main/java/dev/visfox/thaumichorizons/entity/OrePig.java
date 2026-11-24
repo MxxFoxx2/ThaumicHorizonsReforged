@@ -4,26 +4,24 @@ import dev.visfox.thaumichorizons.registry.ThEntities;
 
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.ai.EatStoneGoal;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.nbt.CompoundTag;
+import javax.annotation.Nullable;
 
 public class OrePig extends Pig {
     private int nuggetPercent;
 
-    public OrePig(EntityType<? extends OrePig> type, Level level) {
+    public OrePig(EntityType<OrePig> type, Level level) {
         super(type, level);
         this.goalSelector.addGoal(9, new EatStoneGoal(this));
         this.nuggetPercent = 0;
@@ -89,38 +87,38 @@ public class OrePig extends Pig {
     }
 
     private static @Nullable Item tcItem(String name) {
-        return TcReforgedPort.items.lookup(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        return TcReforgedPort.items.lookup(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
     }
 
     private void dropNugget(ServerLevel level, ItemStack stack) {
-        this.spawnAtLocation(level, stack, 0.3F);
+        this.spawnAtLocation(stack, 0.3F);
     }
 
     @Override
-    protected void dropFromLootTable(ServerLevel level, net.minecraft.world.damagesource.DamageSource source, boolean hitByPlayer) {
+    protected void dropFromLootTable(net.minecraft.world.damagesource.DamageSource source, boolean hitByPlayer) {
         int count = this.random.nextInt(3) + 1 + this.random.nextInt(2);
         for (int index = 0; index < count; ++index) {
-            this.spawnAtLocation(level, new ItemStack(Blocks.STONE), 1.0F);
+            this.spawnAtLocation(new ItemStack(Blocks.STONE), 1.0F);
         }
         if (this.isSaddled()) {
-            this.spawnAtLocation(level, new ItemStack(Items.SADDLE), 1.0F);
+            this.spawnAtLocation(new ItemStack(Items.SADDLE), 1.0F);
         }
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.nuggetPercent = input.getIntOr("percent", 0);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.nuggetPercent = tag.contains("percent") ? tag.getInt("percent") : 0;
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putInt("percent", this.nuggetPercent);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("percent", this.nuggetPercent);
     }
 
     @Override
     public @Nullable OrePig getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.ORE_PIG.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.ORE_PIG.get().create(level);
     }
 }

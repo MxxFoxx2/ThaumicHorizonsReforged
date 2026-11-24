@@ -32,9 +32,9 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.essentia.Essentia;
@@ -76,7 +76,7 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
             if (currentlySucking == null && !aspectsSelected.isEmpty() && !aspectsAcquired.getAspects().isEmpty()) {
                 ItemStack theInjection = new ItemStack(ThItems.SYRINGE_INJECTION.get());
                 List<MobEffectInstance> effects = getCurrentEffects();
-                PotionContents contents = new PotionContents(java.util.Optional.empty(), java.util.Optional.<Integer>empty(), effects, java.util.Optional.<String>empty());
+                PotionContents contents = new PotionContents(java.util.Optional.empty(), java.util.Optional.<Integer>empty(), effects);
                 theInjection.set(DataComponents.POTION_CONTENTS, contents);
                 removeItem(0, 1);
                 for (int i = 0; i < 9; i++) {
@@ -137,8 +137,8 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
             }
             int amplifier = largestWeight / 30;
             int effectDuration = 100 * largestWeight;
-            if (largestEffect.value() == MobEffects.INSTANT_DAMAGE.value()
-                || largestEffect.value() == MobEffects.INSTANT_HEALTH.value()) {
+            if (largestEffect.value() == MobEffects.HARM.value()
+                || largestEffect.value() == MobEffects.HEAL.value()) {
                 effectDuration = 1;
             }
             effectList.add(new MobEffectInstance(largestEffect, effectDuration, amplifier, false, true));
@@ -439,17 +439,17 @@ public class BloodInfuserBlockEntity extends ThBlockEntity implements EssentiaTr
     }
 
     private void buildWeights() {
-        Holder<MobEffect> speed = MobEffects.SPEED;
-        Holder<MobEffect> slow = MobEffects.SLOWNESS;
-        Holder<MobEffect> haste = MobEffects.HASTE;
-        Holder<MobEffect> fatigue = MobEffects.MINING_FATIGUE;
-        Holder<MobEffect> strength = MobEffects.STRENGTH;
-        Holder<MobEffect> health = MobEffects.INSTANT_HEALTH;
-        Holder<MobEffect> harm = MobEffects.INSTANT_DAMAGE;
-        Holder<MobEffect> jump = MobEffects.JUMP_BOOST;
-        Holder<MobEffect> nausea = MobEffects.NAUSEA;
+        Holder<MobEffect> speed = MobEffects.MOVEMENT_SPEED;
+        Holder<MobEffect> slow = MobEffects.MOVEMENT_SLOWDOWN;
+        Holder<MobEffect> haste = MobEffects.DIG_SPEED;
+        Holder<MobEffect> fatigue = MobEffects.DIG_SLOWDOWN;
+        Holder<MobEffect> strength = MobEffects.DAMAGE_BOOST;
+        Holder<MobEffect> health = MobEffects.HEAL;
+        Holder<MobEffect> harm = MobEffects.HARM;
+        Holder<MobEffect> jump = MobEffects.JUMP;
+        Holder<MobEffect> nausea = MobEffects.CONFUSION;
         Holder<MobEffect> regen = MobEffects.REGENERATION;
-        Holder<MobEffect> resist = MobEffects.RESISTANCE;
+        Holder<MobEffect> resist = MobEffects.DAMAGE_RESISTANCE;
         Holder<MobEffect> fireres = MobEffects.FIRE_RESISTANCE;
         Holder<MobEffect> water = MobEffects.WATER_BREATHING;
         Holder<MobEffect> invis = MobEffects.INVISIBILITY;

@@ -3,7 +3,9 @@
   "category": "food",
   "cookingtime": 200,
   "experience": 1.0,
-  "ingredient": "thaumichorizons:meatth",
+  "ingredient": {
+    "item": "thaumichorizons:meatth"
+  },
   "result": {
     "id": "thaumichorizons:meatcookedth"
   }

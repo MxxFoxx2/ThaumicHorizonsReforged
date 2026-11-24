@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.core.registries.BuiltInRegistries;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.lib.THSounds;
@@ -158,17 +158,17 @@ public final class LensManager {
         if (id == null) {
             return null;
         }
-        return BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id(id));
+        return BuiltInRegistries.ITEM.get(ThaumicHorizons.id(id));
     }
 
     public static String getLensId(ItemStack goggles) {
-        return goggles.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getStringOr("Lens", "");
+        return goggles.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString("Lens");
     }
 
     public static void setLensItem(ItemStack goggles, @Nullable ItemStack lens) {
         CustomData data = goggles.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         net.minecraft.nbt.CompoundTag tag = data.copyTag();
-        int lensIndex = tag.getIntOr("LensIndex", -1);
+        int lensIndex = tag.contains("LensIndex") ? tag.getInt("LensIndex") : -1;
         net.minecraft.world.item.component.ItemLore loreComponent = goggles.get(DataComponents.LORE);
         List<Component> lines = loreComponent == null ? List.of() : loreComponent.lines();
         java.util.ArrayList<Component> updated = new java.util.ArrayList<>(lines);

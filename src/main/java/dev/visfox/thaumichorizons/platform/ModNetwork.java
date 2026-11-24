@@ -31,7 +31,7 @@ public final class ModNetwork {
     }
 
     public static <T extends CustomPacketPayload> void toClient(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
-        REGISTRATIONS.add(registrar -> registrar.playToClient(type, codec));
+        REGISTRATIONS.add(registrar -> registrar.playToClient(type, codec, (payload, context) -> { }));
     }
 
     public static <T extends CustomPacketPayload> void toServer(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, Handler<T> handler) {

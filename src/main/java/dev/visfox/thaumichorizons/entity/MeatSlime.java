@@ -2,17 +2,16 @@ package dev.visfox.thaumichorizons.entity;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.Level;
 
 public class MeatSlime extends Slime {
-    public MeatSlime(EntityType<? extends MeatSlime> type, Level level) {
+    public MeatSlime(EntityType<MeatSlime> type, Level level) {
         super(type, level);
     }
 
@@ -25,10 +24,10 @@ public class MeatSlime extends Slime {
 
     @Override
     protected ParticleOptions getParticleType() {
-        return new net.minecraft.core.particles.DustParticleOptions(0xFF3333, 1.0F);
+        return new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0F, 0.2F, 0.2F), 1.0F);
     }
 
     @Override
-    protected void dropFromLootTable(ServerLevel level, DamageSource source, boolean hitByPlayer) {
+    protected void dropFromLootTable(DamageSource source, boolean hitByPlayer) {
     }
 }

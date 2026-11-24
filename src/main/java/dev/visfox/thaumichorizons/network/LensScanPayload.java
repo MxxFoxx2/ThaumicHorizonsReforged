@@ -9,7 +9,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -45,7 +45,7 @@ public record LensScanPayload(int kind, BlockPos pos, int entityId) implements C
 
     private static boolean hasScholarLens(ServerPlayer player) {
         ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-        Item goggles = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
+        Item goggles = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
         return goggles != null && head.is(goggles) && LensManager.getLensId(head).equals("LensOrderEntropy");
     }
 

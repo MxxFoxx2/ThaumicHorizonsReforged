@@ -10,13 +10,15 @@ import java.util.List;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class InjectorItem extends Item {
     public static final int MAX_DAMAGE = 1000;
@@ -26,7 +28,7 @@ public class InjectorItem extends Item {
     }
 
     @Override
-    public net.minecraft.world.InteractionResult use(Level world, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
             if (!world.isClientSide() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
@@ -39,7 +41,7 @@ public class InjectorItem extends Item {
         } else {
             player.startUsingItem(hand);
         }
-        return net.minecraft.world.InteractionResult.CONSUME;
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
@@ -48,8 +50,8 @@ public class InjectorItem extends Item {
     }
 
     @Override
-    public net.minecraft.world.item.ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return net.minecraft.world.item.ItemUseAnimation.NONE;
+    public net.minecraft.world.item.UseAnim getUseAnimation(ItemStack stack) {
+        return net.minecraft.world.item.UseAnim.NONE;
     }
 
     @Override
@@ -66,12 +68,12 @@ public class InjectorItem extends Item {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
         ItemStack ammo = getAmmo(stack, 0);
         if (!(entity instanceof Player player) || ammo == null) {
             SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
                 visual -> visual.withUseTicks(0));
-            return true;
+            return;
         }
 
         int charge = getUseDuration(stack, entity) - timeLeft;
@@ -80,7 +82,7 @@ public class InjectorItem extends Item {
         if (draw < 0.1F) {
             SyringeKeys.INJECTOR_VISUAL.update(stack, InjectorVisualData.EMPTY,
                 visual -> visual.withUseTicks(0));
-            return true;
+            return;
         }
         draw = Math.min(draw, 1.0F);
 
@@ -110,13 +112,13 @@ public class InjectorItem extends Item {
                 world.addFreshEntity(projectile);
             }
 
-            stack.hurtAndBreak(1, player, player.getUsedItemHand().asEquipmentSlot());
+            stack.hurtAndBreak(1, player,
+                player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             world.playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.ARROW_SHOOT,
                 net.minecraft.sounds.SoundSource.PLAYERS, 1.0F,
                 1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + draw * 0.5F);
             rotateAmmo(stack);
         }
-        return true;
     }
 
     public @Nullable ItemStack getAmmo(ItemStack stack, int slot) {

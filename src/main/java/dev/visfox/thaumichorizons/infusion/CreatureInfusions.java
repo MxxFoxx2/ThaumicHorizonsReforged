@@ -6,7 +6,7 @@ import dev.visfox.thaumichorizons.platform.DataKey;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.entity.Entity;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class CreatureInfusions {
     public static final int NUM_INFUSIONS = 12;

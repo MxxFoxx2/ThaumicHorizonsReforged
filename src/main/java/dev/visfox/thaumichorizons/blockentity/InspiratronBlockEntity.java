@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -22,16 +22,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class InspiratronBlockEntity extends ThBlockEntity implements SoulReceiver, Container, net.minecraft.world.MenuProvider {
     public static final int PROGRESS_MAX = 100;
     public static final int PAPER_SLOT = 0;
     public static final int KNOWLEDGE_SLOT = 1;
-    private static final Identifier KNOWLEDGE_FRAGMENT = Identifier.fromNamespaceAndPath("thaumcraft", "knowledge_fragment");
+    private static final ResourceLocation KNOWLEDGE_FRAGMENT = ResourceLocation.fromNamespaceAndPath("thaumcraft", "knowledge_fragment");
 
     public final net.minecraft.world.SimpleContainer inventory = new net.minecraft.world.SimpleContainer(2) {
         @Override

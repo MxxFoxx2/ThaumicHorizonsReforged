@@ -1,6 +1,58 @@
 # Fidelity
 
+## Minecraft 1.21.1 port (branch `1.21.1`)
+
+The `1.21.1` branch ports THR from the Minecraft 26.3 / NeoForge 26.3 snapshot to **Minecraft 1.21.1 / NeoForge 21.1.256** on Java 21 (Parchment `1.21.1`/`2024.11.17`, see `gradle.properties`). The host is **TC4R `mc/1.21.1`**, commit `03f354ac4ed91151ef10c9d9b2e4947789453472`, consumed as a composite build through the `tc4rPath` property. The rest of this file describes the 26.3 branch's behaviour; the bullets below are the confirmed deviations that apply to this port.
+
+### Host dependency
+
+- The 1.21.1 host exposes no `GolemStats`/`golemStats()` contract and no `NodeTransducerBlockEntity.stopForVortexConversion()`. Golem material behaviour therefore stays on the TH side (`GolemMaterialTH` plus `compat/tc/mixin/GolemMaterialStatsMixin`), and the automatic node→Vortex conversion of the Transduction Amplifier stays disabled through the existing reflective capability check in `TcReforgedPort` — the same safe fallback the stock 26.3 host uses.
+
+### Item models and special rendering
+
+- 1.21.1 has no `assets/<namespace>/items/` definition layer and no `minecraft:special`/`select` item model types. All 127 registered items render from `assets/thaumichorizons/models/item/<id>.json`; the 26.x `assets/thaumichorizons/items/` directory and the dead `models/item/injector_special_base.json` were deleted.
+- The special (OBJ/mesh) item renders are dispatched through the NeoForge item extension `IClientItemExtensions` in `ThItemRenderers`. The 26.x model-driven `view` selector became the Java-side `ThItemView.of(ItemDisplayContext)`, so the same renderers keep their ground / inventory / hand / fixed variants without a data-driven model file.
+
+### Spawn eggs
+
+- 1.21.1 tints spawn eggs automatically through the `SpawnEggItem(type, backgroundColor, highlightColor, props)` constructor; the 26.x per-egg `minecraft:constant` tint definitions have no 1.21.1 equivalent. The 23 spawn-egg registrations carry the per-entity colors from the 26.x definitions (alpha stripped).
+
+### Data-pack formats
+
+- Loot tables use the 1.21.1 pool/entry shape: a pool's `"conditions"` is a list of entries discriminated by `"condition"`, and an entry's `"functions"` is a list discriminated by `"function"`. The 26.x `"condition"`/`"modifier"`/`"type"` keys are invalid in 1.21.1 and were rewritten.
+- Recipe ingredients use the 1.21.1 object form. `Ingredient.CODEC` accepts either a list of ingredient objects or a single ingredient object (`{"item": ...}` / `{"tag": ...}`); the 26.x bare-string ingredient is rejected by the codec. All THR recipe files were converted from `"ingredients": ["ns:id"]` to `"ingredients": [{"item": "ns:id"}]`, and the shaped-recipe `key` entries were converted the same way.
+- `dimension_type` is flat in 1.21.1 and requires `has_raids` and `piglin_safe`; `has_fixed_time`, `skybox`, `attributes`, `cardinal_light` and `has_ender_dragon_fight` do not exist. `fixed_time: 18000` replaces `has_fixed_time`.
+- Biome effects require integer `fog_color`, `water_color`, `water_fog_color` and `sky_color`.
+- Recipe results use `"id"`/`"count"` (already correct in the source). Crafting book categories are `building`/`redstone`/`equipment`/`misc`; cooking categories are `food`/`blocks`/`misc`.
+- The Pocket Plane dimension type and biome are modelled on the nether, matching the 1.7.10 reference (`WorldChunkManagerHell`): `effects: "minecraft:the_nether"`, `has_raids: false`, `piglin_safe: false`, and the vanilla nether biome colors (fog `12638463`, water `4159204`, water fog `329011`, sky `0`).
+- The dead `data/minecraft/tags/entity_type/boat.json` and `data/neoforge/tags/entity_type/boats.json` files were removed: vanilla 1.21.1 has no `minecraft:boat` entity tag and NeoForge 21.1.256 exposes boat membership through `c:boats`. Custom TH boats are registered in `data/c/tags/entity_type/boats.json`.
+
+### Registration order — disposable wand defaults
+
+- 1.21.1 binds data component types only once the registry events run, and the TC4R wand components (`thaumcraft:wand_parts`, `thaumcraft:wand_vis`) are registered by the host. Applying them to `Item.Properties` during mod construction therefore failed with `Trying to access unbound value: .../thaumcraft:wand_parts` and aborted the server at mod construction.
+- The disposable wand is now registered with `properties -> new DisposableWandItem(DisposableWandItem.properties(properties))`, so the component defaults are written inside the registration supplier, exactly like the host's own `RegistryHelper.registerItem(..., WandItem::properties)` pattern. The wand keeps its disposable cap/rod and 25000 vis per primal as item defaults.
+
+### Entity textures and models
+
+- 1.21.1 bakes `PigModel`/`CowModel` at a 64×32 layer (26.3 used 64×64), so the legacy 64×32 pig/cow skins are used unchanged; the 26.3 64×64 padding is reverted on this branch.
+- 1.21.1 has no separate baby-horse model layer (foals reuse the adult horse mesh), and the 1.7.10 reference ships no separate baby sheets either, so the eight `*_baby.png` sheets were deleted and foals render with the adult sheet. The remapped 64×64 adult horse sheets produced by `tools/remap_horse_skins.py` are unchanged.
+- The 26.3 snapshot mapped the `IRON_CHAIN`/`COPPER_CHAIN` golem material blocks; neither exists in 1.21.1. The material mapping now covers `Blocks.CHAIN` (the 1.21.1 copper chain) plus the copper and lightning-rod family. The 1.7.10 reference has no chain golem material at all.
+
+### Client-side rendering
+
+- NeoForge 21.1.256 has no `ClientResourceLoadFinishedEvent` equivalent. The Vortex ambient sound handler is instead registered through `RegisterClientReloadListenersEvent`; a reload stops active loops and resets the scan state so nearby vortices restart their sounds on the next scan.
+- Endersteed and Nightmare keep the unarmored legacy sheet as the base and use add-on-side `ThHorseArmorLayer` and `ThHorseSaddleLayer`. Armor uses the vanilla `AnimalArmorItem` mesh/texture, while the saddle uses the vanilla horse saddle UVs; the base custom model hides its saddle parts to avoid double drawing. Live appearance comparison remains open.
+- The Vat alpha mixin is retargeted to `EntityModel.renderToBuffer`, the 1.21.1 model-render entry point.
+
+### Port tooling
+
+- `tools/check_data.py` validates the 1.21.1 data pack (loot table/pool/entry key sets, condition and function discriminators, recipe result ids, book categories, dimension-type schema, biome effect colors, tag keys).
+- `tools/backport/data_pack.py` is an idempotent 26.x→1.21.1 data converter for the loot tables, dimension type and biome effects.
+- `tools/check_seams.py` also validates the 1.21.1 item-model layer (every registered item needs `models/item/<id>.json`), and `tools/check_assets.py` scans `blockstates`/`models` instead of the removed `items` directory.
+
 ## Stock TC4R 1.1.3 compatibility profile
+
+This section describes the **26.3 host**. The 1.21.1 host pin and its differences are listed above.
 
 The supported public host is official Thaumcraft 4: Reforged 1.1.3 for Minecraft 26.3 (tag `26.3`, commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`). THR no longer requires the separate add-on API fork.
 
@@ -282,6 +334,6 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 - Thaumium Boat dispensing accepts lava as well as water.
 - `SmeltingBonusesMixin` adds the original TH meat → meat-nugget bonus to the Infernal Furnace bonus table. The mixin uses the official host's private registration helper and is guarded so it adds the entry only once.
 
-## Remaining research-page gap
+## Research-page rendering
 
-- The 1.7.10 `voidPutty` page renders a custom dynamic repair recipe. Official TC4R 1.1.3 has no native page type for an arbitrary dynamic repair recipe. Gameplay repair remains implemented; only that visual research page remains absent. Do not substitute a misleading static recipe page.
+- The 1.7.10 `voidPutty` page renders a custom dynamic repair recipe. Official TC4R 1.1.3 has no native page type for an arbitrary dynamic repair recipe, so THR adds a second `voidPutty2` text page and renders the real damaged-item + Void Putty → repaired-item rule through `VoidPuttyResearchPageMixin`. Gameplay repair remains implemented; live visual acceptance of the page is still open.

@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import dev.visfox.thaumichorizons.lib.TagInput;
+
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.block.pocket.GatewayPortalBlock;
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
@@ -107,7 +109,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                         md++;
                     } else if (x != 0 || y != 0) {
                         level.setBlock(target, PocketRegistry.PORTAL_TH.get().defaultBlockState(), 3);
-                        configurePortal(target, pocketID, portalNum, level.dimension().identifier().toString());
+                        configurePortal(target, pocketID, portalNum, level.dimension().location().toString());
                     }
                 }
             }
@@ -123,13 +125,13 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
                         md++;
                     } else if (z != 0 || y != 0) {
                         level.setBlock(target, PocketRegistry.PORTAL_TH.get().defaultBlockState(), 3);
-                        configurePortal(target, pocketID, portalNum, level.dimension().identifier().toString());
+                        configurePortal(target, pocketID, portalNum, level.dimension().location().toString());
                     }
                 }
             }
         }
 
-        String sourceDimension = level.dimension().identifier().toString();
+        String sourceDimension = level.dimension().location().toString();
         PocketPlanes.makePortal(pocketID, portalNum, worldPosition.getX(), worldPosition.getY(),
             worldPosition.getZ(), sourceDimension, xAligned, server.getServer());
         portalOpen = true;
@@ -409,9 +411,7 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         return InteractionResult.SUCCESS;
     }
 
-    @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
-        super.preRemoveSideEffects(pos, state);
         if (!(level instanceof ServerLevel server)) {
             return;
         }
@@ -442,8 +442,19 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
     }
 
     @Override
-    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        saveAdditional(dev.visfox.thaumichorizons.compat.ValueOutput.of(tag, registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        loadAdditional(dev.visfox.thaumichorizons.compat.ValueInput.of(tag, registries));
+    }
+
+    protected void saveAdditional(dev.visfox.thaumichorizons.compat.ValueOutput output) {
+        super.saveAdditional(output.tag(), output.lookup());
         output.putBoolean("hasKeystone", hasKeystone);
         output.putBoolean("portalOpen", portalOpen);
         output.putInt("pocketPlaneID", pocketID);
@@ -452,9 +463,8 @@ public class SlotBlockEntity extends BlockEntity implements WandInteractable {
         output.putBoolean("aligned", xAligned);
     }
 
-    @Override
-    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
-        super.loadAdditional(input);
+    protected void loadAdditional(dev.visfox.thaumichorizons.compat.ValueInput input) {
+        super.loadAdditional(input.tag(), input.lookup());
         hasKeystone = input.getBooleanOr("hasKeystone", false);
         portalOpen = input.getBooleanOr("portalOpen", false);
         pocketID = input.getIntOr("pocketPlaneID", 0);

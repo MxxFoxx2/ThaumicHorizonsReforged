@@ -6,14 +6,14 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.CloudBlock;
 import dev.visfox.thaumichorizons.blockentity.CloudBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -24,15 +24,15 @@ import net.minecraft.world.phys.AABB;
  * cloud-variant tint. Rain state and column depth are synchronized by the
  * block entity; the biome determines rain versus snow locally.</p>
  */
-public final class CloudBlockRenderer implements BlockEntityRenderer<CloudBlockEntity, CloudBlockRenderer.State> {
-    private static final Identifier RAIN = ThaumicHorizons.id("textures/environment/rain.png");
-    private static final Identifier FIRE_RAIN = ThaumicHorizons.id("textures/environment/firerain.png");
-    private static final Identifier SNOW = Identifier.fromNamespaceAndPath("minecraft", "textures/environment/snow.png");
+public final class CloudBlockRenderer implements ThStateBlockRenderer<CloudBlockEntity, CloudBlockRenderer.State> {
+    private static final ResourceLocation RAIN = ThaumicHorizons.id("textures/environment/rain.png");
+    private static final ResourceLocation FIRE_RAIN = ThaumicHorizons.id("textures/environment/firerain.png");
+    private static final ResourceLocation SNOW = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/environment/snow.png");
 
     public CloudBlockRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public boolean raining;
         public boolean warmBiome;
         public int cloudType;
@@ -51,8 +51,7 @@ public final class CloudBlockRenderer implements BlockEntityRenderer<CloudBlockE
     @Override
     public void extractRenderState(CloudBlockEntity entity, State state, float partialTicks,
         net.minecraft.world.phys.Vec3 cameraPosition,
-        net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Object progress) {
         Level level = entity.getLevel();
         if (level == null) {
             state.raining = false;
@@ -61,24 +60,24 @@ public final class CloudBlockRenderer implements BlockEntityRenderer<CloudBlockE
 
         BlockPos pos = entity.getBlockPos();
         state.raining = entity.isRaining();
-        state.warmBiome = level.getBiome(pos).value().warmEnoughToRain(pos, level.getSeaLevel());
+        state.warmBiome = level.getBiome(pos).value().warmEnoughToRain(pos);
         state.cloudType = entity.getBlockState().getValue(CloudBlock.TYPE);
         state.columnDepth = Math.max(0, entity.getColumnDepth() - 1);
         state.worldX = pos.getX();
         state.worldZ = pos.getZ();
         state.gameTime = level.getGameTime();
         state.partialTicks = partialTicks;
-        state.lightCoords = LightCoordsUtil.FULL_BRIGHT;
+        state.lightCoords = LightTexture.FULL_BRIGHT;
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-        net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector,
+        dev.visfox.thaumichorizons.client.platform.ThCameraRenderState camera) {
         if (!state.raining || state.columnDepth <= 0) {
             return;
         }
 
-        Identifier texture = state.cloudType == 1 ? FIRE_RAIN : state.warmBiome ? RAIN : SNOW;
+        ResourceLocation texture = state.cloudType == 1 ? FIRE_RAIN : state.warmBiome ? RAIN : SNOW;
         int color = tint(state.cloudType);
         double time = state.gameTime + state.partialTicks + state.worldX + 16.0D * state.worldZ;
         float scroll = (float) (-time * 0.2D - Math.floor(-time * 0.1D));

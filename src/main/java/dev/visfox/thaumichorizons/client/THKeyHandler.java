@@ -20,10 +20,10 @@ public final class THKeyHandler {
     private THKeyHandler() {
     }
 
-    public static final KeyMapping ARCANE_LENS = new KeyMapping("key.thaumichorizons.arcane_lens", InputConstants.KEY_V, KeyMapping.Category.MISC);
-    public static final KeyMapping MORPHIC_FINGERS = new KeyMapping("key.thaumichorizons.morphic_fingers", InputConstants.KEY_M, KeyMapping.Category.MISC);
-    public static final KeyMapping TOGGLE_CLIMB = new KeyMapping("key.thaumichorizons.toggle_climb", InputConstants.KEY_C, KeyMapping.Category.MISC);
-    public static final KeyMapping TOGGLE_INVISIBLE = new KeyMapping("key.thaumichorizons.toggle_invisible", InputConstants.KEY_X, KeyMapping.Category.MISC);
+    public static final KeyMapping ARCANE_LENS = new KeyMapping("key.thaumichorizons.arcane_lens", InputConstants.KEY_V, KeyMapping.CATEGORY_MISC);
+    public static final KeyMapping MORPHIC_FINGERS = new KeyMapping("key.thaumichorizons.morphic_fingers", InputConstants.KEY_M, KeyMapping.CATEGORY_MISC);
+    public static final KeyMapping TOGGLE_CLIMB = new KeyMapping("key.thaumichorizons.toggle_climb", InputConstants.KEY_C, KeyMapping.CATEGORY_MISC);
+    public static final KeyMapping TOGGLE_INVISIBLE = new KeyMapping("key.thaumichorizons.toggle_invisible", InputConstants.KEY_X, KeyMapping.CATEGORY_MISC);
     private static boolean arcaneLensKeyDown;
     private static boolean restoreMouseGrab;
 
@@ -41,7 +41,7 @@ public final class THKeyHandler {
         boolean lensKeyDown = ARCANE_LENS.isDown();
         if (lensKeyDown && !arcaneLensKeyDown) {
             arcaneLensKeyDown = true;
-            if (minecraft.player != null && minecraft.gui.screen() == null
+            if (minecraft.player != null && minecraft.screen == null
                 && ArcaneLensHud.isWearingGoggles(minecraft.player)) {
                 if (minecraft.player.isShiftKeyDown()) {
                     ClientNetwork.sendToServer(new LensChangePayload("REMOVE"));
@@ -61,13 +61,13 @@ public final class THKeyHandler {
                 }
                 ArcaneLensHud.close();
             }
-            if (restoreMouseGrab && minecraft.player != null && minecraft.gui.screen() == null) {
+            if (restoreMouseGrab && minecraft.player != null && minecraft.screen == null) {
                 minecraft.mouseHandler.grabMouse();
             }
             restoreMouseGrab = false;
         }
 
-        if (minecraft.gui.screen() != null && ArcaneLensHud.isOpen()) {
+        if (minecraft.screen != null && ArcaneLensHud.isOpen()) {
             ArcaneLensHud.close();
             restoreMouseGrab = false;
         }

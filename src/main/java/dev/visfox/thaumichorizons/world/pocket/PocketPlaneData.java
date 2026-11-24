@@ -1,10 +1,14 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import dev.visfox.thaumichorizons.lib.TagInput;
+
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.world.level.biome.Biome;
+import javax.annotation.Nullable;
 
 public class PocketPlaneData {
     public int radius;
@@ -20,7 +24,7 @@ public class PocketPlaneData {
     public String portalDDimension = "";
     public String sourceDimension = "";
     public String name = "Generic Pocket Plane";
-    public net.minecraft.resources.@Nullable ResourceKey<net.minecraft.world.level.biome.Biome> biome;
+    public @Nullable ResourceKey<Biome> biome;
 
     public PocketPlaneData() {
         this.radius = 32;
@@ -56,7 +60,7 @@ public class PocketPlaneData {
 
     public static PocketPlaneData read(CompoundTag tag) {
         PocketPlaneData data = new PocketPlaneData();
-        int storedRadius = tag.getIntOr("radius", 32);
+        int storedRadius = TagInput.getIntOr(tag, "radius", 32);
         // Generated planes are constrained to radius 32..127 so their
         // 256-block Z slices cannot overlap. Repair invalid persisted values
         // before portal placement or teardown uses the radius.
@@ -66,18 +70,18 @@ public class PocketPlaneData {
                 "Clamping invalid Pocket Plane radius {} to {} while loading SavedData",
                 storedRadius, data.radius);
         }
-        data.potionEffects = tag.getIntArray("effects").orElse(null);
-        data.name = tag.getStringOr("name", "Generic Pocket Plane");
-        data.color = tag.getIntOr("color", 0) & 0xFFFFFF;
-        data.portalA = tag.getIntArray("portalA").orElse(null);
-        data.portalB = tag.getIntArray("portalB").orElse(null);
-        data.portalC = tag.getIntArray("portalC").orElse(null);
-        data.portalD = tag.getIntArray("portalD").orElse(null);
-        data.portalADimension = tag.getStringOr("portalADimension", "");
-        data.portalBDimension = tag.getStringOr("portalBDimension", "");
-        data.portalCDimension = tag.getStringOr("portalCDimension", "");
-        data.portalDDimension = tag.getStringOr("portalDDimension", "");
-        data.sourceDimension = tag.getStringOr("sourceDimension", "");
+        data.potionEffects = TagInput.getIntArrayOr(tag, "effects");
+        data.name = TagInput.getStringOr(tag, "name", "Generic Pocket Plane");
+        data.color = TagInput.getIntOr(tag, "color", 0) & 0xFFFFFF;
+        data.portalA = TagInput.getIntArrayOr(tag, "portalA");
+        data.portalB = TagInput.getIntArrayOr(tag, "portalB");
+        data.portalC = TagInput.getIntArrayOr(tag, "portalC");
+        data.portalD = TagInput.getIntArrayOr(tag, "portalD");
+        data.portalADimension = TagInput.getStringOr(tag, "portalADimension", "");
+        data.portalBDimension = TagInput.getStringOr(tag, "portalBDimension", "");
+        data.portalCDimension = TagInput.getStringOr(tag, "portalCDimension", "");
+        data.portalDDimension = TagInput.getStringOr(tag, "portalDDimension", "");
+        data.sourceDimension = TagInput.getStringOr(tag, "sourceDimension", "");
         return data;
     }
 

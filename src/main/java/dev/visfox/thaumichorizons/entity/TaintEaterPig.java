@@ -6,15 +6,15 @@ import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.entity.ai.EatTaintGoal;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class TaintEaterPig extends Pig {
-    public TaintEaterPig(EntityType<? extends TaintEaterPig> type, Level level) {
+    public TaintEaterPig(EntityType<TaintEaterPig> type, Level level) {
         super(type, level);
         this.goalSelector.addGoal(9, new EatTaintGoal(this));
     }
@@ -38,6 +38,6 @@ public class TaintEaterPig extends Pig {
 
     @Override
     public @Nullable TaintEaterPig getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.TAINT_EATER_PIG.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.TAINT_EATER_PIG.get().create(level);
     }
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,7 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.item.tool.SpecialMining;
@@ -45,10 +45,10 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusLiquefactionItem extends FocusItem {
     public static final FocusUpgradeType NUGGETS = new FocusUpgradeType(33, "nuggets",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/nuggets.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/nuggets.png"),
         new AspectList().add(Aspect.METAL, 8));
     public static final FocusUpgradeType PURITY = new FocusUpgradeType(34, "purity",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/purity.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/purity.png"),
         new AspectList().add(Aspect.ORDER, 8));
 
     private static final AspectList COST = new AspectList().add(Aspect.FIRE, 40);
@@ -143,8 +143,7 @@ public class FocusLiquefactionItem extends FocusItem {
         }
         if (entity instanceof LivingEntity living) {
             if (wand.consumeAllVis(stack, player, COST_CRITTER, true, true)) {
-                living.hurtServer((ServerLevel) level, level.damageSources().inFire(),
-                    1.0F + 0.5F * Wands.getFocusPotency(stack));
+                living.hurt(level.damageSources().inFire(), 1.0F + 0.5F * Wands.getFocusPotency(stack));
             }
             return;
         }
@@ -229,7 +228,7 @@ public class FocusLiquefactionItem extends FocusItem {
     }
 
     @Override
-    public FocusUpgradeType @Nullable [] getPossibleUpgradesByRank(ItemStack focus, int rank) {
+    public @Nullable FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focus, int rank) {
         return switch (rank) {
             case 1, 2, 4 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.POTENCY, NUGGETS};
             case 3 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.POTENCY,
@@ -266,7 +265,7 @@ public class FocusLiquefactionItem extends FocusItem {
                 }
                 case 3 -> serverLevel.setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
                 case 4 -> {
-                    TntBlock.prime(serverLevel, pos);
+                    TntBlock.explode(serverLevel, pos);
                 }
                 case 6 -> serverLevel.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
                 default -> {
@@ -325,9 +324,10 @@ public class FocusLiquefactionItem extends FocusItem {
         if (!(level instanceof ServerLevel serverLevel)) {
             return ItemStack.EMPTY;
         }
-        return serverLevel.recipeAccess()
+        return serverLevel.getRecipeManager()
             .getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(input), serverLevel)
-            .map(recipe -> recipe.value().assemble(new SingleRecipeInput(input))).orElse(ItemStack.EMPTY);
+            .map(recipe -> recipe.value().assemble(new SingleRecipeInput(input), serverLevel.registryAccess()))
+            .orElse(ItemStack.EMPTY);
     }
 
     public static @Nullable BlockHitResult getTargetBlock(Level level, Player player) {
@@ -375,7 +375,7 @@ public class FocusLiquefactionItem extends FocusItem {
     }
 
     @Override
-    public net.minecraft.resources.@Nullable Identifier getFocusTexture(ItemStack focus) {
-        return Identifier.fromNamespaceAndPath("thaumichorizons", "item/focus_liquefaction");
+    public @Nullable ResourceLocation getFocusTexture(ItemStack focus) {
+        return ResourceLocation.fromNamespaceAndPath("thaumichorizons", "item/focus_liquefaction");
     }
 }

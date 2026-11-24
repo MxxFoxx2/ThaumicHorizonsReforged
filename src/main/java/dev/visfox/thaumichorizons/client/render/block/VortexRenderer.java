@@ -4,25 +4,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.VortexBlockEntity;
 import java.util.List;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 
-public final class VortexRenderer implements BlockEntityRenderer<VortexBlockEntity, VortexRenderer.State> {
-    private static final Identifier VORTEX = ThaumicHorizons.id("textures/misc/vortex.png");
+public final class VortexRenderer implements ThStateBlockRenderer<VortexBlockEntity, VortexRenderer.State> {
+    private static final ResourceLocation VORTEX = ThaumicHorizons.id("textures/misc/vortex.png");
 
     public VortexRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public List<Aspect> aspects = List.of();
         public AspectList amounts = new AspectList();
         public int count;
@@ -42,8 +42,7 @@ public final class VortexRenderer implements BlockEntityRenderer<VortexBlockEnti
 
     @Override
     public void extractRenderState(VortexBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.aspects = List.copyOf(entity.aspects.getAspects());
         state.amounts = entity.aspects.copy();
@@ -60,7 +59,7 @@ public final class VortexRenderer implements BlockEntityRenderer<VortexBlockEnti
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         if (state.aspects.isEmpty() || state.alpha <= 0.0F) {
             return;
         }
@@ -72,7 +71,7 @@ public final class VortexRenderer implements BlockEntityRenderer<VortexBlockEnti
             float period = 500.0F + 50.0F * index;
             angle = (ticks % period) / period * (float) (Math.PI * 2.0);
             float scale = state.beams < 6 || state.count < 50 ? 4.0F : 4.0F / 3.0F;
-            MachineRenderHelper.strip(poseStack, collector, camera, MachineRenderHelper.NODES,
+            MachineRenderHelper.strip(poseStack, collector, MachineRenderHelper.NODES,
                 0.5F, 0.5F, 0.5F, scale, 32, 0, state.frame, withAlpha(aspect.getColor(), alpha), state.lightCoords);
         }
 
@@ -83,17 +82,17 @@ public final class VortexRenderer implements BlockEntityRenderer<VortexBlockEnti
             coreScale = 1.0F - state.count / 25.0F;
         }
         if (!state.cheat && (state.beams < 6 || state.count < 50)) {
-            MachineRenderHelper.rotatingFrame(poseStack, collector, camera, VORTEX,
+            MachineRenderHelper.rotatingFrame(poseStack, collector, VORTEX,
                 0.5F, 0.5F, 0.5F, angle * 20.0F * coreScale / (1 + 2 * state.beams),
                 0.8F * coreScale, 16, state.frame % 16, withAlpha(0xFFFFFF, state.alpha * 0.8F), state.lightCoords);
         } else {
-            MachineRenderHelper.strip(poseStack, collector, camera, MachineRenderHelper.NODES,
+            MachineRenderHelper.strip(poseStack, collector, MachineRenderHelper.NODES,
                 0.5F, 0.5F, 0.5F, 3.0F, 32, 2, state.frame, withAlpha(0xFFFFFF, state.alpha), state.lightCoords);
         }
         if (state.plane) {
             for (int index = 0; index < state.aspects.size(); index++) {
                 Aspect aspect = state.aspects.get(index);
-                MachineRenderHelper.strip(poseStack, collector, camera, MachineRenderHelper.NODES,
+                MachineRenderHelper.strip(poseStack, collector, MachineRenderHelper.NODES,
                     0.5F, 0.5F, 0.5F, 0.5F, 32, 0, state.frame,
                     withAlpha(aspect.getColor(), alpha), state.lightCoords);
             }

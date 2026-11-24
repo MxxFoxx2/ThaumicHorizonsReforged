@@ -12,8 +12,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.aspect.Aspect;
@@ -137,7 +137,7 @@ public class TransductionAmplifierBlockEntity extends ThBlockEntity {
                                 new Vec3(target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ()),
                                 0xFFFFFF);
                         }
-                        target.hurtServer(serverLevel, magic, 4.0F);
+                        target.hurt(magic, 4.0F);
                     }
                 }
             }

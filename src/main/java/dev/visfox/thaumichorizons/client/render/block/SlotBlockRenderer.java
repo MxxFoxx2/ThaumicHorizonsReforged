@@ -5,22 +5,22 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 /** Renders the legacy ModelReceptacle's conditional, plane-tinted Keystone cube. */
-public final class SlotBlockRenderer implements BlockEntityRenderer<SlotBlockEntity, SlotBlockRenderer.State> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/models/receptacle.png");
+public final class SlotBlockRenderer implements ThStateBlockRenderer<SlotBlockEntity, SlotBlockRenderer.State> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/models/receptacle.png");
 
     public SlotBlockRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public boolean hasKeystone;
         public int color = 0xFFFFFF;
     }
@@ -32,15 +32,14 @@ public final class SlotBlockRenderer implements BlockEntityRenderer<SlotBlockEnt
 
     @Override
     public void extractRenderState(SlotBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         state.hasKeystone = entity.hasKeystone();
         state.color = entity.keystoneColor() | 0xFF000000;
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-        net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector,
+        dev.visfox.thaumichorizons.client.platform.ThCameraRenderState camera) {
         if (!state.hasKeystone) {
             return;
         }

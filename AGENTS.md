@@ -6,8 +6,8 @@
 
 Thaumic Horizons: Reforged — порт Thaumic Horizons из Minecraft 1.7.10 на современный Minecraft/NeoForge как дополнение для Thaumcraft 4: Reforged (TC4R).
 
-- Текущая цель: Minecraft 26.3, NeoForge 26.3.0.57-beta, Java 25. Перед работой сверяй версии в `gradle.properties`.
-- TC4R — обязательная зависимость. Поддерживаемая версия: официальный TC4R 1.1.3 для Minecraft 26.3, tag `26.3`, commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`. Локальная сборка использует sibling-репозиторий через `includeBuild('../thaumcraft-4-reforged')`; CI проверяет ту же публичную ревизию в `.github/workflows/ci.yml`.
+- Текущая цель (ветка `1.21.1`): Minecraft 1.21.1, NeoForge 21.1.256, Java 21. Перед работой сверяй версии в `gradle.properties`.
+- TC4R — обязательная зависимость. Поддерживаемая версия на этой ветке: официальный TC4R, ветка `mc/1.21.1`, commit `03f354ac4ed91151ef10c9d9b2e4947789453472`. Локальная сборка использует sibling-репозиторий через `includeBuild(tc4rPath)` (в `gradle.properties` путь указывает на `../thaumcraft-4-reforged-1.21.1`); CI проверяет ту же публичную ревизию в `.github/workflows/ci.yml`. На ветке `main` цель — Minecraft 26.3 / TC4R tag `26.3`.
 - Основные слои: `src/main/java/dev/visfox/thaumichorizons/`, `src/main/java/dev/visfox/thaumichorizons/platform/`, `src/main/java/dev/visfox/thaumichorizons/client/platform/`, `src/main/java/dev/visfox/thaumichorizons/compat/` и `src/main/java/dev/visfox/thaumichorizons/compat/tc/`.
 
 ## Источники истины и приоритет

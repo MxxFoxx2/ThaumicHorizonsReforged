@@ -5,7 +5,9 @@
     "M"
   ],
   "key": {
-    "M": "thaumichorizons:bucketchocolate"
+    "M": {
+      "item": "thaumichorizons:bucketchocolate"
+    }
   },
   "result": {
     "id": "thaumichorizons:barchocolate"

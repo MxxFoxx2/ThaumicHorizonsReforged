@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class VatInteriorBlock extends Block implements EntityBlock {
 
@@ -43,8 +43,7 @@ public class VatInteriorBlock extends Block implements EntityBlock {
 
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
-        net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         entity.setAirSupply(300);
     }
 }

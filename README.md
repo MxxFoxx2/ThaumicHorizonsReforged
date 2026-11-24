@@ -4,26 +4,26 @@
 [![Latest release](https://img.shields.io/github/v/release/MxxFoxx2/ThaumicHorizonsReforged?include_prereleases&label=release)](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/releases)
 [![License: LGPL-3.0-or-later](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue)](LICENSE.txt)
 
-Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; maintained by [GTNewHorizons](https://github.com/GTNewHorizons/ThaumicHorizons)) for **Minecraft 26.3** on **NeoForge**, built as an add-on for [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged).
+Unofficial port of **Thaumic Horizons** (Minecraft 1.7.10, by Kentington; maintained by [GTNewHorizons](https://github.com/GTNewHorizons/ThaumicHorizons)) for **Minecraft 1.21.1** on **NeoForge 21.1.256** (this branch; `main` targets Minecraft 26.3), built as an add-on for [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged).
 
 The goal is to recreate the original gameplay 1:1: creature infusion and morphing, player self-infusions, the Vat, souls and the blood system, TH golems, arcane lenses, boats and mounts, clouds and spikes, and the pocket plane. Logic, numbers, recipes, and texts are ported from the original sources; intentional deviations are documented in [docs/fidelity.md](docs/fidelity.md) — most notably the player-invisibility infusion is reimplemented without the original sync/render bug.
 
 > [!WARNING]
-> **Official host compatibility:** Thaumic Horizons: Reforged `0.1.0-beta.2` targets the public [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3), pinned to commit [`99499a8`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2). No custom TC4R fork is required.
+> **Host compatibility:** on the `1.21.1` branch the add-on targets the official [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged) branch `mc/1.21.1`, pinned to commit [`03f354a`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/03f354ac4ed91151ef10c9d9b2e4947789453472). The `26.3` release line targets the published [TC4R 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3), pinned to commit [`99499a8`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2). No custom TC4R fork is required on either line.
 >
 > **Known compatibility limitation:** on the official host, the Transduction Amplifier's automatic multi-transducer-to-Vortex conversion is disabled. Stock TC4R does not expose the API hook needed to safely stop the transducer before replacing its node. Other Transduction Amplifier behavior remains enabled.
 >
 > TH golem materials, material-specific attributes, upgrade slots, textures and regeneration intervals are adapted locally. Optional TC4R machine-beam FX and Creature Infusion research-page extensions are not available on stock TC4R; the current TH content tree does not use those extensions.
 >
-> **Experimental pre-release:** broad gameplay, multiplayer, save/reload and visual acceptance coverage is incomplete. Pocket Plane is especially not yet validated as a complete playable dimension. Back up worlds before testing.
+> **Experimental pre-release:** broad gameplay, multiplayer, save/reload and visual acceptance coverage is incomplete. On the 1.21.1 branch the build, static checks and client/server startup smoke pass, and the client has reached an existing world, but no scripted gameplay or visual acceptance scenario has been completed. Pocket Plane is especially not yet validated as a complete playable dimension. Back up worlds before testing.
 
 > **License scope.** Thaumic Horizons itself is open source — Kentington's original code is MIT and the GTNH fork's changes are LGPL-3.0-or-later — so this port's TH logic and assets are redistributable under those licenses (see Authors and license below). What stays restricted: **Thaumcraft** assets and logic belong to Azanor and reach this mod only through [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged), whose own personal-use policy applies to them.
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
+| 1.21.1 | 21.1.256 | `mc/1.21.1` (`03f354a`) | port branch — build, static checks and startup smoke green; gameplay/visual gate open |
 | 26.3 | 26.3.0.57-beta | 1.1.3 (official `26.3` release) | `0.1.0-beta.2` — experimental pre-release; one host-dependent feature disabled |
 | 26.1.2 | 26.1.2.122 | 1.1.3 | planned |
-| 1.21.1 | 21.1.256 | 1.1.3 | planned |
 
 ## What the mod adds
 
@@ -42,12 +42,12 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 ## Installation
 
-1. Create a **Minecraft 26.3** profile with **NeoForge 26.3.0.57-beta**.
-2. Install **TerraBlender 26.3-26.3.0.0.9** (required by TC4R).
-3. Install the official [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3). Use the published `thaumcraft-4-reforged-1.1.3-26.3.jar` from that release.
-4. Drop `thaumic-horizons-reforged-0.1.0-beta.2-26.3.jar` into the same `mods` folder.
+1. Create a **Minecraft 1.21.1** profile with **NeoForge 21.1.256**.
+2. Install **TerraBlender 1.21.1-4.1.0.1** (required by TC4R).
+3. Install a TC4R build from the official [`mc/1.21.1`](https://github.com/notlikethiss/thaumcraft-4-reforged/tree/mc/1.21.1) branch, pinned to commit [`03f354a`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/03f354ac4ed91151ef10c9d9b2e4947789453472).
+4. Drop `thaumic-horizons-reforged-0.1.0-beta.2-1.21.1.jar` into the same `mods` folder.
 
-The compatibility build is tested against official TC4R commit [`99499a8`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2). A custom TC4R build is no longer required.
+For the 26.3 release line, use the published TC4R 1.1.3 release jar and `thaumic-horizons-reforged-0.1.0-beta.2-26.3.jar` instead.
 
 ## Configuration
 
@@ -55,7 +55,7 @@ The compatibility build is tested against official TC4R commit [`99499a8`](https
 
 ## Building and development
 
-Java 25 and a sibling checkout of the official TC4R repository are required. `settings.gradle` includes `../thaumcraft-4-reforged`; clone it next to this repository and check out the official `26.3` tag (commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`) before building. From the repository root:
+Java 21 and a sibling checkout of the official TC4R repository are required. `settings.gradle` includes the sibling path selected by the `tc4rPath` property; on this branch `gradle.properties` points it at `../thaumcraft-4-reforged-1.21.1`, which must be checked out on `mc/1.21.1` (commit `03f354ac4ed91151ef10c9d9b2e4947789453472`). From the repository root:
 
 ```sh
 ./gradlew build
@@ -64,6 +64,7 @@ Java 25 and a sibling checkout of the official TC4R repository are required. `se
 ./gradlew runServer
 python3 -I tools/check_seams.py
 python3 -I tools/check_assets.py
+python3 -I tools/check_data.py
 ```
 
 On Windows use `gradlew.bat` and `python` instead. Read [AGENTS.md](AGENTS.md) for shared agent rules. [CLAUDE.md](CLAUDE.md) imports those rules for Claude Code. The architecture and TC4R integration boundaries are explained in [docs/architecture.md](docs/architecture.md) and [docs/tc4r-integration.md](docs/tc4r-integration.md). The prerelease smoke gate and unverified behavior inventory are tracked in [docs/verification.md](docs/verification.md).
@@ -75,6 +76,8 @@ Syringes, the Corpse Effigy and the three spike items use per-context 3D transfo
 ## Status and roadmap
 
 The `0.1.0-beta.2` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, boats and mounts, projectiles, clouds/spikes, utility items and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not prerelease blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
+
+The `1.21.1` branch carries the same content on Minecraft 1.21.1 / NeoForge 21.1.256 against TC4R `mc/1.21.1`: the full source tree compiles, the JUnit/seam/asset/data-pack checks pass, a clean-world dedicated-server smoke reaches `Done`, and the client boots and reaches an existing world. No scripted gameplay, multiplayer, save/reload or visual acceptance scenario has been completed, so none of the 26.3 in-game evidence transfers to it yet.
 
 ## Authors and license
 

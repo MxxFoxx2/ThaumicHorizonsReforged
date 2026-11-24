@@ -9,7 +9,6 @@ import dev.visfox.thaumichorizons.entity.ai.HurtByTargetGoalTH;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -27,10 +26,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class Gravekeeper extends TamableAnimal {
-    public Gravekeeper(EntityType<? extends Gravekeeper> type, Level level) {
+    public Gravekeeper(EntityType<Gravekeeper> type, Level level) {
         super(type, level);
         this.setTame(true, false);
     }
@@ -46,11 +45,11 @@ public class Gravekeeper extends TamableAnimal {
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.targetSelector.addGoal(1, new HurtByTargetGoalTH(this, false));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false,
-            (target, lvl) -> target.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD)));
+            target -> target.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return net.minecraft.world.entity.animal.feline.Ocelot.createAttributes();
+        return net.minecraft.world.entity.animal.Ocelot.createAttributes();
     }
 
     @Override
@@ -84,6 +83,6 @@ public class Gravekeeper extends TamableAnimal {
 
     @Override
     public @Nullable Gravekeeper getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.GRAVEKEEPER.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.GRAVEKEEPER.get().create(level);
     }
 }

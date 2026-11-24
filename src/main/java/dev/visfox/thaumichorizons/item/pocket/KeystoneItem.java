@@ -7,6 +7,8 @@ import dev.visfox.thaumichorizons.world.pocket.PocketPlaneData;
 import dev.visfox.thaumichorizons.world.pocket.PocketPlanes;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import dev.visfox.thaumichorizons.registry.PocketRegistry;
+import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
@@ -24,7 +26,7 @@ public class KeystoneItem extends Item {
 
     public static boolean isBound(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data != null && data.copyTag().getIntOr("dimension", Integer.MIN_VALUE) != Integer.MIN_VALUE;
+        return data != null && data.copyTag().contains("dimension");
     }
 
     public static int getPlaneID(ItemStack stack) {
@@ -32,7 +34,7 @@ public class KeystoneItem extends Item {
         if (data == null) {
             return Integer.MIN_VALUE;
         }
-        return data.copyTag().getIntOr("dimension", Integer.MIN_VALUE);
+        return data.copyTag().getInt("dimension");
     }
 
     private static CompoundTag boundData(int planeID) {
@@ -48,7 +50,7 @@ public class KeystoneItem extends Item {
 
     public static int getPlaneColor(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data == null ? 0xFFFFFF : data.copyTag().getIntOr("color", 0xFFFFFF) & 0xFFFFFF;
+        return data == null || !data.copyTag().contains("color") ? 0xFFFFFF : data.copyTag().getInt("color") & 0xFFFFFF;
     }
 
     public static ItemStack create(int planeID) {
@@ -111,13 +113,13 @@ public class KeystoneItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
-            net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder,
-            TooltipFlag flag) {
+            List<Component> tooltip, TooltipFlag flag) {
+        Consumer<Component> builder = tooltip::add;
         int planeID = getPlaneID(stack);
         if (isBound(stack)) {
             builder.accept(Component.translatable("item.thaumichorizons.keystoneth"));
             CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-            String planeName = data == null ? "" : data.copyTag().getStringOr("name", "");
+            String planeName = data == null ? "" : data.copyTag().getString("name");
             if (!planeName.isBlank()) {
                 builder.accept(Component.literal(planeName));
             }

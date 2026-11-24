@@ -1,6 +1,7 @@
 package dev.visfox.thaumichorizons.item;
 
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
+import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -9,7 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
@@ -38,11 +38,12 @@ public class AmuletMirrorItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        Consumer<Component> builder = tooltip::add;
         if (TcReforgedPort.mirrors.isAvailable() && TcReforgedPort.mirrors.isLinked(stack)) {
             TcReforgedPort.mirrors.appendLink(stack, builder);
         }
-        super.appendHoverText(stack, context, display, builder, flag);
+        super.appendHoverText(stack, context, tooltip, flag);
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {

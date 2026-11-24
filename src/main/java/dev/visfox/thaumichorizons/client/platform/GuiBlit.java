@@ -1,16 +1,26 @@
 package dev.visfox.thaumichorizons.client.platform;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 
 public final class GuiBlit {
     private GuiBlit() {
     }
 
-    public static void blit(GuiGraphicsExtractor graphics, Identifier texture, int x, int y, int width, int height,
+    public static void blit(GuiGraphics graphics, ResourceLocation texture, int x, int y, int width, int height,
         int u, int v, int regionWidth, int regionHeight, int textureWidth, int textureHeight, int argb) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, (float) u, (float) v, width, height, regionWidth,
-            regionHeight, textureWidth, textureHeight, argb);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(
+            FastColor.ARGB32.red(argb) / 255.0F,
+            FastColor.ARGB32.green(argb) / 255.0F,
+            FastColor.ARGB32.blue(argb) / 255.0F,
+            FastColor.ARGB32.alpha(argb) / 255.0F
+        );
+        graphics.blit(texture, x, y, width, height, (float) u, (float) v, regionWidth, regionHeight,
+            textureWidth, textureHeight);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

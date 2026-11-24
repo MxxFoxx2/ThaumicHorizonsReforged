@@ -5,24 +5,24 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public final class PortalTHRenderer implements BlockEntityRenderer<PortalTHBlockEntity, PortalTHRenderer.State> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/misc/vortex.png");
+public final class PortalTHRenderer implements ThStateBlockRenderer<PortalTHBlockEntity, PortalTHRenderer.State> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/misc/vortex.png");
 
     public PortalTHRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public int openCount;
         public int color;
         public int frame;
@@ -36,8 +36,7 @@ public final class PortalTHRenderer implements BlockEntityRenderer<PortalTHBlock
 
     @Override
     public void extractRenderState(PortalTHBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.openCount = entity.openCount();
         state.color = switch (entity.sourceDimension()) {
@@ -52,7 +51,7 @@ public final class PortalTHRenderer implements BlockEntityRenderer<PortalTHBlock
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         float open = state.openCount + state.partialTicks;
         float horizontal = Math.min(5.0F, open) / 5.0F;
         float vertical = Math.min(30.0F, open) / 30.0F;
@@ -63,7 +62,7 @@ public final class PortalTHRenderer implements BlockEntityRenderer<PortalTHBlock
         float u1 = (state.frame + 1) / 16.0F;
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotate(camera.orientation);
+        poseStack.mulPose(camera.orientation);
         poseStack.scale(horizontal, vertical, horizontal);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE),
             (pose, buffer) -> quad(buffer, pose, state.color, state.lightCoords, u0, u1));

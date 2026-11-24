@@ -6,13 +6,13 @@ import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.blockentity.VatBlockEntity;
 import dev.visfox.thaumichorizons.blockentity.VatMatrixBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.client.geom.CubeGeometry;
@@ -25,15 +25,15 @@ import thaumcraft.client.geom.QuadSink;
  * <p>Draws the eight animated cubes, their emissive overlay, and the additive
  * infusion halo while the Vat is in infusion mode.</p>
  */
-public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlockEntity, VatMatrixRenderer.State> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class VatMatrixRenderer implements ThStateBlockRenderer<VatMatrixBlockEntity, VatMatrixRenderer.State> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
         "thaumcraft", "textures/model/infuser.png");
     private static final int FULL_BRIGHT = 0x00F000F0;
 
     public VatMatrixRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public float startUp;
         public float instability;
         public float craftCount;
@@ -49,8 +49,7 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
 
     @Override
     public void extractRenderState(VatMatrixBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         state.partialTicks = partialTicks;
         if (entity.getLevel() == null) {
             state.startUp = 0.0F;
@@ -77,8 +76,8 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-        net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector,
+        dev.visfox.thaumichorizons.client.platform.ThCameraRenderState camera) {
         float ticks = state.gameTime + state.partialTicks;
         float startup = Math.max(0.0F, Math.min(1.0F, state.startUp));
         float activeInstability = Math.min(6.0F,
@@ -86,7 +85,7 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
 
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, (ticks % 360.0F) * startup);
+        poseStack.mulPose(Axis.YP.rotationDegrees((ticks % 360.0F) * startup));
 
         for (int x = 0; x < 2; x++) {
             for (int y = 0; y < 2; y++) {
@@ -104,13 +103,13 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
                         (y == 0 ? -0.25F : 0.25F) + wobbleY,
                         (z == 0 ? -0.25F : 0.25F) + wobbleZ);
                     if (x > 0) {
-                        poseStack.rotateDegrees(Axis.XP, 90.0F);
+                        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
                     }
                     if (y > 0) {
-                        poseStack.rotateDegrees(Axis.YP, 90.0F);
+                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
                     }
                     if (z > 0) {
-                        poseStack.rotateDegrees(Axis.ZP, 90.0F);
+                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                     }
                     poseStack.scale(0.45F, 0.45F, 0.45F);
 

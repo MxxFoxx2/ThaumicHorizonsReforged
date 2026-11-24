@@ -27,7 +27,7 @@ public class GolemBellTHItem extends GolemBellItem {
             }
             if (player.isShiftKeyDown()) {
                 if (golem.getCore() >= 0) {
-                    golem.spawnAtLocation(level, GolemItems.core(golem.getCore()));
+                    golem.spawnAtLocation(GolemItems.core(golem.getCore()));
                 }
                 golem.die();
                 return true;
@@ -35,7 +35,7 @@ public class GolemBellTHItem extends GolemBellItem {
             ItemStack dropped = golem.toItem(false);
             golem.dropCarried();
             if (!dropped.isEmpty()) {
-                golem.spawnAtLocation(level, dropped);
+                golem.spawnAtLocation(dropped);
             }
             THSounds.play(level, golem.position(), "zap", SoundSource.PLAYERS, 0.5F, 1.0F);
             golem.discard();

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public abstract class TargetGoalTH extends Goal {
     protected final Mob taskOwner;
@@ -80,8 +80,8 @@ public abstract class TargetGoalTH extends Goal {
         if (!target.isAlive()) {
             return false;
         }
-        if (this.taskOwner instanceof OwnableEntity owner && owner.getOwnerReference() != null) {
-            if (target instanceof OwnableEntity other && owner.getOwnerReference().equals(other.getOwnerReference())) {
+        if (this.taskOwner instanceof OwnableEntity owner && owner.getOwnerUUID() != null) {
+            if (target instanceof OwnableEntity other && owner.getOwnerUUID().equals(other.getOwnerUUID())) {
                 return false;
             }
             LivingEntity ownerEntity = owner.getOwner();

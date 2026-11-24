@@ -2,6 +2,8 @@ package dev.visfox.thaumichorizons.item;
 
 import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
 import net.minecraft.ChatFormatting;
+import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,8 +28,9 @@ public class SyringeBloodSampleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack sample, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
-        java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack sample, TooltipContext context, List<Component> lines,
+        TooltipFlag flag) {
+        Consumer<Component> tooltip = lines::add;
         tooltip.accept(Component.literal("Essentia required to clone:").withStyle(ChatFormatting.GRAY));
         AspectList asp = new AspectList().add(Aspect.LIFE, 4);
         SyringeKeys.SampleData data = SyringeKeys.SAMPLE.get(sample);

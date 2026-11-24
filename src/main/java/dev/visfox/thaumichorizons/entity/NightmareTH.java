@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -97,7 +97,7 @@ public final class NightmareTH extends Endersteed {
 
     private Vec3 safeColumn(ServerLevel destination, int x, int z) {
         BlockPos surface = destination.getHeightmapPos(
-            Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, destination.getMaxY() - 1, z));
+            Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, destination.getMaxBuildHeight() - 1, z));
         BlockPos ground = surface.below();
         if (!destination.getBlockState(ground).isFaceSturdy(destination, ground, Direction.UP)) {
             return null;

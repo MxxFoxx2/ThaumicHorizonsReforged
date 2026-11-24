@@ -43,6 +43,16 @@ class ConfigResearchRegistrationTest {
     }
 
     @Test
+    void voidPuttyHasRepairRecipePage() {
+        ResearchItem entry = ResearchCategories.getResearch("voidPutty");
+        assertNotNull(entry);
+        assertEquals(2, entry.pages().size());
+        ResearchPage page = entry.pages().get(1);
+        assertTrue(page instanceof ResearchPage.Text);
+        assertEquals("voidPutty2", ((ResearchPage.Text) page).text());
+    }
+
+    @Test
     void creatureAndSelfInfusionPagesUseStandardImageMarkers() {
         ResearchCategory category = ResearchCategories.get(CATEGORY);
         assertNotNull(category);

@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -9,6 +9,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class LostSoul extends Mob implements Enemy {
     public int courseChangeCooldown;
@@ -26,16 +27,16 @@ public class LostSoul extends Mob implements Enemy {
 
     private static @Nullable SoundEvent tcSound(String path, @Nullable SoundEvent fallback) {
         return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT
-            .getOptional(Identifier.fromNamespaceAndPath("thaumcraft", path))
+            .getOptional(ResourceLocation.fromNamespaceAndPath("thaumcraft", path))
             .orElse(fallback);
     }
 
-    public LostSoul(EntityType<? extends LostSoul> type, Level level) {
+    public LostSoul(EntityType<LostSoul> type, Level level) {
         super(type, level);
         this.courseChangeCooldown = 0;
         this.xpReward = 5;
         this.setNoGravity(true);
-        this.moveControl = new net.minecraft.world.entity.ai.control.FlyingMoveControl<>(this, 20, true);
+        this.moveControl = new net.minecraft.world.entity.ai.control.FlyingMoveControl(this, 20, true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -55,11 +56,16 @@ public class LostSoul extends Mob implements Enemy {
 
     @Override
     public void travel(Vec3 input) {
-        this.travelFlying(input, 0.02F);
+        if (this.isControlledByLocalInstance()) {
+            this.moveRelative(0.02F, input);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.91));
+        }
+        this.calculateEntityAnimation(false);
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+    public boolean hurt(DamageSource source, float damage) {
         return false;
     }
 
@@ -78,8 +84,9 @@ public class LostSoul extends Mob implements Enemy {
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel level) {
-        super.customServerAiStep(level);
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ServerLevel level = (ServerLevel) this.level();
         double dx = this.waypointX - this.getX();
         double dy = this.waypointY - this.getY();
         double dz = this.waypointZ - this.getZ();
@@ -155,7 +162,7 @@ public class LostSoul extends Mob implements Enemy {
     }
 
     @Override
-    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, net.minecraft.world.entity.EntitySpawnReason reason) {
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, net.minecraft.world.entity.MobSpawnType reason) {
         return true;
     }
 }

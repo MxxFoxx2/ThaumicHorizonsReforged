@@ -10,10 +10,10 @@ import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LightningBolt;
@@ -38,8 +38,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 import thaumcraft.aspect.Aspect;
 
 /**
@@ -57,6 +57,18 @@ public final class CloudBlockEntity extends BlockEntity {
     public CloudBlockEntity(BlockPos pos, BlockState state) {
         super(ThBlockEntities.CLOUD.get(), pos, state);
         dropTimer = DROP_TIMERS[state.getValue(dev.visfox.thaumichorizons.block.CloudBlock.TYPE)];
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        loadAdditional(ValueInput.of(tag, registries));
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        saveAdditional(ValueOutput.of(tag, registries));
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, CloudBlockEntity cloud) {
@@ -125,7 +137,7 @@ public final class CloudBlockEntity extends BlockEntity {
             return;
         }
 
-        AABB column = new AABB(pos.getX(), level.getMinY(), pos.getZ(),
+        AABB column = new AABB(pos.getX(), level.getMinBuildHeight(), pos.getZ(),
             pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0);
         for (LightningBolt bolt : level.getEntitiesOfClass(LightningBolt.class, column)) {
             BlockPos strike = bolt.blockPosition();
@@ -182,9 +194,9 @@ public final class CloudBlockEntity extends BlockEntity {
     }
 
     private void spawnLightning(ServerLevel level, BlockPos ground) {
-        EntityType<?> lightningType = BuiltInRegistries.ENTITY_TYPE.getValue(
-            Identifier.fromNamespaceAndPath("minecraft", "lightning_bolt"));
-        Entity created = lightningType.create(level, EntitySpawnReason.TRIGGERED);
+        EntityType<?> lightningType = BuiltInRegistries.ENTITY_TYPE.get(
+            ResourceLocation.fromNamespaceAndPath("minecraft", "lightning_bolt"));
+        Entity created = lightningType.create(level);
         if (!(created instanceof LightningBolt bolt)) {
             return;
         }
@@ -199,7 +211,7 @@ public final class CloudBlockEntity extends BlockEntity {
     private void animateGroundBlock(ServerLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (state.isAir() || state.hasBlockEntity() || state.getDestroySpeed(level, pos) < 0.0F
-                || (!state.isSolidRender() && !FocusAnimationItem.isWhitelisted(state))) {
+                || (!state.isSolidRender(level, pos) && !FocusAnimationItem.isWhitelisted(state))) {
             return;
         }
 
@@ -229,7 +241,7 @@ public final class CloudBlockEntity extends BlockEntity {
         var itemCompat = TcReforgedPort.items;
         var item = id == null || !itemCompat.isAvailable()
             ? null
-            : itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", id));
+            : itemCompat.lookup(ResourceLocation.fromNamespaceAndPath("thaumcraft", id));
         spawnCloudDrop(level, new ItemStack(item != null ? item : (id == null ? Items.GOLD_NUGGET : Items.IRON_NUGGET)));
     }
 
@@ -326,9 +338,9 @@ public final class CloudBlockEntity extends BlockEntity {
     }
 
     private void convertCowToMooshroom(ServerLevel level, LivingEntity cow) {
-        EntityType<?> mooshroomType = BuiltInRegistries.ENTITY_TYPE.getValue(
-            Identifier.fromNamespaceAndPath("minecraft", "mooshroom"));
-        Entity converted = mooshroomType.create(level, EntitySpawnReason.CONVERSION);
+        EntityType<?> mooshroomType = BuiltInRegistries.ENTITY_TYPE.get(
+            ResourceLocation.fromNamespaceAndPath("minecraft", "mooshroom"));
+        Entity converted = mooshroomType.create(level);
         if (!(converted instanceof LivingEntity mooshroom)) {
             return;
         }
@@ -430,13 +442,13 @@ public final class CloudBlockEntity extends BlockEntity {
     }
 
     private BlockState thaumcraftPlant(String path, BlockState fallback) {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("thaumcraft", path));
+        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("thaumcraft", path));
         return block == Blocks.AIR ? fallback : block.defaultBlockState();
     }
 
     private BlockPos findGroundBelow(ServerLevel level) {
         BlockPos.MutableBlockPos cursor = worldPosition.mutable();
-        while (cursor.getY() > level.getMinY()
+        while (cursor.getY() > level.getMinBuildHeight()
                 && level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()) {
             cursor.move(0, -1, 0);
         }
@@ -446,7 +458,7 @@ public final class CloudBlockEntity extends BlockEntity {
     private void applyPrecipitation(ServerLevel level, int type) {
         BlockHitResult hit = level.clip(new ClipContext(
             new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() - 0.5, worldPosition.getZ() + 0.5),
-            new Vec3(worldPosition.getX() + 0.5, level.getMinY(), worldPosition.getZ() + 0.5),
+            new Vec3(worldPosition.getX() + 0.5, level.getMinBuildHeight(), worldPosition.getZ() + 0.5),
             ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, net.minecraft.world.phys.shapes.CollisionContext.empty()
         ));
         if (hit.getType() != HitResult.Type.BLOCK) {
@@ -469,7 +481,7 @@ public final class CloudBlockEntity extends BlockEntity {
                     }
                 }
                 case 3 -> level.setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 3);
-                case 4 -> TntBlock.prime(level, targetPos);
+                case 4 -> TntBlock.explode(level, targetPos);
                 case 6 -> level.setBlock(targetPos, Blocks.LAVA.defaultBlockState(), 3);
                 default -> {
                     if (flammable) {
@@ -490,8 +502,8 @@ public final class CloudBlockEntity extends BlockEntity {
         }
 
         BlockPos above = targetPos.above();
-        if (level.getBiome(targetPos).value().coldEnoughToSnow(targetPos, level.getSeaLevel())) {
-            if (target.isSolidRender() && level.isEmptyBlock(above)) {
+        if (level.getBiome(targetPos).value().coldEnoughToSnow(targetPos)) {
+            if (target.isSolidRender(level, targetPos) && level.isEmptyBlock(above)) {
                 level.setBlock(above, Blocks.SNOW.defaultBlockState(), 3);
             }
         } else if (target.is(Blocks.FARMLAND)
@@ -506,19 +518,15 @@ public final class CloudBlockEntity extends BlockEntity {
                 Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), 3);
         }
     }
-
-    @Override
     protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
+        super.loadAdditional(input.tag(), input.lookup());
         dropTimer = input.getIntOr("dropTimer", -1);
         weatherTicks = input.getIntOr("weatherTicks", 0);
         raining = input.getBooleanOr("raining", false);
         columnDepth = Math.max(1, Math.min(256, input.getIntOr("columnDepth", 256)));
     }
-
-    @Override
     protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+        super.saveAdditional(output.tag(), output.lookup());
         output.putInt("dropTimer", dropTimer);
         output.putInt("weatherTicks", weatherTicks);
         output.putBoolean("raining", raining);

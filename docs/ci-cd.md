@@ -2,9 +2,9 @@
 
 ## Continuous integration
 
-The `CI` workflow runs on pushes to `main`, pull requests targeting `main`, and manual dispatch. It builds with Java 25 and the Gradle Wrapper, runs the platform/API seam checker, and inspects the distributable JAR.
+The `CI` workflow runs on pushes to any branch, pull requests targeting `main`, and manual dispatch. On the `1.21.1` branch it builds with Java 21 and the Gradle Wrapper, runs the platform/API seam checker, the data-pack checker and the asset checker, smoke-tests a dedicated server through `Done`, and inspects the distributable JAR.
 
-The project uses a composite Gradle build: `settings.gradle` includes `../thaumcraft-4-reforged`. CI therefore checks out both repositories as sibling directories. The add-on currently needs the `MxxFoxx2/thaumcraft-4-reforged` `feat/addon-api` implementation, pinned to commit `dd1d6e729260fa7363b943a471cc78e1ef9c603f`. Bump this pin deliberately when the required API changes.
+The project uses a composite Gradle build: `settings.gradle` includes the sibling TC4R checkout selected by the `tc4rPath` property. CI therefore checks out TC4R as a sibling directory and passes `-Ptc4rPath=../thaumcraft-4-reforged` to the Gradle invocation. On this branch the checkout is the public `notlikethiss/thaumcraft-4-reforged` branch `mc/1.21.1`, pinned to commit `03f354ac4ed91151ef10c9d9b2e4947789453472`; the workflow fails if the resolved commit differs. Locally, `gradle.properties` points `tc4rPath` at the sibling `../thaumcraft-4-reforged-1.21.1` worktree.
 
 The build runs with Gradle parallel execution, the local build cache, and the configuration cache. `gradle/actions/setup-gradle` additionally caches Gradle User Home and validates the wrapper. ModDevGradle detects the CI environment and uses its CI compilation path, avoiding the normal Minecraft decompile/recompile pipeline.
 
@@ -22,7 +22,7 @@ A release is triggered only by a version tag beginning with `v`, for example `v0
 
 The release workflow deliberately builds against the source commit for the currently published upstream TC4 Reforged `1.1.3` release, not against the development fork. It checks for the APIs currently used by this add-on (custom `WandItem` recognition, Creature Infusion research pages, and Synthetic/Ethereal node types) before it spends time building or publishing anything.
 
-**Current release gate:** the public TC4 Reforged `26.3` / `1.1.3` release does not yet contain all of those APIs. The current add-on code uses the development fork's `feat/addon-api` branch. Consequently, the production release workflow is intentionally blocked until the required API is included in a published TC4 Reforged version. Do not bypass this check by switching the release build to the development fork: that would risk publishing a JAR that users cannot run with the dependency currently documented in the README.
+**Current release gate:** the public TC4 Reforged `26.3` / `1.1.3` release does not yet contain all of those APIs. The current add-on code uses the development fork's `feat/addon-api` branch. Consequently, the production release workflow is intentionally blocked until the required API is included in a published TC4 Reforged version. Do not bypass this check by switching the release build to the development fork: that would risk publishing a JAR that users cannot run with the dependency currently documented in the README. This gate describes the 26.3 release line; the `1.21.1` branch has no published release and no release workflow run yet.
 
 After the dependency is published with the required API, update the pinned TC4 Reforged commit in `.github/workflows/release.yml` to the commit corresponding to that published release. Then update the dependency version/range in the mod metadata and documentation as appropriate, bump `mod_version`, and push a matching `v<mod_version>` tag from `main`.
 

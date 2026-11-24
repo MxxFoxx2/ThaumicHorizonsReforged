@@ -7,11 +7,12 @@ import dev.visfox.thaumichorizons.infusion.ThInfusionRecipes;
 import dev.visfox.thaumichorizons.lib.EntityRay;
 import java.util.Map;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -19,8 +20,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.npc.villager.Villager;
-import net.minecraft.world.entity.animal.golem.AbstractGolem;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,13 +37,14 @@ public final class InfusionCheatItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
         Entity target = EntityRay.getPointedEntity(level, player, 1.5);
         if (!(target instanceof LivingEntity entity) || !isValidTarget(entity)) {
-            return InteractionResult.PASS;
+            return InteractionResultHolder.pass(stack);
         }
         for (ThInfusionRecipes.CreatureInfusionRecipe recipe : ThInfusionRecipes.getCritterRecipes()) {
             if (recipe.getID() != infusionId || !(recipe.getRecipeOutput() instanceof Map<?, ?> output)
@@ -70,9 +72,9 @@ public final class InfusionCheatItem extends Item {
                 TcReforgedPort.fx.burst(level,
                     new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ()), 0xFFFFFF, 16);
             }
-            return InteractionResult.CONSUME;
+            return InteractionResultHolder.consume(stack);
         }
-        return InteractionResult.PASS;
+        return InteractionResultHolder.pass(stack);
     }
 
     private static boolean isValidTarget(LivingEntity entity) {
@@ -88,7 +90,7 @@ public final class InfusionCheatItem extends Item {
         AttributeInstance instance = entity.getAttribute(attribute);
         if (instance != null) {
             instance.addTransientModifier(new AttributeModifier(
-                Identifier.fromNamespaceAndPath("thaumichorizons", "cheat_" + attribute.getRegisteredName().replace(":", "_")),
+                ResourceLocation.fromNamespaceAndPath("thaumichorizons", "cheat_" + attribute.getRegisteredName().replace(":", "_")),
                 value / divisor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         }
     }

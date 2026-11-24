@@ -14,9 +14,30 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public final class FocusIlluminationDyeRecipe extends CustomRecipe {
+    public FocusIlluminationDyeRecipe() {
+        super(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
+    }
+
     public static final FocusIlluminationDyeRecipe INSTANCE = new FocusIlluminationDyeRecipe();
-    public static final RecipeSerializer<FocusIlluminationDyeRecipe> SERIALIZER =
-        new RecipeSerializer<>(MapCodec.unit(INSTANCE), StreamCodec.<RegistryFriendlyByteBuf, FocusIlluminationDyeRecipe>unit(INSTANCE));
+    private static final MapCodec<FocusIlluminationDyeRecipe> CODEC = MapCodec.unit(INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, FocusIlluminationDyeRecipe> STREAM_CODEC =
+        StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<FocusIlluminationDyeRecipe> SERIALIZER = new RecipeSerializer<>() {
+        @Override
+        public MapCodec<FocusIlluminationDyeRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, FocusIlluminationDyeRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+    };
+
+    @Override
+    public boolean canCraftInDimensions(int width, int height) {
+        return true;
+    }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
@@ -42,7 +63,7 @@ public final class FocusIlluminationDyeRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input) {
+    public ItemStack assemble(CraftingInput input, net.minecraft.core.HolderLookup.Provider registries) {
         ItemStack focus = null;
         int color = 0;
         for (int slot = 0; slot < input.size(); slot++) {
@@ -56,10 +77,7 @@ public final class FocusIlluminationDyeRecipe extends CustomRecipe {
                 }
                 focus = stack;
             } else if (stack.getItem() instanceof DyeItem) {
-                DyeColor dye = stack.get(DataComponents.DYE);
-                if (dye == null) {
-                    return ItemStack.EMPTY;
-                }
+                DyeColor dye = ((DyeItem) stack.getItem()).getDyeColor();
                 color = FocusIlluminationItem.legacyColorIndex(dye);
             } else {
                 return ItemStack.EMPTY;

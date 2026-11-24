@@ -18,7 +18,7 @@ public final class InfusionCommands {
     @SubscribeEvent
     static void onRegisterCommands(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("thaumichorizons")
-            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+            .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
             .then(Commands.literal("chameleon")
                 .then(Commands.argument("active", BoolArgumentType.bool())
                     .executes(context -> setChameleon(context.getSource(), BoolArgumentType.getBool(context, "active"))))));

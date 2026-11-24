@@ -2,13 +2,13 @@ package dev.visfox.thaumichorizons.lib;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.Thaumcraft;
 
 public final class THSounds {
@@ -16,7 +16,7 @@ public final class THSounds {
     }
 
     public static @Nullable SoundEvent sound(String path) {
-        SoundEvent event = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.fromNamespaceAndPath("thaumcraft", path));
+        SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.fromNamespaceAndPath("thaumcraft", path));
         return event == null ? null : event;
     }
 

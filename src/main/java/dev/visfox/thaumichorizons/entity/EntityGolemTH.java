@@ -11,13 +11,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -38,10 +37,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.phys.AABB;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.Thaumcraft;
 import thaumcraft.entity.golem.GolemBase;
 import thaumcraft.entity.golem.GolemKeys;
@@ -106,18 +104,12 @@ public class EntityGolemTH extends GolemBase {
         if (block == null) {
             return false;
         }
-        for (net.minecraft.world.level.block.WeatheringCopper.WeatherState weather
-            : net.minecraft.world.level.block.WeatheringCopper.WeatherState.values()) {
-            if (Blocks.COPPER_BLOCK.weathering().pick(weather) == block
-                || Blocks.COPPER_BLOCK.waxed().pick(weather) == block
-                || Blocks.COPPER_CHAIN.weathering().pick(weather) == block
-                || Blocks.COPPER_CHAIN.waxed().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.weathering().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.waxed().pick(weather) == block) {
-                return true;
-            }
-        }
-        return false;
+        return block instanceof net.minecraft.world.level.block.WeatheringCopper
+            || block == Blocks.WAXED_COPPER_BLOCK
+            || block == Blocks.WAXED_EXPOSED_COPPER
+            || block == Blocks.WAXED_WEATHERED_COPPER
+            || block == Blocks.WAXED_OXIDIZED_COPPER
+            || block == Blocks.LIGHTNING_ROD;
     }
 
     public static GolemMaterialTH materialType(@Nullable Block block) {
@@ -183,7 +175,7 @@ public class EntityGolemTH extends GolemBase {
         return GolemType.WOOD;
     }
 
-    public Identifier getGolemTexture() {
+    public ResourceLocation getGolemTexture() {
         return ThaumicHorizons.id("textures/model/golem_" + material().id() + ".png");
     }
 
@@ -259,7 +251,7 @@ public class EntityGolemTH extends GolemBase {
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false,
-            (target, lvl) -> target instanceof Enemy));
+            target -> target instanceof Enemy));
         if (isBerserk()) {
             targetSelector.addGoal(1, new BerserkTargetGoal());
         }
@@ -267,12 +259,12 @@ public class EntityGolemTH extends GolemBase {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+    public boolean hurt(DamageSource source, float amount) {
         Entity attacker = source.getDirectEntity();
         if (attacker != null && attacker != this && getBlocky() == Blocks.CACTUS) {
-            attacker.hurtServer(level, damageSources().thorns(this), getUpgradeAmount(5) * 2 + random.nextInt(2));
+            attacker.hurt(damageSources().thorns(this), getUpgradeAmount(5) * 2 + random.nextInt(2));
         }
-        return super.hurtServer(level, source, amount);
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -324,9 +316,9 @@ public class EntityGolemTH extends GolemBase {
     }
 
     private void spawnEldritchGuardian() {
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.fromNamespaceAndPath("thaumcraft", "eldritch_guardian")).orElse(null);
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath("thaumcraft", "eldritch_guardian")).orElse(null);
         if (type != null) {
-            Entity guardian = type.create(level(), EntitySpawnReason.EVENT);
+            Entity guardian = type.create(level());
             if (guardian != null) {
                 guardian.setPos(getX(), getY(), getZ());
                 level().addFreshEntity(guardian);
@@ -388,34 +380,37 @@ public class EntityGolemTH extends GolemBase {
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putInt("GolemBlockTH", entityData.get(TH_BLOCK));
-        output.putString("GolemMaterialTH", material().id());
-        output.putInt("GolemMetaTH", entityData.get(TH_META));
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("GolemBlockTH", entityData.get(TH_BLOCK));
+        tag.putString("GolemMaterialTH", material().id());
+        tag.putInt("GolemMetaTH", entityData.get(TH_META));
         BlockState state = getGolemBlockState();
         if (state != null) {
-            output.store("GolemStateTH", BlockState.CODEC, state);
+            tag.put("GolemStateTH", NbtUtils.writeBlockState(state));
         }
-        output.putInt("TicksAliveTH", ticksAlive);
-        output.putInt("VoidCountTH", voidCount);
-        output.putBoolean("BerserkTH", isBerserk());
-        output.putBoolean("KaboomTH", isKaboom());
+        tag.putInt("TicksAliveTH", ticksAlive);
+        tag.putInt("VoidCountTH", voidCount);
+        tag.putBoolean("BerserkTH", isBerserk());
+        tag.putBoolean("KaboomTH", isKaboom());
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        int legacyType = input.getIntOr("GolemType", 1);
-        super.readAdditionalSaveData(input);
-        entityData.set(TH_BLOCK, input.getIntOr("GolemBlockTH", 0));
-        entityData.set(TH_META, input.getIntOr("GolemMetaTH", 0));
-        entityData.set(TH_STATE, input.read("GolemStateTH", BlockState.CODEC));
-        ticksAlive = input.getIntOr("TicksAliveTH", 0);
-        voidCount = input.getIntOr("VoidCountTH", 0);
-        entityData.set(TH_BERSERK, input.getBooleanOr("BerserkTH", false));
-        entityData.set(TH_KABOOM, input.getBooleanOr("KaboomTH", false));
+    public void readAdditionalSaveData(CompoundTag tag) {
+        int legacyType = tag.contains("GolemType") ? tag.getInt("GolemType") : 1;
+        super.readAdditionalSaveData(tag);
+        entityData.set(TH_BLOCK, tag.contains("GolemBlockTH") ? tag.getInt("GolemBlockTH") : 0);
+        entityData.set(TH_META, tag.contains("GolemMetaTH") ? tag.getInt("GolemMetaTH") : 0);
+        entityData.set(TH_STATE, tag.contains("GolemStateTH")
+            ? java.util.Optional.of(NbtUtils.readBlockState(
+                BuiltInRegistries.BLOCK.asLookup(), tag.getCompound("GolemStateTH")))
+            : java.util.Optional.empty());
+        ticksAlive = tag.contains("TicksAliveTH") ? tag.getInt("TicksAliveTH") : 0;
+        voidCount = tag.contains("VoidCountTH") ? tag.getInt("VoidCountTH") : 0;
+        entityData.set(TH_BERSERK, tag.getBoolean("BerserkTH"));
+        entityData.set(TH_KABOOM, tag.getBoolean("KaboomTH"));
         GolemMaterialTH restored;
-        String savedMaterial = input.getStringOr("GolemMaterialTH", "");
+        String savedMaterial = tag.getString("GolemMaterialTH");
         if (!savedMaterial.isBlank()) {
             restored = GolemMaterialTH.byId(savedMaterial);
         } else {
@@ -434,7 +429,7 @@ public class EntityGolemTH extends GolemBase {
 
     @Override
     public ItemStack toItem(boolean dismantle) {
-        var item = BuiltInRegistries.ITEM.getValue(ThaumicHorizons.id("golemplacer"));
+        var item = BuiltInRegistries.ITEM.get(ThaumicHorizons.id("golemplacer"));
         if (item == null) {
             return ItemStack.EMPTY;
         }
@@ -459,7 +454,7 @@ public class EntityGolemTH extends GolemBase {
             tag.putString("GolemMaterial", material.id());
             if (state != null) {
                 tag.putInt("GolemBlockId", BuiltInRegistries.BLOCK.getId(state.getBlock()));
-                tag.store("GolemState", BlockState.CODEC, state);
+                tag.put("GolemState", NbtUtils.writeBlockState(state));
             }
             tag.putInt("GolemMd", md);
             tag.putBoolean("Berserk", berserk);
@@ -472,12 +467,12 @@ public class EntityGolemTH extends GolemBase {
         }
 
         public static @Nullable Block blockOf(CompoundTag tag) {
-            int id = tag.getIntOr("GolemBlockId", 0);
-            return id == 0 ? null : BuiltInRegistries.BLOCK.get(id).map(ref -> ref.value()).orElse(null);
+            int id = tag.contains("GolemBlockId") ? tag.getInt("GolemBlockId") : 0;
+            return id == 0 ? null : BuiltInRegistries.BLOCK.byId(id);
         }
 
         public static GolemMaterialTH materialOf(CompoundTag tag) {
-        return GolemMaterialTH.byId(tag.getStringOr("GolemMaterial", GolemMaterialTH.DEFAULT.id()));
+        return GolemMaterialTH.byId(tag.contains("GolemMaterial") ? tag.getString("GolemMaterial") : GolemMaterialTH.DEFAULT.id());
     }
 
     public static @Nullable BlockState stateOf(CompoundTag tag) {
@@ -485,16 +480,17 @@ public class EntityGolemTH extends GolemBase {
             if (block == null) {
                 return null;
             }
-            return tag.read("GolemState", BlockState.CODEC).orElse(block.defaultBlockState());
+            return tag.contains("GolemState") ? NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(),
+                tag.getCompound("GolemState")) : block.defaultBlockState();
         }
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        boolean hit = super.doHurtTarget(level, target);
+    public boolean doHurtTarget(Entity target) {
+        boolean hit = super.doHurtTarget(target);
         if (hit && getBlocky() == Blocks.COBWEB && target instanceof LivingEntity living) {
             living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.SLOWNESS, 20, 0));
+                net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 20, 0));
         }
         return hit;
     }

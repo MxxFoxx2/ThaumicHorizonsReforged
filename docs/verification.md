@@ -16,6 +16,7 @@ Automated prerequisite for the current revision:
 gradlew.bat build
 python -I tools/check_seams.py
 python -I tools/check_assets.py
+python -I tools/check_data.py
 ```
 
 - [ ] **Boot:** launch a live client and a dedicated server, create or load a world, and complete a resource reload without TH crashes, mixin failures, missing models or missing textures.
@@ -28,6 +29,25 @@ python -I tools/check_assets.py
 Passing this gate supports an **experimental prerelease**, not a stable or exhaustively verified 1:1 release.
 
 ## Historical evidence and unverified behavior inventory
+
+## Minecraft 1.21.1 port branch — automated evidence
+
+Recorded on branch `1.21.1` with the port changes uncommitted on top of `d89905e`, host TC4R `mc/1.21.1` (`03f354a`), MC 1.21.1 / NeoForge 21.1.256, Java 21:
+
+| Command | Result |
+| --- | --- |
+| `.\gradlew.bat build --no-configuration-cache --rerun-tasks --console=plain` | `BUILD SUCCESSFUL` — all sources recompiled; JUnit reports 68 tests with 0 failures/errors and 1 explicit skip |
+| `python -I tools/check_seams.py` | `item models ok: 127 registered items, 211 models, 139 local textures` / `seams ok: 320 files checked` |
+| `python -I tools/check_assets.py` | `assets ok: 476 references checked` |
+| `python -I tools/check_data.py` | `data ok: 44 files checked` |
+| CI-style dedicated-server smoke (clean world, `stop` after `Done`) | server reached `Done (9.510s)!`, logged `Thaumic Horizons: Reforged loaded`, loaded 1402 recipes and stopped cleanly; total warm-cache smoke time was 36.4 seconds |
+| `.\gradlew.bat runClient` | client started with `Thaumic Horizons: Reforged loaded` and reached an existing singleplayer world; no THR ERROR/FATAL or missing-model line was recorded |
+
+- These are build, static-analysis and startup results, **not gameplay evidence**. The client reached a world, but no scripted gameplay, multiplayer, save/reload or visual acceptance scenario was completed, so every in-game `[x]` recorded below was observed on the 26.3 revision and does **not** transfer to this branch. The six-scenario smoke gate above is still open for 1.21.1.
+- The dedicated-server run is what surfaced the two port defects listed in [fidelity.md](fidelity.md): the disposable wand's data-component defaults were applied before the component types were bound (server crash at mod construction), and 11 recipe files used the 26.x bare-string ingredient form (recipe parse errors). Both are fixed and re-verified by the run above.
+- One error remains in the server log and belongs to the host: NeoForge reports `thaumcraft:firebat` and `thaumcraft:wisp` as missing `RegisterSpawnPlacementsEvent` handlers. Both are TC4R entities; the host repository is read-only for this port. The client log likewise only shows TC4R's own `thaumcraft:blockstates/static_field|sapping_field|impassable_field` missing-model warnings.
+- `SyringeKeysTest.ammoDataUsesEmptyListAsDefault` is explicitly `@Disabled`: `ItemStack.CODEC` initializes built-in registries and requires NeoForge's `LoadingModList`, which the plain JUnit environment does not provide. It remains covered only by runtime startup, not by a unit assertion.
+- Port-specific visual risks that a live client would settle first: the BEWLR item renderers (`ThItemView` view branching), the per-entity spawn-egg tints, the Pocket Plane dimension/biome load, the Void Putty repair-page mixin, the Endersteed/Nightmare armor and saddle layers, and the horse foal sheets (1.21.1 has no baby-horse layer, so foals reuse the adult sheet).
 
 ## Cloud blocks — PR #2, code and CI only
 

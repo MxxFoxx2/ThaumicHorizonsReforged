@@ -12,15 +12,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import thaumcraft.entity.golem.GolemBase;
 import thaumcraft.entity.golem.GolemKeys;
 import thaumcraft.entity.golem.GolemType;
 import thaumcraft.item.golem.GolemPlacerItem;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class GolemPlacerTHItem extends GolemPlacerItem {
@@ -40,9 +40,9 @@ public class GolemPlacerTHItem extends GolemPlacerItem {
             BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
             CompoundTag data = EntityGolemTH.GolemBlockData.get(stack);
             @Nullable BlockState blocky = EntityGolemTH.GolemBlockData.stateOf(data);
-            int md = data.getIntOr("GolemMd", 0);
-            boolean berserk = data.getBooleanOr("Berserk", false);
-            boolean kaboom = data.getBooleanOr("Kaboom", false);
+            int md = data.contains("GolemMd") ? data.getInt("GolemMd") : 0;
+            boolean berserk = data.getBoolean("Berserk");
+            boolean kaboom = data.getBoolean("Kaboom");
             EntityGolemTH golem = new EntityGolemTH(EntityGolemTH.thType(), level);
             golem.setPos(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
             golem.setYRot(level.getRandom().nextFloat() * 360.0F);
@@ -65,8 +65,9 @@ public class GolemPlacerTHItem extends GolemPlacerItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
-            Consumer<Component> builder, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip,
+            TooltipFlag flag) {
+        Consumer<Component> builder = tooltip::add;
         CompoundTag data = EntityGolemTH.GolemBlockData.get(stack);
         if (data.contains("GolemBlockId") && EntityGolemTH.GolemBlockData.blockOf(data) != null) {
             Block blocky = EntityGolemTH.GolemBlockData.blockOf(data);

@@ -9,10 +9,10 @@ import java.util.List;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class InjectorMenu extends AbstractContainerMenu {
     public static final int AMMO_SLOTS = 7;
@@ -28,8 +28,8 @@ public class InjectorMenu extends AbstractContainerMenu {
         super(ThMenus.INJECTOR.get(), containerId);
         this.player = inventory.player;
         this.ammoInv = new InjectorInventory();
-        this.injector = inventory.getSelectedItem();
-        this.blockSlot = inventory.getSelectedSlot();
+        this.injector = inventory.getSelected();
+        this.blockSlot = inventory.selected;
         List<ItemStack> ammo = new ArrayList<>();
         for (int i = 0; i < AMMO_SLOTS; i++) {
             ItemStack loaded = injector.getItem() instanceof InjectorItem injectorItem
@@ -101,7 +101,7 @@ public class InjectorMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(int slotIndex, int button, ContainerInput input, Player clicker) {
+    public void clicked(int slotIndex, int button, ClickType input, Player clicker) {
         if (slotIndex == blockSlot) {
             return;
         }

@@ -5,17 +5,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.entity.LostSoul;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public final class LostSoulRenderer extends EntityRenderer<LostSoul, EntityRenderState> {
-    private static final Identifier TEXTURE = ThaumicHorizons.id("textures/misc/soul.png");
+public final class LostSoulRenderer extends EntityRenderer<LostSoul> {
+    private static final ResourceLocation TEXTURE = ThaumicHorizons.id("textures/misc/soul.png");
 
     public LostSoulRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -23,37 +22,41 @@ public final class LostSoulRenderer extends EntityRenderer<LostSoul, EntityRende
     }
 
     @Override
-    public EntityRenderState createRenderState() {
-        return new EntityRenderState();
-    }
-
-    @Override
-    public void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
-        float bob = Mth.sin(state.ageInTicks / 6.0F) * 0.15F;
+    public void render(LostSoul entity, float entityYaw, float partialTick,
+        PoseStack poseStack, MultiBufferSource buffers, int packedLight) {
+        float bob = Mth.sin((entity.tickCount + partialTick) / 6.0F) * 0.15F;
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.45F + bob, 0.0F);
-        poseStack.rotate(camera.orientation);
-        collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE), (pose, buffer) -> {
-            quad(buffer, pose, 0.55F);
-        });
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        collectorGeometry(poseStack, buffers, packedLight);
         poseStack.popPose();
-        super.submit(state, poseStack, collector, camera);
+        super.render(entity, entityYaw, partialTick, poseStack, buffers, packedLight);
     }
 
-    private static void quad(VertexConsumer buffer, PoseStack.Pose pose, float size) {
+    private static void collectorGeometry(PoseStack poseStack, MultiBufferSource buffers, int light) {
+        VertexConsumer buffer = buffers.getBuffer(ThRenderTypes.entityTranslucent(TEXTURE));
+        quad(buffer, poseStack.last(), 0.55F, light);
+    }
+
+    private static void quad(VertexConsumer buffer, PoseStack.Pose pose, float size, int light) {
         float half = size * 0.5F;
-        vertex(buffer, pose, -half, -half, 0.0F, 0.0F, 1.0F);
-        vertex(buffer, pose, half, -half, 0.0F, 1.0F, 1.0F);
-        vertex(buffer, pose, half, half, 0.0F, 1.0F, 0.0F);
-        vertex(buffer, pose, -half, half, 0.0F, 0.0F, 0.0F);
+        vertex(buffer, pose, -half, -half, 0.0F, 1.0F, light);
+        vertex(buffer, pose, half, -half, 1.0F, 1.0F, light);
+        vertex(buffer, pose, half, half, 1.0F, 0.0F, light);
+        vertex(buffer, pose, -half, half, 0.0F, 0.0F, light);
     }
 
-    private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v) {
-        buffer.addVertex(pose, x, y, z)
+    private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light) {
+        buffer.addVertex(pose, x, y, 0.0F)
             .setColor(0xFFFFFFFF)
             .setUv(u, v)
             .setOverlay(OverlayTexture.NO_OVERLAY)
-            .setLight(240)
+            .setLight(light)
             .setNormal(pose, 0.0F, 0.0F, 1.0F);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(LostSoul entity) {
+        return TEXTURE;
     }
 }

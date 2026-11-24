@@ -1,16 +1,26 @@
 # Roadmap and current state
 
-Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). The remaining-visual-ports branch has since been merged, followed by a second original-parity pass. Current local verification includes full build and JUnit, clean seam/asset checks, client startup with a clean TH resource reload, and a dedicated server reaching `Done` with `pocket_plane` loaded. These facts remain separate from the unexecuted gameplay scenarios in `verification.md`.
+Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). The remaining-visual-ports branch has since been merged, followed by a second original-parity pass. The `1.21.1` branch carries the port described below; the 26.3 evidence quoted in the rest of this file stays attached to the 26.3 revision and does not transfer to it.
 
 ## Current foundation
 
-- Target: Minecraft 26.3 / NeoForge 26.3, as an add-on for Thaumcraft 4: Reforged.
+- Target (this branch): Minecraft 1.21.1 / NeoForge 21.1.256 on Java 21, as an add-on for Thaumcraft 4: Reforged `mc/1.21.1` (`03f354a`). The `main` branch targets Minecraft 26.3 / NeoForge 26.3 against TC4R `26.3`.
 - Compatibility interfaces and the `TcReforgedPort` ServiceLoader adapter isolate TC4R APIs; version-specific seams live in `platform/` and `client/platform/`.
 - The 74-entry research tree, aspects, English/Russian localization, player infusion attachment, Chameleon Skin redesign, Spider Climb and Warp Tumor are present.
 - The main content pass includes 20 creature types, their AI and infusion recipes; golems, lenses, foci; machines; souls, blood and Vat systems.
 - Nine menu types are registered: Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers and Vis Dynamo.
 - Entity renderers are registered for the 20 creature types plus AlchemitePrimed and the TH golem. Node Monitor has a dedicated block-entity renderer. Familiar has a dedicated cutout hat layer built from the original `ModelFamiliar` geometry. The Vat now has a block-entity renderer for the original five-part 3×3 shell (base, water, glass, top and hatch) using the shipped 512×512 atlas, plus a client-only NBT-backed preview for a contained non-player creature. Its blocks use invisible vanilla render shapes to avoid duplicate cubes. The infusion matrix renderer also draws eight rotating/wobbling cubes, an emissive pulse and the additive mode-2 halo. Explicit blockstate selectors cover Vat variants 10–11 and VatSolid variants 4–7. Normal/revived Effigy previews and the floating sample-item preview now have source render paths; the mode-1 dissolve fade and all live-client appearance checks remain open.
 - The TC4R FX adapter `TcFx` delegates to the fork's `FxProxy`. Legacy machine, Vortex, Portal and stabilizer renderers now have modern implementations; exact visual parity and runtime scenarios still need checks.
+
+## 1.21.1 port status
+
+- **Java port (done, build-verified):** all 297 sources compile against Minecraft 1.21.1 / NeoForge 21.1.256 with the TC4R `mc/1.21.1` host; the JUnit suite and the full `build` task pass.
+- **Item model layer (done):** 1.21.1 has no `assets/<namespace>/items/` definition layer and no `minecraft:special`/`select` model types, so all 127 registered items were converted to `assets/thaumichorizons/models/item/<id>.json` and the special renders now run through the NeoForge item extension `IClientItemExtensions`, with the view selected in Java by `ThItemView.of(ItemDisplayContext)`.
+- **Spawn eggs (done):** the 23 spawn eggs carry the per-entity colors from the 26.x tint definitions through the 1.21.1 `SpawnEggItem(type, background, highlight, props)` constructor.
+- **Data pack (done):** 24 loot tables, the Pocket Plane dimension type and the Pocket Plane biome were converted to the 1.21.1 schemas; `tools/backport/data_pack.py` performs the same conversion idempotently and `tools/check_data.py` validates the result. The recipe files were converted from the 26.x bare-string ingredient form to the 1.21.1 `{"item": ...}` form.
+- **Server and client startup (done):** a clean-world dedicated-server smoke reaches `Done`, loads `thaumichorizons:pocket_plane` and all recipes, then stops cleanly; a client run boots with THR loaded and reaches an existing singleplayer world. The runs found and fixed two port defects: the disposable wand applied TC4R data-component defaults before the component types were bound (server crash at mod construction), and 11 recipes used the invalid 26.x ingredient form.
+- **Tooling (done):** `tools/check_seams.py` validates the 1.21.1 item-model layer, `tools/check_assets.py` scans `blockstates`/`models`, and CI builds against the pinned TC4R `mc/1.21.1` revision on Java 21 with the data checker and a dedicated-server smoke step.
+- **Not verified yet:** no scripted gameplay scenario, multiplayer session, world save/reload cycle or visual parity pass has been completed on this branch. The Void Putty repair page and Endersteed/Nightmare armor/saddle layers are implemented but still need live visual acceptance. The 26.3 in-game evidence in `verification.md` does not transfer; the six-scenario smoke gate remains open for 1.21.1.
 
 ## Recent content additions
 
@@ -63,7 +73,7 @@ Still pending: live verification of generated terrain layers/caves/pockets, slot
 
 `docs/verification.md` contains the current six-scenario prerelease smoke gate, historical evidence and an unverified behavior inventory. The former 122 open checklist entries are inventory items rather than pending assigned work. They do not measure implementation completeness and do not individually block a prerelease.
 
-GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, Java 25 Gradle build with configuration/build caches, and distributable-JAR validation. The latest code-bearing `main` run before the documentation-only client-session update, [#44763568265](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44763568265), is green. CI does not replace the live-client and multiplayer scenarios in the smoke gate.
+GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, the data-pack checker, the Java Gradle build with configuration/build caches, and distributable-JAR validation. On this branch the workflow builds with Java 21 against the pinned TC4R `mc/1.21.1` revision `03f354a`. The latest green run recorded in this file belongs to the 26.3 `main` branch ([#44763568265](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44763568265)); the 1.21.1 branch has no CI run yet. CI does not replace the live-client and multiplayer scenarios in the smoke gate.
 
 ## Upstream
 

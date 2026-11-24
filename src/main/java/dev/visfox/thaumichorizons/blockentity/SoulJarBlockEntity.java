@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.blockentity;
 
+import dev.visfox.thaumichorizons.lib.EntityPlacement;
+
 import dev.visfox.thaumichorizons.item.SoulJarKeys.SoulJarData;
 import dev.visfox.thaumichorizons.lib.EntityNbt;
 import dev.visfox.thaumichorizons.registry.ThBlockEntities;
@@ -15,9 +17,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
+import javax.annotation.Nullable;
 import thaumcraft.wand.WandInteractable;
 
 public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractable {
@@ -48,9 +50,9 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
                 return InteractionResult.PASS;
             }
             if (ent instanceof TamableAnimal tameable && !tameable.isTame()) {
-                tameable.setOwner(player);
+                tameable.setTame(true, true); tameable.setOwnerUUID(player.getUUID());
             }
-            ent.snapTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, 0.0F, 0.0F);
+            EntityPlacement.snapTo(ent, pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, 0.0F, 0.0F);
             if (!serverLevel.addFreshEntity(ent)) {
                 return InteractionResult.PASS;
             }
@@ -63,7 +65,7 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
             }
         }
         level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F);
-        player.swing(player.getUsedItemHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+        player.swing(player.getUsedItemHand(), false);
         return InteractionResult.SUCCESS;
     }
 

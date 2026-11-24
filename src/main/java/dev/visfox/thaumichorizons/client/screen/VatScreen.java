@@ -4,28 +4,29 @@ import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.container.VatMenu;
 import dev.visfox.thaumichorizons.infusion.CreatureInfusions;
 import dev.visfox.thaumichorizons.registry.ThItems;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class VatScreen extends AbstractContainerScreen<VatMenu> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("thaumichorizons", "textures/gui/guivat.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/gui/guivat.png");
 
     public VatScreen(VatMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 176, 209);
+        super(menu, inventory, title);
+        imageWidth = 176;
+        imageHeight = 209;
     }
 
     @Override
-    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick);
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         ThGui.sheet(graphics, TEXTURE, leftPos, topPos, imageWidth, imageHeight, 0, 0);
         if (!TcReforgedPort.research.isComplete(menu.player(), "incarnationVat")) {
             ThGui.sheet(graphics, TEXTURE, leftPos + 58, topPos + 30, 57, 20, 176, 163);
@@ -56,7 +57,7 @@ public class VatScreen extends AbstractContainerScreen<VatMenu> {
         }
     }
 
-    private void drawHealth(GuiGraphicsExtractor graphics, float adjustedHealth, float max) {
+    private void drawHealth(GuiGraphics graphics, float adjustedHealth, float max) {
         for (int i = 0; i < (int) max; i++) {
             int x = leftPos + 56 + 7 * i - 63 * (i / 9);
             int y = topPos + 12 + 7 * (i / 9);

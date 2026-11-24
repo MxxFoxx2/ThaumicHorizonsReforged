@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.node.Node;
@@ -116,7 +116,7 @@ public class ExplosionAlchemite {
                     double d10 = (1.0 - d8) * getBlockDensity(vec3, entity.getBoundingBox());
                     double damage = ((d10 * d10 + d10) / 2.0 * 16.0 * this.explosionSize + 1.0);
                     if (this.level instanceof ServerLevel serverLevel) {
-                        entity.hurtServer(serverLevel, serverLevel.damageSources().magic(), (float) (int) damage);
+                        entity.hurt(serverLevel.damageSources().magic(), (float) (int) damage);
                     }
                     entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d10, d6 * d10, d7 * d10));
                 }
@@ -183,7 +183,7 @@ public class ExplosionAlchemite {
             var itemCompat = TcReforgedPort.items;
             boolean itemsAvailable = itemCompat.isAvailable();
             Item essenceItem = itemsAvailable
-                ? itemCompat.lookup(Identifier.fromNamespaceAndPath("thaumcraft", "crystallized_essence"))
+                ? itemCompat.lookup(ResourceLocation.fromNamespaceAndPath("thaumcraft", "crystallized_essence"))
                 : null;
             for (BlockPos blockpos : this.affectedBlockPositions) {
                 BlockState block = serverLevel.getBlockState(blockpos);

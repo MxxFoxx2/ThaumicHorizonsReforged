@@ -4,7 +4,7 @@ import dev.visfox.thaumichorizons.entity.EntityGolemTH;
 import dev.visfox.thaumichorizons.lib.THSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.WandItem;
@@ -29,10 +29,10 @@ import thaumcraft.wand.focus.FocusUpgradeType;
 
 public class FocusAnimationItem extends FocusItem {
     public static final FocusUpgradeType BERSERK = new FocusUpgradeType(30, "berserk",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/berserk.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/berserk.png"),
         new AspectList().add(Aspect.WEAPON, 8));
     public static final FocusUpgradeType DETONATION = new FocusUpgradeType(31, "detonation",
-        Identifier.fromNamespaceAndPath("thaumichorizons", "textures/foci/detonation.png"),
+        ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/foci/detonation.png"),
         new AspectList().add(Aspect.WEAPON, 8));
 
     private static final AspectList COST = new AspectList()
@@ -58,7 +58,7 @@ public class FocusAnimationItem extends FocusItem {
     }
 
     @Override
-    public FocusUpgradeType @Nullable [] getPossibleUpgradesByRank(ItemStack focus, int rank) {
+    public @Nullable FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focus, int rank) {
         return switch (rank) {
             case 1, 2, 4 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.EXTEND};
             case 3 -> new FocusUpgradeType[] {FocusUpgradeType.FRUGAL, FocusUpgradeType.EXTEND, BERSERK};
@@ -77,12 +77,11 @@ public class FocusAnimationItem extends FocusItem {
         if (state.hasBlockEntity() || state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) {
             return InteractionResult.PASS;
         }
-        if (!state.isSolidRender() && !isWhitelisted(state)) {
+        if (!state.isSolidRender(level, pos) && !isWhitelisted(state)) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
-            player.swing(InteractionHand.MAIN_HAND,
-                net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+            player.swing(InteractionHand.MAIN_HAND, true);
             return InteractionResult.CONSUME;
         }
         ItemStack focusStack = Wands.getFocusItem(stack);
@@ -126,7 +125,7 @@ public class FocusAnimationItem extends FocusItem {
     }
 
     @Override
-    public net.minecraft.resources.@Nullable Identifier getFocusTexture(ItemStack focus) {
-        return Identifier.fromNamespaceAndPath("thaumichorizons", "item/focus_animation");
+    public @Nullable ResourceLocation getFocusTexture(ItemStack focus) {
+        return ResourceLocation.fromNamespaceAndPath("thaumichorizons", "item/focus_animation");
     }
 }

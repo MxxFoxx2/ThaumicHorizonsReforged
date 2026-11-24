@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class SitGoalTH extends Goal {
     private final Mob entity;

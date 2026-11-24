@@ -8,9 +8,9 @@ import dev.visfox.thaumichorizons.item.lenses.ILens;
 import dev.visfox.thaumichorizons.item.lenses.ItemLensCase;
 import dev.visfox.thaumichorizons.item.lenses.LensManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -31,8 +31,8 @@ public final class ArcaneLensHud {
     }
 
     public static boolean isWearingGoggles(Player player) {
-        Item goggles = BuiltInRegistries.ITEM.getValue(
-            Identifier.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
+        Item goggles = BuiltInRegistries.ITEM.get(
+            ResourceLocation.fromNamespaceAndPath("thaumcraft", "goggles_of_revealing"));
         return goggles != null && player.getItemBySlot(EquipmentSlot.HEAD).is(goggles);
     }
 
@@ -84,16 +84,16 @@ public final class ArcaneLensHud {
         }
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.gui.screen() != null || !isWearingGoggles(player)) {
+        if (player == null || minecraft.screen != null || !isWearingGoggles(player)) {
             close();
             return;
         }
 
-        GuiGraphicsExtractor graphics = event.getGuiGraphics();
+        GuiGraphics graphics = event.getGuiGraphics();
         int centerX = graphics.guiWidth() / 2;
         int centerY = graphics.guiHeight() / 2;
-        int mouseX = Mth.floor(minecraft.mouseHandler.getScaledXPos(minecraft.getWindow()));
-        int mouseY = Mth.floor(minecraft.mouseHandler.getScaledYPos(minecraft.getWindow()));
+        int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * minecraft.getWindow().getGuiScaledWidth() / (double) minecraft.getWindow().getWidth());
+        int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * minecraft.getWindow().getGuiScaledHeight() / (double) minecraft.getWindow().getHeight());
         int count = LENSES.size();
         float radius = 18.0F + count * 2.5F;
 
@@ -115,9 +115,9 @@ public final class ArcaneLensHud {
         ItemStack currentLens = LensManager.getLensItem(
             LensManager.getLensId(player.getItemBySlot(EquipmentSlot.HEAD)));
         if (!currentLens.isEmpty()) {
-            graphics.item(currentLens, centerX - 8, centerY - 8);
+            graphics.renderItem(currentLens, centerX - 8, centerY - 8);
             if (Math.abs(mouseX - centerX) <= 12 && Math.abs(mouseY - centerY) <= 12) {
-                graphics.setTooltipForNextFrame(minecraft.font, currentLens, mouseX, mouseY);
+                graphics.renderTooltip(minecraft.font, currentLens, mouseX, mouseY);
             }
         }
 
@@ -136,15 +136,15 @@ public final class ArcaneLensHud {
                 x + 10,
                 y + 10,
                 hovered ? 0xE6B79B55 : 0xD52B2535);
-            graphics.item(entry.getValue(), x - 8, y - 8);
+            graphics.renderItem(entry.getValue(), x - 8, y - 8);
             if (hovered) {
-                graphics.setTooltipForNextFrame(minecraft.font, entry.getValue(), mouseX, mouseY);
+                graphics.renderTooltip(minecraft.font, entry.getValue(), mouseX, mouseY);
             }
             index++;
         }
 
         String hint = "Release V to equip · Shift+V to remove";
-        graphics.text(minecraft.font, hint, centerX - minecraft.font.width(hint) / 2,
+        graphics.drawString(minecraft.font, hint, centerX - minecraft.font.width(hint) / 2,
             centerY + Mth.ceil(radius) + 18, 0xFFE8DDBF, true);
     }
 }

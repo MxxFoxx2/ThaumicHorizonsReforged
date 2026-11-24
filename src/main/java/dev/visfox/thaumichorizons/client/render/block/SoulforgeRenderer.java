@@ -4,23 +4,23 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.SoulforgeBlockEntity;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThCameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.client.render.device.WardedRendering;
 
-public final class SoulforgeRenderer implements BlockEntityRenderer<SoulforgeBlockEntity, SoulforgeRenderer.State> {
-    private static final Identifier SOUL = ThaumicHorizons.id("textures/misc/soul.png");
+public final class SoulforgeRenderer implements ThStateBlockRenderer<SoulforgeBlockEntity, SoulforgeRenderer.State> {
+    private static final ResourceLocation SOUL = ThaumicHorizons.id("textures/misc/soul.png");
 
     public SoulforgeRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public float rotation;
         public int forging;
         public int souls;
@@ -34,8 +34,7 @@ public final class SoulforgeRenderer implements BlockEntityRenderer<SoulforgeBlo
 
     @Override
     public void extractRenderState(SoulforgeBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         state.rotation = entity.rota;
         state.forging = entity.forging;
@@ -44,17 +43,17 @@ public final class SoulforgeRenderer implements BlockEntityRenderer<SoulforgeBlo
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector, ThCameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, -1.25F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, state.rotation - 90.0F);
-        WardedRendering.brainJar(collector, poseStack, state.lightCoords, 0.0F, WardedRendering.viewerTicks());
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation - 90.0F));
+        WardedRendering.brainJar(collector.buffers, poseStack, state.lightCoords, 0.0F, WardedRendering.viewerTicks());
         poseStack.popPose();
 
         if (state.forging > 0) {
             for (int x = 0; x < 2; x++) {
                 for (int z = 0; z < 2; z++) {
-                    MachineRenderHelper.frame(poseStack, collector, camera, MachineRenderHelper.LIGHTNING_RING,
+                    MachineRenderHelper.frame(poseStack, collector, MachineRenderHelper.LIGHTNING_RING,
                         x == 0 ? 0.025F : 0.975F, 0.75F, z == 0 ? 0.025F : 0.975F,
                         0.9F, 16, state.frame, 0xFFFFFFFF, state.lightCoords);
                 }
@@ -69,7 +68,7 @@ public final class SoulforgeRenderer implements BlockEntityRenderer<SoulforgeBlo
             for (int index = 0; index < state.souls; index++) {
                 float x = (float) (0.5 + distance * Math.sin(2.0 * radian + offset * index));
                 float z = (float) (0.5 + distance * Math.cos(2.0 * radian + offset * index));
-                MachineRenderHelper.particle(poseStack, collector, camera, SOUL, x, 0.85F, z,
+                MachineRenderHelper.particle(poseStack, collector, SOUL, x, 0.85F, z,
                     0.1F, 0.0F, v0, 1.0F, v1, 0xFFFFFFFF, state.lightCoords);
             }
         }

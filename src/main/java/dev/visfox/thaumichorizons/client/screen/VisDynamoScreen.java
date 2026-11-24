@@ -1,22 +1,24 @@
 package dev.visfox.thaumichorizons.client.screen;
 
 import dev.visfox.thaumichorizons.container.VisDynamoMenu;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import thaumcraft.aspect.Aspect;
 
 public class VisDynamoScreen extends AbstractContainerScreen<VisDynamoMenu> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("thaumichorizons", "textures/gui/guidynamo.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("thaumichorizons", "textures/gui/guidynamo.png");
 
     public VisDynamoScreen(VisDynamoMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 111, 104);
+        super(menu, inventory, title);
+        imageWidth = 111;
+        imageHeight = 104;
     }
 
     @Override
-    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         ThGui.drawTag(graphics, 11, 12, Aspect.AIR, 0.0F, !menu.tile().provideAer);
         ThGui.drawTag(graphics, 83, 11, Aspect.EARTH, 0.0F, !menu.tile().provideTerra);
         ThGui.drawTag(graphics, 11, 45, Aspect.FIRE, 0.0F, !menu.tile().provideIgnis);
@@ -26,15 +28,14 @@ public class VisDynamoScreen extends AbstractContainerScreen<VisDynamoMenu> {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick);
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         ThGui.sheet(graphics, TEXTURE, leftPos, topPos, imageWidth, imageHeight, 0, 0);
     }
 
     @Override
-    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
-        int x = (int) event.x() - leftPos;
-        int y = (int) event.y() - topPos;
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int x = (int) mouseX - leftPos;
+        int y = (int) mouseY - topPos;
         if (inRect(x, y, 11, 12)) {
             click(1);
             return true;
@@ -59,7 +60,7 @@ public class VisDynamoScreen extends AbstractContainerScreen<VisDynamoMenu> {
             click(6);
             return true;
         }
-        return super.mouseClicked(event, doubleClick);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private boolean inRect(int x, int y, int rx, int ry) {

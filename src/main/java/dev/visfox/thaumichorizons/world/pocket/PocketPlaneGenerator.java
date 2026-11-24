@@ -1,5 +1,7 @@
 package dev.visfox.thaumichorizons.world.pocket;
 
+import dev.visfox.thaumichorizons.lib.TagInput;
+
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlock;
 import dev.visfox.thaumichorizons.block.pocket.PortalTHBlockEntity;
 import dev.visfox.thaumichorizons.lib.TcBlocks;
@@ -12,16 +14,15 @@ import java.util.Iterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.biome.Biomes;
@@ -114,22 +115,22 @@ public final class PocketPlaneGenerator {
     private static Block taint(int md) {
         // blockTaint metadata: 0 crusted taint, 1 tainted soil, 2 flesh.
         return switch (md) {
-            case 0 -> tc("crusted_taint", Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE));
+            case 0 -> tc("crusted_taint", Blocks.PURPLE_TERRACOTTA);
             case 1 -> tc("tainted_soil", Blocks.DIRT);
-            case 2 -> tc("flesh_block", Blocks.WOOL.pick(DyeColor.RED));
-            default -> Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE);
+            case 2 -> tc("flesh_block", Blocks.RED_WOOL);
+            default -> Blocks.PURPLE_TERRACOTTA;
         };
     }
 
     private static Block taintFiber(int md) {
         // blockTaintFibres is a separate legacy registry from blockTaint.
         return switch (md) {
-            case 0 -> tc("fibrous_taint", Blocks.WOOL.pick(DyeColor.PURPLE));
+            case 0 -> tc("fibrous_taint", Blocks.PURPLE_WOOL);
             case 1 -> tc("tainted_grass", Blocks.GRASS_BLOCK);
             case 2 -> tc("tainted_plant", Blocks.TALL_GRASS);
             case 3 -> tc("spore_stalk", Blocks.WARPED_STEM);
             case 4 -> tc("mature_spore_stalk", Blocks.WARPED_STEM);
-            default -> Blocks.WOOL.pick(DyeColor.PURPLE);
+            default -> Blocks.PURPLE_WOOL;
         };
     }
 
@@ -224,25 +225,25 @@ public final class PocketPlaneGenerator {
         int pointer = 0;
         data.potionEffects = new int[8];
         if (aspects.getAmount(Aspect.MOTION) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.SPEED);
+            data.potionEffects[pointer++] = id(MobEffects.MOVEMENT_SPEED);
         }
         if (aspects.getAmount(Aspect.FLIGHT) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.JUMP_BOOST);
+            data.potionEffects[pointer++] = id(MobEffects.JUMP);
         }
         if (aspects.getAmount(Aspect.HEAL) > 0) {
             data.potionEffects[pointer++] = id(MobEffects.REGENERATION);
         }
         if (aspects.getAmount(Aspect.TRAVEL) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.SPEED);
+            data.potionEffects[pointer++] = id(MobEffects.MOVEMENT_SPEED);
         }
         if (aspects.getAmount(Aspect.TOOL) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.HASTE);
+            data.potionEffects[pointer++] = id(MobEffects.DIG_SPEED);
         }
         if (aspects.getAmount(Aspect.WEAPON) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.STRENGTH);
+            data.potionEffects[pointer++] = id(MobEffects.DAMAGE_BOOST);
         }
         if (aspects.getAmount(Aspect.ARMOR) > 0) {
-            data.potionEffects[pointer++] = id(MobEffects.RESISTANCE);
+            data.potionEffects[pointer++] = id(MobEffects.DAMAGE_RESISTANCE);
         }
     }
 
@@ -352,7 +353,7 @@ public final class PocketPlaneGenerator {
             drewAnything = true;
         }
         if (aspects.getAmount(Aspect.CLOTH) > 0) {
-            drawLayer(xCenter, yCenter, zCenter, data, world, Blocks.WOOL.pick(DyeColor.WHITE), 0, level, noise, cold, desert, life,
+            drawLayer(xCenter, yCenter, zCenter, data, world, Blocks.WHITE_WOOL, 0, level, noise, cold, desert, life,
                 aspects);
             level -= fastFloor(aspectFraction(Aspect.CLOTH, aspects) * data.radius);
             drewAnything = true;
@@ -435,7 +436,7 @@ public final class PocketPlaneGenerator {
                                     setBlock(world, x + xCenter, y + level, z + zCenter, block, 0);
                                     if ((life > 40 || aspects.getAmount(Aspect.BEAST) > 0)
                                             && rand.nextInt(100) > 98 && creatures < MAX_CREATURES) {
-                                        spawn(world, EntityTypes.SQUID, x + xCenter, y + level, z + zCenter, false);
+                                        spawn(world, EntityType.SQUID, x + xCenter, y + level, z + zCenter, false);
                                     }
                                     if (life > 0 && rand.nextInt(100) > 98) {
                                         setBlock(world, x + xCenter, y + level + 1, z + zCenter, Blocks.LILY_PAD, 0);
@@ -562,13 +563,13 @@ public final class PocketPlaneGenerator {
                             if ((life >= 50 || aspects.getAmount(Aspect.BEAST) > 0) && rand.nextInt(100) > 98) {
                                 Mob critter = null;
                                 switch (rand.nextInt(7)) {
-                                    case 0 -> critter = EntityTypes.COW.create(world, EntitySpawnReason.NATURAL);
-                                    case 1 -> critter = EntityTypes.PIG.create(world, EntitySpawnReason.NATURAL);
-                                    case 2 -> critter = EntityTypes.CHICKEN.create(world, EntitySpawnReason.NATURAL);
-                                    case 3 -> critter = EntityTypes.SHEEP.create(world, EntitySpawnReason.NATURAL);
-                                    case 4 -> critter = EntityTypes.HORSE.create(world, EntitySpawnReason.NATURAL);
-                                    case 5 -> critter = EntityTypes.OCELOT.create(world, EntitySpawnReason.NATURAL);
-                                    case 6 -> critter = EntityTypes.WOLF.create(world, EntitySpawnReason.NATURAL);
+                                    case 0 -> critter = EntityType.COW.create(world);
+                                    case 1 -> critter = EntityType.PIG.create(world);
+                                    case 2 -> critter = EntityType.CHICKEN.create(world);
+                                    case 3 -> critter = EntityType.SHEEP.create(world);
+                                    case 4 -> critter = EntityType.HORSE.create(world);
+                                    case 5 -> critter = EntityType.OCELOT.create(world);
+                                    case 6 -> critter = EntityType.WOLF.create(world);
                                 }
                                 if (critter != null && creatures < MAX_CREATURES) {
                                     critter.setPos(x + xCenter + 0.5D, y + level + 1, z + zCenter + 0.5D);
@@ -590,7 +591,7 @@ public final class PocketPlaneGenerator {
                             }
                             if (aspects.getAmount(Aspect.SLIME) > 0 && rand.nextInt(100) > 98
                                     && creatures < MAX_CREATURES) {
-                                spawn(world, EntityTypes.SLIME, x + xCenter, y + level + 1, z + zCenter, true);
+                                spawn(world, EntityType.SLIME, x + xCenter, y + level + 1, z + zCenter, true);
                             }
                             if (aspects.getAmount(Aspect.ELDRITCH) > 0 && rand.nextInt(200) > 198) {
                                 setBlock(world, x + xCenter, y + level, z + zCenter, cosmeticSolid(1), 0);
@@ -623,7 +624,7 @@ public final class PocketPlaneGenerator {
 
     private static void spawn(ServerLevel world, EntityType<? extends Mob> type, int x, int y, int z,
             boolean persistence) {
-        Mob mob = type.create(world, EntitySpawnReason.NATURAL);
+        Mob mob = type.create(world);
         if (mob != null) {
             mob.setPos(x + 0.5D, y, z + 0.5D);
             if (persistence) {
@@ -635,9 +636,9 @@ public final class PocketPlaneGenerator {
     }
 
     private static void spawnTc4Entity(ServerLevel world, String name, int x, int y, int z) {
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("thaumcraft", name));
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("thaumcraft", name));
         if (type != null) {
-            Entity entity = type.create(world, EntitySpawnReason.NATURAL);
+            Entity entity = type.create(world);
             if (entity instanceof Mob mob) {
                 mob.setPos(x + 0.5D, y, z + 0.5D);
                 mob.setPersistenceRequired();

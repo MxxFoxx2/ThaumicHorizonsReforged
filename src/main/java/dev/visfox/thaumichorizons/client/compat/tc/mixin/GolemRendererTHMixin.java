@@ -1,7 +1,6 @@
 package dev.visfox.thaumichorizons.client.compat.tc.mixin;
 
 import dev.visfox.thaumichorizons.entity.EntityGolemTH;
-import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +16,7 @@ import thaumcraft.item.golem.GolemItems;
 /** Restores TH-specific golem presentation without requiring the fork-only renderer hook. */
 @Mixin(value = GolemRenderer.class, remap = false)
 public abstract class GolemRendererTHMixin {
-    @Shadow @Final private ItemModelResolver itemResolver;
+    @Shadow @Final private thaumcraft.client.platform.ItemModelResolver itemResolver;
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void thaumichorizons$applyMaterialPresentation(

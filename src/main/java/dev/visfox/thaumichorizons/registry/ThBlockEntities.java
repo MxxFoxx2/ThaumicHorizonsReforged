@@ -33,52 +33,48 @@ public final class ThBlockEntities {
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ThaumicHorizons.MODID);
 
     public static final Supplier<BlockEntityType<CloudBlockEntity>> CLOUD = BLOCK_ENTITIES.register(
-        "cloud", () -> new BlockEntityType<>(CloudBlockEntity::new,
-            java.util.Set.of(ThBlocks.CLOUD.get(), ThBlocks.CLOUD_GLOWING.get())));
+        "cloud", () -> BlockEntityType.Builder.of(CloudBlockEntity::new, ThBlocks.CLOUD.get(), ThBlocks.CLOUD_GLOWING.get()).build(null));
     public static final Supplier<BlockEntityType<SpikeBlockEntity>> SPIKE = BLOCK_ENTITIES.register(
-        "spike", () -> new BlockEntityType<>(SpikeBlockEntity::new,
-            java.util.Set.of(ThBlocks.SPIKE.get(), ThBlocks.SPIKE_WOOD.get(), ThBlocks.SPIKE_TOOTH.get())));
+        "spike", () -> BlockEntityType.Builder.of(SpikeBlockEntity::new, ThBlocks.SPIKE.get(), ThBlocks.SPIKE_WOOD.get(), ThBlocks.SPIKE_TOOTH.get()).build(null));
     public static final Supplier<BlockEntityType<VisDynamoBlockEntity>> VIS_DYNAMO = BLOCK_ENTITIES.register(
-        "visdynamo", () -> new BlockEntityType<>(VisDynamoBlockEntity::new, ThBlocks.VIS_DYNAMO.get()));
+        "visdynamo", () -> BlockEntityType.Builder.of(VisDynamoBlockEntity::new, ThBlocks.VIS_DYNAMO.get()).build(null));
     public static final Supplier<BlockEntityType<EssentiaDynamoBlockEntity>> ESSENTIA_DYNAMO = BLOCK_ENTITIES.register(
-        "essentiadynamo", () -> new BlockEntityType<>(EssentiaDynamoBlockEntity::new, ThBlocks.ESSENTIA_DYNAMO.get()));
+        "essentiadynamo", () -> BlockEntityType.Builder.of(EssentiaDynamoBlockEntity::new, ThBlocks.ESSENTIA_DYNAMO.get()).build(null));
     public static final Supplier<BlockEntityType<NodeMonitorBlockEntity>> NODE_MONITOR = BLOCK_ENTITIES.register(
-        "nodemonitor", () -> new BlockEntityType<>(NodeMonitorBlockEntity::new, ThBlocks.NODE_MONITOR.get()));
+        "nodemonitor", () -> BlockEntityType.Builder.of(NodeMonitorBlockEntity::new, ThBlocks.NODE_MONITOR.get()).build(null));
     public static final Supplier<BlockEntityType<IlluminationLightBlockEntity>> ILLUMINATION_LIGHT = BLOCK_ENTITIES.register(
-        "illumination_light", () -> new BlockEntityType<>(IlluminationLightBlockEntity::new,
-            java.util.Set.of(ThBlocks.LIGHT.get(), ThBlocks.LIGHT_SOLAR.get())));
+        "illumination_light", () -> BlockEntityType.Builder.of(IlluminationLightBlockEntity::new, ThBlocks.LIGHT.get(), ThBlocks.LIGHT_SOLAR.get()).build(null));
     public static final Supplier<BlockEntityType<SyntheticNodeBlockEntity>> SYNTH_NODE = BLOCK_ENTITIES.register(
-        "synthnode", () -> new BlockEntityType<>(SyntheticNodeBlockEntity::new, ThBlocks.SYNTH_NODE.get()));
+        "synthnode", () -> BlockEntityType.Builder.of(SyntheticNodeBlockEntity::new, ThBlocks.SYNTH_NODE.get()).build(null));
     public static final Supplier<BlockEntityType<TransductionAmplifierBlockEntity>> TRANSDUCTION_AMPLIFIER =
         BLOCK_ENTITIES.register("transductionamplifier",
-            () -> new BlockEntityType<>(TransductionAmplifierBlockEntity::new, ThBlocks.TRANSDUCTION_AMPLIFIER.get()));
+            () -> BlockEntityType.Builder.of(TransductionAmplifierBlockEntity::new, ThBlocks.TRANSDUCTION_AMPLIFIER.get()).build(null));
     public static final Supplier<BlockEntityType<RecombinatorBlockEntity>> RECOMBINATOR = BLOCK_ENTITIES.register(
-        "recombinator", () -> new BlockEntityType<>(RecombinatorBlockEntity::new, ThBlocks.RECOMBINATOR.get()));
+        "recombinator", () -> BlockEntityType.Builder.of(RecombinatorBlockEntity::new, ThBlocks.RECOMBINATOR.get()).build(null));
     public static final Supplier<BlockEntityType<VortexBlockEntity>> VORTEX = BLOCK_ENTITIES.register(
-        "vortexth", () -> new BlockEntityType<>(VortexBlockEntity::new, ThBlocks.VORTEX.get()));
+        "vortexth", () -> BlockEntityType.Builder.of(VortexBlockEntity::new, ThBlocks.VORTEX.get()).build(null));
     public static final Supplier<BlockEntityType<VortexStabilizerBlockEntity>> VORTEX_STABILIZER = BLOCK_ENTITIES.register(
-        "vortexstabilizer", () -> new BlockEntityType<>(VortexStabilizerBlockEntity::new, ThBlocks.VORTEX_STABILIZER.get()));
+        "vortexstabilizer", () -> BlockEntityType.Builder.of(VortexStabilizerBlockEntity::new, ThBlocks.VORTEX_STABILIZER.get()).build(null));
     public static final Supplier<BlockEntityType<SoulJarBlockEntity>> SOUL_JAR = BLOCK_ENTITIES.register(
-        "souljar", () -> new BlockEntityType<>(SoulJarBlockEntity::new, ThBlocks.SOUL_JAR.get()));
+        "souljar", () -> BlockEntityType.Builder.of(SoulJarBlockEntity::new, ThBlocks.SOUL_JAR.get()).build(null));
     public static final Supplier<BlockEntityType<SoulExtractorBlockEntity>> SOUL_EXTRACTOR = BLOCK_ENTITIES.register(
-        "soulsieve", () -> new BlockEntityType<>(SoulExtractorBlockEntity::new, ThBlocks.SOUL_EXTRACTOR.get()));
+        "soulsieve", () -> BlockEntityType.Builder.of(SoulExtractorBlockEntity::new, ThBlocks.SOUL_EXTRACTOR.get()).build(null));
     public static final Supplier<BlockEntityType<InspiratronBlockEntity>> INSPIRATRON = BLOCK_ENTITIES.register(
-        "inspiratron", () -> new BlockEntityType<>(InspiratronBlockEntity::new, ThBlocks.INSPIRATRON.get()));
+        "inspiratron", () -> BlockEntityType.Builder.of(InspiratronBlockEntity::new, ThBlocks.INSPIRATRON.get()).build(null));
     public static final Supplier<BlockEntityType<SoulforgeBlockEntity>> SOULFORGE = BLOCK_ENTITIES.register(
-        "soulforge", () -> new BlockEntityType<>(SoulforgeBlockEntity::new, ThBlocks.SOULFORGE.get()));
+        "soulforge", () -> BlockEntityType.Builder.of(SoulforgeBlockEntity::new, ThBlocks.SOULFORGE.get()).build(null));
     public static final Supplier<BlockEntityType<SoulBeaconBlockEntity>> SOUL_BEACON = BLOCK_ENTITIES.register(
-        "soulbeacon", () -> new BlockEntityType<>(SoulBeaconBlockEntity::new, ThBlocks.SOUL_BEACON.get()));
+        "soulbeacon", () -> BlockEntityType.Builder.of(SoulBeaconBlockEntity::new, ThBlocks.SOUL_BEACON.get()).build(null));
     public static final Supplier<BlockEntityType<BloodInfuserBlockEntity>> BLOOD_INFUSER = BLOCK_ENTITIES.register(
-        "bloodinfuser", () -> new BlockEntityType<>(BloodInfuserBlockEntity::new, ThBlocks.BLOOD_INFUSER.get()));
+        "bloodinfuser", () -> BlockEntityType.Builder.of(BloodInfuserBlockEntity::new, ThBlocks.BLOOD_INFUSER.get()).build(null));
     public static final Supplier<BlockEntityType<VatBlockEntity>> VAT = BLOCK_ENTITIES.register("vat",
-        () -> new BlockEntityType<>(VatBlockEntity::new, ThBlocks.VAT_SOLID.get()));
+        () -> BlockEntityType.Builder.of(VatBlockEntity::new, ThBlocks.VAT_SOLID.get()).build(null));
     public static final Supplier<BlockEntityType<VatSlaveBlockEntity>> VAT_SLAVE = BLOCK_ENTITIES.register("vatslave",
-        () -> new BlockEntityType<>(VatSlaveBlockEntity::new,
-            java.util.Set.of(ThBlocks.VAT.get(), ThBlocks.VAT_SOLID.get(), ThBlocks.VAT_INTERIOR.get())));
+        () -> BlockEntityType.Builder.of(VatSlaveBlockEntity::new, ThBlocks.VAT.get(), ThBlocks.VAT_SOLID.get(), ThBlocks.VAT_INTERIOR.get()).build(null));
     public static final Supplier<BlockEntityType<VatConnectorBlockEntity>> VAT_CONNECTOR = BLOCK_ENTITIES.register(
-        "vatconnector", () -> new BlockEntityType<>(VatConnectorBlockEntity::new, ThBlocks.VAT_SOLID.get()));
+        "vatconnector", () -> BlockEntityType.Builder.of(VatConnectorBlockEntity::new, ThBlocks.VAT_SOLID.get()).build(null));
     public static final Supplier<BlockEntityType<VatMatrixBlockEntity>> VAT_MATRIX = BLOCK_ENTITIES.register(
-        "vatmatrix", () -> new BlockEntityType<>(VatMatrixBlockEntity::new, ThBlocks.MOD_MATRIX.get()));
+        "vatmatrix", () -> BlockEntityType.Builder.of(VatMatrixBlockEntity::new, ThBlocks.MOD_MATRIX.get()).build(null));
 
     private ThBlockEntities() {
     }

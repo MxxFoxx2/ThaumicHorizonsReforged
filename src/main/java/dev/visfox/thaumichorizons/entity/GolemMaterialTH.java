@@ -6,7 +6,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Own golem materials of Thaumic Horizons. Independent from the stock TC4R
@@ -158,7 +158,7 @@ public enum GolemMaterialTH {
         if (state.is(Blocks.IRON_BLOCK) || state.is(Blocks.GOLD_BLOCK) || isCopperFamily(block)
             || state.is(Blocks.RAW_IRON_BLOCK) || state.is(Blocks.RAW_GOLD_BLOCK) || state.is(Blocks.ANVIL)
             || state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL) || state.is(Blocks.IRON_BARS)
-            || state.is(Blocks.IRON_CHAIN) || state.is(Blocks.CAULDRON)
+            || state.is(Blocks.CHAIN) || state.is(Blocks.CAULDRON)
             || state.is(Blocks.WATER_CAULDRON) || state.is(Blocks.LAVA_CAULDRON) || state.is(Blocks.HOPPER)
             || state.is(Blocks.RAIL) || state.is(Blocks.POWERED_RAIL) || state.is(Blocks.DETECTOR_RAIL)
             || state.is(Blocks.ACTIVATOR_RAIL) || state.is(Blocks.IRON_DOOR) || state.is(Blocks.IRON_TRAPDOOR)
@@ -207,17 +207,11 @@ public enum GolemMaterialTH {
         if (block == null) {
             return false;
         }
-        for (net.minecraft.world.level.block.WeatheringCopper.WeatherState weather
-            : net.minecraft.world.level.block.WeatheringCopper.WeatherState.values()) {
-            if (Blocks.COPPER_BLOCK.weathering().pick(weather) == block
-                || Blocks.COPPER_BLOCK.waxed().pick(weather) == block
-                || Blocks.COPPER_CHAIN.weathering().pick(weather) == block
-                || Blocks.COPPER_CHAIN.waxed().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.weathering().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.waxed().pick(weather) == block) {
-                return true;
-            }
-        }
-        return false;
+        return block instanceof net.minecraft.world.level.block.WeatheringCopper
+            || block == Blocks.WAXED_COPPER_BLOCK
+            || block == Blocks.WAXED_EXPOSED_COPPER
+            || block == Blocks.WAXED_WEATHERED_COPPER
+            || block == Blocks.WAXED_OXIDIZED_COPPER
+            || block == Blocks.LIGHTNING_ROD;
     }
 }

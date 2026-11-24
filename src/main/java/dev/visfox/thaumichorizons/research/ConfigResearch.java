@@ -1,7 +1,7 @@
 package dev.visfox.thaumichorizons.research;
 
 import java.util.List;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
 import dev.visfox.thaumichorizons.compat.ResearchCompat.Flag;
@@ -19,7 +19,7 @@ public final class ConfigResearch {
         TcReforgedPort.research.registerCategory(
             CATEGORY,
             th("textures/misc/vat.png"),
-            Identifier.parse("thaumcraft:textures/gui/gui_researchback.png"));
+            ResourceLocation.parse("thaumcraft:textures/gui/gui_researchback.png"));
         registerAlternateGolemBell();
         registerAlcheponics();
         registerAlchIncubation();
@@ -96,16 +96,16 @@ public final class ConfigResearch {
         registerChameleonSkin();
     }
 
-    private static Identifier th(String path) {
-        return Identifier.fromNamespaceAndPath("thaumichorizons", path);
+    private static ResourceLocation th(String path) {
+        return ResourceLocation.fromNamespaceAndPath("thaumichorizons", path);
     }
 
-    private static Identifier tc(String path) {
-        return Identifier.fromNamespaceAndPath("thaumcraft", path);
+    private static ResourceLocation tc(String path) {
+        return ResourceLocation.fromNamespaceAndPath("thaumcraft", path);
     }
 
-    private static Identifier mc(String path) {
-        return Identifier.fromNamespaceAndPath("minecraft", path);
+    private static ResourceLocation mc(String path) {
+        return ResourceLocation.fromNamespaceAndPath("minecraft", path);
     }
 
     private static CompatAspectList tags(Object... pairs) {
@@ -117,7 +117,7 @@ public final class ConfigResearch {
     }
 
     private static void register(String key, CompatAspectList tags, int column, int row, int complexity,
-        Identifier icon, List<Flag> flags, List<String> parents, List<String> parentsHidden,
+        ResourceLocation icon, List<Flag> flags, List<String> parents, List<String> parentsHidden,
         List<String> siblings, List<String> itemTriggers, int warp, PageSpec... pages) {
         TcReforgedPort.research.registerResearch(new ResearchSpec(
             key, CATEGORY, tags, column, row, complexity, icon, flags, parents, parentsHidden,
@@ -543,7 +543,8 @@ public final class ConfigResearch {
         register("voidPutty", tags("permutatio", 3, "fabrico", 3, "metallum", 3),
             16, 9, 2, th("textures/item/voidputty.png"),
             List.of(Flag.CONCEALED), List.of("planarRift"), List.of(), List.of(), List.of(), 0,
-            PageSpec.text("voidPutty1"));
+            PageSpec.text("voidPutty1"),
+            PageSpec.text("voidPutty2"));
     }
 
     private static void registerVoidGolem() {

@@ -18,8 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.redstone.Orientation;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.wand.WandInteractable;
 
 public class VortexStabilizerBlock extends Block implements EntityBlock, WandInteractable {
@@ -55,12 +54,12 @@ public class VortexStabilizerBlock extends Block implements EntityBlock, WandInt
 
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
-        @Nullable Orientation orientation, boolean movedByPiston) {
+        BlockPos sourcePos, boolean movedByPiston) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof VortexStabilizerBlockEntity stabilizer) {
             stabilizer.redstoned = level.hasNeighborSignal(pos);
             stabilizer.sync();
         }
-        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        super.neighborChanged(state, level, pos, neighborBlock, sourcePos, movedByPiston);
     }
 
     @Override

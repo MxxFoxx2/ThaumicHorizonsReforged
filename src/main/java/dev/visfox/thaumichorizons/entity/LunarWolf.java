@@ -4,7 +4,7 @@ import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -13,7 +13,7 @@ import thaumcraft.aspect.AspectList;
 import thaumcraft.wand.Wands;
 
 public class LunarWolf extends Wolf {
-    public LunarWolf(EntityType<? extends LunarWolf> type, Level level) {
+    public LunarWolf(EntityType<LunarWolf> type, Level level) {
         super(type, level);
     }
 
@@ -24,11 +24,10 @@ public class LunarWolf extends Wolf {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!(this.level() instanceof ServerLevel level) || level.isBrightOutside()) {
+        if (!(this.level() instanceof ServerLevel level) || level.isDay()) {
             return;
         }
-        float moonFactor = moonPhaseFactor(level.environmentAttributes()
-            .getValue(net.minecraft.world.attribute.EnvironmentAttributes.MOON_PHASE, this.blockPosition()).ordinal());
+        float moonFactor = moonPhaseFactor(level.dimensionType().moonPhase(level.getDayTime()));
         int interval = (int) (7.0F - moonFactor * 4.0F);
         if (interval <= 0 || this.tickCount % interval != 0) {
             return;

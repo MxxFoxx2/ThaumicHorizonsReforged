@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -23,15 +22,15 @@ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class GuardianPanther extends TamableAnimal {
-    public GuardianPanther(EntityType<? extends GuardianPanther> type, Level level) {
+    public GuardianPanther(EntityType<GuardianPanther> type, Level level) {
         super(type, level);
         this.setTame(true, false);
     }
@@ -52,7 +51,7 @@ public class GuardianPanther extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createAnimalAttributes()
+        return Ocelot.createAttributes()
             .add(Attributes.MAX_HEALTH, 24.0)
             .add(Attributes.MOVEMENT_SPEED, 0.5)
             .add(Attributes.ATTACK_DAMAGE, 3.0);
@@ -70,7 +69,7 @@ public class GuardianPanther extends TamableAnimal {
         if (food != null && this.getHealth() < this.getMaxHealth()) {
             stack.consume(1, player);
             this.heal(food.nutrition());
-            return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
         }
         return super.mobInteract(player, hand);
     }
@@ -88,6 +87,6 @@ public class GuardianPanther extends TamableAnimal {
 
     @Override
     public @Nullable GuardianPanther getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return ThEntities.GUARDIAN_PANTHER.get().create(level, EntitySpawnReason.MOB_SUMMONED);
+        return ThEntities.GUARDIAN_PANTHER.get().create(level);
     }
 }

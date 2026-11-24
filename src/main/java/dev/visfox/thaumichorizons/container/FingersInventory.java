@@ -3,8 +3,8 @@ package dev.visfox.thaumichorizons.container;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.visfox.thaumichorizons.compat.ValueInput;
+import dev.visfox.thaumichorizons.compat.ValueOutput;
 
 public class FingersInventory implements Container {
     public static final int GRID_SLOTS = 9;

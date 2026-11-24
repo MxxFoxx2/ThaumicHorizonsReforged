@@ -7,14 +7,14 @@ import dev.visfox.thaumichorizons.ThaumicHorizons;
 import dev.visfox.thaumichorizons.blockentity.RecombinatorBlockEntity;
 import dev.visfox.thaumichorizons.client.platform.ThRenderTypes;
 import dev.visfox.thaumichorizons.compat.tc.TcReforgedPort;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import dev.visfox.thaumichorizons.client.platform.ThImmediateGeometry;
+import dev.visfox.thaumichorizons.client.platform.ThStateBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import dev.visfox.thaumichorizons.client.platform.ThBlockEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import thaumcraft.node.Node;
@@ -24,15 +24,15 @@ import thaumcraft.node.Node;
  * kept in the static model; this renderer moves the pearl and draws the active
  * animated ring while TC4R's BeamFx maintains the link to the node below.
  */
-public final class RecombinatorRenderer implements BlockEntityRenderer<RecombinatorBlockEntity, RecombinatorRenderer.State> {
-    private static final Identifier MODEL_TEXTURE = ThaumicHorizons.id("textures/models/recombinator.png");
-    private static final Identifier RING_TEXTURE = Identifier.fromNamespaceAndPath(
+public final class RecombinatorRenderer implements ThStateBlockRenderer<RecombinatorBlockEntity, RecombinatorRenderer.State> {
+    private static final ResourceLocation MODEL_TEXTURE = ThaumicHorizons.id("textures/models/recombinator.png");
+    private static final ResourceLocation RING_TEXTURE = ResourceLocation.fromNamespaceAndPath(
         "thaumcraft", "textures/item/lightningringv.png");
 
     public RecombinatorRenderer(BlockEntityRendererProvider.Context context) {
     }
 
-    public static final class State extends BlockEntityRenderState {
+    public static final class State extends ThBlockEntityRenderState {
         public int count;
         public boolean active;
         public boolean hasNode;
@@ -48,8 +48,7 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
 
     @Override
     public void extractRenderState(RecombinatorBlockEntity entity, State state, float partialTicks,
-        Vec3 cameraPosition, net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay overlay) {
-        BlockEntityRenderState.extractBase(entity, state, overlay);
+        Vec3 cameraPosition, Object progress) {
         Level level = entity.getLevel();
         if (level == null) {
             state.active = false;
@@ -74,8 +73,8 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-        net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+    public void submit(State state, PoseStack poseStack, ThImmediateGeometry collector,
+        dev.visfox.thaumichorizons.client.platform.ThCameraRenderState camera) {
         float sine = (float) Math.sin(state.count / 8.0F);
         float pearlOffset = sine * 2.0F;
 
@@ -93,8 +92,8 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
             float centerY = 1.5F + 0.2F * sine;
             poseStack.pushPose();
             poseStack.translate(0.5F, centerY, 0.5F);
-            poseStack.rotateDegrees(Axis.YP, -camera.yRot);
-            poseStack.rotateDegrees(Axis.XP, camera.xRot);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getYRot()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getXRot()));
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(RING_TEXTURE),
                 (pose, buffer) -> renderRing(pose, buffer, state.lightCoords, u0, u1));
             poseStack.popPose();

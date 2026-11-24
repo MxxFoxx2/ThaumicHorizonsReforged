@@ -10,8 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.redstone.Orientation;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public final class RecombinatorBlock extends Block implements EntityBlock {
     public RecombinatorBlock(Properties properties) {
@@ -20,11 +19,11 @@ public final class RecombinatorBlock extends Block implements EntityBlock {
 
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
-        @Nullable Orientation orientation, boolean movedByPiston) {
+        BlockPos sourcePos, boolean movedByPiston) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof RecombinatorBlockEntity recombinator) {
             recombinator.updatePower(level.hasNeighborSignal(pos));
         }
-        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        super.neighborChanged(state, level, pos, neighborBlock, sourcePos, movedByPiston);
     }
 
     @Override

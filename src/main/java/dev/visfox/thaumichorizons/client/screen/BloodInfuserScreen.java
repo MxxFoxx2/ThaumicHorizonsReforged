@@ -5,19 +5,18 @@ import dev.visfox.thaumichorizons.blockentity.BloodInfuserBlockEntity;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Inventory;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 
 public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("thaumichorizons",
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("thaumichorizons",
         "textures/gui/guibloodinfuser.png");
     private static final int MAX_SELECTED = 8;
 
@@ -27,7 +26,9 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
     private List<Aspect> aspectsKnown;
 
     public BloodInfuserScreen(BloodInfuserMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 176, 219);
+        super(menu, inventory, title);
+        imageWidth = 176;
+        imageHeight = 219;
         BloodInfuserBlockEntity tile = menu.tile();
         for (Aspect asp : tile.aspectsSelected.getAspects()) {
             if (asp != null) {
@@ -40,7 +41,7 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
     }
 
     @Override
-    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         List<Aspect> known = knownAspects();
         AspectList alreadyUsed = new AspectList();
         for (int i = 0; i < numSelected; i++) {
@@ -70,7 +71,7 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
                 int k = 0;
                 for (java.util.Map.Entry<net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>, Integer> entry
                     : effects.entrySet()) {
-                    graphics.text(font, Component.literal(entry.getKey().value().getDescriptionId() + " "
+                    graphics.drawString(font, Component.literal(entry.getKey().value().getDescriptionId() + " "
                         + entry.getValue()), leftPos + 171, topPos + 72 + k * 10, 0xFF808080, false);
                     k++;
                 }
@@ -79,8 +80,7 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick);
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         ThGui.sheet(graphics, TEXTURE, leftPos, topPos, imageWidth, imageHeight, 0, 0);
     }
 
@@ -100,7 +100,7 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
         return offset + 16 < known.size();
     }
 
-    private void drawAspectList(GuiGraphicsExtractor graphics, List<Aspect> known) {
+    private void drawAspectList(GuiGraphics graphics, List<Aspect> known) {
         for (int i = 0; i < 16 && offset + i < known.size(); i++) {
             Aspect asp = known.get(offset + i);
             ThGui.drawTag(graphics, 14 + 18 * (i / 2), 83 + ((i % 2 == 0) ? 18 : 0), asp, 0.0F, false);
@@ -121,10 +121,10 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         List<Aspect> known = knownAspects();
-        int x = (int) event.x() - leftPos;
-        int y = (int) event.y() - topPos;
+        int x = (int) mouseX - leftPos;
+        int y = (int) mouseY - topPos;
         if (inRect(x, y, 38, 57, 6, 6)) {
             click(menu.tile().mode == 1 ? 0 : 1);
             return true;
@@ -169,7 +169,7 @@ public class BloodInfuserScreen extends AbstractContainerScreen<BloodInfuserMenu
                 return true;
             }
         }
-        return super.mouseClicked(event, doubleClick);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private boolean inRect(int x, int y, int rx, int ry, int w, int h) {

@@ -2,7 +2,7 @@ package dev.visfox.thaumichorizons.compat.tc;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jspecify.annotations.Nullable;
+import javax.annotation.Nullable;
 import thaumcraft.aspect.Aspect;
 import thaumcraft.aspect.AspectList;
 import dev.visfox.thaumichorizons.compat.CompatAspectList;
