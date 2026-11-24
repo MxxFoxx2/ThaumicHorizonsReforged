@@ -198,25 +198,35 @@ jobs:
             fixes_section+=$'\n'
           fi
 
+          if [[ "$MOD_VERSION" == "0.1.0" ]]; then
+            release_intro="This is the initial **0.x public release** for this Minecraft version line."
+          else
+            release_intro="This is an update in the **0.x pre-1.0 release line** for this Minecraft version."
+          fi
+          if [[ "$MOD_VERSION" == "1.0.0" ]]; then
+            versioning_note="This is the 1.0.0 stability milestone."
+          else
+            versioning_note="<code>${MOD_VERSION}</code> is intentionally pre-1.0 and does not claim the compatibility guarantees of <code>1.0.0</code>."
+          fi
           cat > "$RUNNER_TEMP/release-notes.md" <<EOF
           # Thaumic Horizons: Reforged ${MOD_VERSION} — Minecraft ${MINECRAFT_VERSION}
 
-          This is the initial **0.x public release** for this Minecraft version line. It is published as a regular GitHub release (not a beta/prerelease), but it is **not the 1.0.0 stability milestone**.
+          ${release_intro} It is published as a regular GitHub release (not a beta/prerelease).
 
           ## Host compatibility
 
-          Targets the official Thaumcraft 4: Reforged 1.1.3 line for Minecraft ${MINECRAFT_VERSION}, pinned to commit <code>8b953e69c3d625469006f688d964d9f2a7911590</code>.
+          Targets the official [Thaumcraft 4: Reforged 1.1.3 line for Minecraft 26.1.2](https://github.com/notlikethiss/thaumcraft-4-reforged/tree/26.1.2), pinned to commit <code>8b953e69c3d625469006f688d964d9f2a7911590</code>.
 
           ${fixes_section}
           ## Validation
 
-          This workflow reruns the build, JUnit suite, API-seam checks, asset checks and distributable-JAR validation. See [docs/verification.md](https://github.com/${GITHUB_REPOSITORY}/blob/26.1.2/docs/verification.md) for the tested scope.
+          This workflow reruns the Java 25 build, JUnit suite, API-seam checks, model/texture/research-asset checks and JAR validation. The branch has documented local client and dedicated-server startup checks; the current verification record reports 67 JUnit tests with no failures, errors or skips. See [docs/verification.md](https://github.com/${GITHUB_REPOSITORY}/blob/26.1.2/docs/verification.md).
 
-          Gameplay, multiplayer, persistence and visual acceptance coverage remains limited to the evidence recorded on this branch. Pocket Plane travel and recovery are not yet verified as a complete playable loop. Back up worlds before testing.
+          Full gameplay, multiplayer, persistence and visual acceptance remain open on this version line. The 26.3 and 1.21.1 results do not transfer to 26.1.2. Pocket Plane travel and recovery are especially not yet verified as a complete playable loop. Back up worlds before testing.
 
           ## Versioning
 
-          <code>${MOD_VERSION}</code> is intentionally pre-1.0: it exits the beta label without claiming the compatibility guarantees of <code>1.0.0</code>.
+          ${versioning_note}
           EOF
 
       - name: Publish non-prerelease GitHub Release
