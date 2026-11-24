@@ -198,7 +198,9 @@ jobs:
             fixes_section+=$'\n'
           fi
 
-          if [[ "$MOD_VERSION" == "0.1.0" ]]; then
+          if [[ "$MOD_VERSION" == "1.0.0" ]]; then
+            release_intro="This is the 1.0.0 stability release for this Minecraft version line."
+          elif [[ "$MOD_VERSION" == "0.1.0" ]]; then
             release_intro="This is the initial **0.x public release** for this Minecraft version line."
           else
             release_intro="This is an update in the **0.x pre-1.0 release line** for this Minecraft version."
