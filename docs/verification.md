@@ -40,7 +40,7 @@ Recorded on branch `1.21.1` with the port changes uncommitted on top of `d89905e
 | `python -I tools/check_seams.py` | `item models ok: 127 registered items, 211 models, 139 local textures` / `seams ok: 320 files checked` |
 | `python -I tools/check_assets.py` | `assets ok: 476 references checked` |
 | `python -I tools/check_data.py` | `data ok: 44 files checked` |
-| CI-style dedicated-server smoke (clean world, `stop` after `Done`) | server reached `Done (9.510s)!`, logged `Thaumic Horizons: Reforged loaded`, loaded 1402 recipes and stopped cleanly; total warm-cache smoke time was 36.4 seconds |
+| Local dedicated-server smoke (clean world, `stop` after `Done`) | server reached `Done (9.510s)!`, logged `Thaumic Horizons: Reforged loaded`, loaded 1402 recipes and stopped cleanly; total warm-cache smoke time was 36.4 seconds |
 | `.\gradlew.bat runClient` | client started with `Thaumic Horizons: Reforged loaded` and reached an existing singleplayer world; no THR ERROR/FATAL or missing-model line was recorded |
 
 - These are build, static-analysis and startup results, **not gameplay evidence**. The client reached a world, but no scripted gameplay, multiplayer, save/reload or visual acceptance scenario was completed, so every in-game `[x]` recorded below was observed on the 26.3 revision and does **not** transfer to this branch. The six-scenario smoke gate above is still open for 1.21.1.

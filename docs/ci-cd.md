@@ -2,7 +2,7 @@
 
 ## Continuous integration
 
-The `CI` workflow runs on pushes to any branch, pull requests targeting `main`, and manual dispatch. On the `1.21.1` branch it builds with Java 21 and the Gradle Wrapper, runs the platform/API seam checker, the data-pack checker and the asset checker, smoke-tests a dedicated server through `Done`, and inspects the distributable JAR.
+The `CI` workflow runs on pushes to any branch, pull requests targeting `main`, and manual dispatch. On the `1.21.1` branch it builds with Java 21 and the Gradle Wrapper, runs the platform/API seam checker, the data-pack checker and the asset checker, and inspects the distributable JAR.
 
 The project uses a composite Gradle build: `settings.gradle` includes the sibling TC4R checkout selected by the `tc4rPath` property. CI therefore checks out TC4R as a sibling directory and passes `-Ptc4rPath=../thaumcraft-4-reforged` to the Gradle invocation. On this branch the checkout is the public `notlikethiss/thaumcraft-4-reforged` branch `mc/1.21.1`, pinned to commit `03f354ac4ed91151ef10c9d9b2e4947789453472`; the workflow fails if the resolved commit differs. Locally, `gradle.properties` points `tc4rPath` at the sibling `../thaumcraft-4-reforged-1.21.1` worktree.
 

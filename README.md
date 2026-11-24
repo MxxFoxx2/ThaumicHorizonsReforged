@@ -15,13 +15,13 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 >
 > TH golem materials, material-specific attributes, upgrade slots, textures and regeneration intervals are adapted locally. Optional TC4R machine-beam FX and Creature Infusion research-page extensions are not available on stock TC4R; the current TH content tree does not use those extensions.
 >
-> **Experimental pre-release:** broad gameplay, multiplayer, save/reload and visual acceptance coverage is incomplete. On the 1.21.1 branch the build, static checks and client/server startup smoke pass, and the client has reached an existing world, but no scripted gameplay or visual acceptance scenario has been completed. Pocket Plane is especially not yet validated as a complete playable dimension. Back up worlds before testing.
+> **Experimental pre-release:** broad gameplay, multiplayer, save/reload and visual acceptance coverage is incomplete. On the 1.21.1 branch the build and static checks pass, local client/server startup checks succeed, and the client has reached an existing world, but no scripted gameplay or visual acceptance scenario has been completed. Pocket Plane is especially not yet validated as a complete playable dimension. Back up worlds before testing.
 
 > **License scope.** Thaumic Horizons itself is open source — Kentington's original code is MIT and the GTNH fork's changes are LGPL-3.0-or-later — so this port's TH logic and assets are redistributable under those licenses (see Authors and license below). What stays restricted: **Thaumcraft** assets and logic belong to Azanor and reach this mod only through [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged), whose own personal-use policy applies to them.
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
-| 1.21.1 | 21.1.256 | `mc/1.21.1` (`03f354a`) | port branch — build, static checks and startup smoke green; gameplay/visual gate open |
+| 1.21.1 | 21.1.256 | `mc/1.21.1` (`03f354a`) | port branch — build, static checks and local startup checks green; gameplay/visual gate open |
 | 26.3 | 26.3.0.57-beta | 1.1.3 (official `26.3` release) | `0.1.0-beta.2` — experimental pre-release; one host-dependent feature disabled |
 | 26.1.2 | 26.1.2.122 | 1.1.3 | planned |
 
