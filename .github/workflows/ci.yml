@@ -61,10 +61,20 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: enhanced
-          cache-read-only: ${{ github.event_name == 'pull_request' || github.ref != 'refs/heads/main' }}
+          cache-read-only: ${{ github.event_name == 'pull_request' || (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/1.21.1') }}
           # Set this repository secret to persist the encrypted Configuration Cache
           # between GitHub-hosted runners. Dependency/build caches work without it.
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: Cache NeoForge development artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            thaumic-horizons-reforged/build/moddev/artifacts
+            thaumic-horizons-reforged/build/tmp/createMinecraftArtifacts
+          key: neoforge-${{ runner.os }}-${{ hashFiles('thaumic-horizons-reforged/gradle.properties', 'thaumic-horizons-reforged/build.gradle', 'thaumic-horizons-reforged/settings.gradle', 'thaumic-horizons-reforged/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            neoforge-${{ runner.os }}-${{ hashFiles('thaumic-horizons-reforged/gradle.properties') }}-
 
       - name: Check platform/API seams
         working-directory: thaumic-horizons-reforged
