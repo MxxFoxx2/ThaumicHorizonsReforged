@@ -56,7 +56,7 @@ neoForge {
 }
 
 dependencies {
-    implementation "thaumcraft:thaumcraft-4-reforged:1.1.3"
+    implementation "thaumcraft:thaumcraft-4-reforged:${tc4r_version}"
     testImplementation platform('org.junit:junit-bom:5.12.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -74,6 +74,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            tc4r_version           : tc4r_version,
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
@@ -92,6 +93,7 @@ neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xmaxerrs', '100000']
 }
 
 idea {

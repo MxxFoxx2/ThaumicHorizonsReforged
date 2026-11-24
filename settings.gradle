@@ -8,6 +8,6 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-includeBuild('../thaumcraft-4-reforged')
+includeBuild('../thaumcraft-4-reforged-26.1.2')
 
 rootProject.name = 'thaumic-horizons-reforged'

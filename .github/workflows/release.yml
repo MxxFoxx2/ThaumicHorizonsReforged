@@ -1,11 +1,13 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_authorized:
+        description: "Confirm the Minecraft 26.1.2 source/runtime acceptance gate passed"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -17,7 +19,7 @@ concurrency:
 jobs:
   release:
     name: Verify and publish release
-    if: (github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release:')) || startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'workflow_dispatch' && inputs.release_authorized == true && (github.ref == 'refs/heads/26.1.2' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -26,30 +28,30 @@ jobs:
       CI: "true"
 
     steps:
-      - name: Checkout tagged Thaumic Horizons revision
+      - name: Checkout Thaumic Horizons revision
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
           path: thaumic-horizons-reforged
 
-      # The published THR artifact targets the public TC4R 1.1.3 release.
-      - name: Checkout official Thaumcraft 4 Reforged
+      # The published THR artifact targets the pinned TC4R 1.1.3 Minecraft 26.1.2 backport.
+      - name: Checkout pinned Thaumcraft 4 Reforged 26.1.2
         uses: actions/checkout@v7
         with:
           repository: notlikethiss/thaumcraft-4-reforged
-          ref: 26.3
-          path: thaumcraft-4-reforged
+          ref: 26.1.2
+          path: thaumcraft-4-reforged-26.1.2
           persist-credentials: false
 
-      - name: Verify official TC4R 1.1.3 revision
-        working-directory: thaumcraft-4-reforged
+      - name: Verify pinned TC4R 1.1.3 revision
+        working-directory: thaumcraft-4-reforged-26.1.2
         shell: bash
         run: |
           set -euo pipefail
-          expected="99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2"
+          expected="8b953e69c3d625469006f688d964d9f2a7911590"
           actual="$(git rev-parse HEAD)"
           if [[ "$actual" != "$expected" ]]; then
-            echo "::error::Release host is not the pinned official TC4R 1.1.3 revision."
+            echo "::error::Release host is not the pinned TC4R 1.1.3 26.1.2 revision."
             exit 1
           fi
 
@@ -60,7 +62,7 @@ jobs:
           set -euo pipefail
 
           mod_version="$(grep "^mod_version=" gradle.properties | cut -d= -f2)"
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+          if [[ "$GITHUB_REF" == "refs/heads/26.1.2" ]]; then
             tag="v$mod_version"
           else
             tag="${GITHUB_REF_NAME}"
@@ -77,9 +79,9 @@ jobs:
             exit 1
           fi
 
-          git fetch --no-tags origin main
+          git fetch --no-tags origin 26.1.2
           if [[ "$GITHUB_REF" == refs/tags/* ]] && ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
-            echo "::error::The release tag must point to a commit reachable from main."
+            echo "::error::The release tag must point to a commit reachable from 26.1.2."
             exit 1
           fi
 
@@ -158,13 +160,13 @@ jobs:
           cat > "$RUNNER_TEMP/release-notes.md" <<EOF
           # Thaumic Horizons: Reforged ${tag#v}
 
-          This build packages the current source implementation of the major Thaumic Horizons content systems for Minecraft 26.3 / NeoForge 26.3.
+          This build packages the current source implementation of the major Thaumic Horizons content systems for Minecraft 26.1.2 / NeoForge 26.1.2.122.
 
           ## Host compatibility
 
-          **This build targets the official [Thaumcraft 4: Reforged 1.1.3 release for Minecraft 26.3](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.3), pinned to commit 99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2.**
+          **This build targets [Thaumcraft 4: Reforged 1.1.3 for Minecraft 26.1.2](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.1.2), pinned to commit 8b953e69c3d625469006f688d964d9f2a7911590.**
 
-          It does not require the THR-maintained TC4R fork. Compatibility adapters preserve TH golem material stats and add-on wand recognition. On stock TC4R, the Transduction Amplifier's automatic multi-transducer-to-Vortex conversion is disabled because the public host API does not expose a safe transducer-stop hook. Optional machine-beam FX and Creature Infusion research-page extensions are unavailable; no active TH content entry currently depends on either extension.
+          The Minecraft 26.1.2 source backport and its runtime compatibility are not yet validated merely by changing the build target. Resolve compilation and integration failures before publishing a release; a green CI run confirms only the configured seam, build and JAR checks.
 
           This remains an experimental pre-release. Several gameplay, multiplayer, persistence and visual acceptance scenarios remain unverified; see the repository README and docs/verification.md.
 

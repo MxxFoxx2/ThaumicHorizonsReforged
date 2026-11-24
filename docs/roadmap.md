@@ -1,18 +1,18 @@
 # Roadmap and current state
 
-Baseline snapshot captured on 2026-11-19 at `main` commit [`f601cfb`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/f601cfb8a69048ffba39317cdd60370f68b41c3f). The remaining-visual-ports branch has since been merged, followed by a second original-parity pass. Current local verification includes full build and JUnit, clean seam/asset checks, client startup with a clean TH resource reload, and a dedicated server reaching `Done` with `pocket_plane` loaded. These facts remain separate from the unexecuted gameplay scenarios in `verification.md`.
+The `26.1.2` branch starts from the Minecraft 26.3 source baseline at local commit `d89905e`. Its current task is build and documentation preparation for Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25 and TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. Retargeting Gradle does not port the Java sources or prove runtime compatibility. Current results and open gates are tracked in [verification.md](verification.md).
 
 ## Current foundation
 
-- Target: Minecraft 26.3 / NeoForge 26.3, as an add-on for Thaumcraft 4: Reforged.
-- Compatibility interfaces and the `TcReforgedPort` ServiceLoader adapter isolate TC4R APIs; version-specific seams live in `platform/` and `client/platform/`.
-- The 74-entry research tree, aspects, English/Russian localization, player infusion attachment, Chameleon Skin redesign, Spider Climb and Warp Tumor are present.
-- The main content pass includes 20 creature types, their AI and infusion recipes; golems, lenses, foci; machines; souls, blood and Vat systems.
-- Nine menu types are registered: Case, Vat, Soul Sieve, Inspiratron, Soulforge, Blood Infuser, Injector, Fingers and Vis Dynamo.
-- Entity renderers are registered for the 20 creature types plus AlchemitePrimed and the TH golem. Node Monitor has a dedicated block-entity renderer. Familiar has a dedicated cutout hat layer built from the original `ModelFamiliar` geometry. The Vat now has a block-entity renderer for the original five-part 3×3 shell (base, water, glass, top and hatch) using the shipped 512×512 atlas, plus a client-only NBT-backed preview for a contained non-player creature. Its blocks use invisible vanilla render shapes to avoid duplicate cubes. The infusion matrix renderer also draws eight rotating/wobbling cubes, an emissive pulse and the additive mode-2 halo. Explicit blockstate selectors cover Vat variants 10–11 and VatSolid variants 4–7. Normal/revived Effigy previews and the floating sample-item preview now have source render paths; the mode-1 dissolve fade and all live-client appearance checks remain open.
-- The TC4R FX adapter `TcFx` delegates to the fork's `FxProxy`. Legacy machine, Vortex, Portal and stabilizer renderers now have modern implementations; exact visual parity and runtime scenarios still need checks.
+- Target: Minecraft 26.1.2 / NeoForge 26.1.2.122, with the sibling TC4R checkout `../thaumcraft-4-reforged-26.1.2` as the required composite build.
+- Build metadata, mod dependency metadata, CI and release host pins now use the 26.1.2 versions; `tc4r_version` has a single property shared by the dependency and generated TOML.
+- The inherited source contains compatibility interfaces, `TcReforgedPort`, and version-sensitive seams in `platform/` and `client/platform/`. Their API and mixin targets still require validation against TC4R 26.1.2.
+- The inherited inventory includes the 74-entry research tree, aspects, English/Russian localization, infusions, creatures, golems, machines, lenses/foci, souls, blood, Vat systems, boats/mounts, projectiles, clouds/spikes and Pocket Plane code.
+- No 26.1.2 gameplay, multiplayer, persistence, client-rendering or release acceptance follows from the source inventory. Historical 26.3 verification remains historical evidence only.
 
-## Recent content additions
+## Inherited 26.3 implementation history
+
+The sections below record work performed on the Minecraft 26.3 baseline. Commit links and statements about successful 26.3 builds, server startup, dimensions or rendering must not be cited as 26.1.2 evidence.
 
 - **Case menu and screen** registered and wired: [`c195288`](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/commit/c195288b6d28d5045ea6598a4688671faba30a63).
 - **Greatwood and Thaumium Boats**: both entity/item registrations, original textures and boat renderers are now wired. Thaumium's lava support, fire immunity and passenger fire-resistance effect are implemented; original arcane aspects/ingredients are restored in the corresponding research pages. Runtime checks remain open.
@@ -49,22 +49,19 @@ PR #4 adds another defensive pass to the same subsystem: the source Vortex takes
 Still pending: live verification of generated terrain layers/caves/pockets, slot geometry and vis cost, Keystone round-trip, all four portal directions, return dimension/position/orientation, portal teardown, SavedData restart behavior, and client assets/rendering for the new blocks. The portal/slot and Keystone paths now exist in source but have not yet been exercised in a live client/server world. The historical `.deferred-pocket/` staging directory is no longer part of the public source state; the current public WIP is in `src/main/java` and `src/main/resources`.
 
 - **Synthetic Node Wisp Essence interaction**: right-click insertion now adds four units per essence of its first stored aspect to the node's maximum capacity; breaking/removing the node returns essence stacks from the maximum aspect capacity with the legacy two-aspect item data. Aspect component access stays behind `ItemCompat`. Code and CI coverage only; the item insertion/drop loop still needs an in-game check.
-- **Transduction Amplifier overload**: restored the original 2+/3+/4-amplifier thresholds for magic zaps/damage, randomized Flux Gas/Goo spills, and one-time Vortex conversion. The conversion preserves the energized node's aspect base and stops the overlying TC4R Node Transducer through a newly pinned `stopForVortexConversion()` compatibility API; first-tick redstone state is also initialized. This is code + CI coverage only; runtime behavior still needs the manual checks in `verification.md`. The legacy amplifier implementation does not directly spawn Wisps.
+- **Transduction Amplifier overload**: restored the original 2+/3+/4-amplifier thresholds for magic zaps/damage, randomized Flux Gas/Goo spills, and one-time Vortex conversion. The historical 26.3 fork exposed `stopForVortexConversion()`; the pinned 26.1.2 host does not, so the guarded automatic conversion remains disabled on this branch until a safe validated hook exists. First-tick redstone state is also initialized. The legacy amplifier implementation does not directly spawn Wisps.
 
-## Remaining work — priority order
+## Remaining 26.1.2 work — priority order
 
-1. **Run the six-scenario prerelease smoke gate in `docs/verification.md`.** This replaces the old requirement to complete Gate 1/Gate 2 and every variant-specific check. Fix crashes, world loss, duplication and broken core loops first.
-2. **Automate repeatable high-risk scenarios.** Prefer the existing JUnit and command-line tools where they can exercise the behavior. Add runtime integration automation only when those cannot cover the scenario; do not recreate the exhaustive manual matrix as an equally large test suite.
-3. **Use targeted, issue-driven verification.** When changing a subsystem or receiving a report, check the relevant entries in the unverified behavior inventory. Exhaustive variant coverage and exact 1.7.10 visual comparison are optional parity work, not standing prerelease blockers.
-4. **Move required add-on hooks into published TC4R.** Remove the custom-fork installation requirement only after the upstream artifact contains and validates the required APIs.
-5. **Defer backports until 26.3 stabilizes.** The `mc/26.1.2` and `mc/1.21.1` branches have independent release gates and do not block 26.3 prereleases.
+1. **Compile against the pinned host.** Run `gradlew.bat build`; classify failures as Minecraft/NeoForge API, TC4R API, resource-format or test issues. Source fixes require a separately approved backport task.
+2. **Validate loading and integration.** After compilation, launch a clean client and dedicated server; resolve mixin, registration, model, texture, datapack and dimension-loading failures.
+3. **Run the 26.1.2 acceptance gate.** Repeat the representative Vat/Soul Jar, two-client infusion, Pocket Plane, machine-loop and save/reload scenarios in `verification.md` on the current revision.
+4. **Publish only after evidence exists.** A configured workflow or a JAR name check is not a release gate. Keep the experimental warning until the current branch has reproducible build and runtime evidence.
 
 ## Verification / CI status
 
-`docs/verification.md` contains the current six-scenario prerelease smoke gate, historical evidence and an unverified behavior inventory. The former 122 open checklist entries are inventory items rather than pending assigned work. They do not measure implementation completeness and do not individually block a prerelease.
-
-GitHub Actions CI is configured for pushes and pull requests to `main`; it runs the seam checker, Java 25 Gradle build with configuration/build caches, and distributable-JAR validation. The latest code-bearing `main` run before the documentation-only client-session update, [#44763568265](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/actions/runs/44763568265), is green. CI does not replace the live-client and multiplayer scenarios in the smoke gate.
+`docs/verification.md` records actual 26.1.2 results separately from the inherited 26.3 evidence and unverified behavior inventory. GitHub Actions runs on every branch push and on pull requests targeting `26.1.2`; it checks the TC4R pin, seams, assets, Gradle build, JAR name and JAR contents. CI does not replace live-client, dedicated-server, multiplayer or persistence checks. Historical green runs on `main` do not establish the state of this backport.
 
 ## Upstream
 
-The `feat/addon-api` branch contains additive TC4R hooks used by this port (including creature-infusion research pages, FX extensions and golem type support). The initial `0.1.0-beta.1` release line deliberately builds against the CI-tested snapshot in `MxxFoxx2/thaumcraft-4-reforged` (`c5b7a0d99c2c23f097591c1343b8f6d3d3d8febb`). The ordinary published TC4R 1.1.3 artifact is not yet the dependency for this prerelease; remove this temporary split only after the required APIs are published upstream and verified.
+The required host is `notlikethiss/thaumcraft-4-reforged` tag `26.1.2`, pinned to `8b953e69c3d625469006f688d964d9f2a7911590`. No custom TC4R fork is configured. Several optional add-on hooks documented for the 26.3 line are absent from the pinned source, so TH must keep guarded fallbacks and must not introduce direct linkage to missing methods. Upstream or sibling-host changes require explicit user direction.

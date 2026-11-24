@@ -3,14 +3,41 @@
 This file separates release-blocking smoke coverage from the unverified behavior inventory.
 
 - `[x]` records evidence observed on the named revision. A build, source inspection or CI run is not gameplay evidence.
+- Every section must name its Minecraft/host target. Historical 26.3 results do not count as 26.1.2 evidence.
 - The six scenarios in **Prerelease smoke gate** are the only standing manual gate for an experimental prerelease. Automating a scenario is encouraged; mark it complete only after the automated or manual scenario actually passes on the current revision.
 - Plain bullets in the inventory are unverified behaviors and parity questions, **not assigned tasks and not individual release blockers**. Use them when changing the corresponding subsystem or investigating a report.
 - Test one representative of repetitive variants first. Exhaustive variant and 1.7.10 visual-parity passes are optional follow-up work unless a change specifically affects them.
 - Until the inventory is covered by evidence, releases must retain the experimental prerelease warning and must not claim fully verified 1:1 behavior.
 
-## Prerelease smoke gate
+## Minecraft 26.1.2 backport status — 2026-11-24
 
-Automated prerequisite for the current revision:
+Target: TH branch `26.1.2` at source baseline `d89905e`, Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25, TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. This section records the build/documentation retargeting only. This task did not modify Java sources or resources; concurrent source edits observed in the worktree are outside its scope and are preserved rather than validated here.
+
+- [x] `gradle.properties`, `settings.gradle`, generated metadata inputs and both workflows consistently target 26.1.2 and the pinned TC4R checkout/commit.
+- [x] Both workflow YAML files parse successfully; all 6 CI and 7 release shell steps pass `bash -n`.
+- [x] The release workflow is manual-only and requires explicit `release_authorized` attestation on branch `26.1.2` or a `v*` tag.
+- [x] `gradlew.bat dependencyInsight --dependency thaumcraft-4-reforged --configuration compileClasspath --no-configuration-cache` resolves `thaumcraft:thaumcraft-4-reforged:1.1.3` to `project :thaumcraft-4-reforged-26.1.2` through the composite build.
+- [x] `python -I tools/check_seams.py` passes: 303 files checked.
+- [x] `python -I tools/check_assets.py` passes: 599 references checked; 127 item-model definitions, 180 models, 140 local textures, 37 special definitions and 5 registered renderer types reported.
+- [ ] `gradlew.bat build --no-configuration-cache --console=plain` passes. The initial run against the unchanged `d89905e` source baseline reached `:compileJava` and failed with **100 compilation errors**. After concurrent Java edits appeared in the worktree at 22:52, a later run against that different partial snapshot failed with **144 errors**. Both are source-compatibility failures, not successful TH builds; the count is snapshot-dependent and is not a compatibility metric.
+- [ ] JUnit passes. Tests did not run because main-source compilation failed.
+- [ ] A clean client and dedicated server start without TH crashes, mixin failures or missing resources.
+- [ ] Runtime compatibility, multiplayer, persistence and visual acceptance pass on 26.1.2.
+- [ ] A release JAR is accepted for 26.1.2. No such acceptance is claimed.
+
+Across the two source snapshots, compiler failures included `ExtractBlockScreenEffectEvent` / `CustomBlockScreenEffectRenderer`, `MoveSimulationType`, `Prediction`, `EntityTypes`, the `monster.cubemob.Slime` package, `SamplerContext`, `BaseEntityBlock.codec()`, `PoseStack.rotate*`, camera/GUI methods, renderer submission signatures, `FlyingMoveControl` generics, item fields such as `Items.DYE`/`Items.WOOL`, and the `LivingEntity.swing(...)` signature. Some of these were removed by the concurrent edits, but the later snapshot still failed compilation. Resolving the remaining incompatibilities is a separately approved source-backport task.
+
+The build also reported a non-fatal warning that the macOS path `/opt/homebrew/opt/openjdk@25`, inherited from the TC4R composite build's `org.gradle.java.installations.paths`, does not exist on Windows. Java toolchain resolution still reached compilation. Do not modify the sibling host repository merely to silence that warning.
+
+## Minecraft 26.1.2 acceptance gate
+
+After compilation succeeds, repeat the representative scenarios below on the pinned 26.1.2 host. Until then, all gameplay items remain open for this branch.
+
+## Historical Minecraft 26.3 prerelease smoke gate
+
+The following gate originated on the Minecraft 26.3 baseline. Preserve its historical evidence, but do not use checked 26.3 items as proof for 26.1.2.
+
+Automated prerequisite for the historical baseline:
 
 ```sh
 gradlew.bat build
@@ -27,7 +54,7 @@ python -I tools/check_assets.py
 
 Passing this gate supports an **experimental prerelease**, not a stable or exhaustively verified 1:1 release.
 
-## Historical evidence and unverified behavior inventory
+## Historical Minecraft 26.3 evidence and unverified behavior inventory
 
 ## Cloud blocks — PR #2, code and CI only
 
@@ -161,7 +188,7 @@ Use these when changing infusions; the prerelease gate covers only the represent
 - Chameleon without the infusion slot filled does nothing
 - X/C keys toggle only when the infusion is present (server-verified)
 
-## Stable release criteria
+## Historical Minecraft 26.3 stable-release criteria
 
 A stable 26.3 release requires the prerelease smoke gate on a clean checkout, no known crash/world-loss/duplication defects in the covered core loops, and a dedicated-server/two-client pass. `docs/fidelity.md` must describe the intentional deviations and remaining unverified areas accurately. Broad parity testing remains risk-based rather than an exhaustive mandatory matrix.
 

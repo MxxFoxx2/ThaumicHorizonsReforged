@@ -19,7 +19,7 @@ Keep gameplay code independent of version-specific APIs and TC4R internals where
 
 ## Thaumcraft compatibility
 
-- TC4R (the fork at `../thaumcraft-4-reforged`, composite build) is the only integration target and a hard dependency: there is no ServiceLoader, no fallback backend and no availability gating.
+- TC4R (`../thaumcraft-4-reforged-26.1.2`, composite build, tag `26.1.2`, commit `8b953e69c3d625469006f688d964d9f2a7911590`) is the only integration target and a hard dependency: there is no ServiceLoader, no fallback backend and no availability gating.
 - `compat/tc/TcReforgedPort` exposes the TC4R-backed capability implementations as public static fields; gameplay code calls them directly (`TcReforgedPort.fx.sparkle(...)`), or uses the TC4R public API straight away when the allowlist in `tools/check_seams.py` permits it.
 - TC4R implementation details and mixins belong in `compat/tc/`.
 - Gameplay code may directly import only the explicit public API allowlist in `tools/check_seams.py`. This is a reviewed exception, not general permission to import TC4R classes.
@@ -29,7 +29,7 @@ See [TC4R integration](tc4r-integration.md) before changing the host integration
 ## Golem materials
 
 - TH golems use `entity/GolemMaterialTH` — TH-owned materials, characteristics and `fromBlock` mapping, independent from TC4R's `GolemType` (which is stock Thaumcraft again).
-- The material is a synced string (`TH_MATERIAL`) and is persisted as a stable string id (`GolemMaterialTH`) with a legacy ordinal mapping for old saves; the stats reach the TC4R base golem through the overridable `GolemBase.golemStats()`.
+- The material is a synced string (`TH_MATERIAL`) and is persisted as a stable string id (`GolemMaterialTH`) with a legacy ordinal mapping for old saves. The inherited 26.3 integration overrides the host golem contract; revalidate those overrides and mixin targets against TC4R 26.1.2 before treating them as compatible.
 
 ## Registration and state
 

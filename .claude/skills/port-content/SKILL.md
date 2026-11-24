@@ -6,7 +6,7 @@ description: Use when porting a gameplay feature or content from the Thaumic Hor
 # Port content from 1.7.10
 
 1. Найди исходную реализацию в `reference/1.7.10/` и связанные регистрации, вызовы, рецепты, исследования, аспекты, локализацию, модели и текстуры.
-2. Сверь старые ID с таблицей `../thaumcraft-4-reforged/tools/data/id_map.json` и реализацией TC4R. Не угадывай замену по названию.
+2. Сверь старые ID с таблицей `../thaumcraft-4-reforged-26.1.2/tools/data/id_map.json` и реализацией TC4R из pinned checkout. Не угадывай замену по названию.
 3. Изучи существующие TH-реализации и используй текущие registry, compat, platform и rendering patterns.
 4. Сохраняй серверную авторитетность, persistence, synchronization, ownership, drops и multiplayer-поведение там, где они применимы.
 5. Сохраняй оригинальные числа, вероятности, стоимости аспектов, ингредиенты и research gates. Необходимые отступления фиксируй в `docs/fidelity.md`.

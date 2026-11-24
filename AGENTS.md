@@ -6,8 +6,9 @@
 
 Thaumic Horizons: Reforged — порт Thaumic Horizons из Minecraft 1.7.10 на современный Minecraft/NeoForge как дополнение для Thaumcraft 4: Reforged (TC4R).
 
-- Текущая цель: Minecraft 26.3, NeoForge 26.3.0.57-beta, Java 25. Перед работой сверяй версии в `gradle.properties`.
-- TC4R — обязательная зависимость. Поддерживаемая версия: официальный TC4R 1.1.3 для Minecraft 26.3, tag `26.3`, commit `99499a8ef6cf9af0efa6a93a058ea56a42a0e7b2`. Локальная сборка использует sibling-репозиторий через `includeBuild('../thaumcraft-4-reforged')`; CI проверяет ту же публичную ревизию в `.github/workflows/ci.yml`.
+- Текущая цель: Minecraft 26.1.2, NeoForge 26.1.2.122, Java 25. Перед работой сверяй версии в `gradle.properties`.
+- TC4R — обязательная зависимость. Поддерживаемая версия: TC4R 1.1.3 для Minecraft 26.1.2, tag `26.1.2`, commit `8b953e69c3d625469006f688d964d9f2a7911590`. Локальная сборка использует sibling-репозиторий `../thaumcraft-4-reforged-26.1.2` через `includeBuild`; CI проверяет ту же публичную ревизию в `.github/workflows/ci.yml`.
+- Ветка `26.1.2` пока настраивает сборку и документацию под бэкпорт. Успешная сборка, runtime-совместимость и игровые проверки не следуют из одной смены версий; сначала выполняй `gradlew.bat build`, затем только подтверждённые проверки фиксируй в `docs/verification.md`.
 - Основные слои: `src/main/java/dev/visfox/thaumichorizons/`, `src/main/java/dev/visfox/thaumichorizons/platform/`, `src/main/java/dev/visfox/thaumichorizons/client/platform/`, `src/main/java/dev/visfox/thaumichorizons/compat/` и `src/main/java/dev/visfox/thaumichorizons/compat/tc/`.
 
 ## Источники истины и приоритет
@@ -17,7 +18,7 @@ Thaumic Horizons: Reforged — порт Thaumic Horizons из Minecraft 1.7.10 �
 1. Явное требование пользователя.
 2. Подтверждённое намеренное отличие, зафиксированное в `docs/fidelity.md`.
 3. Оригинальная реализация и ресурсы в `reference/1.7.10/` — источник игрового поведения, чисел, рецептов, аспектов, исследований и ассетов.
-4. Закреплённый исходный код TC4R — источник API и правил интеграции. Старые ID предметов и блоков сопоставляй через `../thaumcraft-4-reforged/tools/data/id_map.json`; не угадывай современные ID по названию.
+4. Закреплённый исходный код TC4R 26.1.2 — источник API и правил интеграции. Старые ID предметов и блоков сопоставляй через `../thaumcraft-4-reforged-26.1.2/tools/data/id_map.json`; не угадывай современные ID по названию. Контракты из документации ветки 26.3 повторно проверяй по этому исходнику.
 5. Существующий код и документация репозитория — источник текущих соглашений и реализации, но не доказательство оригинального поведения.
 
 Назначение документов:
@@ -70,6 +71,7 @@ Thaumic Horizons: Reforged — порт Thaumic Horizons из Minecraft 1.7.10 �
 - Не расширяй allowlist TC4R API ради удобства. Сначала проверь, можно ли добавить узкий compat-интерфейс; обоснование расширения документируй в `docs/tc4r-integration.md`.
 - Не изменяй sibling-репозиторий TC4R без прямого разрешения пользователя.
 - Не добавляй новую зависимость без прямого разрешения пользователя.
+- Смена build target не равна переносу исходников. API-исправления и runtime-приёмка требуют отдельного согласованного объёма и реальных проверок.
 
 ### Никогда
 
