@@ -45,9 +45,9 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 1. Create a **Minecraft 1.21.1** profile with **NeoForge 21.1.256**.
 2. Install **TerraBlender 1.21.1-4.1.0.1** (required by TC4R).
 3. Install a TC4R build from the official [`mc/1.21.1`](https://github.com/notlikethiss/thaumcraft-4-reforged/tree/mc/1.21.1) branch, pinned to commit [`03f354a`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/03f354ac4ed91151ef10c9d9b2e4947789453472).
-4. Drop `thaumic-horizons-reforged-0.1.0-beta.2-1.21.1.jar` into the same `mods` folder.
+4. Drop `thaumic-horizons-reforged-0.1.0-1.21.1.jar` into the same `mods` folder.
 
-For the 26.3 release line, use the published TC4R 1.1.3 release jar and `thaumic-horizons-reforged-0.1.0-beta.2-26.3.jar` instead.
+For the 26.3 release line, use the official TC4R 1.1.3 release and the Minecraft 26.3 JAR from the corresponding `0.1.0` GitHub Release after that release is published.
 
 ## Configuration
 
@@ -75,7 +75,7 @@ Syringes, the Corpse Effigy and the three spike items use per-context 3D transfo
 
 ## Status and roadmap
 
-The `0.1.0-beta.2` pre-release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, boats and mounts, projectiles, clouds/spikes, utility items and Pocket Plane code. This is a source-implementation milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not prerelease blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
+The configured `0.1.0` release packages the current source implementation of the major Thaumic Horizons content systems: the full 74-entry research tree, creatures and infusions, golems, machines, lenses/foci, souls/blood/Vat, boats and mounts, projectiles, clouds/spikes, utility items and Pocket Plane code. This is an early pre-1.0 source milestone, not a claim that every mechanic has passed in-game acceptance. Pocket Plane travel/generation, several complete gameplay loops, multiplayer persistence and client visual parity remain unverified. Verification is limited to six risk-based smoke scenarios plus targeted regression checks when a subsystem changes; exhaustive variant and visual-parity passes are not release blockers. See [docs/roadmap.md](docs/roadmap.md) and [docs/verification.md](docs/verification.md).
 
 The `1.21.1` branch carries the same content on Minecraft 1.21.1 / NeoForge 21.1.256 against TC4R `mc/1.21.1`: the full source tree compiles, the JUnit/seam/asset/data-pack checks pass, a clean-world dedicated-server smoke reaches `Done`, and the client boots and reaches an existing world. No scripted gameplay, multiplayer, save/reload or visual acceptance scenario has been completed, so none of the 26.3 in-game evidence transfers to it yet.
 
