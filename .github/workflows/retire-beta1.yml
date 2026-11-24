@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   retire:
-    if: startsWith(github.event.head_commit.message, 'maintenance: retire beta.1 release')
+    if: "${{ startsWith(github.event.head_commit.message, 'maintenance: retire beta.1 release') }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the cleanup commit
