@@ -21,7 +21,7 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
-| 1.21.1 | 21.1.256 | `mc/1.21.1` (`03f354a`) | `0.1.0` — early public release; build/static/startup checks pass; gameplay/visual acceptance open |
+| 1.21.1 | 21.1.256 | `mc/1.21.1` (`03f354a`) | `0.1.0` — release configured, awaiting manual publication; gameplay/visual acceptance open |
 | 26.3 | 26.3.0.57-beta | 1.1.3 (official `26.3` release) | `0.1.0` release prepared; one host-dependent feature disabled |
 | 26.1.2 | 26.1.2.122 | 1.1.3 | `0.1.0` release prepared; build/JUnit/startup pass; gameplay acceptance open |
 
