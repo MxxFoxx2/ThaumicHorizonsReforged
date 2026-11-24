@@ -67,7 +67,7 @@ public class SoulJarBlock extends Block implements EntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide()) {
+        if (level.isClientSide()) {
             if (level.getBlockEntity(pos) instanceof SoulJarBlockEntity jar && jar.jarData != null) {
                 ItemStack stack = new ItemStack(this);
                 SoulJarKeys.DATA.set(stack, jar.jarData);
