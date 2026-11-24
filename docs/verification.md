@@ -3,12 +3,12 @@
 This file separates release-blocking smoke coverage from the unverified behavior inventory.
 
 - `[x]` records evidence observed on the named revision. A build, source inspection or CI run is not gameplay evidence.
-- The six scenarios in **Prerelease smoke gate** are the only standing manual gate for an experimental prerelease. Automating a scenario is encouraged; mark it complete only after the automated or manual scenario actually passes on the current revision.
+- The six scenarios in **Early-release smoke gate** are the standing manual acceptance gate for a 0.x release; passing them does not prove exhaustive 1:1 parity. Automating a scenario is encouraged; mark it complete only after the automated or manual scenario actually passes on the current revision.
 - Plain bullets in the inventory are unverified behaviors and parity questions, **not assigned tasks and not individual release blockers**. Use them when changing the corresponding subsystem or investigating a report.
 - Test one representative of repetitive variants first. Exhaustive variant and 1.7.10 visual-parity passes are optional follow-up work unless a change specifically affects them.
-- Until the inventory is covered by evidence, releases must retain the experimental prerelease warning and must not claim fully verified 1:1 behavior.
+- Until the inventory is covered by evidence, releases must retain a clear early-release validation warning and must not claim fully verified 1:1 behavior.
 
-## Prerelease smoke gate
+## Early-release smoke gate
 
 Automated prerequisite for the current revision:
 
@@ -26,7 +26,7 @@ python -I tools/check_data.py
 - [ ] **Persistence and inventory:** exercise representative block-entity, item-component, entity and player-attachment state through save/reload. Use the Vat and Blood Infuser menus to move items and change settings; confirm no crashes, duplication, lost stacks or client/server disagreement.
 - [ ] **Visual smoke:** inspect the Vat, one static machine, one custom entity, one Spike and the Syringe in world/inventory contexts. Catch invisible or obviously broken geometry and render-log errors; exhaustive UV, animation and 1.7.10 parity comparison is not required for the prerelease gate.
 
-Passing this gate supports an **experimental prerelease**, not a stable or exhaustively verified 1:1 release.
+Passing this gate supports an early 0.x release, not a 1.0.0 stable or exhaustively verified 1:1 release.
 
 ## Historical evidence and unverified behavior inventory
 
