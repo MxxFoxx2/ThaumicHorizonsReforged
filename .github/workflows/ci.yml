@@ -67,7 +67,7 @@ jobs:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Cache NeoForge development artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             thaumic-horizons-reforged/build/moddev/artifacts
