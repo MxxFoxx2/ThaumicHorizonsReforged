@@ -5,10 +5,34 @@ on:
     branches: ["**"]
     paths-ignore:
       - "docs/**"
+      - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.rst"
+      - "**/*.adoc"
+      - "LICENSE*"
+      - "NOTICE*"
+      - "CHANGELOG*"
+      - "CONTRIBUTING*"
+      - "CODE_OF_CONDUCT*"
+      - "SECURITY*"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE*"
   pull_request:
     branches: [main]
     paths-ignore:
       - "docs/**"
+      - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.rst"
+      - "**/*.adoc"
+      - "LICENSE*"
+      - "NOTICE*"
+      - "CHANGELOG*"
+      - "CONTRIBUTING*"
+      - "CODE_OF_CONDUCT*"
+      - "SECURITY*"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE*"
   workflow_dispatch:
 
 permissions:
