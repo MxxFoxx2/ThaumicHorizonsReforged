@@ -21,9 +21,9 @@ The goal is to recreate the original gameplay 1:1: creature infusion and morphin
 
 | Minecraft | NeoForge | Thaumcraft 4: Reforged | Status |
 | --- | --- | --- | --- |
-| 26.3 | 26.3.0.57-beta | 1.1.3 (official `26.3` release) | `0.1.0` — release configured, not yet published; one host-dependent feature disabled |
-| 26.1.2 | 26.1.2.122 | 1.1.3 | `0.1.0` release prepared; build/JUnit/startup pass; gameplay acceptance open |
-| 1.21.1 | 21.1.256 | 1.1.3 | `0.1.0` release prepared; build/static/startup pass; gameplay acceptance open |
+| 26.3 | 26.3.0.57-beta | 1.1.3 (official `26.3` release) | [`0.1.0` published](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/releases/tag/v0.1.0%2Bmc26.3); one host-dependent feature disabled |
+| 26.1.2 | 26.1.2.122 | 1.1.3 | [`0.1.0` published](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/releases/tag/v0.1.0%2Bmc26.1.2); build/JUnit/startup pass; gameplay acceptance open |
+| 1.21.1 | 21.1.256 | 1.1.3 | [`0.1.0` published](https://github.com/MxxFoxx2/ThaumicHorizonsReforged/releases/tag/v0.1.0%2Bmc1.21.1); build/static/startup pass; gameplay acceptance open |
 
 ## What the mod adds
 
