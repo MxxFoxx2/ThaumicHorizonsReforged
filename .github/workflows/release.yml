@@ -3,8 +3,8 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      release_authorized:
-        description: "Confirm the Minecraft 26.1.2 source/runtime acceptance gate passed"
+      publish_early_release:
+        description: "Confirm publishing this documented pre-1.0 release while gameplay acceptance remains open."
         required: true
         type: boolean
         default: false
@@ -18,8 +18,8 @@ concurrency:
 
 jobs:
   release:
-    name: Verify and publish release
-    if: github.event_name == 'workflow_dispatch' && inputs.release_authorized == true && (github.ref == 'refs/heads/26.1.2' || startsWith(github.ref, 'refs/tags/v'))
+    name: Verify and publish Minecraft 26.1.2 release
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_early_release == true && github.ref == 'refs/heads/26.1.2'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -28,64 +28,67 @@ jobs:
       CI: "true"
 
     steps:
-      - name: Checkout Thaumic Horizons revision
+      - name: Checkout Thaumic Horizons
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
           path: thaumic-horizons-reforged
 
-      # The published THR artifact targets the pinned TC4R 1.1.3 Minecraft 26.1.2 backport.
-      - name: Checkout pinned Thaumcraft 4 Reforged 26.1.2
+      - name: Checkout pinned official Thaumcraft 4 Reforged 26.1.2
         uses: actions/checkout@v7
         with:
           repository: notlikethiss/thaumcraft-4-reforged
-          ref: 26.1.2
+          ref: 8b953e69c3d625469006f688d964d9f2a7911590
           path: thaumcraft-4-reforged-26.1.2
           persist-credentials: false
 
-      - name: Verify pinned TC4R 1.1.3 revision
+      - name: Verify the pinned TC4R host revision
         working-directory: thaumcraft-4-reforged-26.1.2
         shell: bash
         run: |
           set -euo pipefail
           expected="8b953e69c3d625469006f688d964d9f2a7911590"
           actual="$(git rev-parse HEAD)"
-          if [[ "$actual" != "$expected" ]]; then
-            echo "::error::Release host is not the pinned TC4R 1.1.3 26.1.2 revision."
+          test "$actual" = "$expected" || {
+            echo "::error::Expected TC4R $expected, got $actual"
             exit 1
-          fi
+          }
 
-      - name: Validate release tag and main ancestry
+      - name: Validate branch, version and release tag
         working-directory: thaumic-horizons-reforged
+        env:
+          EXPECTED_BRANCH: "26.1.2"
+          EXPECTED_MINECRAFT_VERSION: "26.1.2"
         shell: bash
         run: |
           set -euo pipefail
-
-          mod_version="$(grep "^mod_version=" gradle.properties | cut -d= -f2)"
-          if [[ "$GITHUB_REF" == "refs/heads/26.1.2" ]]; then
-            tag="v$mod_version"
-          else
-            tag="${GITHUB_REF_NAME}"
-          fi
-
-          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "::error::Release tags must use vMAJOR.MINOR.PATCH (optionally with a prerelease suffix)."
+          if [[ "$GITHUB_REF" != "refs/heads/$EXPECTED_BRANCH" ]]; then
+            echo "::error::Run this workflow from $EXPECTED_BRANCH."
             exit 1
           fi
-
-          tag_version="${tag#v}"
-          if [[ "$tag_version" != "$mod_version" ]]; then
-            echo "::error::Release tag ($tag_version) does not match mod_version ($mod_version) in gradle.properties."
+          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
+          [[ "$minecraft_version" == "$EXPECTED_MINECRAFT_VERSION" ]] || {
+            echo "::error::Expected Minecraft $EXPECTED_MINECRAFT_VERSION, got $minecraft_version"
+            exit 1
+          }
+          [[ "$mod_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+            echo "::error::Release version must be a plain MAJOR.MINOR.PATCH without beta/RC suffix."
+            exit 1
+          }
+          tag="v${mod_version}+mc${minecraft_version}"
+          if [[ -n "$(git ls-remote --refs origin "refs/tags/$tag")" ]]; then
+            echo "::error::Release tag already exists: $tag"
             exit 1
           fi
-
-          git fetch --no-tags origin 26.1.2
-          if [[ "$GITHUB_REF" == refs/tags/* ]] && ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
-            echo "::error::The release tag must point to a commit reachable from 26.1.2."
+          git fetch --no-tags origin "$EXPECTED_BRANCH"
+          git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD || {
+            echo "::error::Workflow commit is not on $EXPECTED_BRANCH."
             exit 1
-          fi
-
+          }
           echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
+          echo "MOD_VERSION=$mod_version" >> "$GITHUB_ENV"
+          echo "MINECRAFT_VERSION=$minecraft_version" >> "$GITHUB_ENV"
 
       - name: Set up Java 25
         uses: actions/setup-java@v6
@@ -93,7 +96,7 @@ jobs:
           distribution: temurin
           java-version: "25"
 
-      - name: Set up Gradle and restore caches
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: enhanced
@@ -104,96 +107,82 @@ jobs:
         working-directory: thaumic-horizons-reforged
         run: python3 -I tools/check_seams.py
 
-      - name: Build release JAR
+      - name: Check model, texture and research-page assets
+        working-directory: thaumic-horizons-reforged
+        run: python3 -I tools/check_assets.py
+
+      - name: Build and run JUnit tests
         working-directory: thaumic-horizons-reforged
         run: chmod +x ./gradlew && ./gradlew build --configuration-cache --build-cache --parallel --console=plain
 
-      - name: Verify and checksum release JAR
+      - name: Verify and checksum distributable
         id: package
         working-directory: thaumic-horizons-reforged
         shell: bash
         run: |
           set -euo pipefail
-
-          mod_version="$(awk -F= '$1 == "mod_version" { print $2; exit }' gradle.properties | tr -d '\r')"
-          minecraft_version="$(awk -F= '$1 == "minecraft_version" { print $2; exit }' gradle.properties | tr -d '\r')"
-          expected="build/libs/thaumic-horizons-reforged-${mod_version}-${minecraft_version}.jar"
-
+          expected="build/libs/thaumic-horizons-reforged-${MOD_VERSION}-${MINECRAFT_VERSION}.jar"
           test -s "$expected" || {
-            echo "::error::Expected distributable not found: $expected"
+            echo "::error::Expected JAR not found: $expected"
             find build/libs -maxdepth 1 -type f -print 2>/dev/null || true
             exit 1
           }
-
           mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name '*.jar' -print | sort)
-          test "${#jars[@]}" -eq 1 || {
-            echo "::error::Expected exactly one JAR in build/libs; found ${#jars[@]}"
+          test "${#jars[@]}" -eq 1 && test "${jars[0]}" = "$expected" || {
+            echo "::error::Expected exactly one distributable JAR."
             printf '%s\n' "${jars[@]}"
             exit 1
           }
-          test "${jars[0]}" = "$expected"
-
           jar tf "$expected" > "$RUNNER_TEMP/jar-contents.txt"
           for required in META-INF/neoforge.mods.toml thaumichorizons.mixins.json; do
             grep -Fxq "$required" "$RUNNER_TEMP/jar-contents.txt" || {
-              echo "::error::Required mod resource missing from JAR: $required"
+              echo "::error::Required JAR entry missing: $required"
               exit 1
             }
           done
-
           if grep -Eq '(^|/)(reference|docs|tools|run|runs|logs|\.git|\.gradle|\.github)(/|$)|(^|/)(AGENTS\.md|CLAUDE\.md|README[^/]*|LICENSE[^/]*)$|\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"; then
-            echo "::error::Development-only files or sources leaked into the release JAR."
-            grep -E '(^|/)(reference|docs|tools|run|runs|logs|\.git|\.gradle|\.github)(/|$)|(^|/)(AGENTS\.md|CLAUDE\.md|README[^/]*|LICENSE[^/]*)$|\.(java|log|psd|xcf)$' "$RUNNER_TEMP/jar-contents.txt"
+            echo "::error::Development-only files leaked into the JAR."
             exit 1
           fi
-
           sha256sum "$expected" > "${expected}.sha256"
           echo "jar=$expected" >> "$GITHUB_OUTPUT"
           echo "checksum=${expected}.sha256" >> "$GITHUB_OUTPUT"
 
-      - name: Prepare release description
+      - name: Prepare release notes
         working-directory: thaumic-horizons-reforged
         shell: bash
         run: |
-          set -euo pipefail
-          tag="${RELEASE_TAG}"
           cat > "$RUNNER_TEMP/release-notes.md" <<EOF
-          # Thaumic Horizons: Reforged ${tag#v}
+          # Thaumic Horizons: Reforged ${MOD_VERSION} — Minecraft ${MINECRAFT_VERSION}
 
-          This build packages the current source implementation of the major Thaumic Horizons content systems for Minecraft 26.1.2 / NeoForge 26.1.2.122.
+          This is the initial **0.x public backport release** for Minecraft 26.1.2 / NeoForge 26.1.2.122. It is published as a regular GitHub release (not a beta/prerelease), but it is **not the 1.0.0 stability milestone**.
 
           ## Host compatibility
 
-          **This build targets [Thaumcraft 4: Reforged 1.1.3 for Minecraft 26.1.2](https://github.com/notlikethiss/thaumcraft-4-reforged/releases/tag/26.1.2), pinned to commit 8b953e69c3d625469006f688d964d9f2a7911590.**
+          Targets the official [Thaumcraft 4: Reforged 1.1.3 line for Minecraft 26.1.2](https://github.com/notlikethiss/thaumcraft-4-reforged/tree/26.1.2), pinned to commit `8b953e69c3d625469006f688d964d9f2a7911590`.
 
-          The Minecraft 26.1.2 source backport and its runtime compatibility are not yet validated merely by changing the build target. Resolve compilation and integration failures before publishing a release; a green CI run confirms only the configured seam, build and JAR checks.
+          ## Validation
 
-          This remains an experimental pre-release. Several gameplay, multiplayer, persistence and visual acceptance scenarios remain unverified; see the repository README and docs/verification.md.
+          This workflow reruns the Java 25 build, JUnit suite, API-seam checks, model/texture/research-asset checks and JAR validation. The branch has documented local client and dedicated-server startup checks; the current verification record reports 67 JUnit tests with no failures, errors or skips. See [docs/verification.md](https://github.com/${GITHUB_REPOSITORY}/blob/26.1.2/docs/verification.md).
 
-          ## Pre-release testing status
+          Full gameplay, multiplayer, persistence and visual acceptance remain open on this version line. The 26.3 and 1.21.1 results do not transfer to 26.1.2. Pocket Plane travel and recovery are especially not yet verified as a complete playable loop. Back up worlds before testing.
 
-          The major content implementations are present in the source, but many end-to-end gameplay and client-acceptance checks remain open. In particular, Pocket Plane terrain, portals, travel and recovery; several Vat, Soul Jar and syringe workflows; multiplayer and save/reload behavior; and visual parity still need in-game testing. Back up worlds before testing.
+          ## Versioning
 
-          A green CI run confirms the configured seam, build and JAR checks; it does not certify all gameplay scenarios.
+          `0.1.0` is intentionally pre-1.0: it exits the beta label without claiming the compatibility guarantees of `1.0.0`.
           EOF
 
-      - name: Create GitHub Release
+      - name: Publish non-prerelease GitHub Release
         working-directory: thaumic-horizons-reforged
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          tag="${RELEASE_TAG}"
-          title="Thaumic Horizons: Reforged ${tag#v}"
-
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "${{ steps.package.outputs.jar }}" "${{ steps.package.outputs.checksum }}" --clobber
-            gh release edit "$tag" --title "$title" --notes-file "$RUNNER_TEMP/release-notes.md"
-          else
-            args=(--title "$title" --notes-file "$RUNNER_TEMP/release-notes.md")
-            if [[ "$tag" == *-* ]]; then
-              args+=(--prerelease)
-            fi
-            gh release create "$tag" "${{ steps.package.outputs.jar }}" "${{ steps.package.outputs.checksum }}" --target "$GITHUB_SHA" "${args[@]}"
-          fi
+          tag="$RELEASE_TAG"
+          title="Thaumic Horizons: Reforged $MOD_VERSION — Minecraft $MINECRAFT_VERSION"
+          gh release create "$tag" "${{ steps.package.outputs.jar }}" "${{ steps.package.outputs.checksum }}" \
+            --title "$title" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --target "$GITHUB_SHA" \
+            --latest=false

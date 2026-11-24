@@ -7,7 +7,7 @@
 Unofficial port of **Thaumic Horizons** for **Minecraft 26.1.2** on **NeoForge 26.1.2.122**, built as an add-on for [Thaumcraft 4: Reforged](https://github.com/notlikethiss/thaumcraft-4-reforged). The project aims to preserve the original gameplay; confirmed deviations are documented in [docs/fidelity.md](docs/fidelity.md).
 
 > [!WARNING]
-> **Experimental backport.** The build, JUnit, static checks and local client/server startup pass. Gameplay, multiplayer, save/reload and visual acceptance remain open. Do not treat this branch as a validated release.
+> **Early public backport (pre-1.0).** This is a regular 0.x release, not the 1.0.0 stability milestone. The build, JUnit, static checks and local client/server startup pass. Gameplay, multiplayer, save/reload and visual acceptance remain open. Do not treat this branch as fully gameplay-validated or 1:1 complete.
 >
 > TC4R is pinned to tag `26.1.2`, commit [`8b953e6`](https://github.com/notlikethiss/thaumcraft-4-reforged/commit/8b953e69c3d625469006f688d964d9f2a7911590). The sibling repository is not modified.
 
