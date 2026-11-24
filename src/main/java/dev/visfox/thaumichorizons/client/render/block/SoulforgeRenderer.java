@@ -47,7 +47,7 @@ public final class SoulforgeRenderer implements BlockEntityRenderer<SoulforgeBlo
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, -1.25F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, state.rotation - 90.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation - 90.0F));
         WardedRendering.brainJar(collector, poseStack, state.lightCoords, 0.0F, WardedRendering.viewerTicks());
         poseStack.popPose();
 

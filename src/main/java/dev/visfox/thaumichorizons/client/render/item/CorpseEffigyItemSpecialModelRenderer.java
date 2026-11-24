@@ -64,8 +64,8 @@ public final class CorpseEffigyItemSpecialModelRenderer implements SpecialModelR
 
     private void transformModel(PoseStack poseStack) {
         view.apply(poseStack);
-        poseStack.rotateDegrees(Axis.ZP, 180.0F);
-        poseStack.rotateDegrees(Axis.YP, 180.0F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         switch (view) {
             case INVENTORY -> {
                 // center the 1.0-block effigy on the wand band (0.06..1.31)

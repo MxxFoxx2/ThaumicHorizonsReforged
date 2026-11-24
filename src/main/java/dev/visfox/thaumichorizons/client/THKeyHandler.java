@@ -41,7 +41,7 @@ public final class THKeyHandler {
         boolean lensKeyDown = ARCANE_LENS.isDown();
         if (lensKeyDown && !arcaneLensKeyDown) {
             arcaneLensKeyDown = true;
-            if (minecraft.player != null && minecraft.gui.screen() == null
+            if (minecraft.player != null && minecraft.screen == null
                 && ArcaneLensHud.isWearingGoggles(minecraft.player)) {
                 if (minecraft.player.isShiftKeyDown()) {
                     ClientNetwork.sendToServer(new LensChangePayload("REMOVE"));
@@ -61,13 +61,13 @@ public final class THKeyHandler {
                 }
                 ArcaneLensHud.close();
             }
-            if (restoreMouseGrab && minecraft.player != null && minecraft.gui.screen() == null) {
+            if (restoreMouseGrab && minecraft.player != null && minecraft.screen == null) {
                 minecraft.mouseHandler.grabMouse();
             }
             restoreMouseGrab = false;
         }
 
-        if (minecraft.gui.screen() != null && ArcaneLensHud.isOpen()) {
+        if (minecraft.screen != null && ArcaneLensHud.isOpen()) {
             ArcaneLensHud.close();
             restoreMouseGrab = false;
         }

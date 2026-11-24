@@ -92,7 +92,7 @@ public final class SoulJarPreviewRenderer implements BlockEntityRenderer<SoulJar
         if (state.soul) {
             poseStack.pushPose();
             poseStack.translate(0.5F, 0.4F, 0.5F);
-            poseStack.rotate(camera.orientation);
+            poseStack.mulPose(camera.orientation);
             int frame = state.frame;
             // Legacy disables depth testing for this quad so the soul stays visible through the jar.
             collector.submitCustomGeometry(poseStack, ThRenderTypes.textSeeThrough(SOUL_TEXTURE),

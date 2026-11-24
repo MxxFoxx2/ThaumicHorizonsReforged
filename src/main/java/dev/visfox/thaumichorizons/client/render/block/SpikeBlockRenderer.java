@@ -58,23 +58,23 @@ public final class SpikeBlockRenderer implements BlockEntityRenderer<SpikeBlockE
             case UP -> poseStack.translate(0.0F, -1.45F, 0.0F);
             case DOWN -> {
                 poseStack.translate(0.0F, 1.45F, 0.0F);
-                poseStack.rotateDegrees(Axis.ZP, 180.0F);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
             }
             case NORTH -> {
                 poseStack.translate(0.0F, 0.0F, 1.45F);
-                poseStack.rotateDegrees(Axis.XP, -90.0F);
+                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             }
             case SOUTH -> {
                 poseStack.translate(0.0F, 0.0F, -1.45F);
-                poseStack.rotateDegrees(Axis.XP, 90.0F);
+                poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
             }
             case WEST -> {
                 poseStack.translate(1.45F, 0.0F, 0.0F);
-                poseStack.rotateDegrees(Axis.ZP, 90.0F);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
             }
             case EAST -> {
                 poseStack.translate(-1.45F, 0.0F, 0.0F);
-                poseStack.rotateDegrees(Axis.ZP, -90.0F);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
             }
         }
         Identifier texture = TEXTURES[Math.max(0, Math.min(2, state.spikeType))];

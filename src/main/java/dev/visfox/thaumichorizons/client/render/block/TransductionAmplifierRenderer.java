@@ -53,8 +53,8 @@ public final class TransductionAmplifierRenderer
             (pose, buffer) -> model.renderPart("lock", pose, buffer, 0xFFCCCC00, 220));
         for (int index = 0; index < 4; index++) {
             poseStack.pushPose();
-            poseStack.rotateDegrees(Axis.ZP, index * 90.0F);
-            poseStack.rotateDegrees(Axis.YP, 45.0F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(index * 90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(45.0F));
             poseStack.translate(0.0F, 0.0F, extension);
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(BASE),
                 (pose, buffer) -> model.renderPart("piston", pose, buffer, 0xFFFFFFFF, state.lightCoords));
@@ -68,15 +68,15 @@ public final class TransductionAmplifierRenderer
         switch (direction) {
             case SOUTH -> {
                 poseStack.translate(0.5F, 0.5F, 1.0F);
-                poseStack.rotateDegrees(Axis.YP, 180.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             }
             case WEST -> {
                 poseStack.translate(0.0F, 0.5F, 0.5F);
-                poseStack.rotateDegrees(Axis.YP, 90.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
             }
             case EAST -> {
                 poseStack.translate(1.0F, 0.5F, 0.5F);
-                poseStack.rotateDegrees(Axis.YP, 270.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(270.0F));
             }
             default -> poseStack.translate(0.5F, 0.5F, 0.0F);
         }

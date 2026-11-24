@@ -2,6 +2,7 @@ package dev.visfox.thaumichorizons.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -31,6 +32,17 @@ public enum GolemMaterialTH {
     CAKE("cake", 20, 6, 0.35F, false, 2, 4, 25, 1, 750),
     WEB("web", 15, 6, 0.35F, false, 2, 4, 40, 1, 1000),
     VOID("void", 25, 15, 0.40F, true, 2, 8, 20, 3, 0);
+
+    private static final class CopperFamily {
+        private static final Set<Block> BLOCKS = Set.of(
+            Blocks.COPPER_BLOCK, Blocks.EXPOSED_COPPER, Blocks.WEATHERED_COPPER, Blocks.OXIDIZED_COPPER,
+            Blocks.WAXED_COPPER_BLOCK, Blocks.WAXED_EXPOSED_COPPER, Blocks.WAXED_WEATHERED_COPPER, Blocks.WAXED_OXIDIZED_COPPER,
+            Blocks.COPPER_CHAIN.unaffected(), Blocks.COPPER_CHAIN.exposed(), Blocks.COPPER_CHAIN.weathered(), Blocks.COPPER_CHAIN.oxidized(),
+            Blocks.COPPER_CHAIN.waxed(), Blocks.COPPER_CHAIN.waxedExposed(), Blocks.COPPER_CHAIN.waxedWeathered(), Blocks.COPPER_CHAIN.waxedOxidized(),
+            Blocks.LIGHTNING_ROD, Blocks.EXPOSED_LIGHTNING_ROD, Blocks.WEATHERED_LIGHTNING_ROD, Blocks.OXIDIZED_LIGHTNING_ROD,
+            Blocks.WAXED_LIGHTNING_ROD, Blocks.WAXED_EXPOSED_LIGHTNING_ROD, Blocks.WAXED_WEATHERED_LIGHTNING_ROD, Blocks.WAXED_OXIDIZED_LIGHTNING_ROD
+        );
+    }
 
     public record MaterialStats(int health, int armor, float speed, boolean fireResist, int upgrades,
         int carry, int regenDelay, int strength, int visCost, boolean heavy) {
@@ -204,20 +216,6 @@ public enum GolemMaterialTH {
     }
 
     private static boolean isCopperFamily(@Nullable Block block) {
-        if (block == null) {
-            return false;
-        }
-        for (net.minecraft.world.level.block.WeatheringCopper.WeatherState weather
-            : net.minecraft.world.level.block.WeatheringCopper.WeatherState.values()) {
-            if (Blocks.COPPER_BLOCK.weathering().pick(weather) == block
-                || Blocks.COPPER_BLOCK.waxed().pick(weather) == block
-                || Blocks.COPPER_CHAIN.weathering().pick(weather) == block
-                || Blocks.COPPER_CHAIN.waxed().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.weathering().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.waxed().pick(weather) == block) {
-                return true;
-            }
-        }
-        return false;
+        return block != null && CopperFamily.BLOCKS.contains(block);
     }
 }

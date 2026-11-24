@@ -3,7 +3,7 @@ package dev.visfox.thaumichorizons.entity;
 import dev.visfox.thaumichorizons.registry.ThEntities;
 import dev.visfox.thaumichorizons.registry.ThItems;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.chicken.Chicken;
@@ -37,7 +37,7 @@ public class EggIncubatedEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide()) {
-            Chicken chicken = EntityTypes.CHICKEN.create(this.level(), EntitySpawnReason.TRIGGERED);
+            Chicken chicken = EntityType.CHICKEN.create(this.level(), EntitySpawnReason.TRIGGERED);
             if (chicken != null) {
                 chicken.setAge(-24000);
                 chicken.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);

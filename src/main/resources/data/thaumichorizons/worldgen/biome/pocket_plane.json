@@ -6,5 +6,7 @@
     "water_color": "#3f76e4"
   },
   "carvers": [],
-  "features": [[], [], [], []]
+  "features": [[], [], [], []],
+  "spawn_costs": {},
+  "spawners": {}
 }

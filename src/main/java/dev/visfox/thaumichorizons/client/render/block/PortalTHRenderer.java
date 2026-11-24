@@ -63,7 +63,7 @@ public final class PortalTHRenderer implements BlockEntityRenderer<PortalTHBlock
         float u1 = (state.frame + 1) / 16.0F;
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotate(camera.orientation);
+        poseStack.mulPose(camera.orientation);
         poseStack.scale(horizontal, vertical, horizontal);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE),
             (pose, buffer) -> quad(buffer, pose, state.color, state.lightCoords, u0, u1));

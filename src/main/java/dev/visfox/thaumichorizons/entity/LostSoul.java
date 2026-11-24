@@ -35,7 +35,7 @@ public class LostSoul extends Mob implements Enemy {
         this.courseChangeCooldown = 0;
         this.xpReward = 5;
         this.setNoGravity(true);
-        this.moveControl = new net.minecraft.world.entity.ai.control.FlyingMoveControl<>(this, 20, true);
+        this.moveControl = new net.minecraft.world.entity.ai.control.FlyingMoveControl(this, 20, true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {

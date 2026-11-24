@@ -195,7 +195,7 @@ public final class VatStructureRenderer implements BlockEntityRenderer<VatBlockE
             Identifier effigyTexture = state.revivedEffigy ? REVIVED_EFFIGY_TEXTURE : EFFIGY_TEXTURE;
             poseStack.pushPose();
             poseStack.translate(0.5F, -1.5F + state.effigyBob, 0.5F);
-            poseStack.rotateDegrees(Axis.ZP, 180.0F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
             poseStack.scale(0.1F, 0.1F, 0.1F);
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutout(effigyTexture),
                 (pose, buffer) -> effigyModel.renderPart("effigy", pose, buffer, 0xFFFFFFFF, state.lightCoords));

@@ -18,9 +18,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.common.extensions.IBlockExtension;
 import org.jspecify.annotations.Nullable;
 
-public class AlchemiteBlock extends Block {
+public class AlchemiteBlock extends Block implements IBlockExtension {
     public AlchemiteBlock(Properties properties) {
         super(properties);
     }
@@ -28,7 +29,7 @@ public class AlchemiteBlock extends Block {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(state.getBlock())) {
-            if (level.hasNeighborSignal(pos) && prime(level, pos, null, ItemStack.EMPTY)) {
+            if (level.hasNeighborSignal(pos) && prime(level, pos, null)) {
                 level.removeBlock(pos, false);
             }
         }
@@ -38,7 +39,7 @@ public class AlchemiteBlock extends Block {
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
         net.minecraft.world.level.redstone.@Nullable Orientation orientation, boolean movedByPiston) {
-        if (level.hasNeighborSignal(pos) && prime(level, pos, null, ItemStack.EMPTY)) {
+        if (level.hasNeighborSignal(pos) && prime(level, pos, null)) {
             level.removeBlock(pos, false);
         }
         super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
@@ -50,7 +51,7 @@ public class AlchemiteBlock extends Block {
         if (!itemStack.is(Items.FLINT_AND_STEEL) && !itemStack.is(Items.FIRE_CHARGE)) {
             return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
         }
-        if (prime(level, pos, player, itemStack)) {
+        if (prime(level, pos, player)) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
             if (itemStack.is(Items.FLINT_AND_STEEL)) {
                 itemStack.hurtAndBreak(1, player, hand.asEquipmentSlot());
@@ -74,11 +75,11 @@ public class AlchemiteBlock extends Block {
 
     @Override
     public boolean onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face,
-        @Nullable LivingEntity igniter, ItemStack ignitionItem) {
-        return prime(world, pos, igniter, ignitionItem);
+        @Nullable LivingEntity igniter) {
+        return prime(world, pos, igniter);
     }
 
-    private boolean prime(Level level, BlockPos pos, @Nullable LivingEntity igniter, ItemStack itemStack) {
+    private boolean prime(Level level, BlockPos pos, @Nullable LivingEntity igniter) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return true;
         }

@@ -69,10 +69,10 @@ public final class SyntheticNodeRenderer implements BlockEntityRenderer<Syntheti
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, state.rotation);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
         poseStack.scale(0.165F, 0.55F, 0.165F);
-        poseStack.rotateDegrees(Axis.ZP, 40.5F);
-        poseStack.rotateDegrees(Axis.XP, 40.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(40.5F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(40.5F));
         collector.submitCustomGeometry(poseStack, TcRenderTypes.entityTranslucent(CRYSTAL),
             (pose, buffer) -> CubeGeometry.render(new EntityQuadSink(pose, buffer), 0, state.color, state.lightCoords));
         poseStack.popPose();

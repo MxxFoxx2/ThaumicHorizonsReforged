@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.TntMinecartRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.client.renderer.entity.state.TntRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class AlchemitePrimedRenderer extends EntityRenderer<AlchemitePrimedEntity, TntRenderState> {
@@ -45,14 +46,17 @@ public final class AlchemitePrimedRenderer extends EntityRenderer<AlchemitePrime
         poseStack.translate(0.0F, 0.5F, 0.0F);
         float fuse = state.fuseRemainingInTicks;
         if (fuse < 10.0F) {
-            float scale = 1.0F + TntRenderer.getSwellAmount(fuse);
+            float swell = Mth.clamp(1.0F - fuse / 10.0F, 0.0F, 1.0F);
+            swell *= swell;
+            swell *= swell;
+            float scale = 1.0F + swell * 0.3F;
             poseStack.scale(scale, scale, scale);
         }
-        poseStack.rotateDegrees(Axis.YP, -90.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
         poseStack.translate(-0.5F, -0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         TntMinecartRenderer.submitWhiteSolidBlock(state.blockState, poseStack, submitNodeCollector, state.lightCoords,
-            TntRenderer.isLit(fuse), state.outlineColor);
+            (int) fuse / 5 % 2 == 0, state.outlineColor);
         poseStack.popPose();
         super.submit(state, poseStack, submitNodeCollector, camera);
     }

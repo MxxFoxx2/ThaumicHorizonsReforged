@@ -44,7 +44,7 @@ public final class SoulSieveRenderer implements BlockEntityRenderer<SoulExtracto
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURE), (pose, buffer) -> {
             QuadSink sink = new EntityQuadSink(pose, buffer);
             renderStationary(sink, state.lightCoords);

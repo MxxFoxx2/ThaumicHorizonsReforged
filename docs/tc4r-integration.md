@@ -6,7 +6,7 @@ The `26.1.2` branch uses a composite build of `../thaumcraft-4-reforged-26.1.2` 
 
 For old Thaumcraft item and block metadata, use `../thaumcraft-4-reforged-26.1.2/tools/data/id_map.json` rather than semantic guesses. For host API and mixin targets, use the pinned source rather than contracts copied from the Minecraft 26.3 line.
 
-The build configuration and documentation have been retargeted. The inherited Java sources still require compilation and runtime validation; the observations below are source-inspection evidence, not proof that the add-on is compatible.
+The build configuration, Java sources and resources have been adapted to the pinned 26.1.2 host. The full build and local client/server startup pass; gameplay, multiplayer, persistence and visual acceptance remain separate runtime gates. The observations below describe the validated source contract, not complete in-game parity.
 
 ## Choosing the integration point
 
@@ -49,7 +49,7 @@ Until the host provides a required native hook, TH may implement it through a mi
 - Prefer additive-only API changes; preserve behavior when TH is absent.
 - Do not modify `notlikethiss/thaumcraft-4-reforged` or the local sibling checkout without explicit user direction.
 - Build against tag `26.1.2` in the local composite checkout and confirm CI pins the same revision.
-- A source backport is separate from build-target configuration. Do not present compile fixes as complete until the build actually passes.
+- The 26.1.2 source backport now compiles and passes JUnit/static checks; do not present runtime compatibility as complete until the acceptance scenarios pass.
 
 ## Validation
 

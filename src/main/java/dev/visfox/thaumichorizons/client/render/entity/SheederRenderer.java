@@ -47,7 +47,7 @@ public class SheederRenderer extends MobRenderer<Sheeder, LivingEntityRenderStat
         @Override
         public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, LivingEntityRenderState state, float yRot, float xRot) {
             submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack, ThRenderTypes.eyes(EYES_TEXTURE),
-                lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
+                lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
         }
     }
 }

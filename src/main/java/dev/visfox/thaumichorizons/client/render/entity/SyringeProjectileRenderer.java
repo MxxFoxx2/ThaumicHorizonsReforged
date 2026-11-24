@@ -49,8 +49,8 @@ public final class SyringeProjectileRenderer extends EntityRenderer<SyringeProje
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         int bodyColor = 0xBF000000 | (state.potionColor & 0x00FFFFFF);
         poseStack.pushPose();
-        poseStack.rotateDegrees(Axis.YP, state.yaw + 90.0F);
-        poseStack.rotateDegrees(Axis.ZP, -state.pitch);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.yaw + 90.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-state.pitch));
         poseStack.translate(0.0F, -1.36F, 0.0F);
         poseStack.scale(0.0625F, 0.0625F, 0.0625F);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE), (pose, buffer) -> {

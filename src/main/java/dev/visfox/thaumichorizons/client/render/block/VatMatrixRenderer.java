@@ -86,7 +86,7 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
 
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, (ticks % 360.0F) * startup);
+        poseStack.mulPose(Axis.YP.rotationDegrees((ticks % 360.0F) * startup));
 
         for (int x = 0; x < 2; x++) {
             for (int y = 0; y < 2; y++) {
@@ -104,13 +104,13 @@ public final class VatMatrixRenderer implements BlockEntityRenderer<VatMatrixBlo
                         (y == 0 ? -0.25F : 0.25F) + wobbleY,
                         (z == 0 ? -0.25F : 0.25F) + wobbleZ);
                     if (x > 0) {
-                        poseStack.rotateDegrees(Axis.XP, 90.0F);
+                        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
                     }
                     if (y > 0) {
-                        poseStack.rotateDegrees(Axis.YP, 90.0F);
+                        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
                     }
                     if (z > 0) {
-                        poseStack.rotateDegrees(Axis.ZP, 90.0F);
+                        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                     }
                     poseStack.scale(0.45F, 0.45F, 0.45F);
 

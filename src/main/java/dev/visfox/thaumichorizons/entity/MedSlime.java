@@ -9,12 +9,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class MedSlime extends Slime {
-    public MedSlime(EntityType<? extends MedSlime> type, Level level) {
+    public MedSlime(EntityType<MedSlime> type, Level level) {
         super(type, level);
     }
 

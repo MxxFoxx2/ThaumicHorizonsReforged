@@ -44,7 +44,7 @@ public class TaintEaterPigRenderer extends PigRenderer {
             // treats its last param as outlineColor and forces an opaque tint.
             submitNodeCollector.order(1).submitModel(this.getParentModel(), state, poseStack,
                 ThRenderTypes.entityTranslucent(EYES_TEXTURE), LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-                (alpha << 24) | 0xFFFFFF, null, state.outlineColor);
+                (alpha << 24) | 0xFFFFFF, null, state.outlineColor, null);
         }
     }
 }

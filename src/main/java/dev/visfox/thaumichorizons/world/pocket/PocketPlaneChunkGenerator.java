@@ -3,7 +3,6 @@ package dev.visfox.thaumichorizons.world.pocket;
 import com.mojang.serialization.MapCodec;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,8 +20,6 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
-import org.jspecify.annotations.Nullable;
 
 public class PocketPlaneChunkGenerator extends ChunkGenerator {
     public static final MapCodec<PocketPlaneChunkGenerator> CODEC = Biome.CODEC.fieldOf("biome")
@@ -42,10 +39,19 @@ public class PocketPlaneChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> buildTerrain(ChunkAccess chunk, Blender blender, RandomState randomState,
-            StructureManager structureManager, BiomeManager biomeManager, @Nullable WorldGenRegion carverBiomeRegion,
-            Set<Holder<Biome>> possibleBiomes) {
-        return CompletableFuture.completedFuture(chunk);
+    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState,
+            StructureManager structureManager, ChunkAccess centerChunk) {
+        return CompletableFuture.completedFuture(centerChunk);
+    }
+
+    @Override
+    public void applyCarvers(WorldGenRegion region, long seed, RandomState randomState,
+            BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunk) {
+    }
+
+    @Override
+    public void buildSurface(WorldGenRegion level, StructureManager structureManager,
+            RandomState randomState, ChunkAccess protoChunk) {
     }
 
     @Override
@@ -81,8 +87,7 @@ public class PocketPlaneChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos,
-            SamplerContext samplerContext) {
+    public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos) {
         result.add("Pocket plane");
     }
 }

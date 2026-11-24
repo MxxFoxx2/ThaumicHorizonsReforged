@@ -153,7 +153,7 @@ public class FocusContainmentItem extends FocusItem {
         SoulJarKeys.SoulJarData data = new SoulJarKeys.SoulJarData(entityData, false, ent.getName().getString(), "");
         SoulJarKeys.DATA.set(jar, data);
         if (!p.getInventory().add(jar)) {
-            p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
+            p.drop(jar, false);
         }
         TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;
@@ -166,7 +166,7 @@ public class FocusContainmentItem extends FocusItem {
         ItemStack jar = new ItemStack(dev.visfox.thaumichorizons.registry.ThBlocks.SOUL_JAR.get());
         SoulJarKeys.DATA.set(jar, new SoulJarKeys.SoulJarData(new CompoundTag(), true, "", ""));
         if (!p.getInventory().add(jar)) {
-            p.drop(jar, false, net.minecraft.util.Prediction.PREDICTED);
+            p.drop(jar, false);
         }
         TcReforgedPort.fx.containmentCapture(world, ent.position(), 29631);
         return true;

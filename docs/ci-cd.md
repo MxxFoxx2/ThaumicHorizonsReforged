@@ -27,7 +27,7 @@ openssl rand -base64 32
 
 Without that secret, dependency/build caches still work, but configuration-cache entries cannot be reused between fresh hosted runners.
 
-A green CI run proves the configured checks passed. It does not prove that the inherited 26.3 Java sources and resources are fully compatible with Minecraft/TC4R 26.1.2, nor does it replace client, dedicated-server, multiplayer, persistence or visual testing.
+A green CI run proves the configured compile, static and JAR checks passed on the 26.1.2 source backport. It does not replace client, dedicated-server, multiplayer, persistence or visual acceptance testing.
 
 ## Releases
 

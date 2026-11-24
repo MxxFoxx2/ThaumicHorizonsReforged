@@ -1,14 +1,14 @@
 # Roadmap and current state
 
-The `26.1.2` branch starts from the Minecraft 26.3 source baseline at local commit `d89905e`. Its current task is build and documentation preparation for Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25 and TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. Retargeting Gradle does not port the Java sources or prove runtime compatibility. Current results and open gates are tracked in [verification.md](verification.md).
+The `26.1.2` branch starts from the Minecraft 26.3 source baseline at local commit `d89905e` and now contains an uncommitted API/resource backport to Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25 and TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. The full build, JUnit, static checks and local client/server startup pass; gameplay, multiplayer, persistence and visual acceptance remain open. Current results and gates are tracked in [verification.md](verification.md).
 
 ## Current foundation
 
 - Target: Minecraft 26.1.2 / NeoForge 26.1.2.122, with the sibling TC4R checkout `../thaumcraft-4-reforged-26.1.2` as the required composite build.
 - Build metadata, mod dependency metadata, CI and release host pins now use the 26.1.2 versions; `tc4r_version` has a single property shared by the dependency and generated TOML.
-- The inherited source contains compatibility interfaces, `TcReforgedPort`, and version-sensitive seams in `platform/` and `client/platform/`. Their API and mixin targets still require validation against TC4R 26.1.2.
+- The source now contains 26.1.2 adaptations for compatibility interfaces, `TcReforgedPort`, version-sensitive seams in `platform/` and `client/platform/`, entity/item/block APIs, rendering and Pocket Plane worldgen. Compilation and startup validate the seams; runtime behavior remains open.
 - The inherited inventory includes the 74-entry research tree, aspects, English/Russian localization, infusions, creatures, golems, machines, lenses/foci, souls, blood, Vat systems, boats/mounts, projectiles, clouds/spikes and Pocket Plane code.
-- No 26.1.2 gameplay, multiplayer, persistence, client-rendering or release acceptance follows from the source inventory. Historical 26.3 verification remains historical evidence only.
+- No 26.1.2 gameplay, multiplayer, persistence, client-rendering or release acceptance follows from the successful build/startup. Historical 26.3 verification remains historical evidence only.
 
 ## Inherited 26.3 implementation history
 
@@ -53,10 +53,9 @@ Still pending: live verification of generated terrain layers/caves/pockets, slot
 
 ## Remaining 26.1.2 work — priority order
 
-1. **Compile against the pinned host.** Run `gradlew.bat build`; classify failures as Minecraft/NeoForge API, TC4R API, resource-format or test issues. Source fixes require a separately approved backport task.
-2. **Validate loading and integration.** After compilation, launch a clean client and dedicated server; resolve mixin, registration, model, texture, datapack and dimension-loading failures.
-3. **Run the 26.1.2 acceptance gate.** Repeat the representative Vat/Soul Jar, two-client infusion, Pocket Plane, machine-loop and save/reload scenarios in `verification.md` on the current revision.
-4. **Publish only after evidence exists.** A configured workflow or a JAR name check is not a release gate. Keep the experimental warning until the current branch has reproducible build and runtime evidence.
+1. **Source backport and loading validation (done):** the pinned host compiles, JUnit/static checks pass, and clean local client/server startup succeeds.
+2. **Run the 26.1.2 acceptance gate.** Repeat the representative Vat/Soul Jar, two-client infusion, Pocket Plane, machine-loop and save/reload scenarios in `verification.md` on the current revision.
+3. **Publish only after evidence exists.** A configured workflow or a JAR name check is not a release gate. Keep the experimental warning until the current branch has reproducible runtime evidence.
 
 ## Verification / CI status
 

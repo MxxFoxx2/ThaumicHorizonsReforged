@@ -24,11 +24,11 @@ final class MachineRenderHelper {
         Identifier texture, float rise, float rotation, float rotation2, boolean active, int color, int light, int frame) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.2F + rise, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, rotation);
-        poseStack.rotateDegrees(Axis.XP, rotation2);
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+        poseStack.mulPose(Axis.XP.rotationDegrees(rotation2));
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(texture),
             (pose, buffer) -> SCANNER.renderAll(pose, buffer, 0xFFFFFFFF, light));
-        poseStack.rotateDegrees(Axis.XP, -2.0F * rotation2);
+        poseStack.mulPose(Axis.XP.rotationDegrees(-2.0F * rotation2));
         poseStack.scale(0.5F, 1.0F, 0.5F);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(texture),
             (pose, buffer) -> SCANNER.renderAll(pose, buffer, 0xFFFFFFFF, light));

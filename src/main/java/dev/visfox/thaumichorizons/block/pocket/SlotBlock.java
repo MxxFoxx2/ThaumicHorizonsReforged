@@ -1,5 +1,6 @@
 package dev.visfox.thaumichorizons.block.pocket;
 
+import com.mojang.serialization.MapCodec;
 import dev.visfox.thaumichorizons.world.pocket.SlotBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -15,8 +16,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
 public class SlotBlock extends BaseEntityBlock {
+    public static final MapCodec<SlotBlock> CODEC = simpleCodec(SlotBlock::new);
+
     public SlotBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public MapCodec<SlotBlock> codec() {
+        return CODEC;
     }
 
     @Override

@@ -84,7 +84,7 @@ public final class ArcaneLensHud {
         }
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.gui.screen() != null || !isWearingGoggles(player)) {
+        if (player == null || minecraft.screen != null || !isWearingGoggles(player)) {
             close();
             return;
         }

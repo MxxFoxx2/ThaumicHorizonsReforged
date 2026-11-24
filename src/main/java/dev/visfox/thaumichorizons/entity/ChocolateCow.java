@@ -11,7 +11,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,7 +32,7 @@ public class ChocolateCow extends Cow {
         if (held.is(Items.BUCKET)) {
             ItemStack chocolate = new ItemStack(ThItems.BUCKET_CHOCOLATE.get());
             held.consume(1, player);
-            player.getInventory().placeItemBackInInventory(chocolate, Prediction.SERVER_ONLY);
+            player.getInventory().placeItemBackInInventory(chocolate);
             return this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         return super.mobInteract(player, hand);

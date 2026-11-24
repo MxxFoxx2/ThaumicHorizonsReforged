@@ -11,7 +11,7 @@ This file separates release-blocking smoke coverage from the unverified behavior
 
 ## Minecraft 26.1.2 backport status — 2026-11-24
 
-Target: TH branch `26.1.2` at source baseline `d89905e`, Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25, TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. This section records the build/documentation retargeting only. This task did not modify Java sources or resources; concurrent source edits observed in the worktree are outside its scope and are preserved rather than validated here.
+Target: TH branch `26.1.2` at source baseline `d89905e` plus the uncommitted 26.1.2 API/resource backport, Minecraft `26.1.2`, NeoForge `26.1.2.122`, Java 25, TC4R `1.1.3` tag `26.1.2` / commit `8b953e69c3d625469006f688d964d9f2a7911590`. TC4R was not modified.
 
 - [x] `gradle.properties`, `settings.gradle`, generated metadata inputs and both workflows consistently target 26.1.2 and the pinned TC4R checkout/commit.
 - [x] Both workflow YAML files parse successfully; all 6 CI and 7 release shell steps pass `bash -n`.
@@ -19,15 +19,17 @@ Target: TH branch `26.1.2` at source baseline `d89905e`, Minecraft `26.1.2`, Neo
 - [x] `gradlew.bat dependencyInsight --dependency thaumcraft-4-reforged --configuration compileClasspath --no-configuration-cache` resolves `thaumcraft:thaumcraft-4-reforged:1.1.3` to `project :thaumcraft-4-reforged-26.1.2` through the composite build.
 - [x] `python -I tools/check_seams.py` passes: 303 files checked.
 - [x] `python -I tools/check_assets.py` passes: 599 references checked; 127 item-model definitions, 180 models, 140 local textures, 37 special definitions and 5 registered renderer types reported.
-- [ ] `gradlew.bat build --no-configuration-cache --console=plain` passes. The initial run against the unchanged `d89905e` source baseline reached `:compileJava` and failed with **100 compilation errors**. After concurrent Java edits appeared in the worktree at 22:52, a later run against that different partial snapshot failed with **144 errors**. Both are source-compatibility failures, not successful TH builds; the count is snapshot-dependent and is not a compatibility metric.
-- [ ] JUnit passes. Tests did not run because main-source compilation failed.
-- [ ] A clean client and dedicated server start without TH crashes, mixin failures or missing resources.
+- [x] All 399 resource JSON files parse successfully.
+- [x] `gradlew.bat build --no-configuration-cache --rerun-tasks --console=plain` passes; all 12 build tasks executed.
+- [x] JUnit passes: 11 classes, 67 tests, 0 failures/errors/skipped.
+- [x] A clean-world dedicated server reaches `Done (4.278s)!`, logs `Thaumic Horizons: Reforged loaded`, loads 1628 recipes and stops cleanly. The only server ERROR is the known TC4R spawn-placement warning for `thaumcraft:firebat` and `thaumcraft:wisp`.
+- [x] The client starts, logs `Thaumic Horizons: Reforged loaded` and completes a resource reload including `mod/thaumichorizons`. No THR ERROR/FATAL or missing-model line was recorded; the only missing-model warnings are TC4R's `static_field`, `sapping_field` and `impassable_field`.
 - [ ] Runtime compatibility, multiplayer, persistence and visual acceptance pass on 26.1.2.
 - [ ] A release JAR is accepted for 26.1.2. No such acceptance is claimed.
 
-Across the two source snapshots, compiler failures included `ExtractBlockScreenEffectEvent` / `CustomBlockScreenEffectRenderer`, `MoveSimulationType`, `Prediction`, `EntityTypes`, the `monster.cubemob.Slime` package, `SamplerContext`, `BaseEntityBlock.codec()`, `PoseStack.rotate*`, camera/GUI methods, renderer submission signatures, `FlyingMoveControl` generics, item fields such as `Items.DYE`/`Items.WOOL`, and the `LivingEntity.swing(...)` signature. Some of these were removed by the concurrent edits, but the later snapshot still failed compilation. Resolving the remaining incompatibilities is a separately approved source-backport task.
+The source backport reduced the compiler failure set from 217 errors to zero. Confirmed migration groups included entity/spawn/drop/swing APIs, `PoseStack` rotations, camera/GUI and block-screen-effect APIs, renderer submission signatures, block fire/codec extensions, item/block color fields, and the Pocket Plane `ChunkGenerator` contract. The Pocket Plane biome required explicit `spawn_costs` and `spawners` maps on 26.1.2.
 
-The build also reported a non-fatal warning that the macOS path `/opt/homebrew/opt/openjdk@25`, inherited from the TC4R composite build's `org.gradle.java.installations.paths`, does not exist on Windows. Java toolchain resolution still reached compilation. Do not modify the sibling host repository merely to silence that warning.
+The build still reports a non-fatal warning that the macOS path `/opt/homebrew/opt/openjdk@25`, inherited from the TC4R composite build's `org.gradle.java.installations.paths`, does not exist on Windows. Java toolchain resolution succeeds. The sibling host repository was not modified to silence it.
 
 ## Minecraft 26.1.2 acceptance gate
 

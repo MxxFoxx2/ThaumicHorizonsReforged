@@ -84,7 +84,7 @@ public class FocusIlluminationItem extends FocusItem {
         int color = Math.max(0, Math.min(COLORS.length - 1, focus.getDamageValue()));
         BlockState lightState = light.defaultBlockState().setValue(IlluminationLightBlock.COLOR, color);
         level.setBlock(pos, lightState, 3);
-        player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+        player.swing(InteractionHand.MAIN_HAND, true);
         if (!level.isClientSide()) {
             THSounds.play(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), "wand", SoundSource.PLAYERS, 1.0F, 1.0F);
         }

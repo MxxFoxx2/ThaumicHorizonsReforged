@@ -8,11 +8,11 @@ import net.minecraft.world.level.Level;
 public class InvulnerableItemEntity extends ItemEntity {
     public InvulnerableItemEntity(EntityType<? extends ItemEntity> type, Level level) {
         super(type, level);
-        setPermanentlyInvulnerable(true);
+        setInvulnerable(true);
     }
 
     public InvulnerableItemEntity(Level level, double x, double y, double z, ItemStack stack) {
         super(level, x, y, z, stack);
-        setPermanentlyInvulnerable(true);
+        setInvulnerable(true);
     }
 }

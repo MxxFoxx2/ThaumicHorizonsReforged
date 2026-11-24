@@ -63,7 +63,7 @@ public class SoulJarBlockEntity extends ThBlockEntity implements WandInteractabl
             }
         }
         level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F);
-        player.swing(player.getUsedItemHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+        player.swing(player.getUsedItemHand(), false);
         return InteractionResult.SUCCESS;
     }
 

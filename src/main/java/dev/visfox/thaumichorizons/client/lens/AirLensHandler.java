@@ -30,7 +30,7 @@ public final class AirLensHandler {
             || !LensEffectsHandler.hasLens(player, "LensAir")) {
             return;
         }
-        Camera camera = minecraft.gameRenderer.mainCamera();
+        Camera camera = minecraft.gameRenderer.getMainCamera();
         Matrix4f viewRotation = camera.getViewRotationMatrix(new Matrix4f());
         float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         GuiGraphicsExtractor graphics = event.getGuiGraphics();

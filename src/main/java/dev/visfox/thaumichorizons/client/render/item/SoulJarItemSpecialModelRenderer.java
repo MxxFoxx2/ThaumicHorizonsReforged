@@ -88,11 +88,12 @@ public final class SoulJarItemSpecialModelRenderer implements SpecialModelRender
         }
 
         Minecraft minecraft = Minecraft.getInstance();
-        CameraRenderState camera = minecraft.gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
+        CameraRenderState camera = new CameraRenderState();
+        minecraft.gameRenderer.getMainCamera().extractRenderState(camera, 0.0F);
         if (state.soul()) {
             poseStack.pushPose();
             poseStack.translate(0.5F, 0.4F, 0.5F);
-            poseStack.rotate(camera.orientation);
+            poseStack.mulPose(camera.orientation);
             collector.submitCustomGeometry(poseStack, ThRenderTypes.textSeeThrough(SOUL_TEXTURE),
                 (pose, buffer) -> renderSoul(pose, buffer, state.frame(), lightCoords));
             poseStack.popPose();
@@ -104,7 +105,7 @@ public final class SoulJarItemSpecialModelRenderer implements SpecialModelRender
         }
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.01F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.scale(0.25F, 0.25F, 0.25F);
         minecraft.getEntityRenderDispatcher().submit(state.preview(), camera,
             0.0F, 0.0F, 0.0F, poseStack, collector);

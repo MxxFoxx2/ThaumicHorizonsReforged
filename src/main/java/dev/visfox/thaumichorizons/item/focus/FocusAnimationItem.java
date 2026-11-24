@@ -81,8 +81,7 @@ public class FocusAnimationItem extends FocusItem {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
-            player.swing(InteractionHand.MAIN_HAND,
-                net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+            player.swing(InteractionHand.MAIN_HAND, true);
             return InteractionResult.CONSUME;
         }
         ItemStack focusStack = Wands.getFocusItem(stack);

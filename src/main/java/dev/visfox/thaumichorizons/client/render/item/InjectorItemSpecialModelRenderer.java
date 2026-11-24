@@ -71,10 +71,10 @@ public final class InjectorItemSpecialModelRenderer implements SpecialModelRende
         poseStack.pushPose();
         // Keep the legacy orientation while letting the active item display transform
         // control inventory, ground, first-person and third-person placement.
-        poseStack.rotateDegrees(Axis.ZP, 180.0F);
-        poseStack.rotateDegrees(Axis.YP, 180.0F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         poseStack.translate(0.38F, -0.1F, 0.38F);
-        poseStack.rotateDegrees(Axis.YP, 90.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
         renderPart("Drum", 2.5F, 2.25F, 0.0F, 0.0F, 0.0F, state.cylinderRotation() * 2.0F,
@@ -106,13 +106,13 @@ public final class InjectorItemSpecialModelRenderer implements SpecialModelRende
         poseStack.pushPose();
         poseStack.translate(pivotX, pivotY, pivotZ);
         if (rotateZ != 0.0F) {
-            poseStack.rotateDegrees(Axis.ZP, rotateZ);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(rotateZ));
         }
         if (rotateY != 0.0F) {
-            poseStack.rotateDegrees(Axis.YP, rotateY);
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotateY));
         }
         if (rotateX != 0.0F) {
-            poseStack.rotateDegrees(Axis.XP, rotateX);
+            poseStack.mulPose(Axis.XP.rotationDegrees(rotateX));
         }
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityCutoutNoCull(TEXTURE),
             (pose, buffer) -> model.renderPart(name, pose, buffer, 0xFFFFFFFF, lightCoords));

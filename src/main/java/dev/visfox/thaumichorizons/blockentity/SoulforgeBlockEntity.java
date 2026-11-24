@@ -83,7 +83,7 @@ public class SoulforgeBlockEntity extends ThBlockEntity implements SoulReceiver,
             SoulJarKeys.DATA.set(soul, data);
             held.shrink(1);
             if (!player.getInventory().add(soul)) {
-                player.drop(soul, false, net.minecraft.util.Prediction.PREDICTED);
+                player.drop(soul, false);
             }
             souls--;
             setChanged();

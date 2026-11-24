@@ -2,14 +2,14 @@
 
 ## TC4R 1.1.3 compatibility profile
 
-The `26.1.2` branch targets TC4R 1.1.3 for Minecraft 26.1.2 (tag `26.1.2`, commit `8b953e69c3d625469006f688d964d9f2a7911590`). The build and documentation target is configured, but source compilation, mixin application and runtime compatibility remain separate gates. The following compatibility adaptations are inherited from the 26.3 implementation and must be revalidated against the pinned 26.1.2 host; see [tc4r-integration.md](tc4r-integration.md) for current source observations.
+The `26.1.2` branch targets TC4R 1.1.3 for Minecraft 26.1.2 (tag `26.1.2`, commit `8b953e69c3d625469006f688d964d9f2a7911590`). The source backport compiles, passes JUnit/static checks and loads in local client/server startup. Gameplay, multiplayer, persistence and visual acceptance remain separate gates; see [tc4r-integration.md](tc4r-integration.md) and [verification.md](verification.md).
 
-- **TH golems:** the intended profile supplies material health, armor, speed, water behavior, strength, carry capacity, upgrade-slot count, texture and regeneration delay through TH-owned `GolemMaterialTH` and narrow compatibility mixins, without modifying stock golems. This is not yet a verified 26.1.2 result.
-- **Transduction Amplifier:** the pinned host has no `NodeTransducerBlockEntity.stopForVortexConversion()`. Keep the automatic multi-transducer-to-Vortex conversion disabled unless a validated safe hook is supplied; replacing a live node without stopping the transducer would be unsafe.
-- **Optional extensions:** the pinned host has no `FxProxy.machineBeam(...)` or `ResearchPage.creatureInfusion(...)`. Adapters must no-op or avoid direct linkage when those methods are absent; active TH definitions must not depend on them.
-- **Wand recognition:** the pinned `Wands.isWand(ItemStack)` recognizes only the built-in wand. TH's intended recognition mixin for `WandItem` subclasses still needs compilation and runtime validation on 26.1.2.
+- **TH golems:** material health, armor, speed, water behavior, strength, carry capacity, upgrade-slot count, texture and regeneration delay remain TH-owned through `GolemMaterialTH` and narrow compatibility mixins, without modifying stock golems. The 26.1.2 source compiles and the material contract passes JUnit; live behavior remains unverified.
+- **Transduction Amplifier:** the pinned host has no `NodeTransducerBlockEntity.stopForVortexConversion()`. The automatic multi-transducer-to-Vortex conversion remains disabled unless a validated safe hook is supplied; replacing a live node without stopping the transducer would be unsafe.
+- **Optional extensions:** the pinned host has no `FxProxy.machineBeam(...)` or `ResearchPage.creatureInfusion(...)`. Adapters no-op or avoid direct linkage when those methods are absent; active TH definitions do not depend on them.
+- **Wand recognition:** the pinned `Wands.isWand(ItemStack)` recognizes only the built-in wand. TH's recognition mixin for `WandItem` subclasses compiles and loads during 26.1.2 startup; live recognition behavior remains unverified.
 
-These are compatibility intentions and pinned-source observations, not claims of full visual or in-game acceptance. Historical 26.3 compatibility details elsewhere in this document remain baseline history until rechecked on 26.1.2.
+These are source/startup compatibility results, not claims of full visual or in-game acceptance. Historical 26.3 compatibility details elsewhere in this document remain baseline history unless explicitly rechecked on 26.1.2.
 
 
 Known deviations and incomplete port areas relative to the 1.7.10 reference. Unlisted behavior has not necessarily been exhaustively verified as 1:1.
@@ -166,10 +166,10 @@ Recipe-key conventions (TC4R's `TcRecipes` map requires unique keys): multi-vari
 
 ## Addon wand recognition & primed-alchemite client safety
 
-- TC4R `Wands.isWand` in the pinned 26.1.2 source recognizes only the base wand item (`stack.is(ModItems.WAND)`), so the inherited TH disposable wand — a `WandItem` subclass mirroring 1.7.10 `ItemWandCastingDisposable extends ItemWandCasting` — requires TH's recognition mixin. That mixin is intended to accept any `WandItem` subclass while leaving base-wand behavior unchanged; it still needs compilation and runtime validation on 26.1.2. The former `feat/addon-api` fork seam is not the configured dependency.
+- TC4R `Wands.isWand` in the pinned 26.1.2 source recognizes only the base wand item (`stack.is(ModItems.WAND)`), so the inherited TH disposable wand — a `WandItem` subclass mirroring 1.7.10 `ItemWandCastingDisposable extends ItemWandCasting` — requires TH's recognition mixin. That mixin compiles and loads during 26.1.2 client/server startup; live recognition behavior remains unverified. The former `feat/addon-api` fork seam is not the configured dependency.
 - The disposable wand's default `WandKeys.PARTS` and `WandKeys.VIS`, lazy component setup and translations were verified in-game on the historical 26.3 baseline. Revalidate them against the pinned host before treating them as 26.1.2 evidence.
 - The crystal wand stays a bare crafting ingredient, exactly like the original `ItemCrystalWand`.
-- The inherited 26.3 `AlchemitePrimedEntity` overrides `getMoveSimulationType()` = `SERVER_AND_CLIENT` (vanilla `PrimedTnt` idiom); the NeoForge dev-only guard threw "logical side not permitted to simulate movement" when a primed alchemite ticked on the client. `MoveSimulationType` is absent from the 26.1.2 compile target, so this implementation is a known source-backport item rather than a current compatibility claim.
+- `MoveSimulationType` is absent from the 26.1.2 compile target, so the inherited `AlchemitePrimedEntity.getMoveSimulationType()` override was removed. The entity compiles and the dedicated server starts cleanly; client-side movement and fuse behavior remain live-verification items.
 - Recharge is blocked add-on-side by the two recharge mixins. This preserves the original single-use behavior without changing TC4R's base wand rules.
 
 ## Functional-block static models (machine atlases)

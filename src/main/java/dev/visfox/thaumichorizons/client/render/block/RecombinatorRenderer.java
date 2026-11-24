@@ -93,8 +93,8 @@ public final class RecombinatorRenderer implements BlockEntityRenderer<Recombina
             float centerY = 1.5F + 0.2F * sine;
             poseStack.pushPose();
             poseStack.translate(0.5F, centerY, 0.5F);
-            poseStack.rotateDegrees(Axis.YP, -camera.yRot);
-            poseStack.rotateDegrees(Axis.XP, camera.xRot);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-camera.yRot));
+            poseStack.mulPose(Axis.XP.rotationDegrees(camera.xRot));
             collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(RING_TEXTURE),
                 (pose, buffer) -> renderRing(pose, buffer, state.lightCoords, u0, u1));
             poseStack.popPose();

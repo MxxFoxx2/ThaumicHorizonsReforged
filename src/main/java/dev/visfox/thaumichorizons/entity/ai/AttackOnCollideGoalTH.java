@@ -118,7 +118,7 @@ public class AttackOnCollideGoalTH extends Goal {
         if (distanceSq <= reach && this.attackTick <= 20) {
             this.attackTick = 20;
             if (!this.attacker.getMainHandItem().isEmpty()) {
-                this.attacker.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+                this.attacker.swing(InteractionHand.MAIN_HAND, true);
             }
             float damage = 3.0F;
             if (this.attacker.getAttribute(Attributes.ATTACK_DAMAGE) != null) {

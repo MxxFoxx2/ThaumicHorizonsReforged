@@ -102,24 +102,6 @@ public class EntityGolemTH extends GolemBase {
         }
     }
 
-    private static boolean isCopperFamily(@Nullable Block block) {
-        if (block == null) {
-            return false;
-        }
-        for (net.minecraft.world.level.block.WeatheringCopper.WeatherState weather
-            : net.minecraft.world.level.block.WeatheringCopper.WeatherState.values()) {
-            if (Blocks.COPPER_BLOCK.weathering().pick(weather) == block
-                || Blocks.COPPER_BLOCK.waxed().pick(weather) == block
-                || Blocks.COPPER_CHAIN.weathering().pick(weather) == block
-                || Blocks.COPPER_CHAIN.waxed().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.weathering().pick(weather) == block
-                || Blocks.LIGHTNING_ROD.waxed().pick(weather) == block) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static GolemMaterialTH materialType(@Nullable Block block) {
         return GolemMaterialTH.fromBlock(block);
     }

@@ -78,7 +78,7 @@ public final class SyringeItemSpecialModelRenderer implements SpecialModelRender
             case INVENTORY -> poseStack.translate(0.0F, -2.75F, 0.0F);
             case ENTITY -> poseStack.translate(0.0F, -2.0F, 0.0F);
             case EQUIPPED, FIRST_PERSON -> {
-                poseStack.rotateDegrees(Axis.ZP, -66.0F);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(-66.0F));
                 poseStack.translate(-1.0F, -2.25F, 0.75F);
             }
         }

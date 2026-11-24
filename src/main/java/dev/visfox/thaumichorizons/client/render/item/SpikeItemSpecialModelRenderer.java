@@ -94,18 +94,18 @@ public final class SpikeItemSpecialModelRenderer implements SpecialModelRenderer
                 // pixel-measured: the mesh sits 0.19 units high in the slot
                 poseStack.translate(0.0F, -0.55F, 0.0F);
                 poseStack.scale(SCALE, SCALE, SCALE);
-                poseStack.rotateDegrees(Axis.YP, 90.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
             }
             case EQUIPPED, FIRST_PERSON -> {
                 // hang from the hand anchor like the syringe (1.05 units below it)
                 poseStack.translate(0.0F, -3.0F, 0.0F);
                 poseStack.scale(SCALE, SCALE, SCALE);
-                poseStack.rotateDegrees(Axis.YP, 90.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
             }
             case ENTITY -> {
                 poseStack.scale(SCALE, SCALE, SCALE);
                 poseStack.translate(0.0F, -1.45F, 0.0F);
-                poseStack.rotateDegrees(Axis.YP, 90.0F);
+                poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
             }
         }
     }

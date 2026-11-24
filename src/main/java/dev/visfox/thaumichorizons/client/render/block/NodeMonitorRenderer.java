@@ -64,32 +64,32 @@ public final class NodeMonitorRenderer implements BlockEntityRenderer<NodeMonito
         switch (state.facing) {
             case DOWN -> {
                 poseStack.translate(0.0F, -0.8F, 0.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             case UP -> {
                 poseStack.translate(0.0F, 0.8F, 0.0F);
-                poseStack.rotateDegrees(Axis.YP, 180.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             case NORTH -> {
                 poseStack.translate(0.0F, 0.0F, 0.8F);
-                poseStack.rotateDegrees(Axis.YP, -90.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             case SOUTH -> {
                 poseStack.translate(0.0F, 0.0F, -0.8F);
-                poseStack.rotateDegrees(Axis.YP, 90.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             case WEST -> {
                 poseStack.translate(0.8F, 0.0F, 0.0F);
-                poseStack.rotateDegrees(Axis.ZP, 90.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             case EAST -> {
                 poseStack.translate(-0.8F, 0.0F, 0.0F);
-                poseStack.rotateDegrees(Axis.ZP, -90.0F);
-                poseStack.rotateDegrees(Axis.YP, state.rotation);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
             }
             default -> {
             }

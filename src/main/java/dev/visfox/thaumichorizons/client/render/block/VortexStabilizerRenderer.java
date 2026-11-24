@@ -98,8 +98,8 @@ public final class VortexStabilizerRenderer
             case UP -> -90.0F;
             default -> 0.0F;
         };
-        poseStack.rotateDegrees(Axis.YP, -yaw);
-        poseStack.rotateDegrees(Axis.XP, pitch);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-yaw));
+        poseStack.mulPose(Axis.XP.rotationDegrees(pitch));
     }
 
     @Override

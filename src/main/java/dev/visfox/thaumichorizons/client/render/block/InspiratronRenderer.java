@@ -44,8 +44,8 @@ public final class InspiratronRenderer implements BlockEntityRenderer<Inspiratro
         float bob = Mth.sin(WardedRendering.viewerTicks() / 14.0F) * 0.03F + 0.03F;
         poseStack.pushPose();
         poseStack.translate(0.5F, -0.925F + bob, 0.5F);
-        poseStack.rotateDegrees(Axis.XP, 180.0F);
-        poseStack.rotateDegrees(Axis.YP, state.rotation * 180.0F / (float) Math.PI - 90.0F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation * 180.0F / (float) Math.PI - 90.0F));
         WardedRendering.brainJar(collector, poseStack, state.lightCoords, 0.0F, WardedRendering.viewerTicks());
         poseStack.popPose();
     }

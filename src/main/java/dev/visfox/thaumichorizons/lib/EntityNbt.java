@@ -24,7 +24,6 @@ public final class EntityNbt {
     }
 
     public static @Nullable Entity load(CompoundTag tag, Level level) {
-        return EntityType.loadEntityRecursive(tag, level, new net.minecraft.world.entity.EntitySpawnRequest(
-            EntitySpawnReason.LOAD, false), EntityProcessor.NOP);
+        return EntityType.loadEntityRecursive(tag, level, EntitySpawnReason.LOAD, EntityProcessor.NOP);
     }
 }

@@ -32,7 +32,7 @@ public final class LostSoulRenderer extends EntityRenderer<LostSoul, EntityRende
         float bob = Mth.sin(state.ageInTicks / 6.0F) * 0.15F;
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.45F + bob, 0.0F);
-        poseStack.rotate(camera.orientation);
+        poseStack.mulPose(camera.orientation);
         collector.submitCustomGeometry(poseStack, ThRenderTypes.entityTranslucent(TEXTURE), (pose, buffer) -> {
             quad(buffer, pose, 0.55F);
         });

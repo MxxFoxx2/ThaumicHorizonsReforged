@@ -187,7 +187,7 @@ public class FingersMenu extends AbstractContainerMenu {
                 }
                 ItemStack stack = inventory.removeItemNoUpdate(i);
                 if (!stack.isEmpty()) {
-                    player.drop(stack, false, net.minecraft.util.Prediction.PREDICTED);
+                    player.drop(stack, false);
                 }
             }
         }

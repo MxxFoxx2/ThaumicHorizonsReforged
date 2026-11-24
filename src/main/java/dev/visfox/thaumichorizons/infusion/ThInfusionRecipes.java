@@ -263,11 +263,11 @@ public final class ThInfusionRecipes {
     }
 
     public static void init() {
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.GHAST);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.ENDERMAN);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.WITCH);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.BLAZE);
-        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityTypes.MAGMA_CUBE);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.GHAST);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.ENDERMAN);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.WITCH);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.BLAZE);
+        classBanList.add((type, entity) -> type == net.minecraft.world.entity.EntityType.MAGMA_CUBE);
         classBanList.add((type, entity) -> tcEntityType("pech") == type);
         classBanList.add((type, entity) -> tcEntityType("wisp") == type);
         classBanList.add((type, entity) -> entity instanceof thaumcraft.entity.TaintedMob);
@@ -329,7 +329,7 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.DARKNESS, 4).add(thaumcraft.aspect.Aspect.SLIME, 4)
                 .add(thaumcraft.aspect.Aspect.EXCHANGE, 2),
             Chicken.class,
-            new ItemStack[] { new ItemStack(Items.DYE.black()), new ItemStack(Items.SHEARS) },
+            new ItemStack[] { new ItemStack(Items.BLACK_DYE), new ItemStack(Items.SHEARS) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("chickenInfusion", 10, 6,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.GREED, 8).add(thaumcraft.aspect.Aspect.METAL, 8)
@@ -353,8 +353,8 @@ public final class ThInfusionRecipes {
         critterRecipes.add(new CreatureInfusionRecipe("sheepInfusion", 2, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.SENSES, 8).add(thaumcraft.aspect.Aspect.EXCHANGE, 4),
             Sheep.class,
-            new ItemStack[] { new ItemStack(Items.DYE.red()), new ItemStack(Items.LAPIS_LAZULI),
-                new ItemStack(Items.DYE.yellow()) },
+            new ItemStack[] { new ItemStack(Items.RED_DYE), new ItemStack(Items.LAPIS_LAZULI),
+                new ItemStack(Items.YELLOW_DYE) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("sheepInfusion", 3, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.TOOL, 8).add(thaumcraft.aspect.Aspect.CLOTH, 4),
@@ -372,8 +372,8 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.CLOTH, 32).add(thaumcraft.aspect.Aspect.EXCHANGE, 8)
                 .add(thaumcraft.aspect.Aspect.MIND, 16),
             Spider.class,
-            new ItemStack[] { tc("zombie_brain"), new ItemStack(Items.WOOL.white()), new ItemStack(Items.WOOL.white()),
-                new ItemStack(Items.WOOL.white()) },
+            new ItemStack[] { tc("zombie_brain"), new ItemStack(Items.WHITE_WOOL), new ItemStack(Items.WHITE_WOOL),
+                new ItemStack(Items.WHITE_WOOL) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("catInfusion", 4, 2,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.BEAST, 8).add(thaumcraft.aspect.Aspect.WEAPON, 8),
@@ -391,7 +391,7 @@ public final class ThInfusionRecipes {
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.TRAP, 8).add(thaumcraft.aspect.Aspect.AURA, 4)
                 .add(thaumcraft.aspect.Aspect.ENERGY, 16),
             Ocelot.class,
-            new ItemStack[] { tc("balanced_shard"), new ItemStack(Items.WOOL.black()), tc("balanced_shard"),
+            new ItemStack[] { tc("balanced_shard"), new ItemStack(Items.BLACK_WOOL), tc("balanced_shard"),
                 new ItemStack(Items.GOLD_NUGGET) },
             0));
         critterRecipes.add(new CreatureInfusionRecipe("dogInfusion", 14, 2,
@@ -563,9 +563,9 @@ public final class ThInfusionRecipes {
         selfRecipes.add(new SelfInfusionRecipe("chameleonSkin", 7,
             new thaumcraft.aspect.AspectList().add(thaumcraft.aspect.Aspect.SENSES, 48).add(thaumcraft.aspect.Aspect.EXCHANGE, 32)
                 .add(thaumcraft.aspect.Aspect.VOID, 32),
-            new ItemStack[] { new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.DYE.red()),
-                new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.DYE.yellow()),
-                new ItemStack(Items.DYE.black()), new ItemStack(Items.BONE_MEAL) },
+            new ItemStack[] { new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.RED_DYE),
+                new ItemStack(Items.LAPIS_LAZULI), new ItemStack(Items.YELLOW_DYE),
+                new ItemStack(Items.BLACK_DYE), new ItemStack(Items.BONE_MEAL) },
             10));
     }
 
